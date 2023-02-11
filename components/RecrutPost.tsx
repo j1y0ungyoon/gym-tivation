@@ -36,11 +36,14 @@ const RecruitPost = ({ post }: { post: RecruitPostType }) => {
   const onClickEditPost = async () => {};
 
   // Detail 페이지로 이동
-  const GoToRecruitDetail = () => {
-    router.push({
-      pathname: `/recruitDetail/${post.id}`,
-      query: { pid: post.id, post: JSON.stringify(post) },
-    });
+  const GoToRecruitDetail = (post: RecruitPostType) => {
+    router.push(
+      {
+        pathname: `/recruitDetail/${post.id}/${post.title}/${post.content}/${post.createdAt}`,
+        query: { pid: post.id },
+      },
+      // `/recruitDetail/${post.id}`,
+    );
   };
 
   return (
@@ -48,7 +51,7 @@ const RecruitPost = ({ post }: { post: RecruitPostType }) => {
       {isLoadingDeleting ? (
         <RecruitPostBox>게시물을 삭제하고 있습니다.</RecruitPostBox>
       ) : (
-        <RecruitPostBox key={post.id} onClick={GoToRecruitDetail}>
+        <RecruitPostBox key={post.id} onClick={() => GoToRecruitDetail(post)}>
           <h4>{post.title}</h4>
           <h5>{post.content}</h5>
           <button onClick={onClickDeletePost}>삭제</button>
