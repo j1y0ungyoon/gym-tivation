@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { editRecruitPost, deleteRecruitPost } from '../api/api';
 import { EditRecruitPostParameterType } from '../type';
@@ -7,6 +7,9 @@ import { EditRecruitPostParameterType } from '../type';
 const RecruitDetail = ({ params }: any) => {
   const router = useRouter();
   const [id, title, content, createdAt] = params;
+
+  const editTitleRef = useRef<HTMLInputElement>(null);
+  const editContentRef = useRef<HTMLTextAreaElement>(null);
 
   const [changeForm, setChangeForm] = useState(false);
   const [editTitle, setEditTitle] = useState(title);
@@ -87,11 +90,13 @@ const RecruitDetail = ({ params }: any) => {
 
     if (!editTitle) {
       alert('제목을 작성해주세요!');
+      editTitleRef.current?.focus();
       return;
     }
 
     if (!editContent) {
       alert('내용을 작성해주세요!');
+      editContentRef.current?.focus();
       return;
     }
 
@@ -128,11 +133,16 @@ const RecruitDetail = ({ params }: any) => {
           {changeForm ? (
             <div>
               <form onSubmit={onSubmitEdittedPost}>
-                <input defaultValue={title} onChange={onChangeEditTitle} />{' '}
+                <input
+                  defaultValue={title}
+                  onChange={onChangeEditTitle}
+                  ref={editTitleRef}
+                />{' '}
                 <br />
                 <textarea
                   defaultValue={content}
                   onChange={onChangeEditContent}
+                  ref={editContentRef}
                 />{' '}
                 <br />
                 <span>{createdAt}</span> <br />
