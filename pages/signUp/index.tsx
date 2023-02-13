@@ -81,7 +81,7 @@ const SignUp = () => {
   };
 
   //회원가입
-  const signUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onClickSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       const { user } = await createUserWithEmailAndPassword(
@@ -96,7 +96,6 @@ const SignUp = () => {
       await sendEmailVerification(user);
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();
-      console.log(user);
       router.push('/signIn');
     } catch (error: any) {
       alert(error.message);
@@ -106,7 +105,7 @@ const SignUp = () => {
   return (
     <SignUpWrapper>
       {change !== false ? (
-        <SignUpContainer onSubmit={signUp}>
+        <SignUpContainer onSubmit={onClickSignUp}>
           <UploadImage imageURL={imageURL} setImageURL={setImageURL} />
           <InputText>이메일</InputText>
           <SignUpInput

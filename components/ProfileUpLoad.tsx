@@ -12,14 +12,14 @@ const UploadImage = ({
   setImageURL: (p: string) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [progressPercent, setProgressPercent] = useState<number>(0);
-  const onImageChange = (
+  const [progressPercent, setProgressPercent] = useState<number>(0); // 파일 업로드 상태 확인 가능
+  const onChangeImage = (
     e: React.ChangeEvent<EventTarget & HTMLInputElement>,
   ) => {
     e.preventDefault();
     const file = e.target.files;
     if (!file) return null;
-    const storegeRef = ref(storage, `files/${file[0].name}`);
+    const storegeRef = ref(storage, `profile/${file[0].name}`);
     const uploadTask = uploadBytesResumable(storegeRef, file[0]);
     uploadTask.on(
       'state_changed',
@@ -39,15 +39,14 @@ const UploadImage = ({
       () => {
         e.target.value = '';
         getDownloadURL(storegeRef).then((downloadURL) => {
-          console.log('파일 이미지', downloadURL);
           setImageURL(downloadURL);
         });
       },
     );
   };
   return (
-    <div>
-      <label htmlFor="input-file">
+    <UploadImageWrapper>
+      <UploadContainer htmlFor="input-file">
         <PhotoBox>
           {imageURL ? (
             <Photo src={imageURL} />
@@ -58,20 +57,23 @@ const UploadImage = ({
             />
           )}
         </PhotoBox>
-      </label>
+      </UploadContainer>
       <PhotoInput
         id="input-file"
         type="file"
         ref={inputRef}
         name="images"
-        onChange={onImageChange}
+        onChange={onChangeImage}
         accept="image/*"
       />
-    </div>
+    </UploadImageWrapper>
   );
 };
 
 export default UploadImage;
+
+const UploadImageWrapper = styled.div``;
+const UploadContainer = styled.label``;
 
 const PhotoInput = styled.input`
   display: none;
