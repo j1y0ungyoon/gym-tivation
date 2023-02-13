@@ -12,7 +12,7 @@ import {
   AiFillEyeInvisible,
 } from 'react-icons/ai';
 import styled from 'styled-components';
-import SignInModal from '@/components/SingInModal';
+import SignInModal from '@/components/SignInModal';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');

@@ -5,7 +5,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { useState } from 'react';
-import { tou, pi, lb } from '@/components/termsOfUse';
+import { tou, pi, lb } from '@/components/TermsOfUse';
 import styled from 'styled-components';
 import {
   AiOutlineCheckCircle,
