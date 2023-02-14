@@ -57,7 +57,7 @@ const SignIn = () => {
       if (authService.currentUser?.emailVerified === true) {
         alert('로그인 완료');
         console.log(authService.currentUser);
-        //router.push('/');
+        router.push('/');
       } else {
         authService.signOut();
         alert('이메일 인증을 완료해주세요.');
@@ -256,12 +256,14 @@ const PasswordShow = styled.div`
 const GuideText = styled.span`
   color: #495057;
   font-size: 12px;
-  margin: 2.2vw;
+  margin-right: auto;
   :hover {
     cursor: pointer;
     color: black;
   }
 `;
 const GuideBox = styled.div`
+  padding-left: 2vw;
+  display: flex;
   margin-top: 8vh;
 `;

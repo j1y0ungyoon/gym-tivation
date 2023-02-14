@@ -14,7 +14,7 @@ import {
   AiFillEyeInvisible,
 } from 'react-icons/ai';
 import UploadImage from '@/components/ProfileUpLoad';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 const SignUp = () => {
   //회원가입
@@ -27,7 +27,9 @@ const SignUp = () => {
   const [change, setChange] = useState(false);
 
   //프로필 사진
-  const [imageURL, setImageURL] = useState<string>('');
+  const [imageURL, setImageURL] = useState<string>(
+    'https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg',
+  );
 
   //이용약관
   const [touCheck, setTOUCheck] = useState(false);
@@ -54,7 +56,9 @@ const SignUp = () => {
   const password_validation = new RegExp(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}$/,
   );
-  const nickName_validation = new RegExp(/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{2,8}$/);
+  const nickName_validation = new RegExp(
+    /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+  );
 
   const signUpdisabled =
     isValidEmail && isValidPassword && isValidNickName && isValidPasswordCheck;
@@ -82,8 +86,8 @@ const SignUp = () => {
 
   //회원가입
   const onClickSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       const { user } = await createUserWithEmailAndPassword(
         authService,
         email,
