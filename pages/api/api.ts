@@ -1,5 +1,5 @@
 import { dbService } from '../../firebase';
-import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { EditRecruitPostParameterType } from '../type';
 
 export const deleteRecruitPost = async (postId: string) => {
@@ -15,3 +15,9 @@ export const editRecruitPost = async ({
     edittedRecruitPost,
   );
 };
+
+// export const fetchRecruitPost = async (recruitPostId: string) => {
+//   const res = await getDoc(doc(dbService, 'recruitments', recruitPostId));
+
+//   return res.data();
+// };
