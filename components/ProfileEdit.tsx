@@ -271,6 +271,7 @@ const TextInput = styled.input`
   }
 `;
 const EditPhotoBox = styled.div`
+  padding-top: 1vh;
   padding-left: 2vw;
   width: 20vh;
   float: left;
