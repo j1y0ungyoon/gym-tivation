@@ -5,7 +5,6 @@ import UploadImage from '@/components/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage';
-import { AiFillInstagram } from 'react-icons/ai';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -64,20 +63,19 @@ const ProfileEdit = ({ item }: ProfileEditProps) => {
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user !== null) {
-        user.providerData.forEach((profile) => {
-          if (profile.displayName !== null) {
-            const authDisplayName = profile.displayName;
-            setNickName(authDisplayName);
-          }
-          if (profile.photoURL !== null) {
-            const authPhotoURL = profile.photoURL;
-            setPhotoURL(authPhotoURL);
-          }
-        });
+        if (user.displayName !== null) {
+          const authDisplayName = user.displayName;
+          setNickName(authDisplayName);
+        }
+        if (user.photoURL !== null) {
+          const authPhotoURL = user.photoURL;
+          setPhotoURL(authPhotoURL);
+        }
       }
     });
   }, []);
 
+  console.log('로그인', authService.currentUser);
   return (
     <>
       {!isProfileEdit ? (

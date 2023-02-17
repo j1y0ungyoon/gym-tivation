@@ -3,6 +3,7 @@ import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
 import { collection, query, onSnapshot } from 'firebase/firestore';
 import ProfileEdit from '@/components/ProfileEdit';
+import MyPageCalendar from '@/components/MyPageCalendar';
 
 export type ProfileItem = {
   id: string;
@@ -10,20 +11,22 @@ export type ProfileItem = {
   introduction?: string;
   instagram?: string;
 };
-
+// next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
+//
 const MyPage = () => {
   //불러오기
+  const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
   const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
     [],
   );
-
-  //불러오기
+  //Calendar 업로드 시간 설정
+  setTimeout(() => setIsLoadCalendar(true), 800);
   useEffect(() => {
     const q = query(
       collection(dbService, 'profile'),
       //   where('id', '==', authService.currentUser?.uid),
     );
-    onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const newprofiles = snapshot.docs.map((doc) => {
         const newprofile = {
           id: doc.id,
@@ -33,8 +36,11 @@ const MyPage = () => {
       });
       setProfileInformation(newprofiles);
     });
+    return () => {
+      unsubscribe();
+    };
   }, []);
-
+  console.log(profileInformation.length);
   return (
     <MyPageWrapper>
       <MyPageContainer>
@@ -63,7 +69,11 @@ const MyPage = () => {
           <InformationBox> 최근 교류</InformationBox>
         </MypageBox>
         <MypageBox>
-          <Schedule>스케줄입니다</Schedule>
+          <Schedule>
+            {isLoadCalendar && (
+              <MyPageCalendar setIsLoadCalendar={setIsLoadCalendar} />
+            )}
+          </Schedule>
         </MypageBox>
       </MyPageContainer>
     </MyPageWrapper>
@@ -95,7 +105,6 @@ const InformationBox = styled.div`
 `;
 
 const Schedule = styled.div`
-  padding-top: 20px;
   background-color: #e9ecef;
   width: 25vw;
   height: 101vh;

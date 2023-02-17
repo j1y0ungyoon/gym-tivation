@@ -1,9 +1,11 @@
-import { authService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
 } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+
 import { useState } from 'react';
 import { tou, pi, lb } from '@/components/TermsOfUse';
 import styled from 'styled-components';
@@ -98,6 +100,11 @@ const SignUp = () => {
         photoURL: imageURL,
       });
       await sendEmailVerification(user);
+      await setDoc(doc(dbService, 'profile', user.uid), {
+        introduction: '자기소개를 적어주세요.',
+        area: '지역',
+        instagram: '인스타그램',
+      });
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();
       router.push('/signIn');

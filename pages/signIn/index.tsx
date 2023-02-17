@@ -1,10 +1,11 @@
-import { authService } from '@/firebase';
-import { useState, useEffect } from 'react';
+import { authService, dbService } from '@/firebase';
+import { useState, useEffect, useId } from 'react';
 import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { Router, useRouter } from 'next/router';
 import {
   AiFillCheckCircle,
@@ -71,31 +72,23 @@ const SignIn = () => {
   const onClickGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(authService, provider);
+      const { user } = await signInWithPopup(authService, provider);
+      const docRef = doc(dbService, 'profile', user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.data() !== undefined) {
+      } else {
+        await setDoc(doc(dbService, 'profile', user.uid), {
+          introduction: '자기소개를 적어주세요.',
+          area: '지역',
+          instagram: '인스타그램',
+        });
+      }
       alert('로그인 완료');
       router.push('/');
     } catch (error: any) {
       alert(error.message);
     }
   };
-
-  // MyPage에서 불러오기 구현 예정
-  // useEffect(() => {
-  //   authService.onAuthStateChanged((user) => {
-  //     if (user !== null) {
-  //       user.providerData.forEach((profile) => {
-  //         if (profile.displayName !== null) {
-  //           const authDisplayName = profile.displayName;
-  //           setNickName(authDisplayName);
-  //         }
-  //         if (profile.photoURL !== null) {
-  //           const authPhotoURL = profile.photoURL;
-  //           setPhotoURL(authPhotoURL);
-  //         }
-  //       });
-  //     }
-  //   });
-  // }, []);
 
   return (
     <SignInWrapper>
