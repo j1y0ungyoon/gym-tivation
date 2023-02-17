@@ -97,7 +97,7 @@ const MypageBox = styled.div`
 `;
 const InformationBox = styled.div`
   background-color: #e9ecef;
-  width: 24vw;
+  width: 26vw;
   height: 42vh;
   border-radius: 16px;
   margin-bottom: 4vh;
@@ -106,7 +106,7 @@ const InformationBox = styled.div`
 
 const Schedule = styled.div`
   background-color: #e9ecef;
-  width: 25vw;
+  width: 22vw;
   height: 101vh;
   border-radius: 16px;
 `;

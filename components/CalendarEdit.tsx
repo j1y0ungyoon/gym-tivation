@@ -67,7 +67,7 @@ export default CalendarEdit;
 const CalendarContentBox = styled.div``;
 const CalendarTextArea = styled.textarea`
   padding-top: 2vh;
-  width: 20vw;
+  width: 18vw;
   height: 42vh;
   border-radius: 20px;
   border: none;

@@ -136,7 +136,7 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
                 onChange={(e) => {
                   setCalendarText(e.target.value);
                 }}
-                placeholder="일정"
+                placeholder="일정을 적어주세요."
               />
               <CalendarButton type="submit">등록</CalendarButton>
             </CalendarContentBox>
@@ -182,7 +182,7 @@ const CalendarDot = styled.div`
 `;
 const CalendarTextArea = styled.textarea`
   padding-top: 2vh;
-  width: 20vw;
+  width: 18vw;
   height: 42vh;
   border-radius: 20px;
   border: none;

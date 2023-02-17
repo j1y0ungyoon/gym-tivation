@@ -187,7 +187,7 @@ export default ProfileEdit;
 
 const InformationBox = styled.div`
   background-color: #e9ecef;
-  width: 24vw;
+  width: 26vw;
   height: 42vh;
   border-radius: 16px;
   margin-bottom: 4vh;
@@ -221,7 +221,7 @@ const AreaText = styled.span`
 const IntroductionText = styled.textarea`
   margin: 1vw;
   font-size: 16px;
-  width: 20vw;
+  width: 22vw;
   float: left;
   height: 14vh;
   border-radius: 16px;
@@ -259,7 +259,7 @@ const ClickText = styled.button`
 `;
 
 const TextInput = styled.input`
-  width: 7vw;
+  width: 8vw;
   margin-top: 3vh;
   border: none;
   background-color: #e9ecef;
@@ -278,7 +278,7 @@ const EditPhotoBox = styled.div`
 
 const EditNickNameBox = styled.div`
   padding-right: 1vw;
-  width: 25vh;
+  width: 29vh;
   float: right;
 `;
 
@@ -293,7 +293,7 @@ const Select = styled.select`
   }
 `;
 const InstagramInput = styled.input`
-  width: 8vw;
+  width: 9vw;
   height: 2vh;
   border: none;
   background-color: #e9ecef;
