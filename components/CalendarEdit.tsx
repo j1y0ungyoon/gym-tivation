@@ -69,11 +69,8 @@ const CalendarTextArea = styled.textarea`
   padding-top: 2vh;
   width: 20vw;
   height: 42vh;
-  margin-right: 1vw;
   border-radius: 20px;
   border: none;
-  padding-left: 2vh;
-  padding-right: 2vh;
   background-color: white;
   font-size: 16px;
   overflow: none;
