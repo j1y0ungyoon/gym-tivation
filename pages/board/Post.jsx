@@ -93,7 +93,7 @@ const Post = () => {
       createdAt: Date.now(),
       // userId: uid,
       //   nickName: displayName,
-      photoUrl: imageUrl,
+      photo: imageUrl,
     };
 
     await addDoc(collection(dbService, 'posts'), newPost)
@@ -116,7 +116,7 @@ const Post = () => {
           </TitleContainer>
           <BoardCategory category={category} setCategory={setCategory} />
           <ContentContainer>
-            <ImageInput type="file" onChange={onChangeImage} />
+            <ImageInput type="file" accept="image/*" onChange={onChangeImage} />
             <ImagePreview id="image"></ImagePreview>
             <ContentInput
               onChange={onChangeBoardContent}
