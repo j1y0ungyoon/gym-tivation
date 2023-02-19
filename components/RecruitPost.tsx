@@ -12,8 +12,8 @@ const RecruitPost = ({ post }: { post: RecruitPostType }) => {
     // useQuery를 이용해서 db에 데이터 요청하는 방법이 깔끔할 수도 있을 것 같다.
     router.push(
       {
-        pathname: `/recruitDetail/${post.id}/${post.title}/${post.content}/${post.createdAt}`,
-        query: { pid: post.id },
+        pathname: `/recruitDetail/${post.id}`,
+        // query: { pid: post.id },
       },
       // `/recruitDetail/${post.id}`,
     );
@@ -22,8 +22,8 @@ const RecruitPost = ({ post }: { post: RecruitPostType }) => {
   return (
     <>
       <RecruitPostBox key={post.id} onClick={() => GoToRecruitDetail(post)}>
-        <h4>{post.title}</h4>
-        <h5>{post.content}</h5>
+        <TitleText>{post.title}</TitleText>
+        <ContentText>{post.content}</ContentText>
       </RecruitPostBox>
     </>
   );
@@ -32,10 +32,24 @@ const RecruitPost = ({ post }: { post: RecruitPostType }) => {
 export default RecruitPost;
 
 const RecruitPostBox = styled.div`
-  width: 20rem;
-  height: 10rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  width: 15rem;
+  height: 8rem;
   border: 1px solid black;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   cursor: pointer;
+`;
+
+const TitleText = styled.span`
+  font-size: medium;
+  font-weight: bold;
+`;
+
+const ContentText = styled.span`
+  font-size: small;
 `;
