@@ -37,7 +37,7 @@ const MapBoard = () => {
     <div>
       <h1>MapBoard</h1>
       {recruitPosts?.map((post) => {
-        return <RecruitPost post={post} />;
+        return <RecruitPost post={post} key={post.id} />;
       })}
       <h1>나의 운동 메이트를 구해보세요!</h1>
       <button onClick={goToWrite}>작성하기</button>

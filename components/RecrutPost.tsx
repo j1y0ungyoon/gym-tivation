@@ -12,8 +12,8 @@ const RecruitPost = ({ post }: { post: RecruitPostType }) => {
     // useQuery를 이용해서 db에 데이터 요청하는 방법이 깔끔할 수도 있을 것 같다.
     router.push(
       {
-        pathname: `/recruitDetail/${post.id}/${post.title}/${post.content}/${post.createdAt}`,
-        query: { pid: post.id },
+        pathname: `/recruitDetail/${post.id}`,
+        // query: { pid: post.id },
       },
       // `/recruitDetail/${post.id}`,
     );
