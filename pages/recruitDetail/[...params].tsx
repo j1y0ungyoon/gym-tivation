@@ -13,28 +13,6 @@ const RecruitDetail = ({ params }: any) => {
   // 초기값이 제대로 된 녀석이 있으면 옵셔널 처리 안해줘도 됨.
   const [refetchedPost, setRefetchedPost] = useState<RecruitPostType>();
 
-  // 수정한 게시글을 실시간 감지해서 화면에 반영하기 위함.
-  const getRefetchedPost = () => {
-    const unsubscribe = onSnapshot(
-      doc(dbService, 'recruitments', id),
-      (doc) => {
-        const data = doc.data();
-
-        const newObj: RecruitPostType = {
-          id: data?.id,
-          title: data?.title,
-          content: data?.content,
-          createdAt: data?.createdAt,
-        };
-
-        setRefetchedPost(newObj);
-      },
-    );
-    return unsubscribe;
-  };
-
-  // 해당 게시글 불러오기 useQuery
-
   const editTitleRef = useRef<HTMLInputElement>(null);
   const editContentRef = useRef<HTMLTextAreaElement>(null);
 
@@ -152,7 +130,26 @@ const RecruitDetail = ({ params }: any) => {
   };
 
   useEffect(() => {
-    getRefetchedPost();
+    // 수정한 게시글을 실시간 감지해서 화면에 반영하기 위함.
+    const unsubscribe = onSnapshot(
+      doc(dbService, 'recruitments', id),
+      (doc) => {
+        const data = doc.data();
+
+        const newObj: RecruitPostType = {
+          id: data?.id,
+          title: data?.title,
+          content: data?.content,
+          createdAt: data?.createdAt,
+        };
+
+        setRefetchedPost(newObj);
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   if (!refetchedPost) {
