@@ -1,6 +1,7 @@
-import { dbService } from '../../firebase';
-import { deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { dbService, storage } from '../../firebase';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { EditRecruitPostParameterType } from '../type';
+import { deleteObject, ref } from 'firebase/storage';
 
 export const deleteRecruitPost = async (postId: string) => {
   await deleteDoc(doc(dbService, 'recruitments', postId));
@@ -15,6 +16,13 @@ export const editRecruitPost = async ({
     edittedRecruitPost,
   );
 };
+
+export const deleteBoardPost = async ({ id, photo }: any) => {
+  await deleteObject(ref(storage, photo));
+  await deleteDoc(doc(dbService, 'posts', id));
+};
+
+export const editBoardPost = async (id: string) => {};
 
 // export const fetchRecruitPost = async (recruitPostId: string) => {
 //   const res = await getDoc(doc(dbService, 'recruitments', recruitPostId));
