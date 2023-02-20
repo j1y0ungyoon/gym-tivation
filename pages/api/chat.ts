@@ -29,7 +29,7 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
         console.log('클라이언트 접속 종료');
       });
 
-      // 전체 채팅 받는곳
+      // 채팅 받는곳
       socket.on('chat', (data) => {
         console.log('채팅 받음', data);
         if (!data.roomNum) {
@@ -39,7 +39,7 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
         }
       });
 
-      // DM 채팅 받는곳
+      // DM 방으로 묶어주는 곳 (join)
       socket.on('roomEnter', (data) => {
         const { roomNum } = data;
         socket.join(roomNum);

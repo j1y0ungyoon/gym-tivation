@@ -4,11 +4,21 @@ import io from 'socket.io-client';
 import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { authService } from '@/firebase';
+import Link from 'next/link';
+import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { dbService } from '@/firebase';
+import { type } from 'os';
 
 type ChatLog = {
   id: number;
   msg: string;
   username: string;
+};
+
+type DmList = {
+  id: string;
+  enterUser: string[];
+  chatLog: string[];
 };
 
 const Chat = () => {
@@ -18,6 +28,7 @@ const Chat = () => {
   ]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
   const [username, setUsername] = useState('user-' + nanoid());
+  const [dmLists, setDmLists] = useState<any>();
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
@@ -50,6 +61,22 @@ const Chat = () => {
     };
   }, []);
 
+  // 처음에 dms 불러오는 함수
+  useEffect(() => {
+    const getDmList = async () => {
+      const q = await getDocs(query(collection(dbService, 'dms')));
+
+      const dms = q.docs.map((doc) => {
+        return doc.data();
+      });
+
+      setDmLists([...dms]);
+    };
+    getDmList();
+  }, []);
+
+  console.log(dmLists);
+
   // 채팅 전송시 실행 함수
   const postChat = (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
@@ -72,6 +99,14 @@ const Chat = () => {
     setInputValue(e.target.value);
   };
 
+  const onClickDm = () => {
+    addDoc(collection(dbService, 'dms'), {
+      id: authService.currentUser?.uid + 'DM보낼 상대 id',
+      enterUser: [authService.currentUser?.uid, 'DM보낼 상대 id'],
+      chatLog: [],
+    });
+  };
+
   return (
     <div>
       <h1>Chatting</h1>
@@ -92,6 +127,31 @@ const Chat = () => {
         value={inputValue}
         onChange={onChangeInputValue}
       />
+
+      <br />
+      <br />
+
+      <Link
+        href={`/chat/room/${authService.currentUser?.uid + 'DM보낼 상대 id'}`}
+        onClick={() => {
+          onClickDm();
+        }}
+      >
+        <button>DM 로직 버튼</button>
+      </Link>
+
+      <div>
+        {dmLists.map((dmList: DmList) => {
+          return (
+            <div key={dmList.id}>
+              {dmList.enterUser[0] ||
+              dmList.enterUser[1] === authService.currentUser?.uid ? (
+                <p>{dmList.id}</p>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

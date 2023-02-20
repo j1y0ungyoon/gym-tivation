@@ -16,6 +16,7 @@ type ChatLog = {
 const ChatRoom = () => {
   const router = useRouter();
   const { roomNum } = router.query;
+  console.log(roomNum);
   const [username, setUsername] = useState('user-' + nanoid());
 
   const [inputValue, setInputValue] = useState('');
@@ -51,7 +52,7 @@ const ChatRoom = () => {
         socket.emit('roomEnter', roomNum);
       });
 
-      // "roomEnter" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
+      // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
       socket.on('chat', (chatLog: any) => {
         if (roomNum === chatLog.roomNum) {
           setChatLogs((prev) => [...prev, chatLog]);
@@ -81,7 +82,7 @@ const ChatRoom = () => {
       roomNum,
     };
 
-    // "roomEnter" 이름으로 chatLog(채팅내용) 서버로 올려줌
+    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
     socket?.emit('chat', chatLog);
     setInputValue('');
   };
