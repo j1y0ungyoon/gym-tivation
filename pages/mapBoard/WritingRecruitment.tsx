@@ -3,7 +3,7 @@ import { addDoc, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { CoordinateType } from '../type';
+import { CoordinateType, WorkOutTimeType } from '../type';
 import SearchMyGym from '@/components/SearchMyGym';
 import UseDropDown from '@/components/UseDropDown';
 
@@ -11,6 +11,12 @@ const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
   lat: 33.5563,
   lng: 126.79581,
+};
+
+// 운동 시간 초깃값
+const initialWorkOutTime: WorkOutTimeType = {
+  start: '01시',
+  end: '01시',
 };
 
 const WritingRecruitment = () => {
@@ -25,8 +31,18 @@ const WritingRecruitment = () => {
   const [gymName, setGymName] = useState('');
   // 헬스장의 상세 주소
   const [detailAddress, setDetailAddress] = useState('');
+  // 운동 시간 선택을 위한 state
+  const [workOutTime, setWorkOutTime] =
+    useState<WorkOutTimeType>(initialWorkOutTime);
+  // 시작 시간, 종료 시간을 위한 state
+  const [start, setStart] = useState('');
+  const [end, setEnd] = useState('');
+  // 클릭한 요일을 표시하는 state
+  const [isClicked, setIsClicked] = useState(false);
+  // 선택한 요일에 대한 state
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
   // 요일 배열
-  const dyas = [
+  const days = [
     '월요일',
     '화요일',
     '수요일',
@@ -34,6 +50,7 @@ const WritingRecruitment = () => {
     '금요일',
     '토요일',
     '일요일',
+    '매일',
   ];
 
   const router = useRouter();
@@ -64,8 +81,11 @@ const WritingRecruitment = () => {
       content: recruitContent,
       // userId : string,
       // nickName : string,
-      // category: string,
-      // date: string,
+      region: detailAddress.split(' ')[0],
+      gymName,
+      startTime: start,
+      endTime: end,
+      selectedDays,
       createdAt: Date.now(),
     };
 
@@ -82,6 +102,26 @@ const WritingRecruitment = () => {
   // map modal 열기
   const onClickOpenMap = () => {
     setOpenMap(!openMap);
+  };
+
+  // 요일 선택하기
+  const onClickSelectDay = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { value }, // 무슨 요일인지 꺼냈음
+    } = event;
+
+    if (selectedDays.includes(value)) {
+      const newArr = selectedDays.filter((day) => day !== value);
+      setSelectedDays([...newArr]);
+      console.log('뺐다', selectedDays);
+      return;
+    }
+
+    if (!selectedDays.includes(value)) {
+      setSelectedDays((prev) => [...prev, value]);
+      console.log('넣었다', selectedDays);
+      return;
+    }
   };
 
   return (
@@ -112,17 +152,25 @@ const WritingRecruitment = () => {
         </PlaceContainer>
         <DayAndTimeContainer>
           <StyledText>가능 요일 </StyledText>
-          {dyas.map((day) => {
+          {days.map((day) => {
             return (
-              <DayBox>
-                <span>{day}</span>
-              </DayBox>
+              <>
+                <DayBox value={day} onClick={onClickSelectDay}>
+                  {day}
+                </DayBox>
+              </>
             );
           })}
           <StyledText>가능 시간</StyledText>
-          <UseDropDown>시작 시간</UseDropDown>
+          <UseDropDown setStart={setStart} setEnd={setEnd}>
+            시작 시간
+          </UseDropDown>
+          {start ? start : ''}
           <span> ~ </span>
-          <UseDropDown>종료 시간</UseDropDown>
+          <UseDropDown setStart={setStart} setEnd={setEnd}>
+            종료 시간
+          </UseDropDown>
+          {end ? end : ''}
         </DayAndTimeContainer>
 
         <TextAreaContainer>
@@ -183,8 +231,22 @@ const DayAndTimeContainer = styled.section`
   gap: 1rem;
 `;
 
-const DayBox = styled.div`
-  border: 1px;
+const DayBox = styled.button`
+  border: 1px solid black;
+  cursor: pointer;
+  padding: 5px;
+  &:focus {
+    background-color: black;
+    color: white;
+  }
+`;
+
+const SelectedDayBox = styled.div`
+  border: 1px solid black;
+  cursor: pointer;
+  padding: 5px;
+  background-color: black;
+  color: white;
 `;
 
 const TextAreaContainer = styled.section`
