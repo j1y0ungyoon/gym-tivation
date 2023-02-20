@@ -32,7 +32,18 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       // 전체 채팅 받는곳
       socket.on('chat', (data) => {
         console.log('채팅 받음', data);
-        io.emit('chat', data);
+        if (!data.roomNum) {
+          socket.emit('chat', data);
+        } else {
+          socket.to(data.roomNum).emit('chat', data);
+        }
+      });
+
+      // DM 채팅 받는곳
+      socket.on('roomEnter', (data) => {
+        const { roomNum } = data;
+        socket.join(roomNum);
+        // roomNum 이 방 번호, -> userId 로 바꿔줘야 함 / AuthService 에 userId 가 맞는지??
       });
     });
   }
