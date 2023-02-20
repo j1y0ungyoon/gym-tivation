@@ -1,5 +1,4 @@
 import { dbService, storage } from '@/firebase';
-
 import { addDoc, collection } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -24,27 +23,29 @@ const Post = () => {
   const [category, setCategory] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [imageUpload, setImageUpload] = useState(null);
-  const [imageCheck, setImageCheck] = useState('');
+  const [boardPhoto, setBoardPhoto] = useState('');
 
   const router = useRouter();
 
   //   const userid = authService.currentUser?.uid;
   //   const displayName = authService.currentUser?.displayName;
 
-  const onChangeBoardTitle = (event) => {
+  const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
   };
 
-  const onChangeBoardContent = (event) => {
+  const onChangeBoardContent = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     setBoardContent(event.target.value);
   };
 
   useEffect(() => {
     uploadBoardImage();
-    console.log('test가 업데이트 되었습니다.');
-  }, [imageCheck]);
-
+  }, [boardPhoto]);
+  //image upload
   const uploadBoardImage = () => {
+    //@ts-ignore
     const imageRef = ref(storage, `images/${imageUpload?.name}`);
     const imageDataUrl = localStorage.getItem('imageDataUrl');
 
@@ -53,7 +54,6 @@ const Post = () => {
         .then((response) => {
           getDownloadURL(response.ref).then((response) => {
             setImageUrl(response);
-            console.log('URL : ', response);
           });
         })
         .catch((error) => {
@@ -61,30 +61,31 @@ const Post = () => {
         });
     }
   };
-  const onChangeImage = (event) => {
+  //input에 바뀌는 이미지  보여주기
+  const onChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //@ts-ignore
     const file = event.target.files[0];
     const reader = new FileReader();
 
     if (file !== null) {
+      //@ts-ignore
       setImageUpload(file);
       reader.readAsDataURL(file);
     }
-    reader.onloadend = (finishedEvent) => {
+    reader.onloadend = (finishedEvent: any) => {
       const imageDataUrl = finishedEvent.currentTarget.result;
-      localStorage.setItem('imageDataUrl', imageDataUrl);
-      document.getElementById('image').src = imageDataUrl;
-      setImageCheck(imageDataUrl);
+      setBoardPhoto(imageDataUrl);
     };
   };
-
+  //Board로 이동
   const goToBoard = () => {
     router.push({
       pathname: `/board`,
     });
   };
 
-  // Create
-  const onSubmitBoard = async (event) => {
+  // Create Post
+  const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const newPost = {
       title: boardTitle,
