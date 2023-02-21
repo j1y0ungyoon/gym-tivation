@@ -1,18 +1,33 @@
 import BoardItem from '@/components/BoardItem';
 import { dbService } from '@/firebase';
 import { query } from 'firebase/database';
-import { collection, onSnapshot, orderBy } from 'firebase/firestore';
+import {
+  collection,
+  DocumentData,
+  DocumentSnapshot,
+  onSnapshot,
+  orderBy,
+} from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+interface BoardProps {
+  // category?: any;
+  snapshot: DocumentSnapshot<DocumentData>;
+}
 const Board = () => {
   const [category, setCategory] = useState('운동정보');
   const [boardPosts, setBoardPost] = useState([]);
   const router = useRouter();
-  const onClickCategoryButton = () => {
-    console.log('카테고리');
+
+  const onClickCategoryButton = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setCategory(event?.currentTarget.id);
+    console.log(category);
   };
+
   const onClickPostButton = () => {
     router.push({
       pathname: `/board/Post`,
@@ -36,6 +51,7 @@ const Board = () => {
   };
   useEffect(() => {
     const unsubscribe = getPost();
+
     return () => {
       unsubscribe();
     };
@@ -50,13 +66,18 @@ const Board = () => {
           </SearchContainer>
           <CategoryTitle>카테고리</CategoryTitle>
           <CategoryContainter>
-            <Category onClick={onClickCategoryButton}>운동정보</Category>
-            <Category>운동정보</Category>
-            <Category>운동정보</Category>
-            <Category>운동정보</Category>
+            <CategoryButton id="운동정보" onClick={onClickCategoryButton}>
+              운동정보
+            </CategoryButton>
+            <CategoryButton onClick={onClickCategoryButton} id="헬스장정보">
+              헬스장정보
+            </CategoryButton>
+            <CategoryButton onClick={onClickCategoryButton} id="헬스용품추천">
+              헬스용품추천
+            </CategoryButton>
           </CategoryContainter>
           <BoardContent>
-            <BoardItem boardPosts={boardPosts} />
+            <BoardItem category={category} boardPosts={boardPosts} />
           </BoardContent>
           <PostButtonContainer>
             <PostButton onClick={onClickPostButton}>글쓰기</PostButton>
@@ -132,7 +153,7 @@ const CategoryTitle = styled.p`
   padding: 0;
   margin: 0;
 `;
-const Category = styled.button`
+const CategoryButton = styled.button`
   height: 1.5rem;
   border-radius: 2rem;
   border: none;

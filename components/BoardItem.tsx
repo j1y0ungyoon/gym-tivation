@@ -4,14 +4,18 @@ import type { BoardPostType } from '@/pages/type';
 
 interface BoardItemProps {
   boardPosts: BoardPostType[];
+  category?: string;
 }
 
-const BoardItem = ({ boardPosts }: BoardItemProps) => {
+const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
+  // const [category, setCategory] = useState('');
+
+  const filteredCategory = boardPosts?.filter(
+    (item) => item.category === category,
+  );
   return (
     <BoardList>
-      {boardPosts?.map((boardPost) => {
-        console.log('boardPost', boardPost);
-
+      {filteredCategory.map((boardPost) => {
         return (
           <BoardPost
             key={boardPost.id}
