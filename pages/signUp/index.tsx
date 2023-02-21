@@ -108,6 +108,8 @@ const SignUp = () => {
         photoURL: imageURL,
         email: user.email,
         uid: user.uid,
+        following: '',
+        follower: '',
       });
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();
