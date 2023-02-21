@@ -50,7 +50,6 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
   const userUid: any = String(authService.currentUser?.uid);
 
   useEffect(() => {
-    console.log('캘린더불러옴');
     // const test = async () => {
     //   const q = query(collection(dbService, 'calendar'));
     //   const data = await getDocs(q);
