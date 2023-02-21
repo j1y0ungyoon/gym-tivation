@@ -1,37 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { Socket } from 'socket.io';
-import io from 'socket.io-client';
-import { nanoid } from 'nanoid';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { Socket } from 'socket.io';
+import { nanoid } from 'nanoid';
+import io from 'socket.io-client';
 import { authService } from '@/firebase';
-import Link from 'next/link';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
-import { dbService } from '@/firebase';
-import { type } from 'os';
 
 type ChatLog = {
   id: number;
   msg: string;
   username: string;
+  roomNum: any;
 };
 
-type DmList = {
-  id: string;
-  enterUser: string[];
-  chatLog: string[];
-};
+const ChatRoom = () => {
+  const router = useRouter();
+  const { roomNum } = router.query;
+  console.log(roomNum);
+  const [username, setUsername] = useState('user-' + nanoid());
 
-const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([
-    { id: 1, msg: '전체채팅에 접속하셨습니다.', username: '관리자' },
+    {
+      id: 1,
+      msg: `${roomNum}채팅에 접속하셨습니다.`,
+      username: '관리자',
+      roomNum,
+    },
   ]);
+
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
-  const [username, setUsername] = useState('user-' + nanoid());
-  const [dmLists, setDmLists] = useState<any>();
+
+  // /room/roomnum 으로 들어온 상태에서 새로고침 해도 잘 돌아가게 해주기
+  useEffect(() => {
+    router.isReady;
+  }, []);
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
+    if (router.isReady === false) return;
     // socket.io 접속 함수
     const connectToSocket = async () => {
       await fetch('/api/chat');
@@ -42,12 +49,12 @@ const Chat = () => {
       // 초기 연결
       socket.on('connect', () => {
         console.log('연결성공!');
+        socket.emit('roomEnter', roomNum);
       });
 
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
       socket.on('chat', (chatLog: any) => {
-        // 만약 전체채팅이 아니면 return
-        if (!chatLog.roomNum) {
+        if (roomNum === chatLog.roomNum) {
           setChatLogs((prev) => [...prev, chatLog]);
         }
       });
@@ -59,23 +66,7 @@ const Chat = () => {
     return () => {
       socket?.disconnect();
     };
-  }, []);
-
-  // 처음에 dms 불러오는 함수
-  useEffect(() => {
-    const getDmList = async () => {
-      const q = await getDocs(query(collection(dbService, 'dms')));
-
-      const dms = q.docs.map((doc) => {
-        return doc.data();
-      });
-
-      setDmLists([...dms]);
-    };
-    getDmList();
-  }, []);
-
-  console.log(dmLists);
+  }, [router.isReady]);
 
   // 채팅 전송시 실행 함수
   const postChat = (e: React.KeyboardEvent<EventTarget>) => {
@@ -88,6 +79,7 @@ const Chat = () => {
       username: authService.currentUser?.displayName
         ? authService.currentUser.displayName
         : username,
+      roomNum,
     };
 
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
@@ -99,61 +91,27 @@ const Chat = () => {
     setInputValue(e.target.value);
   };
 
-  const onClickDm = () => {
-    addDoc(collection(dbService, 'dms'), {
-      id: authService.currentUser?.uid + 'DM보낼 상대 id',
-      enterUser: [authService.currentUser?.uid, 'DM보낼 상대 id'],
-      chatLog: [],
-    });
-  };
-
   return (
     <div>
-      <h1>Chatting</h1>
-
+      ChatRoom
+      <h1>{roomNum}의 방입니다.</h1>
       <div>
-        {chatLogs.map((chatLog) => (
-          <div key={chatLog.id}>
+        {chatLogs?.map((chatLog) => (
+          <div key={chatLog?.id}>
             <p>
-              {chatLog.username} : {chatLog.msg}
+              {chatLog?.username} : {chatLog?.msg}
             </p>
           </div>
         ))}
       </div>
-
       <input
         type="text"
         onKeyPress={postChat}
         value={inputValue}
         onChange={onChangeInputValue}
       />
-
-      <br />
-      <br />
-
-      <Link
-        href={`/chat/room/${authService.currentUser?.uid + 'DM보낼 상대 id'}`}
-        onClick={() => {
-          onClickDm();
-        }}
-      >
-        <button>DM 로직 버튼</button>
-      </Link>
-
-      <div>
-        {dmLists.map((dmList: DmList) => {
-          return (
-            <div key={dmList.id}>
-              {dmList.enterUser[0] ||
-              dmList.enterUser[1] === authService.currentUser?.uid ? (
-                <p>{dmList.id}</p>
-              ) : null}
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 };
 
-export default Chat;
+export default ChatRoom;
