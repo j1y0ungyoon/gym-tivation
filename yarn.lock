@@ -2796,8 +2796,7 @@ prop-types-extra@^1.1.0:
     react-is "^16.3.2"
     warning "^4.0.0"
 
-prop-types@^15.6.2, prop-types@^15.8.1:
-
+prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -2853,16 +2852,6 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-calendar@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/react-calendar/-/react-calendar-4.0.0.tgz#99ad73dd0c7c5b25aa535a5fdeee3d71bfe45faa"
-  integrity sha512-y9Q5Oo3Mq869KExbOCP3aJ3hEnRZKZ0TqUa9QU1wJGgDZFrW1qTaWp5v52oZpmxTTrpAMTUcUGaC0QJcO1f8Nw==
-  dependencies:
-    "@wojtekmaj/date-utils" "^1.0.2"
-    clsx "^1.2.1"
-    get-user-locale "^1.2.0"
-    prop-types "^15.6.0"
-    
 react-bootstrap@^2.7.2:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-2.7.2.tgz#100069ea7b4807cccbc5fef1e33bc90283262602"
@@ -2880,6 +2869,16 @@ react-bootstrap@^2.7.2:
     react-transition-group "^4.4.2"
     uncontrollable "^7.2.1"
     warning "^4.0.3"
+
+react-calendar@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-calendar/-/react-calendar-4.0.0.tgz#99ad73dd0c7c5b25aa535a5fdeee3d71bfe45faa"
+  integrity sha512-y9Q5Oo3Mq869KExbOCP3aJ3hEnRZKZ0TqUa9QU1wJGgDZFrW1qTaWp5v52oZpmxTTrpAMTUcUGaC0QJcO1f8Nw==
+  dependencies:
+    "@wojtekmaj/date-utils" "^1.0.2"
+    clsx "^1.2.1"
+    get-user-locale "^1.2.0"
+    prop-types "^15.6.0"
 
 react-dom@18.2.0:
   version "18.2.0"
