@@ -104,6 +104,10 @@ const SignUp = () => {
         introduction: '자기소개를 적어주세요.',
         area: '지역',
         instagram: '인스타그램',
+        displayName: nickName,
+        photoURL: imageURL,
+        email: user.email,
+        uid: user.uid,
       });
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();
