@@ -1,38 +1,50 @@
-import { dbService } from '@/firebase';
+import { dbService, storage } from '@/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadString,
+} from 'firebase/storage';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 
 interface DetailProps {
-  id: string;
+  id?: string;
   title?: string;
   content?: string;
-  createdAt: number;
+  createdAt?: number;
   photo?: string;
   item?: any;
   category?: string;
-  detailPost: string;
+  detailPost?: any;
 }
+
 const Detail = ({ params }: any) => {
   const [detailPost, setDetailPost] = useState<DetailProps>();
   const [changeDetailPost, setChangeDetailPost] = useState(false);
-  const [editDetailTitle, setEditDetailTitle] = useState('');
+  const [editDetailTitle, setEditDetailTitle] = useState<string | undefined>(
+    '',
+  );
   const [editDetailCategory, setEditDetailCategory] = useState(
     detailPost?.category,
   );
-  const [editDetailPhoto, setEditDetailPhoto] = useState();
-  const [editDetailContent, setEditDetailContent] = useState('');
-  const [editImgaeUpload, setEditImageUpload] = useState();
+  const [editDetailPhoto, setEditDetailPhoto] = useState<string | any>('');
+  const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
+  const [editDetailContent, setEditDetailContent] = useState<string | any>('');
+  const [editImageUpload, setEditImageUpload] = useState('');
+  const [editImageUrl, setEditImageUrl] = useState('');
 
   const [id] = params;
   const router = useRouter();
 
   // 게시글, 저장된 이미지 파일 delete
   const onClickDeleteBoardPost = async () => {
+    console.log('photo', detailPost?.photo);
     try {
-      await deleteBoardPost({ id: id, photo: detailPost?.photo });
+      deleteBoardPost({ id: id, photo: detailPost?.photo });
       router.push('/board');
     } catch (error) {
       console.log('다시 확인해주세요', error);
@@ -55,6 +67,25 @@ const Detail = ({ params }: any) => {
     setEditDetailCategory(event.target.value);
   };
 
+  //image upload
+  const uploadEditedImage = () => {
+    //@ts-ignore
+    const imageRef = ref(storage, `images/${editImageUpload?.name}`);
+    const imageDataUrl = localStorage.getItem('imageDataUrl');
+
+    if (imageDataUrl) {
+      uploadString(imageRef, imageDataUrl, 'data_url')
+        .then((response) => {
+          getDownloadURL(response.ref).then((response) => {
+            setEditImageUrl(response);
+          });
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
+    }
+  };
+
   //게시글 수정 업데이트
   const onSubmitEditDetail = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,11 +93,13 @@ const Detail = ({ params }: any) => {
     const editDetailPost = {
       title: editDetailTitle,
       content: editDetailContent,
-      photo: editDetailPhoto,
+      photo: editImageUrl,
       category: editDetailCategory,
     };
 
     editBoardPost({ id, editDetailPost });
+    deleteObject(ref(storage, prevPhotoUrl));
+    uploadEditedImage();
     setChangeDetailPost(false);
   };
 
@@ -81,14 +114,16 @@ const Detail = ({ params }: any) => {
     }
     reader.onloadend = (finishedEvent: any) => {
       const imageDataUrl = finishedEvent.currentTarget.result;
+      localStorage.setItem('imageDataUrl', imageDataUrl);
+      //@ts-ignore
+      document.getElementById('image').src = imageDataUrl;
       setEditDetailPhoto(imageDataUrl);
     };
   };
-
-  //게시글 수정 토글 버튼
-  const onClickChangeDetail = () => {
-    setChangeDetailPost(!changeDetailPost);
-  };
+  // image upload 불러오기
+  useEffect(() => {
+    uploadEditedImage();
+  }, [editImageUpload]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(dbService, 'posts', id), (doc) => {
@@ -105,12 +140,29 @@ const Detail = ({ params }: any) => {
       };
 
       setDetailPost(getDetailPost);
-      setEditDetailPhoto(data?.photo);
+      setPrevPhotoUrl(data?.photo);
     });
     return () => {
       unsubscribe();
     };
   }, []);
+  //image upload
+
+  //게시글 수정 토글 버튼
+  const onClickChangeDetail = () => {
+    setChangeDetailPost(!changeDetailPost);
+    //@ts-ignore
+    setEditDetailTitle(detailPost?.title);
+    //@ts-ignore
+    setEditDetailCategory(detailPost?.category);
+    //@ts-ignore
+
+    setEditDetailContent(detailPost?.content);
+    //@ts-ignore
+    setEditDetailPhoto(detailPost?.photo);
+  };
+  //기존 게시글 read
+
   return (
     <>
       {changeDetailPost ? (
@@ -159,7 +211,7 @@ const Detail = ({ params }: any) => {
                 accept="image/*"
                 onChange={onChangeImage}
               />
-              <ImagePreview id="image" src={editDetailPhoto}></ImagePreview>
+              <ImagePreview id="image" src={prevPhotoUrl}></ImagePreview>
               <ContentInput
                 onChange={onChangeEditContent}
                 defaultValue={detailPost?.content}

@@ -74,6 +74,9 @@ const Post = () => {
     }
     reader.onloadend = (finishedEvent: any) => {
       const imageDataUrl = finishedEvent.currentTarget.result;
+      localStorage.setItem('imageDataUrl', imageDataUrl);
+      //@ts-ignore
+      document.getElementById('image').src = imageDataUrl;
       setBoardPhoto(imageDataUrl);
     };
   };
@@ -115,7 +118,7 @@ const Post = () => {
             제목:
             <PostTitle onChange={onChangeBoardTitle} value={boardTitle} />
           </TitleContainer>
-          <BoardCategory category={category} setCategory={setCategory} />
+          <BoardCategory setCategory={setCategory} />
           <ContentContainer>
             <ImageInput type="file" accept="image/*" onChange={onChangeImage} />
             <ImagePreview id="image"></ImagePreview>
