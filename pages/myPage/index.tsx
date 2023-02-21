@@ -1,7 +1,13 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
-import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  onSnapshot,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 import ProfileEdit from '@/components/ProfileEdit';
 import MyPageCalendar from '@/components/MyPageCalendar';
 import LoginState from '@/components/LoginState';
@@ -23,9 +29,7 @@ const MyPage = () => {
   //불러오기
   //캘린더
   const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
-  const [isLoggdIn, setIsLoggedIn] = useState<any>('');
-  //로그인 상태
-  const [isLoginState, setIsLoginState] = useState<boolean>(false);
+
   const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
     [],
   );
@@ -41,14 +45,11 @@ const MyPage = () => {
 
   //Calendar 업로드 시간 설정
   setTimeout(() => setIsLoadCalendar(true), 800);
-  setTimeout(() => setIsLoginState(true), 10000);
 
-  useEffect(() => {
+  const test = () => {
     const q = query(collection(dbService, 'profile'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    onSnapshot(q, (snapshot) => {
       const newprofiles = snapshot.docs.map((doc) => {
-        setFollowing((prev: any) => [...prev, doc.data().following]);
-        setFollower((prev: any) => [...prev, doc.data().follower]);
         const newprofile = {
           id: doc.id,
           ...doc.data(),
@@ -57,12 +58,31 @@ const MyPage = () => {
       });
       setProfileInformation(newprofiles);
     });
+  };
 
+  const followGetDoc = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', userUid),
+    );
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setFollowing((prev: any) => [...prev, doc.data().following]);
+      setFollower((prev: any) => [...prev, doc.data().follower]);
+    });
+  };
+
+  useEffect(() => {
+    test();
+    followGetDoc();
     return () => {
-      unsubscribe();
+      test();
+      followGetDoc();
     };
-  }, [authService.currentUser]);
-  console.log('데이터 정보', profileInformation);
+  }, [authService.currentUser?.uid]);
+
+  console.log('팔로잉스', following);
+  console.log('데이터 정보', follwoingInformation);
   console.log(authService.currentUser);
 
   return (
@@ -71,7 +91,7 @@ const MyPage = () => {
         <MyPageContainer>
           <MypageBox>
             {profileInformation
-              .filter((item) => item.id === userUid)
+              .filter((item) => item.id === authService.currentUser?.uid)
               .map((item) => {
                 return <ProfileEdit key={item.id} item={item} />;
               })}
@@ -101,7 +121,7 @@ const MyPage = () => {
                 </ToggleButton>
               </ToggleButtonBox>
               {profileInformation
-                .filter((item) => item.id !== userUid)
+                .filter((item) => item.id !== authService.currentUser?.uid)
                 .map((item) => {
                   return (
                     <LoginState
