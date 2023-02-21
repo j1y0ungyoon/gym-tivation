@@ -1,4 +1,4 @@
-import { storage } from '@/firebase';
+import { authService, storage } from '@/firebase';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
@@ -44,18 +44,12 @@ const UploadImage = ({
       },
     );
   };
+
   return (
     <UploadImageWrapper>
       <UploadContainer htmlFor="input-file">
         <PhotoBox>
-          {imageURL ? (
-            <Photo src={imageURL} />
-          ) : (
-            <Photo
-              src="https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg"
-              width="100px"
-            />
-          )}
+          <Photo src={imageURL} />
         </PhotoBox>
       </UploadContainer>
       <PhotoInput
@@ -86,7 +80,7 @@ const Photo = styled.img`
 const PhotoBox = styled.div`
   width: 150px;
   height: 150px;
-  margin-left: 8vw;
+  margin: auto;
   margin-bottom: 2vh;
   border-radius: 70%;
   overflow: hidden;

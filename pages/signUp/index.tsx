@@ -1,9 +1,11 @@
-import { authService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
 } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+
 import { useState } from 'react';
 import { tou, pi, lb } from '@/components/TermsOfUse';
 import styled from 'styled-components';
@@ -14,7 +16,7 @@ import {
   AiFillEyeInvisible,
 } from 'react-icons/ai';
 import UploadImage from '@/components/ProfileUpLoad';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 const SignUp = () => {
   //회원가입
@@ -27,7 +29,9 @@ const SignUp = () => {
   const [change, setChange] = useState(false);
 
   //프로필 사진
-  const [imageURL, setImageURL] = useState<string>('');
+  const [imageURL, setImageURL] = useState<string>(
+    'https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg',
+  );
 
   //이용약관
   const [touCheck, setTOUCheck] = useState(false);
@@ -54,7 +58,9 @@ const SignUp = () => {
   const password_validation = new RegExp(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}$/,
   );
-  const nickName_validation = new RegExp(/^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{2,8}$/);
+  const nickName_validation = new RegExp(
+    /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+  );
 
   const signUpdisabled =
     isValidEmail && isValidPassword && isValidNickName && isValidPasswordCheck;
@@ -82,8 +88,8 @@ const SignUp = () => {
 
   //회원가입
   const onClickSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       const { user } = await createUserWithEmailAndPassword(
         authService,
         email,
@@ -94,6 +100,15 @@ const SignUp = () => {
         photoURL: imageURL,
       });
       await sendEmailVerification(user);
+      await setDoc(doc(dbService, 'profile', user.uid), {
+        introduction: '자기소개를 적어주세요.',
+        area: '지역',
+        instagram: '인스타그램',
+        displayName: nickName,
+        photoURL: imageURL,
+        email: user.email,
+        uid: user.uid,
+      });
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();
       router.push('/signIn');
