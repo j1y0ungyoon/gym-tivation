@@ -1,11 +1,13 @@
-import { authService } from '@/firebase';
-import { useState, useEffect } from 'react';
+import { authService, dbService, database } from '@/firebase';
+import { ref, set } from 'firebase/database';
+import { useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
-import { Router, useRouter } from 'next/router';
+import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 import {
   AiFillCheckCircle,
   AiFillEye,
@@ -53,15 +55,21 @@ const SignIn = () => {
   const onClicksignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(authService, email, password);
-      if (authService.currentUser?.emailVerified === true) {
-        alert('로그인 완료');
-        console.log(authService.currentUser);
-        //router.push('/');
-      } else {
-        authService.signOut();
-        alert('이메일 인증을 완료해주세요.');
-      }
+      const { user } = await signInWithEmailAndPassword(
+        authService,
+        email,
+        password,
+      );
+      // if (authService.currentUser?.emailVerified === true) {
+      await updateDoc(doc(dbService, 'profile', user.uid), {
+        loginState: true,
+      });
+      alert('로그인 완료');
+      router.push('/');
+      // } else {
+      //   authService.signOut();
+      //   alert('이메일 인증을 완료해주세요.');
+      // //}
     } catch (error: any) {
       alert(error.message);
     }
@@ -71,31 +79,27 @@ const SignIn = () => {
   const onClickGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(authService, provider);
+      const { user } = await signInWithPopup(authService, provider);
+      const docRef = doc(dbService, 'profile', user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.data() !== undefined) {
+        await updateDoc(doc(dbService, 'profile', user.uid), {
+          loginState: true,
+        });
+      } else {
+        await setDoc(doc(dbService, 'profile', user.uid), {
+          introduction: '자기소개를 적어주세요.',
+          area: '지역',
+          instagram: '인스타그램',
+          loginState: true,
+        });
+      }
       alert('로그인 완료');
       router.push('/');
     } catch (error: any) {
       alert(error.message);
     }
   };
-
-  // MyPage에서 불러오기 구현 예정
-  // useEffect(() => {
-  //   authService.onAuthStateChanged((user) => {
-  //     if (user !== null) {
-  //       user.providerData.forEach((profile) => {
-  //         if (profile.displayName !== null) {
-  //           const authDisplayName = profile.displayName;
-  //           setNickName(authDisplayName);
-  //         }
-  //         if (profile.photoURL !== null) {
-  //           const authPhotoURL = profile.photoURL;
-  //           setPhotoURL(authPhotoURL);
-  //         }
-  //       });
-  //     }
-  //   });
-  // }, []);
 
   return (
     <SignInWrapper>
@@ -256,12 +260,14 @@ const PasswordShow = styled.div`
 const GuideText = styled.span`
   color: #495057;
   font-size: 12px;
-  margin: 2.2vw;
+  margin-right: auto;
   :hover {
     cursor: pointer;
     color: black;
   }
 `;
 const GuideBox = styled.div`
+  padding-left: 2vw;
+  display: flex;
   margin-top: 8vh;
 `;
