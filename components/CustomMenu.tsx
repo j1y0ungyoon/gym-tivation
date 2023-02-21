@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
+import styled from 'styled-components';
 
 // forwardRef again here!
 // Dropdown needs access to the DOM of the Menu to measure it
@@ -24,16 +25,21 @@ const CustomMenu = React.forwardRef(
           onChange={(e) => setValue(e.target.value)}
           value={value}
         /> */}
-        <ul className="list-unstyled">
+        <StyledUl className="list-unstyled">
           {React.Children.toArray(children).filter(
             (child) =>
               //@ts-ignore
               !value || child.props.children.toLowerCase().startsWith(value),
           )}
-        </ul>
+        </StyledUl>
       </div>
     );
   },
 );
 
 export default CustomMenu;
+
+const StyledUl = styled.ul`
+  height: 18rem;
+  overflow: scroll;
+`;
