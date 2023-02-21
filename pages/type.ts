@@ -1,5 +1,10 @@
 // RecruitmentBoard
 
+export interface CoordinateType {
+  lat: number;
+  lng: number;
+}
+
 export interface RecruitPostType {
   title?: string;
   content?: string;
@@ -10,6 +15,7 @@ export interface RecruitPostType {
   gymName?: string;
   startTime?: string;
   endTime?: string;
+  coordinate?: CoordinateType;
   selectedDays?: string[];
   createdAt?: number;
 }
@@ -17,11 +23,6 @@ export interface RecruitPostType {
 export interface EditRecruitPostParameterType {
   recruitPostId: string;
   edittedRecruitPost: object;
-}
-
-export interface CoordinateType {
-  lat: number;
-  lng: number;
 }
 
 export interface MapModalProps {
