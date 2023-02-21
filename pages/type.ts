@@ -58,3 +58,14 @@ export interface DropDownProps {
 //   sunday: boolean;
 //   everyday: boolean;
 // }
+
+export interface BoardPostType {
+  item?: any;
+  id?: string;
+  title?: string;
+  photo?: any;
+  content?: string;
+  createdAt?: number;
+  category?: string;
+}
+
