@@ -1,29 +1,22 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-interface BoardPostProps {
-  item: any;
-  id?: string;
-  title: string;
-  photo?: any;
-  content?: string;
-  createdAt: number;
-}
+import type { BoardPostType } from '@/pages/type';
 
-const BoardPost = ({ item }: BoardPostProps) => {
+const BoardPost = ({ title, id, content }: BoardPostType) => {
   const router = useRouter();
 
-  const goToDetailPost = (item: BoardPostProps) => {
+  const goToDetailPost = (id: any) => {
     router.push({
-      pathname: `/boardDetail/${item.id}`,
+      pathname: `/boardDetail/${id}`,
       query: {
-        id: item.id,
+        id,
       },
     });
   };
   return (
-    <BoardPostWrapper key={item.id} onClick={() => goToDetailPost(item)}>
-      <ItemTitle>{item.title}</ItemTitle>
-      <ItemContent>{item.content}</ItemContent>
+    <BoardPostWrapper key={id} onClick={() => goToDetailPost(id)}>
+      <ItemTitle>{title}</ItemTitle>
+      <ItemContent>{content}</ItemContent>
     </BoardPostWrapper>
   );
 };

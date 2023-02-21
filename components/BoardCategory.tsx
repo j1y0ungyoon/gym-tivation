@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 interface BoardCategoryProps {
-  category: string;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 const BoardCategory = ({ setCategory }: BoardCategoryProps) => {

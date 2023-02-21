@@ -1,8 +1,14 @@
 import BoardItem from '@/components/BoardItem';
+import { dbService } from '@/firebase';
+import { query } from 'firebase/database';
+import { collection, onSnapshot, orderBy } from 'firebase/firestore';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const Board = () => {
+  const [category, setCategory] = useState('운동정보');
+  const [boardPosts, setBoardPost] = useState([]);
   const router = useRouter();
   const onClickCategoryButton = () => {
     console.log('카테고리');
@@ -12,6 +18,28 @@ const Board = () => {
       pathname: `/board/Post`,
     });
   };
+  const getPost = () => {
+    const q = query(
+      //@ts-ignore
+      collection(dbService, 'posts'),
+      orderBy('createdAt', 'desc'),
+    );
+    //@ts-ignore
+    const unsubscribe = onSnapshot(q, (snapshot: any) => {
+      const newPosts = snapshot.docs.map((doc: any) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setBoardPost(newPosts);
+    });
+    return unsubscribe;
+  };
+  useEffect(() => {
+    const unsubscribe = getPost();
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <>
@@ -28,7 +56,7 @@ const Board = () => {
             <Category>운동정보</Category>
           </CategoryContainter>
           <BoardContent>
-            <BoardItem />
+            <BoardItem boardPosts={boardPosts} />
           </BoardContent>
           <PostButtonContainer>
             <PostButton onClick={onClickPostButton}>글쓰기</PostButton>
