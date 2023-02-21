@@ -33,3 +33,13 @@ export interface SearchMyGymProps {
   setGymName: React.Dispatch<React.SetStateAction<string>>;
   setDetailAddress: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface BoardPostType {
+  item?: any;
+  id?: string;
+  title?: string;
+  photo?: any;
+  content?: string;
+  createdAt?: number;
+  category?: string;
+}
