@@ -3,19 +3,10 @@ import 'react-calendar/dist/Calendar.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import {
-  addDoc,
-  collection,
-  query,
-  onSnapshot,
-  where,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from 'firebase/firestore';
+import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { dbService, authService } from '@/firebase';
-import test from 'node:test';
 import CalendarEdit from './CalendarEdit';
+import CalendarAdd from './CalendarAdd';
 
 export type CalendarItem = {
   id: string;
@@ -36,7 +27,6 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
     CalendarItem[]
   >([]);
 
-  const [calendarText, setCalendarText] = useState('');
   const markDate = String(
     new Date(value).toLocaleDateString('ko', {
       year: 'numeric',
@@ -59,27 +49,28 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
 
   const userUid: any = String(authService.currentUser?.uid);
 
-  const onClickCalendarAdd = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      await addDoc(collection(dbService, 'calendar'), {
-        date: markDate,
-        content: calendarText,
-        uid: authService.currentUser?.uid,
-      });
-      alert('마크저장');
-      setCalendarText('');
-    } catch (error: any) {
-      alert(error.message);
-    }
-  };
-
   useEffect(() => {
+    console.log('캘린더불러옴');
+    // const test = async () => {
+    //   const q = query(collection(dbService, 'calendar'));
+    //   const data = await getDocs(q);
+    //   const newData = data.docs.map((doc) => {
+    //     setMark((prev: any) => [...prev, doc.data().date]);
+    //     const newDatas = {
+    //       id: doc.id,
+    //       ...doc.data(),
+    //     };
+    //     return newDatas;
+    //   });
+    //   setCalendarInformation(newData);
+    // };
+
     const q = query(
       collection(dbService, 'calendar'),
       where('uid', '==', userUid),
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log('스냅샷');
       const newcalendars = snapshot.docs.map((doc) => {
         setMark((prev: any) => [...prev, doc.data().date]);
         const newcalendar = {
@@ -88,13 +79,14 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
         };
         return newcalendar;
       });
-
       setCalendarInformation(newcalendars);
     });
     return () => {
       unsubscribe();
     };
   }, []);
+
+  //
 
   return (
     <CalendarWrapper>
@@ -126,21 +118,11 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
             );
           }}
         />
-
         <h3>{markDate}</h3>
         {markCompare === undefined ? (
-          <form onSubmit={onClickCalendarAdd}>
-            <CalendarContentBox>
-              <CalendarTextArea
-                value={calendarText}
-                onChange={(e) => {
-                  setCalendarText(e.target.value);
-                }}
-                placeholder="일정을 적어주세요."
-              />
-              <CalendarButton type="submit">등록</CalendarButton>
-            </CalendarContentBox>
-          </form>
+          <>
+            <CalendarAdd markDate={markDate} userUid={userUid} />
+          </>
         ) : (
           calendarInformation
             .filter((item) => item.date === markDate)
@@ -163,8 +145,8 @@ export default MyPageCalendar;
 
 const CalendarWrapper = styled.div`
   padding-top: 2vh;
-  padding-left: 2vw;
-  padding-right: 2vw;
+  padding-left: 1vw;
+  padding-right: 1vw;
 `;
 const DotBox = styled.div`
   width: 100%;
@@ -181,7 +163,7 @@ const CalendarDot = styled.div`
   background-color: #f87171;
 `;
 const CalendarTextArea = styled.textarea`
-  padding-top: 2vh;
+  padding: 12px;
   width: 18vw;
   height: 42vh;
   border-radius: 20px;

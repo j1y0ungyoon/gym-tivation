@@ -1,32 +1,43 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
-import { collection, query, onSnapshot } from 'firebase/firestore';
+import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import ProfileEdit from '@/components/ProfileEdit';
 import MyPageCalendar from '@/components/MyPageCalendar';
+import LoginState from '@/components/LoginState';
+import Test from '@/components/Test';
+import { getDocs } from 'firebase/firestore';
 
 export type ProfileItem = {
   id: string;
   area?: string;
   introduction?: string;
   instagram?: string;
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  loginState?: boolean;
+  follow?: string;
+  uid?: string;
 };
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
-//
 const MyPage = () => {
   //불러오기
+  //캘린더
   const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
+  //로그인 상태
+  const [isLoginState, setIsLoginState] = useState<boolean>(false);
   const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
     [],
   );
+  const [toggle, setToggle] = useState(false);
   //Calendar 업로드 시간 설정
   setTimeout(() => setIsLoadCalendar(true), 800);
-  useEffect(() => {
-    const q = query(
-      collection(dbService, 'profile'),
-      //   where('id', '==', authService.currentUser?.uid),
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+  setTimeout(() => setIsLoginState(true), 800);
+
+  const myPageonSnapShot = () => {
+    const q = query(collection(dbService, 'profile'));
+    onSnapshot(q, (snapshot) => {
       const newprofiles = snapshot.docs.map((doc) => {
         const newprofile = {
           id: doc.id,
@@ -36,11 +47,16 @@ const MyPage = () => {
       });
       setProfileInformation(newprofiles);
     });
+  };
+
+  useEffect(() => {
+    myPageonSnapShot;
+
     return () => {
-      unsubscribe();
+      myPageonSnapShot();
     };
   }, []);
-  console.log(profileInformation.length);
+
   return (
     <MyPageWrapper>
       <MyPageContainer>
@@ -54,7 +70,13 @@ const MyPage = () => {
             <HeaderText>북마크</HeaderText>
             <ClickText>전체보기</ClickText>
           </MyPageHeader>
-          <InformationBox> 북마크 </InformationBox>
+          <InformationBox>
+            {profileInformation
+              .filter((item) => item.id !== authService.currentUser?.uid)
+              .map((item) => {
+                return <Test key={item.id} item={item} />;
+              })}
+          </InformationBox>
         </MypageBox>
         <MypageBox>
           <MyPageHeader>
@@ -66,7 +88,25 @@ const MyPage = () => {
             <HeaderText>최근 교류</HeaderText>
             <ClickText>전체보기</ClickText>
           </MyPageHeader>
-          <InformationBox> 최근 교류</InformationBox>
+          <InformationBox>
+            <ToggleButtonBox>
+              <ToggleButton onClick={() => setToggle(false)}>
+                팔로잉
+              </ToggleButton>
+              <ToggleButton onClick={() => setToggle(true)}>
+                팔로워
+              </ToggleButton>
+            </ToggleButtonBox>
+            {profileInformation
+              .filter((item) => item.id !== authService.currentUser?.uid)
+              .map((item) => {
+                return (
+                  isLoginState && (
+                    <LoginState key={item.id} item={item} toggle={toggle} />
+                  )
+                );
+              })}
+          </InformationBox>
         </MypageBox>
         <MypageBox>
           <Schedule>
@@ -131,5 +171,25 @@ const ClickText = styled.button`
   :hover {
     cursor: pointer;
     color: black;
+  }
+`;
+const ToggleButtonBox = styled.div`
+  background-color: white;
+  width: 10vw;
+  margin: auto;
+  height: 5vh;
+  margin-bottom: 2vh;
+  border-radius: 30px;
+`;
+const ToggleButton = styled.button`
+  width: 5vw;
+  height: 5vh;
+  background-color: white;
+  border: none;
+  border-radius: 30px;
+  :hover {
+    cursor: pointer;
+    background-color: gray;
+    color: white;
   }
 `;

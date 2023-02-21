@@ -3,7 +3,7 @@ import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
 import UploadImage from '@/components/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage';
 
 type ProfileEditProps = {
@@ -36,26 +36,38 @@ const ProfileEdit = ({ item }: ProfileEditProps) => {
   const [area, setArea] = useState(item.area);
   const [instagram, setInstagram] = useState(item.instagram);
 
+  const nickName_validation = new RegExp(
+    /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+  );
+  const [isValidNickName, setIsValidNickName] = useState(false);
   //프로필 수정
   const onClickProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const user = authService.currentUser;
-      if (user !== null) {
-        await updateProfile(user, {
-          displayName: nickName,
-          photoURL,
-        });
-        setIsProfileEdit(false);
-        await setDoc(doc(dbService, 'profile', user.uid), {
-          introduction: introduction,
-          area: area,
-          instagram: instagram,
-        });
+    if (nickName_validation.test(nickName)) {
+      try {
+        const user = authService.currentUser;
+        if (user !== null) {
+          await updateProfile(user, {
+            displayName: nickName,
+            photoURL,
+          });
+          setIsProfileEdit(false);
+          await updateDoc(doc(dbService, 'profile', user.uid), {
+            introduction: introduction,
+            area: area,
+            instagram: instagram,
+            displayName: nickName,
+            photoURL: photoURL,
+            email: user.email,
+            uid: user.uid,
+          });
+        }
+        alert('변경완료');
+      } catch (error: any) {
+        alert(error.message);
       }
-      alert('변경완료');
-    } catch (error: any) {
-      alert(error.message);
+    } else {
+      alert('닉네임은 특수문자 제외 2글자 이상 8글자 이하로 적어주세요.');
     }
   };
 

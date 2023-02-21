@@ -1,12 +1,13 @@
-import { authService, dbService } from '@/firebase';
-import { useState, useEffect, useId } from 'react';
+import { authService, dbService, database } from '@/firebase';
+import { ref, set } from 'firebase/database';
+import { useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
-import { Router, useRouter } from 'next/router';
+import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 import {
   AiFillCheckCircle,
   AiFillEye,
@@ -54,15 +55,21 @@ const SignIn = () => {
   const onClicksignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(authService, email, password);
-      if (authService.currentUser?.emailVerified === true) {
-        alert('로그인 완료');
-        console.log(authService.currentUser);
-        router.push('/');
-      } else {
-        authService.signOut();
-        alert('이메일 인증을 완료해주세요.');
-      }
+      const { user } = await signInWithEmailAndPassword(
+        authService,
+        email,
+        password,
+      );
+      // if (authService.currentUser?.emailVerified === true) {
+      await updateDoc(doc(dbService, 'profile', user.uid), {
+        loginState: true,
+      });
+      alert('로그인 완료');
+      router.push('/');
+      // } else {
+      //   authService.signOut();
+      //   alert('이메일 인증을 완료해주세요.');
+      // //}
     } catch (error: any) {
       alert(error.message);
     }
@@ -76,11 +83,15 @@ const SignIn = () => {
       const docRef = doc(dbService, 'profile', user.uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.data() !== undefined) {
+        await updateDoc(doc(dbService, 'profile', user.uid), {
+          loginState: true,
+        });
       } else {
         await setDoc(doc(dbService, 'profile', user.uid), {
           introduction: '자기소개를 적어주세요.',
           area: '지역',
           instagram: '인스타그램',
+          loginState: true,
         });
       }
       alert('로그인 완료');
