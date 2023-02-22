@@ -63,9 +63,18 @@ export interface BoardPostType {
   item?: any;
   id?: string;
   title?: string;
-  photo?: any;
+  photo?: string;
   content?: string;
   createdAt?: number;
   category?: string;
+  userId?: string;
 }
-
+export interface GalleryBoardPostType {
+  title?: string;
+  item?: any;
+  content?: string;
+  id?: string;
+  photo?: string;
+  createdAt?: number;
+  userId?: string;
+}
