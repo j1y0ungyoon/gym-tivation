@@ -48,6 +48,20 @@ export interface DropDownProps {
   setEnd: React.Dispatch<React.SetStateAction<string>>;
 }
 
+export interface MyPositionType {
+  center: {
+    lat: number;
+    lng: number;
+  };
+  errMsg: string;
+  isLoading: boolean;
+}
+
+export interface MyLocationProps {
+  myPosition: MyPositionType;
+  setMyPosition: React.Dispatch<React.SetStateAction<MyPositionType>>;
+}
+
 // export interface InitialSelectedDaysType {
 //   monday: boolean;
 //   tuesday: boolean;
@@ -68,4 +82,3 @@ export interface BoardPostType {
   createdAt?: number;
   category?: string;
 }
-

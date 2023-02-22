@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import BoardPost from './BoardPost';
-import type { BoardPostType } from '@/pages/type';
+import type { BoardPostType } from '@/type';
 
 interface BoardItemProps {
   boardPosts: BoardPostType[];

@@ -1,4 +1,4 @@
-import { SearchMyGymProps } from '@/pages/type';
+import { SearchMyGymProps } from '@/type';
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
@@ -76,7 +76,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
         const bounds = new kakao.maps.LatLngBounds();
         let markers = [];
 
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           //   @ts-ignore
           markers.push({
             position: {

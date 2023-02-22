@@ -6,7 +6,7 @@ import {
   CoordinateType,
   EditRecruitPostParameterType,
   RecruitPostType,
-} from '../type';
+} from '../../type';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 import styled from 'styled-components';
@@ -130,11 +130,7 @@ const RecruitDetail = ({ params }: any) => {
   };
 
   // 게시글 수정
-  const onSubmitEdittedPost = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-
+  const onSubmitEdittedPost = async () => {
     if (!editTitle) {
       alert('제목을 작성해주세요!');
       editTitleRef.current?.focus();
@@ -152,6 +148,12 @@ const RecruitDetail = ({ params }: any) => {
     Object.assign(edittedRecruitPost, {
       title: editTitle,
       content: editContent,
+      region: `${detailAddress.split(' ')[0]} ${detailAddress.split(' ')[1]}`,
+      gymName,
+      coordinate,
+      startTime: start,
+      endTime: end,
+      selectedDays,
     });
 
     try {
@@ -240,63 +242,60 @@ const RecruitDetail = ({ params }: any) => {
         <>
           {changeForm ? (
             <DetailPostFormMain>
-              <form onSubmit={onSubmitEdittedPost}>
-                <TitleInput
-                  defaultValue={refetchedPost?.title}
-                  onChange={onChangeEditTitle}
-                  ref={editTitleRef}
-                />
-                <br />
-                <PlaceContainer>
-                  <StyledText>운동 장소</StyledText>
-                  {refetchedPost.gymName ? (
-                    <div>
-                      <PlaceText>{refetchedPost.gymName}</PlaceText>
-                      <DetailAddressText>
-                        ({refetchedPost.region})
-                      </DetailAddressText>
-                    </div>
-                  ) : (
+              <TitleInput
+                defaultValue={refetchedPost?.title}
+                onChange={onChangeEditTitle}
+                ref={editTitleRef}
+              />
+              <br />
+              <PlaceContainer>
+                <StyledText>운동 장소</StyledText>
+                {refetchedPost.gymName ? (
+                  <div>
+                    <PlaceText>{refetchedPost.gymName}</PlaceText>
                     <DetailAddressText>
-                      원하는 헬스장을 검색해 주세요!
+                      ({refetchedPost.region})
                     </DetailAddressText>
-                  )}
-                  <button onClick={onClickOpenMap}>운동 장소 선택 </button>{' '}
-                  <br />
-                </PlaceContainer>
-                <DayAndTimeContainer>
-                  <StyledText>가능 요일 </StyledText>
-                  {days.map((day) => {
-                    return (
-                      <>
-                        <DayBox value={day} onClick={onClickSelectDay}>
-                          {day}
-                        </DayBox>
-                      </>
-                    );
-                  })}
-                  <StyledText>가능 시간</StyledText>
-                  <UseDropDown setStart={setStart} setEnd={setEnd}>
-                    시작 시간
-                  </UseDropDown>
-                  {start ? start : ''}
-                  <span> ~ </span>
-                  <UseDropDown setStart={setStart} setEnd={setEnd}>
-                    종료 시간
-                  </UseDropDown>
-                  {end ? end : ''}
-                </DayAndTimeContainer>
-                <TextAreaContainer>
-                  <textarea
-                    defaultValue={refetchedPost?.content}
-                    onChange={onChangeEditContent}
-                    ref={editContentRef}
-                  />
-                </TextAreaContainer>
-                <br />
-                <span>{refetchedPost?.createdAt}</span> <br />
-                <button>수정 완료</button>
-              </form>
+                  </div>
+                ) : (
+                  <DetailAddressText>
+                    원하는 헬스장을 검색해 주세요!
+                  </DetailAddressText>
+                )}
+                <button onClick={onClickOpenMap}>운동 장소 선택 </button> <br />
+              </PlaceContainer>
+              <DayAndTimeContainer>
+                <StyledText>가능 요일 </StyledText>
+                {days.map((day) => {
+                  return (
+                    <>
+                      <DayBox value={day} onClick={onClickSelectDay}>
+                        {day}
+                      </DayBox>
+                    </>
+                  );
+                })}
+                <StyledText>가능 시간</StyledText>
+                <UseDropDown setStart={setStart} setEnd={setEnd}>
+                  시작 시간
+                </UseDropDown>
+                {start ? start : ''}
+                <span> ~ </span>
+                <UseDropDown setStart={setStart} setEnd={setEnd}>
+                  종료 시간
+                </UseDropDown>
+                {end ? end : ''}
+              </DayAndTimeContainer>
+              <TextAreaContainer>
+                <textarea
+                  defaultValue={refetchedPost?.content}
+                  onChange={onChangeEditContent}
+                  ref={editContentRef}
+                />
+              </TextAreaContainer>
+              <br />
+              <span>{refetchedPost?.createdAt}</span> <br />
+              <button onClick={onSubmitEdittedPost}>수정 완료</button>
               <button onClick={onClickChangeForm}>취소</button>
             </DetailPostFormMain>
           ) : (
