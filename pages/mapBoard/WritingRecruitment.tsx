@@ -3,7 +3,7 @@ import { addDoc, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { CoordinateType, WorkOutTimeType } from '../type';
+import { CoordinateType, WorkOutTimeType } from '../../type';
 import SearchMyGym from '@/components/SearchMyGym';
 import UseDropDown from '@/components/UseDropDown';
 
