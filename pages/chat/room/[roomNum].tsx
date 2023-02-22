@@ -16,8 +16,6 @@ type ChatLog = {
 const ChatRoom = () => {
   const router = useRouter();
   const { roomNum } = router.query;
-  console.log(roomNum);
-  const [username, setUsername] = useState('user-' + nanoid());
 
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([
@@ -28,6 +26,10 @@ const ChatRoom = () => {
       roomNum,
     },
   ]);
+
+  const user = authService.currentUser;
+  const username = user?.displayName;
+  const anonymousname = 'user-' + nanoid();
 
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
 
@@ -49,6 +51,8 @@ const ChatRoom = () => {
       // 초기 연결
       socket.on('connect', () => {
         console.log('연결성공!');
+        console.log('roomNum', roomNum);
+
         socket.emit('roomEnter', roomNum);
       });
 
@@ -76,9 +80,7 @@ const ChatRoom = () => {
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
-      username: authService.currentUser?.displayName
-        ? authService.currentUser.displayName
-        : username,
+      username: username ? username : anonymousname,
       roomNum,
     };
 

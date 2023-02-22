@@ -33,15 +33,14 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       socket.on('chat', (data) => {
         console.log('채팅 받음', data);
         if (!data.roomNum) {
-          socket.emit('chat', data);
+          io.emit('chat', data);
         } else {
-          socket.to(data.roomNum).emit('chat', data);
+          io.to(data.roomNum).emit('chat', data);
         }
       });
 
       // DM 방으로 묶어주는 곳 (join)
-      socket.on('roomEnter', (data) => {
-        const { roomNum } = data;
+      socket.on('roomEnter', (roomNum) => {
         socket.join(roomNum);
         // roomNum 이 방 번호, -> userId 로 바꿔줘야 함 / AuthService 에 userId 가 맞는지??
       });
