@@ -12,8 +12,8 @@ const Post = () => {
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
   const router = useRouter();
-  const uid = authService.currentUser?.uid;
-  const displayName = authService.currentUser?.displayName;
+
+  // const displayName = authService.currentUser?.displayName;
   //image upload
   const uploadBoardImage = () => {
     //@ts-ignore
@@ -78,10 +78,11 @@ const Post = () => {
       title: galleryTitle,
       content: galleryContent,
       createdAt: Date.now(),
-      userId: uid,
-      nickName: displayName,
+      userId: authService.currentUser?.uid,
+      nickName: authService.currentUser?.displayName,
       photo: imageUrl,
       like: [],
+      userPhoto: authService.currentUser?.photoURL,
     };
 
     await addDoc(collection(dbService, 'gallery'), newGalleryPost)

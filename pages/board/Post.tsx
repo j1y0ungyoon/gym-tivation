@@ -6,17 +6,6 @@ import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
 
-// interface Postporps {
-//   boardTitle: string;
-//   boardContent: string;
-//   userId?: string;
-//   comment?: string;
-//   creatAt?: number;
-//   nickName?: string;
-//   category: string;
-//   setCategory: React.Dispatch<React.SetStateAction<string>>;
-// }
-
 const Post = () => {
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
@@ -26,9 +15,6 @@ const Post = () => {
   const [boardPhoto, setBoardPhoto] = useState('');
 
   const router = useRouter();
-
-  const uid = authService.currentUser?.uid;
-  const displayName = authService.currentUser?.displayName;
 
   const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
@@ -95,10 +81,11 @@ const Post = () => {
       content: boardContent,
       category: category,
       createdAt: Date.now(),
-      user: uid,
-      nickName: displayName,
+      userId: authService.currentUser?.uid,
+      nickName: authService.currentUser?.displayName,
       photo: imageUrl,
       like: [],
+      userPhoto: authService.currentUser?.photoURL,
     };
 
     await addDoc(collection(dbService, 'posts'), newPost)
