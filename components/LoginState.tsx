@@ -8,23 +8,23 @@ import styled from 'styled-components';
 type ProfileEditProps = {
   item: ProfileItem;
   toggle: boolean;
-  follwoingInformation: string;
-  followerInformation: string;
+  follower: [];
+  following: [];
   paramsId: string;
 };
 
 const LoginState = ({
   item,
   toggle,
-  follwoingInformation,
-  followerInformation,
+  following,
+  follower,
   paramsId,
 }: ProfileEditProps) => {
   const router = useRouter();
 
   const goToMyPage = (id: any) => {
-    window.location.replace(`/myPage/${id}`);
     router.push({
+      pathname: `/myPage/${item.id}`,
       query: {
         id,
       },
@@ -36,7 +36,7 @@ const LoginState = ({
       <LoginStateWrapper>
         {toggle ? (
           <>
-            {followerInformation.includes(item.id) ? (
+            {follower.join().includes(item.id) ? (
               <OnOffBox
                 onClick={() => {
                   goToMyPage(item.id);
@@ -61,7 +61,7 @@ const LoginState = ({
           </>
         ) : (
           <>
-            {follwoingInformation.includes(item.id) ? (
+            {following.join().includes(item.id) ? (
               <OnOffBox
                 onClick={() => {
                   goToMyPage(item.id);

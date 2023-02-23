@@ -44,8 +44,8 @@ const MyPage = ({ params }: any) => {
 
   const [following, setFollowing] = useState([] as any);
   const [follower, setFollower] = useState([] as any);
-  const follwoingInformation = following.join();
-  const followerInformation = follower.join();
+  // const follwoingInformation = following.join();
+  // const followerInformation = follower.join();
 
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {
@@ -89,8 +89,8 @@ const MyPage = ({ params }: any) => {
     );
     const data = await getDocs(q);
     data.docs.map((doc) => {
-      setFollowing((prev: any) => [...prev, doc.data().following]);
-      setFollower((prev: any) => [...prev, doc.data().follower]);
+      setFollowing(doc.data().following);
+      setFollower(doc.data().follower);
     });
   };
 
@@ -158,8 +158,8 @@ const MyPage = ({ params }: any) => {
                       key={item.id}
                       item={item}
                       toggle={toggle}
-                      followerInformation={followerInformation}
-                      follwoingInformation={follwoingInformation}
+                      follower={follower}
+                      following={following}
                       paramsId={paramsId}
                     />
                   );
