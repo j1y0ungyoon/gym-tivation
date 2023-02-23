@@ -5,17 +5,23 @@ import { Socket } from 'socket.io';
 import { nanoid } from 'nanoid';
 import io from 'socket.io-client';
 import { authService } from '@/firebase';
+import styled from 'styled-components';
 
 type ChatLog = {
   id: number;
   msg: string;
   username: string;
+  photoURL?: string | null | undefined;
   roomNum: any;
 };
 
-const ChatRoom = () => {
+type DmChatProps = {
+  roomNum?: string;
+};
+
+const DmChat = ({ roomNum }: DmChatProps) => {
   const router = useRouter();
-  const { roomNum } = router.query;
+  console.log('roomNum', roomNum);
 
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([
@@ -23,6 +29,7 @@ const ChatRoom = () => {
       id: 1,
       msg: `${roomNum}채팅에 접속하셨습니다.`,
       username: '관리자',
+      photoURL: authService.currentUser?.photoURL,
       roomNum,
     },
   ]);
@@ -51,9 +58,9 @@ const ChatRoom = () => {
       // 초기 연결
       socket.on('connect', () => {
         console.log('연결성공!');
-        console.log('roomNum', roomNum);
 
         socket.emit('roomEnter', roomNum);
+        console.log(roomNum);
       });
 
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
@@ -70,7 +77,7 @@ const ChatRoom = () => {
     return () => {
       socket?.disconnect();
     };
-  }, [router.isReady]);
+  }, [router.isReady, roomNum]);
 
   // 채팅 전송시 실행 함수
   const postChat = (e: React.KeyboardEvent<EventTarget>) => {
@@ -81,6 +88,7 @@ const ChatRoom = () => {
       id: nanoid(),
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
+      photoURL: user ? user.photoURL : null,
       roomNum,
     };
 
@@ -94,26 +102,64 @@ const ChatRoom = () => {
   };
 
   return (
-    <div>
-      ChatRoom
-      <h1>{roomNum}의 방입니다.</h1>
-      <div>
+    <DmChatWrapper>
+      <p>{roomNum}의 방입니다.</p>
+      <DmLogBox>
         {chatLogs?.map((chatLog) => (
-          <div key={chatLog?.id}>
+          <DmBox key={chatLog?.id}>
+            <UserImg src={`${chatLog.photoURL}`} />
             <p>
               {chatLog?.username} : {chatLog?.msg}
             </p>
-          </div>
+          </DmBox>
         ))}
-      </div>
-      <input
+      </DmLogBox>
+      <DmInput
+        placeholder="채팅을 입력하세요."
         type="text"
         onKeyPress={postChat}
         value={inputValue}
         onChange={onChangeInputValue}
       />
-    </div>
+    </DmChatWrapper>
   );
 };
 
-export default ChatRoom;
+const DmChatWrapper = styled.section`
+  width: 60%;
+  min-width: 400px;
+  margin-left: 20px;
+  background-color: #ddd;
+  padding: 20px;
+  border-radius: 20px;
+  overflow-y: auto;
+`;
+
+const DmLogBox = styled.div`
+  max-width: 100%;
+  height: 670px;
+  overflow-y: auto;
+  word-break: break-all;
+`;
+const DmBox = styled.div`
+  display: flex;
+  margin: 10px 0;
+`;
+const UserImg = styled.img`
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 50px;
+  margin-right: 10px;
+`;
+
+const DmInput = styled.input`
+  width: 100%;
+  height: 40px;
+  outline: none;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 20px;
+  font-size: 0.875rem;
+`;
+export default DmChat;
