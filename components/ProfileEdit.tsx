@@ -232,9 +232,9 @@ const AreaText = styled.span`
 const IntroductionText = styled.textarea`
   margin: 1vw;
   font-size: 16px;
-  width: 22vw;
+  width: 24vw;
+  height: 16vh;
   float: left;
-  height: 14vh;
   border-radius: 16px;
   background-color: white;
   text-align: left;

@@ -5,25 +5,26 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 
-const Header = () => {
+const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
-
   const onLogout = async () => {
     try {
       const user = authService.currentUser;
       if (user !== null) {
+        alert('로그아웃');
+        router.push('/');
         authService.signOut();
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: false,
         });
       }
-      alert('로그아웃');
     } catch {
       (error: any) => {
         alert(error);
       };
     }
   };
+
   return (
     <HeaderWrapper>
       <Logo onClick={() => router.push('/')} src="/assets/images/Logo.png" />
@@ -33,7 +34,7 @@ const Header = () => {
           <SearchInput />
           <SearchIcon src="/assets/icons/searchIcon.png" />
         </SearchBar>
-        {!authService.currentUser ? (
+        {!isLoggedIn ? (
           <SignBox>
             <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>/
             <Sign onClick={() => router.push('/signIn')}>로그인</Sign>

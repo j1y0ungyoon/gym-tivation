@@ -1,6 +1,6 @@
 import { authService, dbService, database } from '@/firebase';
 import { ref, set } from 'firebase/database';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
@@ -21,13 +21,6 @@ const SignIn = () => {
   const [password, setPassWord] = useState('');
   // const [photoURL, setPhotoURL] = useState<string>('');
   // const [nickName, setNickName] = useState<string>('');
-
-  //유효성 검사
-  const [isValidEmail, setIsValiEmail] = useState(false);
-  const [isValidPassword, setIsValidPassword] = useState(false);
-
-  //비밀번호 확인
-  const [showPasword, setShowPassword] = useState(false);
 
   //모달
   const [releaseModal, setReleaseModal] = useState<boolean>(false);
@@ -51,6 +44,63 @@ const SignIn = () => {
 
   const router = useRouter();
 
+  //유효성
+  const [emailMessage, setEmailMessage] = useState<string>('');
+  const [isValidEmail, setIsValiEmail] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<string>('');
+  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [showPasword, setShowPassword] = useState(false);
+
+  const onChangeEmail = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const emailRegex =
+        /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      const emailCurrent = e.target.value;
+      setEmail(emailCurrent);
+      if (!emailRegex.test(emailCurrent)) {
+        setEmailMessage('이메일 형식을 확인해주세요.');
+        setIsValiEmail(false);
+      } else {
+        setEmailMessage('');
+        setIsValiEmail(true);
+      }
+    },
+    [],
+  );
+
+  const onChangePassword = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const passwordRegex =
+        /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+      const passwordCurrent = e.target.value;
+      setPassWord(passwordCurrent);
+
+      if (!passwordRegex.test(passwordCurrent)) {
+        setPasswordMessage(
+          '대문자, 소문자, 특수문자 포함 8글자 이상 15글자 이하로 적어주세요.',
+        );
+        setIsValidPassword(false);
+      } else {
+        setPasswordMessage('');
+        setIsValidPassword(true);
+      }
+    },
+    [],
+  );
+
+  const emailIcon =
+    isValidEmail === true ? (
+      <AiFillCheckCircle color="green" />
+    ) : (
+      <AiFillCheckCircle color="red" />
+    );
+  const passwordIcon =
+    isValidPassword === true ? (
+      <AiFillCheckCircle color="green" />
+    ) : (
+      <AiFillCheckCircle color="red" />
+    );
+
   //로그인
   const onClicksignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,16 +110,16 @@ const SignIn = () => {
         email,
         password,
       );
-      // if (authService.currentUser?.emailVerified === true) {
-      await updateDoc(doc(dbService, 'profile', user.uid), {
-        loginState: true,
-      });
-      alert('로그인 완료');
-      router.push('/');
-      // } else {
-      //   authService.signOut();
-      //   alert('이메일 인증을 완료해주세요.');
-      // //}
+      if (authService.currentUser?.emailVerified === true) {
+        await updateDoc(doc(dbService, 'profile', user.uid), {
+          loginState: true,
+        });
+        alert('로그인 완료');
+        router.push('/');
+      } else {
+        authService.signOut();
+        alert('이메일 인증을 완료해주세요.');
+      }
     } catch (error: any) {
       alert(error.message);
     }
@@ -105,75 +155,62 @@ const SignIn = () => {
     <SignInWrapper>
       <SignInContainer onSubmit={onClicksignIn}>
         <HeaderText>GYMTIVATION</HeaderText>
-        <InputText>이메일</InputText>
-        <SignInInput
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (email_validation.test(e.target.value)) {
-              setIsValiEmail(true);
-            } else {
-              setIsValiEmail(false);
-            }
-          }}
-          placeholder="이메일"
-        />
-        {isValidEmail === false ? (
-          <>
-            <IconValidation>
-              <AiFillCheckCircle color="red" />
-              <TextValidation>이메일 형식을 확인해주세요.</TextValidation>
-            </IconValidation>
-          </>
-        ) : (
-          <IconValidation>
-            <AiFillCheckCircle color="green" />
-          </IconValidation>
-        )}
-        <InputText>비밀번호</InputText>
-        <PasswordShow>
+        <InputBox>
+          <InputText>이메일</InputText>
           <SignInInput
-            type={showPasword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => {
-              setPassWord(e.target.value);
-              if (password_validation.test(e.target.value)) {
-                setIsValidPassword(true);
-              } else {
-                setIsValidPassword(false);
-              }
-            }}
-            placeholder="비밀번호"
+            type="email"
+            value={email}
+            onChange={onChangeEmail}
+            placeholder="이메일"
           />
-          {showPasword === false ? (
-            <AiFillEyeInvisible
-              fontSize={'20px'}
-              onClick={() => {
-                setShowPassword(true);
-              }}
-            />
-          ) : (
-            <AiFillEye
-              fontSize={'20px'}
-              onClick={() => {
-                setShowPassword(false);
-              }}
-            />
+          {email.length > 0 && (
+            <IconValidation>
+              {emailIcon}
+              <TextValidation
+                className={`message ${isValidEmail ? 'success' : 'error'}`}
+              >
+                {emailMessage}
+              </TextValidation>
+            </IconValidation>
           )}
-        </PasswordShow>
-        {isValidPassword === false ? (
-          <IconValidation>
-            <AiFillCheckCircle color="red" />
-            <TextValidation>
-              대문자, 소문자, 특수문자 포함 8글자 이상 15글자 이하로 적어주세요.
-            </TextValidation>
-          </IconValidation>
-        ) : (
-          <IconValidation>
-            <AiFillCheckCircle color="green" />
-          </IconValidation>
-        )}
+        </InputBox>
+        <InputBox>
+          <InputText>비밀번호</InputText>
+          <PasswordShow>
+            <SignInInput
+              type={showPasword ? 'text' : 'password'}
+              value={password}
+              onChange={onChangePassword}
+              placeholder="비밀번호"
+            />
+            {showPasword === false ? (
+              <AiFillEyeInvisible
+                fontSize={'20px'}
+                onClick={() => {
+                  setShowPassword(true);
+                }}
+              />
+            ) : (
+              <AiFillEye
+                fontSize={'20px'}
+                onClick={() => {
+                  setShowPassword(false);
+                }}
+              />
+            )}
+          </PasswordShow>
+          {password.length > 0 && (
+            <IconValidation>
+              {passwordIcon}
+              <TextValidation
+                className={`message ${isValidPassword ? 'success' : 'error'}`}
+              >
+                {passwordMessage}
+              </TextValidation>
+            </IconValidation>
+          )}
+        </InputBox>
+
         <GuideBox>
           <GuideText onClick={() => router.push('/signUp')}>
             이메일 가입
@@ -202,17 +239,18 @@ export default SignIn;
 
 const SignInWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  margin: auto;
 `;
-const SignInContainer = styled.form`
-  margin-top: 5vh;
-`;
+const SignInContainer = styled.form``;
 const HeaderText = styled.h2`
-  margin-top: 10vh;
   margin-bottom: 10vh;
   font-size: 28px;
   font-weight: bold;
   text-align: center;
+`;
+
+const InputBox = styled.div`
+  height: 15vh;
 `;
 const SignInInput = styled.input`
   width: 24vw;
