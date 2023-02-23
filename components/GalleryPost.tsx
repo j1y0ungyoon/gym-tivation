@@ -13,7 +13,7 @@ const GalleryPost = ({ id, photo }: GalleryBoardPostType) => {
     });
   };
   return (
-    <GalleryPostWrapper key={id} onClick={goToGalleryDetailPost}>
+    <GalleryPostWrapper key={id} onClick={() => goToGalleryDetailPost(id)}>
       <GalleryImage src={photo}></GalleryImage>
     </GalleryPostWrapper>
   );

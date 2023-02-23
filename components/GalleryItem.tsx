@@ -25,9 +25,7 @@ const GalleryList = styled.div`
   display: flex;
   width: 95%;
   height: 100%;
-
   margin: 0.5rem;
-
   border-radius: 0.5rem;
   overflow: scroll;
   margin: 0px;

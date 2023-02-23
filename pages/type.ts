@@ -68,6 +68,8 @@ export interface BoardPostType {
   createdAt?: number;
   category?: string;
   userId?: string;
+  nickName?: string;
+  like?: string;
 }
 export interface GalleryBoardPostType {
   title?: string;
@@ -77,4 +79,6 @@ export interface GalleryBoardPostType {
   photo?: string;
   createdAt?: number;
   userId?: string;
+  nickName?: string;
+  like?: string;
 }
