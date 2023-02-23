@@ -1,12 +1,16 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
-import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  onSnapshot,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 import ProfileEdit from '@/components/ProfileEdit';
 import MyPageCalendar from '@/components/MyPageCalendar';
 import LoginState from '@/components/LoginState';
-import Test from '@/components/Test';
-import { getDocs } from 'firebase/firestore';
 
 export type ProfileItem = {
   id: string;
@@ -25,17 +29,24 @@ const MyPage = () => {
   //불러오기
   //캘린더
   const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
-  //로그인 상태
-  const [isLoginState, setIsLoginState] = useState<boolean>(false);
+
   const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
     [],
   );
+
+  const [following, setFollowing] = useState([] as any);
+  const [follower, setFollower] = useState([] as any);
+  const follwoingInformation = following.join();
+  const followerInformation = follower.join();
+
+  const userUid: any = String(authService.currentUser?.uid);
+
   const [toggle, setToggle] = useState(false);
+
   //Calendar 업로드 시간 설정
   setTimeout(() => setIsLoadCalendar(true), 800);
-  setTimeout(() => setIsLoginState(true), 800);
 
-  const myPageonSnapShot = () => {
+  const test = () => {
     const q = query(collection(dbService, 'profile'));
     onSnapshot(q, (snapshot) => {
       const newprofiles = snapshot.docs.map((doc) => {
@@ -49,73 +60,90 @@ const MyPage = () => {
     });
   };
 
-  useEffect(() => {
-    myPageonSnapShot;
+  const followGetDoc = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', userUid),
+    );
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setFollowing((prev: any) => [...prev, doc.data().following]);
+      setFollower((prev: any) => [...prev, doc.data().follower]);
+    });
+  };
 
+  useEffect(() => {
+    test();
+    followGetDoc();
     return () => {
-      myPageonSnapShot();
+      test();
+      followGetDoc();
     };
-  }, []);
+  }, [authService.currentUser?.uid]);
+
+  console.log('팔로잉스', following);
+  console.log('데이터 정보', follwoingInformation);
+  console.log(authService.currentUser);
 
   return (
     <MyPageWrapper>
-      <MyPageContainer>
-        <MypageBox>
-          {profileInformation
-            .filter((item) => item.id === authService.currentUser?.uid)
-            .map((item) => {
-              return <ProfileEdit key={item.id} item={item} />;
-            })}
-          <MyPageHeader>
-            <HeaderText>북마크</HeaderText>
-            <ClickText>전체보기</ClickText>
-          </MyPageHeader>
-          <InformationBox>
+      {profileInformation && (
+        <MyPageContainer>
+          <MypageBox>
             {profileInformation
-              .filter((item) => item.id !== authService.currentUser?.uid)
+              .filter((item) => item.id === authService.currentUser?.uid)
               .map((item) => {
-                return <Test key={item.id} item={item} />;
+                return <ProfileEdit key={item.id} item={item} />;
               })}
-          </InformationBox>
-        </MypageBox>
-        <MypageBox>
-          <MyPageHeader>
-            <HeaderText>오운완 갤러리</HeaderText>
-            <ClickText>전체보기</ClickText>
-          </MyPageHeader>
-          <InformationBox> 오원완 갤러리</InformationBox>
-          <MyPageHeader>
-            <HeaderText>최근 교류</HeaderText>
-            <ClickText>전체보기</ClickText>
-          </MyPageHeader>
-          <InformationBox>
-            <ToggleButtonBox>
-              <ToggleButton onClick={() => setToggle(false)}>
-                팔로잉
-              </ToggleButton>
-              <ToggleButton onClick={() => setToggle(true)}>
-                팔로워
-              </ToggleButton>
-            </ToggleButtonBox>
-            {profileInformation
-              .filter((item) => item.id !== authService.currentUser?.uid)
-              .map((item) => {
-                return (
-                  isLoginState && (
-                    <LoginState key={item.id} item={item} toggle={toggle} />
-                  )
-                );
-              })}
-          </InformationBox>
-        </MypageBox>
-        <MypageBox>
-          <Schedule>
-            {isLoadCalendar && (
-              <MyPageCalendar setIsLoadCalendar={setIsLoadCalendar} />
-            )}
-          </Schedule>
-        </MypageBox>
-      </MyPageContainer>
+            <MyPageHeader>
+              <HeaderText>북마크</HeaderText>
+              <ClickText>전체보기</ClickText>
+            </MyPageHeader>
+            <InformationBox></InformationBox>
+          </MypageBox>
+          <MypageBox>
+            <MyPageHeader>
+              <HeaderText>오운완 갤러리</HeaderText>
+              <ClickText>전체보기</ClickText>
+            </MyPageHeader>
+            <InformationBox>오운완 갤러리</InformationBox>
+            <MyPageHeader>
+              <HeaderText>최근 교류</HeaderText>
+              <ClickText>전체보기</ClickText>
+            </MyPageHeader>
+            <InformationBox>
+              <ToggleButtonBox>
+                <ToggleButton onClick={() => setToggle(false)}>
+                  팔로잉
+                </ToggleButton>
+                <ToggleButton onClick={() => setToggle(true)}>
+                  팔로워
+                </ToggleButton>
+              </ToggleButtonBox>
+              {profileInformation
+                .filter((item) => item.id !== authService.currentUser?.uid)
+                .map((item) => {
+                  return (
+                    <LoginState
+                      key={item.id}
+                      item={item}
+                      toggle={toggle}
+                      followerInformation={followerInformation}
+                      follwoingInformation={follwoingInformation}
+                    />
+                  );
+                })}
+            </InformationBox>
+          </MypageBox>
+          <MypageBox>
+            <Schedule>
+              {isLoadCalendar && (
+                <MyPageCalendar setIsLoadCalendar={setIsLoadCalendar} />
+              )}
+            </Schedule>
+          </MypageBox>
+        </MyPageContainer>
+      )}
     </MyPageWrapper>
   );
 };
@@ -127,7 +155,7 @@ const MyPageWrapper = styled.div`
   text-align: center;
 `;
 const MyPageContainer = styled.div`
-  margin-left: 14vw;
+  margin-left: 6vw;
   margin-top: 2vh;
 `;
 
@@ -189,6 +217,9 @@ const ToggleButton = styled.button`
   border-radius: 30px;
   :hover {
     cursor: pointer;
+    background-color: lightgray;
+  }
+  :focus {
     background-color: gray;
     color: white;
   }

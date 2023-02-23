@@ -39,7 +39,7 @@ const ProfileEdit = ({ item }: ProfileEditProps) => {
   const nickName_validation = new RegExp(
     /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
   );
-  const [isValidNickName, setIsValidNickName] = useState(false);
+
   //프로필 수정
   const onClickProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,7 +87,6 @@ const ProfileEdit = ({ item }: ProfileEditProps) => {
     });
   }, []);
 
-  console.log('로그인', authService.currentUser);
   return (
     <>
       {!isProfileEdit ? (

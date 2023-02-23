@@ -1,87 +1,68 @@
-import { useState, useEffect } from 'react';
-import { collection, query, getDocs, where } from 'firebase/firestore';
-import { dbService, authService } from '@/firebase';
 import styled from 'styled-components';
 import { ProfileItem } from '@/pages/myPage';
 
 type ProfileEditProps = {
   item: ProfileItem;
   toggle: boolean;
+  follwoingInformation: string;
+  followerInformation: string;
 };
 
-const LoginState = ({ item, toggle }: ProfileEditProps) => {
-  const [following, setFollowing] = useState([] as any);
-  const [follower, setFollower] = useState([] as any);
-  const follwoingInformation = following.join();
-  const followerInformation = follower.join();
-
-  const userID: any = String(authService.currentUser?.uid);
-
-  const followGetDoc = async () => {
-    const q = query(
-      collection(dbService, 'profile'),
-      where('uid', '==', userID),
-    );
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setFollowing((prev: any) => [...prev, doc.data().following]);
-      setFollower((prev: any) => [...prev, doc.data().follower]);
-    });
-  };
-
-  useEffect(() => {
-    followGetDoc;
-    return () => {
-      followGetDoc();
-    };
-  }, []);
-
+const LoginState = ({
+  item,
+  toggle,
+  follwoingInformation,
+  followerInformation,
+}: ProfileEditProps) => {
+  console.log('팔로잉', follwoingInformation);
   return (
-    <LoginStateWrapper>
-      {toggle ? (
-        <>
-          {followerInformation.includes(item.id) ? (
-            <OnOffBox>
-              <ProfilePhoto>
-                <Photo src={item.photoURL} />
-              </ProfilePhoto>
-              <TextBox>
-                <FollowText> {item.displayName}</FollowText>
-                <div>{item.email}</div>
-              </TextBox>
-              <StateBox>
-                {item.loginState && true ? (
-                  <OnLineState>ONLINE</OnLineState>
-                ) : (
-                  <OFFLineState>OFFLINE</OFFLineState>
-                )}
-              </StateBox>
-            </OnOffBox>
-          ) : null}
-        </>
-      ) : (
-        <>
-          {follwoingInformation.includes(item.id) ? (
-            <OnOffBox>
-              <ProfilePhoto>
-                <Photo src={item.photoURL} />
-              </ProfilePhoto>
-              <TextBox>
-                <FollowText> {item.displayName}</FollowText>
-                <div>{item.email}</div>
-              </TextBox>
-              <StateBox>
-                {item.loginState && true ? (
-                  <OnLineState>ONLINE</OnLineState>
-                ) : (
-                  <OFFLineState>OFFLINE</OFFLineState>
-                )}
-              </StateBox>
-            </OnOffBox>
-          ) : null}
-        </>
-      )}
-    </LoginStateWrapper>
+    <>
+      <LoginStateWrapper>
+        {toggle ? (
+          <>
+            {followerInformation.includes(item.id) ? (
+              <OnOffBox>
+                <ProfilePhoto>
+                  <Photo src={item.photoURL} />
+                </ProfilePhoto>
+                <TextBox>
+                  <FollowText> {item.displayName}</FollowText>
+                  <div>{item.email}</div>
+                </TextBox>
+                <StateBox>
+                  {item.loginState && true ? (
+                    <OnLineState>ONLINE</OnLineState>
+                  ) : (
+                    <OFFLineState>OFFLINE</OFFLineState>
+                  )}
+                </StateBox>
+              </OnOffBox>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {follwoingInformation.includes(item.id) ? (
+              <OnOffBox>
+                <ProfilePhoto>
+                  <Photo src={item.photoURL} />
+                </ProfilePhoto>
+                <TextBox>
+                  <FollowText> {item.displayName}</FollowText>
+                  <div>{item.email}</div>
+                </TextBox>
+                <StateBox>
+                  {item.loginState && true ? (
+                    <OnLineState>ONLINE</OnLineState>
+                  ) : (
+                    <OFFLineState>OFFLINE</OFFLineState>
+                  )}
+                </StateBox>
+              </OnOffBox>
+            ) : null}
+          </>
+        )}
+      </LoginStateWrapper>
+    </>
   );
 };
 

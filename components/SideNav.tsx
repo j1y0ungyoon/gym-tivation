@@ -21,21 +21,33 @@ const SideNav = () => {
 
   return (
     <SideNavWrapper>
-      <Link href={'/'}>Home</Link>
-      <Link href={'/chat'}>채팅</Link>
-      <Link href={'/board'}>게시판</Link>
-      <RoutingDiv onClick={goToMapBoard}>주변 동료 모집</RoutingDiv>
-      <Link href={'/'}>오운완 갤러리</Link>
-      <Link href={'/myPage'}>마이페이지</Link>
+      <NavBtn onClick={() => router.push('/')}>Home</NavBtn>
+      <NavBtn onClick={() => router.push('/chat')}>채팅</NavBtn>
+      <NavBtn onClick={() => router.push('/board')}>게시판</NavBtn>
+      <NavBtn onClick={goToMapBoard}>주변 동료 모집</NavBtn>
+      <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
+      <NavBtn onClick={() => router.push('/myPage')}>마이페이지</NavBtn>
     </SideNavWrapper>
   );
 };
 
 const SideNavWrapper = styled.nav`
-  background-color: #888;
+  width: 180px;
+  height: calc(100vh - 80px);
+  border-right: 1px solid #ddd;
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NavBtn = styled.div`
+  width: 160px;
+  padding: 10px;
+  cursor: pointer;
+  :hover {
+    background-color: #ddd;
+  }
 `;
 
 export default SideNav;
