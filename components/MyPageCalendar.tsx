@@ -78,7 +78,7 @@ const MyPageCalendar = () => {
     return () => {
       unsubscribe();
     };
-  }, [authService.currentUser]);
+  }, []);
   return (
     <CalendarWrapper>
       <>
