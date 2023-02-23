@@ -11,6 +11,9 @@ import {
 import ProfileEdit from '@/components/ProfileEdit';
 import MyPageCalendar from '@/components/MyPageCalendar';
 import LoginState from '@/components/LoginState';
+import MyPageGalley from '@/components/MyPageGallery';
+import MyPageLike from '@/components/MyPageLike';
+import { useRouter } from 'next/router';
 
 export type ProfileItem = {
   id: string;
@@ -26,9 +29,13 @@ export type ProfileItem = {
   uid?: string;
 };
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
-const MyPage = () => {
+const MyPage = ({ params }: any) => {
   //불러오기
   //캘린더
+  const paramsId = String(params);
+
+  console.log(authService.currentUser?.uid);
+  console.log(paramsId);
   const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
 
   const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
@@ -37,10 +44,8 @@ const MyPage = () => {
 
   const [following, setFollowing] = useState([] as any);
   const [follower, setFollower] = useState([] as any);
-  const follwoingInformation = following.join();
-  const followerInformation = follower.join();
-
-  const userUid: any = String(authService.currentUser?.uid);
+  // const follwoingInformation = following.join();
+  // const followerInformation = follower.join();
 
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {
@@ -50,7 +55,9 @@ const MyPage = () => {
   //Calendar 업로드 시간 설정
 
   const profileOnSnapShot = () => {
-    setIsLoadCalendar(true);
+    paramsId === authService.currentUser?.uid
+      ? setIsLoadCalendar(true)
+      : setIsLoadCalendar(false);
     const q = query(collection(dbService, 'profile'));
     onSnapshot(q, (snapshot) => {
       const newprofiles = snapshot.docs.map((doc) => {
@@ -63,16 +70,27 @@ const MyPage = () => {
       setProfileInformation(newprofiles);
     });
   };
-
+  // const followGetDoc = () => {
+  //   const q = query(
+  //     collection(dbService, 'profile'),
+  //     where('uid', '==', paramsId),
+  //   );
+  //   onSnapshot(q, (snapshot) => {
+  //     snapshot.docs.map((doc) => {
+  //       setFollowing((prev: any) => [...prev, doc.data().following]);
+  //       setFollower((prev: any) => [...prev, doc.data().follower]);
+  //     });
+  //   });
+  // };
   const followGetDoc = async () => {
     const q = query(
       collection(dbService, 'profile'),
-      where('uid', '==', userUid),
+      where('uid', '==', paramsId),
     );
     const data = await getDocs(q);
     data.docs.map((doc) => {
-      setFollowing((prev: any) => [...prev, doc.data().following]);
-      setFollower((prev: any) => [...prev, doc.data().follower]);
+      setFollowing(doc.data().following);
+      setFollower(doc.data().follower);
     });
   };
 
@@ -83,7 +101,7 @@ const MyPage = () => {
       profileOnSnapShot();
       followGetDoc();
     };
-  }, [authService.currentUser?.uid]);
+  }, [paramsId, authService.currentUser]);
 
   return (
     <MyPageWrapper>
@@ -91,22 +109,26 @@ const MyPage = () => {
         <MyPageContainer>
           <MypageBox>
             {profileInformation
-              .filter((item) => item.id === authService.currentUser?.uid)
+              .filter((item) => item.id === String(paramsId))
               .map((item) => {
-                return <ProfileEdit key={item.id} item={item} />;
+                return (
+                  <ProfileEdit key={item.id} item={item} paramsId={paramsId} />
+                );
               })}
             <MyPageHeader>
-              <HeaderText>북마크</HeaderText>
+              <HeaderText>좋아요</HeaderText>
               <ClickText>전체보기</ClickText>
             </MyPageHeader>
-            <InformationBox></InformationBox>
+            <InformationBox>{/* <MyPageLike /> */}</InformationBox>
           </MypageBox>
           <MypageBox>
             <MyPageHeader>
               <HeaderText>오운완 갤러리</HeaderText>
               <ClickText>전체보기</ClickText>
             </MyPageHeader>
-            <InformationBox>오운완 갤러리</InformationBox>
+            <InformationBox>
+              <MyPageGalley paramsId={paramsId} />
+            </InformationBox>
             <MyPageHeader>
               <HeaderText>최근 교류</HeaderText>
               <ClickText>전체보기</ClickText>
@@ -136,22 +158,35 @@ const MyPage = () => {
                       key={item.id}
                       item={item}
                       toggle={toggle}
-                      followerInformation={followerInformation}
-                      follwoingInformation={follwoingInformation}
+                      follower={follower}
+                      following={following}
+                      paramsId={paramsId}
                     />
                   );
                 })}
               </LoginStateBox>
             </InformationBox>
           </MypageBox>
-          <MypageBox>
-            <Schedule>{isLoadCalendar && <MyPageCalendar />}</Schedule>
-          </MypageBox>
+          {isLoadCalendar && (
+            <MypageBox>
+              <Schedule>
+                <MyPageCalendar />
+              </Schedule>
+            </MypageBox>
+          )}
         </MyPageContainer>
       )}
     </MyPageWrapper>
   );
 };
+
+export function getServerSideProps({ params: { params } }: any) {
+  return {
+    props: {
+      params,
+    },
+  };
+}
 
 export default MyPage;
 

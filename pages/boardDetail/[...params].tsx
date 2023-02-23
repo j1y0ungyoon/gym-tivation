@@ -260,6 +260,7 @@ const Detail = ({ params }: any) => {
                 <DetailPostContent>{detailPost?.content}</DetailPostContent>
               </ContentBox>
             </ContentContainer>
+
             <DetailButtonWrapper>
               {/* <BoardComment /> */}
               <DetailPostButton onClick={onClickChangeDetail}>
