@@ -49,9 +49,8 @@ const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
 const BoardList = styled.div`
   width: 100%;
   height: 100%;
-  margin: 0.5rem;
   border-radius: 1rem;
-  overflow: scroll;
+  overflow: auto;
 `;
 
 export default BoardItem;

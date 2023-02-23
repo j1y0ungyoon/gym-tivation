@@ -103,14 +103,13 @@ const DmChat = ({ roomNum }: DmChatProps) => {
 
   return (
     <DmChatWrapper>
-      <p>{roomNum}의 방입니다.</p>
       <DmLogBox>
         {chatLogs?.map((chatLog) => (
           <DmBox key={chatLog?.id}>
             <UserImg src={`${chatLog.photoURL}`} />
-            <p>
+            <DmText>
               {chatLog?.username} : {chatLog?.msg}
-            </p>
+            </DmText>
           </DmBox>
         ))}
       </DmLogBox>
@@ -130,20 +129,20 @@ const DmChatWrapper = styled.section`
   min-width: 400px;
   margin-left: 20px;
   background-color: #ddd;
-  padding: 20px;
+  padding: 30px;
   border-radius: 20px;
   overflow-y: auto;
 `;
 
 const DmLogBox = styled.div`
   max-width: 100%;
-  height: 670px;
+  height: calc(100% - 40px);
   overflow-y: auto;
   word-break: break-all;
 `;
 const DmBox = styled.div`
   display: flex;
-  margin: 10px 0;
+  margin-bottom: 16px;
 `;
 const UserImg = styled.img`
   width: 50px;
@@ -151,6 +150,9 @@ const UserImg = styled.img`
   border: 1px solid black;
   border-radius: 50px;
   margin-right: 10px;
+`;
+const DmText = styled.span`
+  margin: 0;
 `;
 
 const DmInput = styled.input`
