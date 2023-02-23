@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import UploadImage from '@/components/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { ProfileItem } from '@/pages/myPage';
+import { ProfileItem } from '@/pages/myPage/[...params]';
 
 type ProfileEditProps = {
   item: ProfileItem;
+  paramsId: string;
 };
 
 const OPTIONS = [
@@ -25,7 +26,7 @@ const OPTIONS = [
 const DEFAULT_PHOTO_URL =
   'https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg';
 
-const ProfileEdit = ({ item }: ProfileEditProps) => {
+const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
   const [isProfileEdit, setIsProfileEdit] = useState(false);
   //닉네임, 사진 불러오기
   const [photoURL, setPhotoURL] = useState(DEFAULT_PHOTO_URL);
@@ -93,28 +94,30 @@ const ProfileEdit = ({ item }: ProfileEditProps) => {
         <>
           <MyPageHeader>
             <HeaderText>프로필</HeaderText>
-            <ClickText
-              onClick={() => {
-                setIsProfileEdit(true);
-              }}
-            >
-              수정하기
-            </ClickText>
+            {authService.currentUser?.uid === paramsId && (
+              <ClickText
+                onClick={() => {
+                  setIsProfileEdit(true);
+                }}
+              >
+                수정하기
+              </ClickText>
+            )}
           </MyPageHeader>
           <InformationBox>
             <EditPhotoBox>
               <ProfilePhoto>
-                {authService.currentUser?.photoURL === null ? (
+                {item.photoURL === null ? (
                   <Photo src="https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg" />
                 ) : (
-                  <Photo src={photoURL} />
+                  <Photo src={item.photoURL} />
                 )}
               </ProfilePhoto>
             </EditPhotoBox>
             <EditNickNameBox>
               <NickNameAreaBox>
-                <NickNameText>{nickName}</NickNameText>
-                <AreaText>{area}</AreaText>
+                <NickNameText>{item.displayName}</NickNameText>
+                <AreaText>{item.area}</AreaText>
               </NickNameAreaBox>
               <p>1일째 운동중</p>
               <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />

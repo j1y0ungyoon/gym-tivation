@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import GalleryPost from './GalleryPost';
-import { GalleryBoardPostType } from '@/pages/type';
+import { GalleryBoardPostType } from '@/type';
 interface GalleryItemProps {
   galleryPhotos: GalleryBoardPostType[];
 }

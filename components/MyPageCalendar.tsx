@@ -62,7 +62,7 @@ const MyPageCalendar = () => {
 
     const q = query(
       collection(dbService, 'calendar'),
-      where('uid', '==', userUid),
+      where('uid', '==', authService.currentUser?.uid),
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newcalendars = snapshot.docs.map((doc) => {
