@@ -33,10 +33,10 @@ const BoardCategory = ({ setCategory }: BoardCategoryProps) => {
         <CategorySelect
           type="radio"
           name="category"
-          value="헬스용품"
+          value="헬스용품추천"
           onChange={onChangeBoardCategory}
         />
-        <CategoryText>헬스용품</CategoryText>
+        <CategoryText>헬스용품추천</CategoryText>
       </CategoryLabel>
     </CategoryWrapper>
   );

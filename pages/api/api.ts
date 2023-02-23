@@ -55,6 +55,14 @@ export const editBoardPost = async ({ id, editDetailPost }: any) => {
   await updateDoc(doc(dbService, 'posts', id), editDetailPost);
 };
 
+export const deleteGalleryPost = async ({ id, photo }: any) => {
+  await deleteObject(ref(storage, photo));
+  await deleteDoc(doc(dbService, 'gallery', id));
+};
+export const editGalleryBoard = async ({ id, editGalleryPost }: any) => {
+  await updateDoc(doc(dbService, 'gallery', id), editGalleryPost);
+};
+
 // export const fetchRecruitPost = async (recruitPostId: string) => {
 //   const res = await getDoc(doc(dbService, 'recruitments', recruitPostId));
 
