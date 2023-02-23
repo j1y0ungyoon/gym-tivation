@@ -94,13 +94,15 @@ const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
         <>
           <MyPageHeader>
             <HeaderText>프로필</HeaderText>
-            <ClickText
-              onClick={() => {
-                setIsProfileEdit(true);
-              }}
-            >
-              수정하기
-            </ClickText>
+            {authService.currentUser?.uid === paramsId && (
+              <ClickText
+                onClick={() => {
+                  setIsProfileEdit(true);
+                }}
+              >
+                수정하기
+              </ClickText>
+            )}
           </MyPageHeader>
           <InformationBox>
             <EditPhotoBox>
@@ -134,66 +136,61 @@ const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
         </>
       ) : (
         <>
-          {authService.currentUser?.uid && (
-            <form onSubmit={onClickProfileEdit}>
-              <MyPageHeader>
-                <HeaderText>프로필</HeaderText>
-                <ClickText type="submit">완료하기</ClickText>
-              </MyPageHeader>
-              <InformationBox>
-                <EditPhotoBox>
-                  <ProfilePhoto>
-                    <UploadImage
-                      imageURL={photoURL}
-                      setImageURL={setPhotoURL}
-                    />
-                  </ProfilePhoto>
-                </EditPhotoBox>
-                <EditNickNameBox>
-                  <TextInput
-                    value={nickName}
-                    onChange={(e) => {
-                      setNickName(e.target.value);
-                    }}
-                    placeholder="닉네임"
-                    maxLength={8}
-                  />
-                  <Select
-                    onChange={(e) => {
-                      setArea(e.target.value);
-                    }}
-                    defaultValue={area}
-                  >
-                    {OPTIONS.map((option) => (
-                      <option key={option.area} value={option.area}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </Select>
-                  <p>1일째 운동중</p>
-                  <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
-                  <InstagramBox>
-                    <InstagramInput
-                      value={instagram}
-                      onChange={(e) => {
-                        setInstagram(e.target.value);
-                      }}
-                      placeholder="아이디"
-                      maxLength={20}
-                    />
-                  </InstagramBox>
-                </EditNickNameBox>
-                <IntroductionText
-                  value={introduction}
+          <form onSubmit={onClickProfileEdit}>
+            <MyPageHeader>
+              <HeaderText>프로필</HeaderText>
+              <ClickText type="submit">완료하기</ClickText>
+            </MyPageHeader>
+            <InformationBox>
+              <EditPhotoBox>
+                <ProfilePhoto>
+                  <UploadImage imageURL={photoURL} setImageURL={setPhotoURL} />
+                </ProfilePhoto>
+              </EditPhotoBox>
+              <EditNickNameBox>
+                <TextInput
+                  value={nickName}
                   onChange={(e) => {
-                    setIntroduction(e.target.value);
+                    setNickName(e.target.value);
                   }}
-                  maxLength={104}
-                  placeholder="자기소개를 입력해주세요."
+                  placeholder="닉네임"
+                  maxLength={8}
                 />
-              </InformationBox>
-            </form>
-          )}
+                <Select
+                  onChange={(e) => {
+                    setArea(e.target.value);
+                  }}
+                  defaultValue={area}
+                >
+                  {OPTIONS.map((option) => (
+                    <option key={option.area} value={option.area}>
+                      {option.name}
+                    </option>
+                  ))}
+                </Select>
+                <p>1일째 운동중</p>
+                <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
+                <InstagramBox>
+                  <InstagramInput
+                    value={instagram}
+                    onChange={(e) => {
+                      setInstagram(e.target.value);
+                    }}
+                    placeholder="아이디"
+                    maxLength={20}
+                  />
+                </InstagramBox>
+              </EditNickNameBox>
+              <IntroductionText
+                value={introduction}
+                onChange={(e) => {
+                  setIntroduction(e.target.value);
+                }}
+                maxLength={104}
+                placeholder="자기소개를 입력해주세요."
+              />
+            </InformationBox>
+          </form>
         </>
       )}
     </>

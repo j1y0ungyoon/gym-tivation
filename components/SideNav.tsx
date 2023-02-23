@@ -34,7 +34,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <NavBtn onClick={goToMapBoard}>주변 동료 모집</NavBtn>
       <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
       {isLoggedIn && (
-        <NavBtn onClick={() => goToDetailMyPage(id)}>마이페이지</NavBtn>
+        <NavBtn onClick={() => goToDetailMyPage()}>마이페이지</NavBtn>
       )}
     </SideNavWrapper>
   );
