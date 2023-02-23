@@ -54,6 +54,7 @@ const BoardPostWrapper = styled.div`
   border-radius: 1.5rem;
   height: 9rem;
   padding: 0.5rem;
+  cursor: pointer;
 `;
 const BoardPostContainer = styled.div`
   display: flex;
