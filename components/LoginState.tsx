@@ -1,11 +1,16 @@
+import { ProfileItem } from '@/pages/myPage/[...params]';
+import { useRouter } from 'next/router';
+import { dbService } from '@/firebase';
+import { getDocs } from 'firebase/firestore';
+
 import styled from 'styled-components';
-import { ProfileItem } from '@/pages/myPage';
 
 type ProfileEditProps = {
   item: ProfileItem;
   toggle: boolean;
   follwoingInformation: string;
   followerInformation: string;
+  paramsId: string;
 };
 
 const LoginState = ({
@@ -13,14 +18,30 @@ const LoginState = ({
   toggle,
   follwoingInformation,
   followerInformation,
+  paramsId,
 }: ProfileEditProps) => {
+  const router = useRouter();
+
+  const goToMyPage = (id: any) => {
+    window.location.replace(`/myPage/${id}`);
+    router.push({
+      query: {
+        id,
+      },
+    });
+  };
+
   return (
     <>
       <LoginStateWrapper>
         {toggle ? (
           <>
             {followerInformation.includes(item.id) ? (
-              <OnOffBox>
+              <OnOffBox
+                onClick={() => {
+                  goToMyPage(item.id);
+                }}
+              >
                 <ProfilePhoto>
                   <Photo src={item.photoURL} />
                 </ProfilePhoto>
@@ -41,7 +62,11 @@ const LoginState = ({
         ) : (
           <>
             {follwoingInformation.includes(item.id) ? (
-              <OnOffBox>
+              <OnOffBox
+                onClick={() => {
+                  goToMyPage(item.id);
+                }}
+              >
                 <ProfilePhoto>
                   <Photo src={item.photoURL} />
                 </ProfilePhoto>
@@ -76,6 +101,9 @@ const OnOffBox = styled.div`
   width: 24vw;
   height: 8vh;
   border-radius: 15px;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const ProfilePhoto = styled.div`

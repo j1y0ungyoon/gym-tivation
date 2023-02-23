@@ -18,6 +18,13 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       router.push('/signIn');
     }
   };
+  const id = authService.currentUser?.uid;
+  const goToDetailMyPage = () => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: { id },
+    });
+  };
 
   return (
     <SideNavWrapper>
@@ -27,7 +34,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <NavBtn onClick={goToMapBoard}>주변 동료 모집</NavBtn>
       <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
       {isLoggedIn && (
-        <NavBtn onClick={() => router.push('/myPage')}>마이페이지</NavBtn>
+        <NavBtn onClick={() => goToDetailMyPage(id)}>마이페이지</NavBtn>
       )}
     </SideNavWrapper>
   );

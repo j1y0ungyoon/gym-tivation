@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
-import BoardComment from '@/components/BoardComment';
+// import BoardComment from '@/components/BoardComment';
 
 interface DetailProps {
   id?: string;
@@ -246,7 +246,7 @@ const Detail = ({ params }: any) => {
               <DetailPostPhoto src={detailPost?.photo} />
               <DetailPostContent>{detailPost?.content}</DetailPostContent>
             </ContentContainer>
-            <BoardComment />
+            {/* <BoardComment /> */}
             <button onClick={onClickChangeDetail}>수정</button>
             <button onClick={onClickDeleteBoardPost}>삭제</button>
           </DetailContent>
