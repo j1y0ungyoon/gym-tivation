@@ -78,7 +78,7 @@ const CommentList = ({ id }: { id: string }) => {
       {comments
         .filter((comment) => comment.postId === id)
         .map((comment) => {
-          return <Comment comment={comment} />;
+          return <Comment key={comment.id} comment={comment} />;
         })}
 
       <div>

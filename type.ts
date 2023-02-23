@@ -73,6 +73,26 @@ export interface CommentType {
   createdAt?: number;
 }
 
+export interface BoardCommentType {
+  id: string;
+  user?: string;
+  nickName?: string;
+  photo?: string;
+  boardComment?: string;
+  postId?: string;
+  createdAt?: number;
+}
+
+export interface GalleryCommentType {
+  id: string;
+  user?: string;
+  nickName?: string;
+  photo?: string;
+  galleryComment?: string;
+  postId?: string;
+  createdAt?: number;
+}
+
 // export interface InitialSelectedDaysType {
 //   monday: boolean;
 //   tuesday: boolean;

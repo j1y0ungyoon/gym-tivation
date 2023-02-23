@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
-// import BoardComment from '@/components/BoardComment';
+import BoardCommentList from '@/components/BoardCommentList';
 
 interface DetailProps {
   id?: string;
@@ -23,7 +23,7 @@ interface DetailProps {
   category?: string;
   detailPost?: any;
   like?: string[];
-  uid?: string | undefined;
+  userId?: string;
 }
 
 const Detail = ({ params }: any) => {
@@ -43,7 +43,7 @@ const Detail = ({ params }: any) => {
 
   const [id] = params;
   const router = useRouter();
-  const uid = authService.currentUser?.uid;
+  const user = authService.currentUser?.uid;
   // 게시글, 저장된 이미지 파일 delete
   const onClickDeleteBoardPost = async () => {
     console.log('photo', detailPost?.photo);
@@ -105,6 +105,7 @@ const Detail = ({ params }: any) => {
     deleteObject(ref(storage, prevPhotoUrl));
     uploadEditedImage();
     setChangeDetailPost(false);
+    toBoard();
   };
 
   //image onchange
@@ -128,7 +129,11 @@ const Detail = ({ params }: any) => {
   useEffect(() => {
     uploadEditedImage();
   }, [editImageUpload]);
-
+  const toBoard = () => {
+    router.push({
+      pathname: `/board`,
+    });
+  };
   const getEditPost = () => {
     const unsubscribe = onSnapshot(doc(dbService, 'posts', id), (doc) => {
       const data = doc.data();
@@ -141,6 +146,9 @@ const Detail = ({ params }: any) => {
         category: data?.category,
         photo: data?.photo,
         like: data?.like,
+        userId: data?.userId,
+        nickName: data?.nickName,
+        userPhoto: data?.userPhoto,
       };
 
       setDetailPost(getDetailPost);
@@ -187,7 +195,6 @@ const Detail = ({ params }: any) => {
               />
             </TitleContainer>
             <ContentContainer>
-              {/* <BoardCategory category={category} setCategory={setCategory} /> */}
               <CategoryWrapper>
                 <CategoryLabel>
                   <CategorySelect
@@ -260,9 +267,14 @@ const Detail = ({ params }: any) => {
                 <DetailPostContent>{detailPost?.content}</DetailPostContent>
               </ContentBox>
             </ContentContainer>
-
+            <BottomWrapper>
+              <CommentWrapper>
+                <BoardCommentList id={id} />
+              </CommentWrapper>
+            </BottomWrapper>
+          </DetailContent>
+          {user === detailPost?.userId ? (
             <DetailButtonWrapper>
-              {/* <BoardComment /> */}
               <DetailPostButton onClick={onClickChangeDetail}>
                 수정
               </DetailPostButton>
@@ -270,7 +282,7 @@ const Detail = ({ params }: any) => {
                 삭제
               </DetailPostButton>
             </DetailButtonWrapper>
-          </DetailContent>
+          ) : null}
         </PostWrapper>
       )}
     </>
@@ -278,12 +290,21 @@ const Detail = ({ params }: any) => {
 };
 const PostWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100vw;
   height: 95vh;
   background-color: white;
   border-radius: 2rem;
+`;
+const BottomWrapper = styled.div`
+  display: flex;
+`;
+const CommentWrapper = styled.div`
+  display: flex;
+
+  flex-direction: column; ;
 `;
 const PostContent = styled.form`
   display: flex;
@@ -299,9 +320,10 @@ const DetailContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 97%;
-  height: 95%;
+  /* height: 95%; */
   background-color: #f2f2f2;
   border-radius: 2rem;
+  overflow: scroll;
 `;
 const DetailImageWrapper = styled.div`
   display: flex;
@@ -321,6 +343,8 @@ const TitleContainer = styled.div`
 const ContentBox = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100%;
+  height: 100%;
 `;
 const PostTitle = styled.input`
   width: 80%;
@@ -341,7 +365,7 @@ const ContentInput = styled.textarea`
   display: flex;
   padding: 1rem;
   width: 50%;
-  height: 50%;
+  height: 90%;
   border-radius: 2rem;
   font-size: 1.5rem;
   margin: 1rem;
@@ -364,7 +388,7 @@ const ImageInput = styled.input`
 const ImagePreview = styled.img`
   margin-top: 1rem;
   width: 100%;
-  height: 50%;
+  height: 90%;
   object-fit: cover;
   border-radius: 2rem;
 `;
@@ -383,14 +407,13 @@ const DetailPostContent = styled.div`
   border-radius: 2rem;
   font-size: 1.5rem;
   margin: 1rem;
-  resize: none;
-  border: none;
+  border: 1px solid #777;
 `;
 
 const DetailPostPhoto = styled.img`
   margin-top: 1rem;
   width: 100%;
-  height: 50%;
+  height: 90%;
   border-radius: 2rem;
   object-fit: cover;
 `;
@@ -411,7 +434,9 @@ const CategoryText = styled.span`
   width: 110px;
   height: 35px;
   background: #e6e6e6;
-  border-radius: 50px;
+  border-radius: 2rem;
+  margin-right: 1rem;
+  margin-bottom: 2rem;
   border: none;
   display: flex;
   justify-content: center;

@@ -1,15 +1,9 @@
 import { dbService, storage } from '../../firebase';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { EditRecruitPostParameterType } from '../../type';
 import { deleteObject, ref } from 'firebase/storage';
 import { query } from 'firebase/database';
+import { describe } from 'node:test';
 
 // 동료 모집글 삭제하기
 export const deleteRecruitPost = async (postId: string) => {
@@ -32,6 +26,15 @@ export const deleteComment = async (commentId: string) => {
   await deleteDoc(doc(dbService, 'comments', commentId));
 };
 
+//게시판 댓글 삭제하기
+
+export const deleteBoardComment = async (id: string) => {
+  await deleteDoc(doc(dbService, 'boardComment', id));
+};
+
+export const deleteGalleryComment = async (id: string) => {
+  await deleteDoc(doc(dbService, 'galleryComment', id));
+};
 // 동료 모집글 가져오기(위도, 경도를 뽑기 위해)
 // export const fetchRecruitPosts = async () => {
 //   const querySnapshot = await getDocs(collection(dbService, 'recruitments'));

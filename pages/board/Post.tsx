@@ -6,17 +6,6 @@ import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
 
-// interface Postporps {
-//   boardTitle: string;
-//   boardContent: string;
-//   userId?: string;
-//   comment?: string;
-//   creatAt?: number;
-//   nickName?: string;
-//   category: string;
-//   setCategory: React.Dispatch<React.SetStateAction<string>>;
-// }
-
 const Post = () => {
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
@@ -26,9 +15,6 @@ const Post = () => {
   const [boardPhoto, setBoardPhoto] = useState('');
 
   const router = useRouter();
-
-  const uid = authService.currentUser?.uid;
-  const displayName = authService.currentUser?.displayName;
 
   const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
@@ -95,10 +81,11 @@ const Post = () => {
       content: boardContent,
       category: category,
       createdAt: Date.now(),
-      user: uid,
-      nickName: displayName,
+      userId: authService.currentUser?.uid,
+      nickName: authService.currentUser?.displayName,
       photo: imageUrl,
       like: [],
+      userPhoto: authService.currentUser?.photoURL,
     };
 
     await addDoc(collection(dbService, 'posts'), newPost)
@@ -121,15 +108,22 @@ const Post = () => {
           </TitleContainer>
           <BoardCategory setCategory={setCategory} />
           <ContentContainer>
-            <ImageInput type="file" accept="image/*" onChange={onChangeImage} />
-            <ImagePreview id="image"></ImagePreview>
+            <PostImageWrapper>
+              <ImageInput
+                type="file"
+                accept="image/*"
+                onChange={onChangeImage}
+              />
+              <ImagePreview id="image" />
+            </PostImageWrapper>
             <ContentInput
               onChange={onChangeBoardContent}
               value={boardContent}
             />
           </ContentContainer>
-
-          <PostButton type="submit">게시하기</PostButton>
+          <PostButtonWrapper>
+            <PostButton type="submit">게시하기</PostButton>
+          </PostButtonWrapper>
         </PostContent>
       </PostWrapper>
     </>
@@ -141,7 +135,6 @@ const PostWrapper = styled.div`
   justify-content: center;
   width: 100vw;
   height: 95vh;
-  border: 1px solid black;
   background-color: white;
   border-radius: 2rem;
 `;
@@ -151,20 +144,73 @@ const PostContent = styled.form`
   align-items: center;
   width: 97%;
   height: 95%;
-  background-color: pink;
+  background-color: #f2f2f2;
   border-radius: 2rem;
 `;
-const TitleContainer = styled.div``;
-const PostTitle = styled.input`
-  width: 30rem;
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  width: 100%;
+  font-size: 2rem;
 `;
-const ContentContainer = styled.div``;
-const ContentInput = styled.textarea``;
-const PostButton = styled.button``;
-const ImageInput = styled.input``;
+const PostTitle = styled.input`
+  width: 80%;
+  height: 3rem;
+  border-radius: 1rem;
+  border: none;
+  margin: 1rem;
+`;
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 80%;
+  padding: 2rem;
+`;
+const ContentInput = styled.textarea`
+  display: flex;
+  padding: 1rem;
+  width: 50%;
+  height: 90%;
+  border-radius: 2rem;
+  font-size: 1.5rem;
+  margin: 1rem;
+  resize: none;
+  border: none;
+`;
+const PostButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  height: 20%;
+  padding: 2rem;
+`;
+const PostButton = styled.button`
+  width: 10rem;
+  height: 2rem;
+  border-radius: 1rem;
+  background-color: #d9d9d9;
+  margin: 1rem;
+  border: none;
+`;
+const ImageInput = styled.input`
+  width: 100%;
+  height: 2rem;
+`;
 const ImagePreview = styled.img`
-  width: 150px;
-  height: 150px;
+  margin-top: 1rem;
+  width: 100%;
+  height: 100%;
+  border-radius: 2rem;
+`;
+const PostImageWrapper = styled.div`
+  display: flex;
+  width: 50%;
+  height: 90%;
+  flex-direction: column;
+  margin: 1rem;
 `;
 
 export default Post;
