@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 
-const SideNav = () => {
+const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
 
   const goToMapBoard = () => {
@@ -26,7 +26,9 @@ const SideNav = () => {
       <NavBtn onClick={() => router.push('/board')}>게시판</NavBtn>
       <NavBtn onClick={goToMapBoard}>주변 동료 모집</NavBtn>
       <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
-      <NavBtn onClick={() => router.push('/myPage')}>마이페이지</NavBtn>
+      {isLoggedIn && (
+        <NavBtn onClick={() => router.push('/myPage')}>마이페이지</NavBtn>
+      )}
     </SideNavWrapper>
   );
 };

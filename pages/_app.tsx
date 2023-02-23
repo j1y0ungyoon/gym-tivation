@@ -4,15 +4,27 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '@/components/Header';
 import SideNav from '@/components/SideNav';
 import styled from 'styled-components';
+import { authService } from '@/firebase';
+import { useState, useEffect } from 'react';
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  useEffect(() => {
+    authService.onAuthStateChanged((user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} />
       <Layout>
-        <SideNav />
+        <SideNav isLoggedIn={isLoggedIn} />
         <Component {...pageProps} />
       </Layout>
     </QueryClientProvider>

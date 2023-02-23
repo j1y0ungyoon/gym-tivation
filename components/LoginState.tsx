@@ -14,7 +14,6 @@ const LoginState = ({
   follwoingInformation,
   followerInformation,
 }: ProfileEditProps) => {
-  console.log('팔로잉', follwoingInformation);
   return (
     <>
       <LoginStateWrapper>
@@ -68,9 +67,7 @@ const LoginState = ({
 
 export default LoginState;
 
-const LoginStateWrapper = styled.div`
-  overflow: auto;
-`;
+const LoginStateWrapper = styled.div``;
 
 const OnOffBox = styled.div`
   display: flex;
@@ -82,7 +79,7 @@ const OnOffBox = styled.div`
 `;
 
 const ProfilePhoto = styled.div`
-  width: 5vw;
+  width: 100px;
   height: 50px;
   margin-top: 2vh;
   margin-left: 1vw;
@@ -114,9 +111,9 @@ const OFFLineState = styled.li`
   }
 `;
 const TextBox = styled.div`
-  margin-top: 3vh;
+  margin-top: 2vh;
   text-align: left;
-  width: 20vw; ;
+  width: 20vw;
 `;
 const StateBox = styled.div`
   margin-top: 3vh;
