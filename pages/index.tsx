@@ -26,9 +26,9 @@ const Home = () => {
     <HomeWrapper>
       <TitleText>현재 함께 운동중인 동료들 2683명!</TitleText>
       <ImgContainer>
-        {/* <ImgBox style={{ zIndex: 100 }} src={`${mainImg[0].photo}`} />
-        <ImgBox style={{ zIndex: 50 }} src={`${mainImg[1].photo}`} />
-        <ImgBox style={{ zIndex: 0 }} src={`${mainImg[2].photo}`} /> */}
+        {/* <ImgBox style={{ zIndex: 100 }} src={`${mainImg[0]?.photo}`} />
+        <ImgBox style={{ zIndex: 50 }} src={`${mainImg[0]?.photo}`} />
+        <ImgBox style={{ zIndex: 0 }} src={`${mainImg[0]?.photo}`} /> */}
       </ImgContainer>
     </HomeWrapper>
   );
