@@ -1,3 +1,4 @@
+import Like from '@/components/Like';
 import { dbService, storage } from '@/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import {
@@ -193,6 +194,7 @@ const GalleryDetail = ({ params }: any) => {
       ) : (
         <GalleryPostWrapper>
           <GalleryContent>
+            <Like detailGalleryPost={detailGalleryPost} />
             <GalleryTitleContainer>
               제목:
               <DetailGalleryTitle>
@@ -257,7 +259,6 @@ const DetailGalleryTitle = styled.div`
   align-items: center;
   justify-content: center;
   margin: 1rem;
-
   font-size: 2rem;
 `;
 const GalleryPostContent = styled.form`
@@ -332,7 +333,9 @@ const GalleryImageWarpper = styled.div`
 const GalleryImagePreview = styled.img`
   margin-top: 1rem;
   width: 100%;
+  height: 90%;
   border-radius: 2rem;
+  object-fit: cover;
 `;
 export function getServerSideProps({ params: { params } }: any) {
   return {
