@@ -1,4 +1,4 @@
-import { SearchMyGymProps } from '@/pages/type';
+import { SearchMyGymProps } from '@/type';
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
@@ -54,6 +54,14 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   // 지역 설정
   const onClickSetRegion = () => {
     setRegion(inputRegion);
+    setInputRegion('');
+  };
+
+  // 엔터 후 지역 설정
+  const onPressSetRegion = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onClickSetRegion();
+    }
   };
 
   // 확인 버튼
@@ -76,7 +84,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
         const bounds = new kakao.maps.LatLngBounds();
         let markers = [];
 
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           //   @ts-ignore
           markers.push({
             position: {
@@ -103,6 +111,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
         <div style={{ height: '20%', width: '100%', backgroundColor: 'blue' }}>
           <input
             onChange={onChangeInputRegion}
+            onKeyUp={onPressSetRegion}
             value={inputRegion}
             placeholder="예시) 서울 종로구"
           />

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import type { BoardPostType } from '@/pages/type';
+import type { BoardPostType } from '@/type';
 
 const BoardPost = ({
   photo,

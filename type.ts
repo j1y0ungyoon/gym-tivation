@@ -9,8 +9,9 @@ export interface RecruitPostType {
   title?: string;
   content?: string;
   id: string;
-  // userId: string,
-  // nickName: string,
+  userId?: string;
+  nickName?: string;
+  userPhoto?: string;
   region?: string;
   gymName?: string;
   startTime?: string;
@@ -46,6 +47,30 @@ export interface WorkOutTimeType {
 export interface DropDownProps {
   setStart: React.Dispatch<React.SetStateAction<string>>;
   setEnd: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface MyPositionType {
+  center: {
+    lat: number;
+    lng: number;
+  };
+  errMsg: string;
+  isLoading: boolean;
+}
+
+export interface MyLocationProps {
+  myPosition: MyPositionType;
+  setMyPosition: React.Dispatch<React.SetStateAction<MyPositionType>>;
+}
+
+export interface CommentType {
+  id: string;
+  userId?: string;
+  nickName?: string;
+  userPhoto?: string;
+  comment?: string;
+  postId?: string;
+  createdAt?: number;
 }
 
 // export interface InitialSelectedDaysType {

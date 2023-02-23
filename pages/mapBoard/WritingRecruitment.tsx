@@ -1,9 +1,9 @@
-import { dbService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { CoordinateType, WorkOutTimeType } from '../type';
+import { CoordinateType, WorkOutTimeType } from '../../type';
 import SearchMyGym from '@/components/SearchMyGym';
 import UseDropDown from '@/components/UseDropDown';
 
@@ -90,8 +90,9 @@ const WritingRecruitment = () => {
     const newRecruitPost = {
       title: recruitTitle,
       content: recruitContent,
-      // userId : string,
-      // nickName : string,
+      userId: authService.currentUser?.uid,
+      nickName: authService.currentUser?.displayName,
+      userPhoto: authService.currentUser?.photoURL,
       region: `${detailAddress.split(' ')[0]} ${detailAddress.split(' ')[1]}`,
       gymName,
       coordinate,

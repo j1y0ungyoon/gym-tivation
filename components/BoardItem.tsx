@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import BoardPost from './BoardPost';
-import type { BoardPostType } from '@/pages/type';
+
 import { useRouter } from 'next/router';
+
+import type { BoardPostType } from '@/type';
 
 interface BoardItemProps {
   boardPosts: BoardPostType[];

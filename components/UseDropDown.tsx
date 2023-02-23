@@ -3,7 +3,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import CustomMenu from './CustomMenu';
 import CustomToggle from './CustomToggle';
 import { PropsWithChildren } from 'react';
-import { DropDownProps } from '@/pages/type';
+import { DropDownProps } from '@/type';
 
 const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
   const timeArray = [

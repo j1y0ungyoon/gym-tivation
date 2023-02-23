@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { RecruitPostType } from '../type';
+import { RecruitPostType } from '../../type';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 import RecruitPost from '@/components/RecruitPost';
 import styled from 'styled-components';
-import { CoordinateType } from '../type';
-import MapModal from '@/components/MapModal';
+import { CoordinateType } from '../../type';
+import SearchColleague from '@/components/SearchColleague';
 
 const initialCoordinate: CoordinateType = {
   lat: 33.5563,
@@ -20,17 +20,10 @@ const MapBoard = () => {
   // 위도, 경도 담아주기 (좌표 -> coordinate)
   const [coordinate, setCoordinate] =
     useState<CoordinateType>(initialCoordinate);
-  // 맵 모달창 오픈
-  const [openMap, setOpenMap] = useState(false);
 
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
     router.push('/mapBoard/WritingRecruitment');
-  };
-
-  // map modal 열기
-  const onClickOpenMap = () => {
-    setOpenMap(!openMap);
   };
 
   // 마운트 시 post 실시간으로 불러오기
@@ -57,35 +50,55 @@ const MapBoard = () => {
   }
 
   return (
-    <MapBoardContainer>
-      <NavBarStyle>네브바</NavBarStyle>
-      <div>
-        <h2>MapBoard</h2>
+    <>
+      <MapWrapper>
+        <MapBoardContainer>
+          <MapBoardHeadContainer>
+            <span>운동 메이트 구하기!</span>
+            <button onClick={goToWrite}>작성하기</button>
+          </MapBoardHeadContainer>
+          <SearchColleague
+            setCoordinate={setCoordinate}
+            coordinate={coordinate}
+          />
+        </MapBoardContainer>
+      </MapWrapper>
+      <MapBoardWrapper>
         {recruitPosts?.map((post) => {
           return <RecruitPost post={post} key={post.id} />;
         })}
-        <h2>운동 메이트 구하기!</h2>
-        <button onClick={goToWrite}>작성하기</button> <br />
-        <button onClick={onClickOpenMap}>내 주변 동료 보기</button>
-      </div>
-      {openMap ? (
-        <MapModal setCoordinate={setCoordinate} coordinate={coordinate} />
-      ) : null}
-    </MapBoardContainer>
+      </MapBoardWrapper>
+    </>
   );
 };
 
 export default MapBoard;
 
-const MapBoardContainer = styled.div`
+const MapWrapper = styled.main`
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const NavBarStyle = styled.div`
+const MapBoardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2rem;
+  background-color: #d9d9d9;
+  border-radius: 2rem;
+  width: 55vw;
+`;
+
+const MapBoardHeadContainer = styled.section``;
+
+const MapBoardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100vh;
   background-color: antiquewhite;
-  width: 10rem;
+  gap: 1rem;
 `;
 
 const PostListSection = styled.div``;
