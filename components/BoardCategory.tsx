@@ -57,6 +57,7 @@ const CategoryText = styled.span`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  margin: 1rem;
   color: #777; ;
 `;
 const CategorySelect = styled.input.attrs({ type: 'radio' })`

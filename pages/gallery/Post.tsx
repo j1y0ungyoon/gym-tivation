@@ -210,6 +210,7 @@ const GalleryImageWarpper = styled.div`
 const GalleryImagePreview = styled.img`
   margin-top: 1rem;
   width: 100%;
+  height: 100%;
   border-radius: 2rem;
 `;
 
