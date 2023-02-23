@@ -1,72 +1,34 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-// import { useState, useEffect } from 'react';
-// import {
-//   query,
-//   collection,
-//   getDocs,
-//   where,
-//   onSnapshot,
-// } from 'firebase/firestore';
-// import { dbService, authService } from '@/firebase';
-// import Follow from '@/components/Follow';
-
-// type Follow = {
-//   id: string;
-//   area?: string;
-//   introduction?: string;
-//   instagram?: string;
-//   displayName?: string;
-//   email?: string;
-//   photoURL?: string;
-//   loginState?: boolean;
-//   follow?: string;
-//   uid?: string;
-// };
+import { authService, dbService } from '@/firebase';
+import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 
 const Home = () => {
-  ////////////////////////////// 여기부터 팔로우 시작 ////////////////////////////
-  // const [followInformation, setFollowInformation] = useState<Follow[]>([]);
+  const user = authService.currentUser;
 
-  // const userUid: any = String(authService.currentUser?.uid);
+  const [mainImg, setMainImg] = useState<any>([]);
 
-  // useEffect(() => {
-  //   const q = query(
-  //     collection(dbService, 'profile'),
-  //     where('uid', '!=', userUid),
-  //   );
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const newfollows = snapshot.docs.map((doc) => {
-  //       const newfollow = {
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       };
-  //       return newfollow;
-  //     });
-  //     setFollowInformation(newfollows);
-  //   });
+  useEffect(() => {
+    const getGallery = async () => {
+      const q = await getDocs(query(collection(dbService, 'gallery')));
 
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, [authService.currentUser]);
+      const gallery = q.docs.map((doc) => {
+        return doc.data();
+      });
 
-  // return (
-  //   <div>
-  //     {followInformation.map((item) => {
-  //       return <Follow key={item.id} item={item} userUid={userUid} />;
-  //     })}
-  //   </div>
-  // );
-  //////////////////////////////// 여기까지 팔로우 ////////////////////////////////////
+      setMainImg(gallery);
+    };
+    getGallery();
+  }, []);
 
   return (
     <HomeWrapper>
       <TitleText>현재 함께 운동중인 동료들 2683명!</TitleText>
       <ImgContainer>
-        <ImgBox style={{ zIndex: 100 }} src="/assets/images/testImg01.png" />
-        <ImgBox style={{ zIndex: 50 }} src="/assets/images/testImg02.png" />
-        <ImgBox style={{ zIndex: 0 }} src="/assets/images/testImg01.png" />
+        {/* <ImgBox style={{ zIndex: 100 }} src={`${mainImg[0].photo}`} />
+        <ImgBox style={{ zIndex: 50 }} src={`${mainImg[1].photo}`} />
+        <ImgBox style={{ zIndex: 0 }} src={`${mainImg[2].photo}`} /> */}
       </ImgContainer>
     </HomeWrapper>
   );
@@ -98,6 +60,7 @@ const ImgBox = styled.img`
   height: 600px;
   border: 1px solid red;
   border-radius: 200px;
+  object-fit: cover;
 `;
 
 export default Home;

@@ -186,50 +186,58 @@ const Detail = ({ params }: any) => {
                 defaultValue={detailPost?.title}
               />
             </TitleContainer>
-            {/* <BoardCategory category={category} setCategory={setCategory} /> */}
-            <CategoryWrapper>
-              <CategoryLabel>
-                <CategorySelect
-                  type="radio"
-                  name="category"
-                  value="운동정보"
-                  onChange={onChangeBoardCategory}
-                />
-                <CategoryText>운동정보</CategoryText>
-              </CategoryLabel>
-              <CategoryLabel>
-                <CategorySelect
-                  type="radio"
-                  name="category"
-                  value="헬스장정보"
-                  onChange={onChangeBoardCategory}
-                />
-                <CategoryText>헬스장정보</CategoryText>
-              </CategoryLabel>
-              <CategoryLabel>
-                <CategorySelect
-                  type="radio"
-                  name="category"
-                  value="헬스용품추천"
-                  onChange={onChangeBoardCategory}
-                />
-                <CategoryText>헬스용품추천</CategoryText>
-              </CategoryLabel>
-            </CategoryWrapper>
             <ContentContainer>
-              <ImageInput
-                type="file"
-                accept="image/*"
-                onChange={onChangeImage}
-              />
-              <ImagePreview id="image" src={prevPhotoUrl}></ImagePreview>
-              <ContentInput
-                onChange={onChangeEditContent}
-                defaultValue={detailPost?.content}
-              />
+              {/* <BoardCategory category={category} setCategory={setCategory} /> */}
+              <CategoryWrapper>
+                <CategoryLabel>
+                  <CategorySelect
+                    type="radio"
+                    name="category"
+                    value="운동정보"
+                    onChange={onChangeBoardCategory}
+                  />
+                  <CategoryText>운동정보</CategoryText>
+                </CategoryLabel>
+                <CategoryLabel>
+                  <CategorySelect
+                    type="radio"
+                    name="category"
+                    value="헬스장정보"
+                    onChange={onChangeBoardCategory}
+                  />
+                  <CategoryText>헬스장정보</CategoryText>
+                </CategoryLabel>
+                <CategoryLabel>
+                  <CategorySelect
+                    type="radio"
+                    name="category"
+                    value="헬스용품추천"
+                    onChange={onChangeBoardCategory}
+                  />
+                  <CategoryText>헬스용품추천</CategoryText>
+                </CategoryLabel>
+              </CategoryWrapper>
+              <ContentBox>
+                <DetailImageWrapper>
+                  <ImageInput
+                    type="file"
+                    accept="image/*"
+                    onChange={onChangeImage}
+                  />
+                  <ImagePreview id="image" src={prevPhotoUrl}></ImagePreview>
+                </DetailImageWrapper>
+                <ContentInput
+                  onChange={onChangeEditContent}
+                  defaultValue={detailPost?.content}
+                />
+              </ContentBox>
             </ContentContainer>
-            <button onClick={onClickChangeDetail}>취소</button>
-            <PostButton type="submit">수정완료</PostButton>
+            <DetailButtonWrapper>
+              <DetailPostButton onClick={onClickChangeDetail}>
+                취소
+              </DetailPostButton>
+              <DetailPostButton type="submit">수정완료</DetailPostButton>
+            </DetailButtonWrapper>
           </PostContent>
         </PostWrapper>
       ) : (
@@ -241,14 +249,27 @@ const Detail = ({ params }: any) => {
               <DetailPostTitle>{detailPost?.title}</DetailPostTitle>
             </TitleContainer>
             <ContentContainer>
-              <CategoryText>{detailPost?.category}</CategoryText>
-              <div>created At{detailPost?.createdAt}</div>
-              <DetailPostPhoto src={detailPost?.photo} />
-              <DetailPostContent>{detailPost?.content}</DetailPostContent>
+              <CategoryWrapper>
+                <CategoryText>{detailPost?.category}</CategoryText>
+              </CategoryWrapper>
+              {/* <div>created At{detailPost?.createdAt}</div> */}
+              <ContentBox>
+                <DetailImageWrapper>
+                  <DetailPostPhoto src={detailPost?.photo} />
+                </DetailImageWrapper>
+                <DetailPostContent>{detailPost?.content}</DetailPostContent>
+              </ContentBox>
             </ContentContainer>
-            {/* <BoardComment /> */}
-            <button onClick={onClickChangeDetail}>수정</button>
-            <button onClick={onClickDeleteBoardPost}>삭제</button>
+
+            <DetailButtonWrapper>
+              {/* <BoardComment /> */}
+              <DetailPostButton onClick={onClickChangeDetail}>
+                수정
+              </DetailPostButton>
+              <DetailPostButton onClick={onClickDeleteBoardPost}>
+                삭제
+              </DetailPostButton>
+            </DetailButtonWrapper>
           </DetailContent>
         </PostWrapper>
       )}
@@ -261,7 +282,6 @@ const PostWrapper = styled.div`
   justify-content: center;
   width: 100vw;
   height: 95vh;
-  border: 1px solid black;
   background-color: white;
   border-radius: 2rem;
 `;
@@ -271,7 +291,7 @@ const PostContent = styled.form`
   align-items: center;
   width: 97%;
   height: 95%;
-  background-color: pink;
+  background-color: #f2f2f2;
   border-radius: 2rem;
 `;
 const DetailContent = styled.div`
@@ -280,48 +300,107 @@ const DetailContent = styled.div`
   align-items: center;
   width: 97%;
   height: 95%;
-  background-color: pink;
+  background-color: #f2f2f2;
   border-radius: 2rem;
 `;
-const TitleContainer = styled.div``;
+const DetailImageWrapper = styled.div`
+  display: flex;
+  width: 50%;
+  height: 90%;
+  flex-direction: column;
+  margin: 1rem;
+`;
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  width: 100%;
+  font-size: 2rem;
+`;
+const ContentBox = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 const PostTitle = styled.input`
-  width: 30rem;
+  width: 80%;
+  height: 3rem;
+  border-radius: 1rem;
+  border: none;
+  margin: 1rem;
 `;
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 80%;
+  padding: 2rem;
 `;
+
 const ContentInput = styled.textarea`
-  font-size: 1rem;
-  width: 500px;
-  height: 50px;
-  border: 1px solid black;
+  display: flex;
+  padding: 1rem;
+  width: 50%;
+  height: 50%;
+  border-radius: 2rem;
+  font-size: 1.5rem;
+  margin: 1rem;
+  resize: none;
+  border: none;
 `;
-const PostButton = styled.button``;
-const ImageInput = styled.input``;
+const DetailPostButton = styled.button`
+  width: 10rem;
+  height: 2rem;
+  border-radius: 1rem;
+  background-color: #d9d9d9;
+  margin: 1rem;
+  border: none;
+`;
+
+const ImageInput = styled.input`
+  width: 100%;
+  height: 2rem;
+`;
 const ImagePreview = styled.img`
-  width: 500px;
-  height: 500px;
+  margin-top: 1rem;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+  border-radius: 2rem;
 `;
 const DetailPostTitle = styled.p`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
   font-size: 2rem;
-  width: 100%;
-  height: 50px;
-  border: 1px solid black;
 `;
-const DetailPostContent = styled.p`
-  font-size: 1rem;
-  width: 500px;
-  height: 50px;
-  border: 1px solid black;
+const DetailPostContent = styled.div`
+  display: flex;
+  padding: 1rem;
+  width: 50%;
+  height: 90%;
+  border-radius: 2rem;
+  font-size: 1.5rem;
+  margin: 1rem;
+  resize: none;
+  border: none;
 `;
 
 const DetailPostPhoto = styled.img`
-  width: 500px;
-  height: 500px;
-  border: 1px solid black;
+  margin-top: 1rem;
+  width: 100%;
+  height: 50%;
+  border-radius: 2rem;
+  object-fit: cover;
 `;
-
+const DetailButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  height: 20%;
+  padding: 2rem;
+`;
 const CategoryWrapper = styled.div`
   display: flex;
   flex-direction: row;
