@@ -24,6 +24,7 @@ const GalleryPostWrapper = styled.div`
   height: 14rem;
   display: flex;
   flex-direction: row;
+  cursor: pointer;
 `;
 const GalleryImage = styled.img`
   width: 100%;
