@@ -1,6 +1,5 @@
 import { authService, dbService } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
@@ -111,13 +110,13 @@ const LogoutBtn = styled.button`
   height: 40px;
   margin-right: 25px;
   padding: 0;
-  border-radius: 20px;
+  border-radius: 50px;
   border: none;
-  background-color: #cecece;
-  color: #222;
+  background-color: #d9d9d9;
+  color: #000;
   :hover {
-    background-color: #222;
-    color: #eee;
+    background-color: #000;
+    color: #fff;
   }
 `;
 
