@@ -1,5 +1,5 @@
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+// import 'react-calendar/dist/Calendar.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
@@ -16,11 +16,7 @@ export type CalendarItem = {
   content?: string;
 };
 
-export type CalendarLoad = {
-  setIsLoadCalendar: (p: boolean) => void;
-};
-
-const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
+const MyPageCalendar = () => {
   const [value, setValue] = useState(new Date());
   const [mark, setMark] = useState([] as any);
   const [calendarInformation, setCalendarInformation] = useState<
@@ -69,7 +65,6 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
       where('uid', '==', userUid),
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      console.log('스냅샷');
       const newcalendars = snapshot.docs.map((doc) => {
         setMark((prev: any) => [...prev, doc.data().date]);
         const newcalendar = {
@@ -83,41 +78,43 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
     return () => {
       unsubscribe();
     };
-  }, []);
-
-  //
-
+  }, [authService.currentUser]);
   return (
     <CalendarWrapper>
       <>
-        <Calendar
-          onChange={setValue}
-          value={value}
-          formatDay={(locale, date) =>
-            new Date(date).toLocaleDateString('en-us', {
-              day: '2-digit',
-            })
-          }
-          tileContent={({ date }) => {
-            const exist = mark.find(
-              (oneDate: any) =>
-                oneDate ===
-                String(
-                  new Date(date).toLocaleDateString('ko', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                  }),
-                ),
-            );
-            return (
-              <>
-                <DotBox>{exist && <CalendarDot />}</DotBox>
-              </>
-            );
-          }}
-        />
-        <h3>{markDate}</h3>
+        <Test>
+          <Calendar
+            onChange={setValue}
+            value={value}
+            next2Label={null}
+            prev2Label={null}
+            calendarType="US"
+            formatDay={(locale, date) =>
+              new Date(date).toLocaleDateString('en-us', {
+                day: '2-digit',
+              })
+            }
+            tileContent={({ date }) => {
+              const exist = mark.find(
+                (oneDate: any) =>
+                  oneDate ===
+                  String(
+                    new Date(date).toLocaleDateString('ko', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    }),
+                  ),
+              );
+              return (
+                <>
+                  <DotBox>{exist && <CalendarDot />}</DotBox>
+                </>
+              );
+            }}
+          />
+        </Test>
+        <DateText>{markDate}</DateText>
         {markCompare === undefined ? (
           <>
             <CalendarAdd markDate={markDate} userUid={userUid} />
@@ -130,7 +127,8 @@ const MyPageCalendar = ({ setIsLoadCalendar }: CalendarLoad) => {
                 <CalendarEdit
                   key={item.id}
                   item={item}
-                  setIsLoadCalendar={setIsLoadCalendar}
+                  mark={mark}
+                  setMark={setMark}
                 />
               );
             })
@@ -161,33 +159,147 @@ const CalendarDot = styled.div`
   border-radius: 50%;
   background-color: #f87171;
 `;
-const CalendarTextArea = styled.textarea`
-  padding: 12px;
-  width: 18vw;
-  height: 42vh;
-  border-radius: 20px;
-  border: none;
-  background-color: white;
-  font-size: 16px;
-  overflow: none;
-  resize: none;
-  :focus {
+const DateText = styled.h3`
+  margin-top: 2vh;
+`;
+const Test = styled.div`
+  .react-calendar {
+    width: 350px;
+    max-width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.125em;
+  }
+  .react-calendar--doubleView {
+    width: 700px;
+  }
+  .react-calendar--doubleView .react-calendar__viewContainer {
+    display: flex;
+    margin: -0.5em;
+  }
+  .react-calendar--doubleView .react-calendar__viewContainer > * {
+    width: 50%;
+    margin: 0.5em;
+  }
+  .react-calendar,
+  .react-calendar *,
+  .react-calendar *:before,
+  .react-calendar *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .react-calendar button {
+    margin: 0;
+    border: 0;
     outline: none;
   }
-`;
-const CalendarButton = styled.button`
-  margin-top: 1vh;
-  width: 4vw;
-  height: 3vh;
-  color: black;
-  background-color: white;
-  border: none;
-  font-size: 16px;
-  border-radius: 30px;
-  :hover {
+  .react-calendar button:enabled:hover {
     cursor: pointer;
-    background-color: #dee2e6;
+  }
+  .react-calendar__navigation {
+    display: flex;
+    height: 44px;
+    margin-bottom: 1em;
+  }
+  .react-calendar__navigation button {
+    min-width: 44px;
+    font-size: 24px;
+    background: none;
+  }
+  .react-calendar__navigation button:disabled {
+    background-color: #f0f0f0;
+  }
+  .react-calendar__navigation button:enabled:hover,
+  .react-calendar__navigation button:enabled:focus {
+    background-color: #e6e6e6;
+  }
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.75em;
+  }
+  .react-calendar__month-view__weekdays__weekday {
+    padding: 0.5em;
+  }
+  .react-calendar__month-view__weekNumbers .react-calendar__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em;
+    font-weight: bold;
+  }
+  .react-calendar__month-view__days__day--weekend {
+    color: #d10000;
+  }
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: #757575;
+  }
+  .react-calendar__year-view .react-calendar__tile,
+  .react-calendar__decade-view .react-calendar__tile,
+  .react-calendar__century-view .react-calendar__tile {
+    padding: 2em 0.5em;
+  }
+  .react-calendar__tile {
+    max-width: 100%;
+    padding: 10px 6.6667px;
+    background: none;
+    text-align: center;
+    line-height: 16px;
+  }
+  .react-calendar__tile:disabled {
+    background-color: #f0f0f0;
+  }
+  .react-calendar__tile:enabled:hover,
+  .react-calendar__tile:enabled:focus {
+    background-color: #e6e6e6;
+  }
+  .react-calendar__tile--now {
+    background: #ffff76;
+  }
+  .react-calendar__tile--now:enabled:hover,
+  .react-calendar__tile--now:enabled:focus {
+    background: #ffffa9;
+  }
+  .react-calendar__tile--hasActive {
+    background: #76baff;
+  }
+  .react-calendar__tile--hasActive:enabled:hover,
+  .react-calendar__tile--hasActive:enabled:focus {
+    background: #a9d4ff;
+  }
+  .react-calendar__tile--active {
+    background: #006edc;
+    color: white;
+  }
+  .react-calendar__tile--active:enabled:hover,
+  .react-calendar__tile--active:enabled:focus {
+    background: #1087ff;
+  }
+  .react-calendar--selectRange .react-calendar__tile--hover {
+    background-color: #e6e6e6;
+  }
+  .react-calendar__navigation__label > span {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  /* .react-calendar__tile--now {
+    background: white;
+    color: black;
+  }
+  .react-calendar__tile--now:enabled:hover {
+    background-color: white;
+  }
+  .react-calendar__tile--now:enabled:focus {
+    color: red;
+  } */
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom-style: solid;
+    border-bottom-color: black;
+    border-width: 1px;
   }
 `;
-
-const CalendarContentBox = styled.div``;

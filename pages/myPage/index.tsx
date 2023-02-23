@@ -21,7 +21,8 @@ export type ProfileItem = {
   email?: string;
   photoURL?: string;
   loginState?: boolean;
-  follow?: string;
+  following?: string;
+  follower?: string;
   uid?: string;
 };
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
@@ -42,11 +43,14 @@ const MyPage = () => {
   const userUid: any = String(authService.currentUser?.uid);
 
   const [toggle, setToggle] = useState(false);
+  const onClickToggle = () => {
+    setToggle(!toggle);
+  };
 
   //Calendar 업로드 시간 설정
-  setTimeout(() => setIsLoadCalendar(true), 800);
 
-  const test = () => {
+  const profileOnSnapShot = () => {
+    setIsLoadCalendar(true);
     const q = query(collection(dbService, 'profile'));
     onSnapshot(q, (snapshot) => {
       const newprofiles = snapshot.docs.map((doc) => {
@@ -73,17 +77,13 @@ const MyPage = () => {
   };
 
   useEffect(() => {
-    test();
+    profileOnSnapShot();
     followGetDoc();
     return () => {
-      test();
+      profileOnSnapShot();
       followGetDoc();
     };
   }, [authService.currentUser?.uid]);
-
-  console.log('팔로잉스', following);
-  console.log('데이터 정보', follwoingInformation);
-  console.log(authService.currentUser);
 
   return (
     <MyPageWrapper>
@@ -113,16 +113,24 @@ const MyPage = () => {
             </MyPageHeader>
             <InformationBox>
               <ToggleButtonBox>
-                <ToggleButton onClick={() => setToggle(false)}>
-                  팔로잉
-                </ToggleButton>
-                <ToggleButton onClick={() => setToggle(true)}>
-                  팔로워
-                </ToggleButton>
+                {toggle ? (
+                  <>
+                    <ToggleButton onClick={onClickToggle}>팔로잉</ToggleButton>
+                    <FollowToggleButton onClick={onClickToggle}>
+                      팔로워
+                    </FollowToggleButton>
+                  </>
+                ) : (
+                  <>
+                    <FollowToggleButton onClick={onClickToggle}>
+                      팔로잉
+                    </FollowToggleButton>
+                    <ToggleButton onClick={onClickToggle}>팔로워</ToggleButton>
+                  </>
+                )}
               </ToggleButtonBox>
-              {profileInformation
-                .filter((item) => item.id !== authService.currentUser?.uid)
-                .map((item) => {
+              <LoginStateBox>
+                {profileInformation.map((item) => {
                   return (
                     <LoginState
                       key={item.id}
@@ -133,14 +141,11 @@ const MyPage = () => {
                     />
                   );
                 })}
+              </LoginStateBox>
             </InformationBox>
           </MypageBox>
           <MypageBox>
-            <Schedule>
-              {isLoadCalendar && (
-                <MyPageCalendar setIsLoadCalendar={setIsLoadCalendar} />
-              )}
-            </Schedule>
+            <Schedule>{isLoadCalendar && <MyPageCalendar />}</Schedule>
           </MypageBox>
         </MyPageContainer>
       )}
@@ -174,8 +179,8 @@ const InformationBox = styled.div`
 
 const Schedule = styled.div`
   background-color: #e9ecef;
-  width: 22vw;
-  height: 101vh;
+  width: 20vw;
+  height: 100vh;
   border-radius: 16px;
 `;
 
@@ -223,4 +228,21 @@ const ToggleButton = styled.button`
     background-color: gray;
     color: white;
   }
+`;
+
+const FollowToggleButton = styled.button`
+  width: 5vw;
+  height: 5vh;
+  background-color: gray;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  :hover {
+    cursor: pointer;
+    background-color: lightgray;
+  }
+`;
+const LoginStateBox = styled.div`
+  height: 30vh;
+  overflow: auto;
 `;

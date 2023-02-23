@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { authService } from '@/firebase';
@@ -12,6 +12,29 @@ type ModalProps = {
 const SignInModal = ({ onClickCloseModal, email_validation }: ModalProps) => {
   const [email, setEmail] = useState('');
   const [isValidEmail, setIsValiEmail] = useState(false);
+  const [emailMessage, setEmailMessage] = useState<string>('');
+  const onChangeEmail = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const emailRegex =
+        /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      const emailCurrent = e.target.value;
+      setEmail(emailCurrent);
+      if (!emailRegex.test(emailCurrent)) {
+        setEmailMessage('이메일 형식을 확인해주세요.');
+        setIsValiEmail(false);
+      } else {
+        setEmailMessage('');
+        setIsValiEmail(true);
+      }
+    },
+    [],
+  );
+  const emailIcon =
+    isValidEmail === true ? (
+      <AiFillCheckCircle color="green" />
+    ) : (
+      <AiFillCheckCircle color="red" />
+    );
 
   //패스워드 이메일 전송
   const onClickSendPassword = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,32 +54,25 @@ const SignInModal = ({ onClickCloseModal, email_validation }: ModalProps) => {
       <ModalWrapper>
         <ModalContainer onSubmit={onClickSendPassword}>
           <HeaderText>비밀번호 찾기</HeaderText>
-          <InputText>이메일</InputText>
-          <SignInInput
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (email_validation.test(e.target.value)) {
-                setIsValiEmail(true);
-              } else {
-                setIsValiEmail(false);
-              }
-            }}
-            placeholder="비밀번호를 찾으실 이메일을 입력해주세요."
-          />
-          {isValidEmail === false ? (
-            <>
+          <InputBox>
+            <InputText>이메일</InputText>
+            <SignInInput
+              type="email"
+              value={email}
+              onChange={onChangeEmail}
+              placeholder="비밀번호를 찾으실 이메일을 입력해주세요."
+            />
+            {email.length > 0 && (
               <IconValidation>
-                <AiFillCheckCircle color="red" />
-                <TextValidation>이메일 형식을 확인해주세요.</TextValidation>
+                {emailIcon}
+                <TextValidation
+                  className={`message ${isValidEmail ? 'success' : 'error'}`}
+                >
+                  {emailMessage}
+                </TextValidation>
               </IconValidation>
-            </>
-          ) : (
-            <IconValidation>
-              <AiFillCheckCircle color="green" />
-            </IconValidation>
-          )}
+            )}
+          </InputBox>
           <SignInButton disabled={isValidEmail === false}>확인</SignInButton>
         </ModalContainer>
       </ModalWrapper>
@@ -73,7 +89,7 @@ const ModalWrapper = styled.div`
   height: 40vh;
   position: fixed;
   top: 50%;
-  left: 50%;
+  left: 55%;
   border-radius: 15px;
   background-color: white;
   transform: translate(-50%, -50%) !important;
@@ -135,4 +151,7 @@ const SignInButton = styled.button`
     cursor: pointer;
     background-color: #dee2e6;
   }
+`;
+const InputBox = styled.div`
+  height: 15vh;
 `;
