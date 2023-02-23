@@ -20,6 +20,7 @@ interface GalleryDetailProps {
   item?: any;
   like?: string[];
 }
+
 const GalleryDetail = ({ params }: any) => {
   const [detailGalleryPost, setDetailGalleryPost] =
     useState<GalleryDetailProps>();
@@ -73,6 +74,7 @@ const GalleryDetail = ({ params }: any) => {
       unsubscribe();
     };
   }, []);
+
   const onChangeEditGalleryTitle = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {

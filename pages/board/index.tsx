@@ -1,6 +1,7 @@
 import BoardItem from '@/components/BoardItem';
-import Search from '@/components/Search';
+// import Search from '@/components/Search';
 import { dbService } from '@/firebase';
+import { BoardPostType } from '@/type';
 import { query } from 'firebase/database';
 import {
   collection,
@@ -12,7 +13,6 @@ import {
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { BoardPostType } from '../type';
 
 interface BoardProps {
   category?: any;
@@ -96,7 +96,7 @@ const Board = () => {
         </CategoryContainter>
 
         <BoardMain>
-          <Search />
+          {/* <Search /> */}
           <BoardContent>
             <BoardItem category={category} boardPosts={boardPosts} />
           </BoardContent>
