@@ -101,7 +101,7 @@ const MyPage = ({ params }: any) => {
       profileOnSnapShot();
       followGetDoc();
     };
-  }, [paramsId]);
+  }, [paramsId, authService.currentUser]);
 
   return (
     <MyPageWrapper>
