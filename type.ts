@@ -9,8 +9,9 @@ export interface RecruitPostType {
   title?: string;
   content?: string;
   id: string;
-  // userId: string,
-  // nickName: string,
+  userId?: string;
+  nickName?: string;
+  userPhoto?: string;
   region?: string;
   gymName?: string;
   startTime?: string;
@@ -60,6 +61,16 @@ export interface MyPositionType {
 export interface MyLocationProps {
   myPosition: MyPositionType;
   setMyPosition: React.Dispatch<React.SetStateAction<MyPositionType>>;
+}
+
+export interface CommentType {
+  id: string;
+  userId?: string;
+  nickName?: string;
+  userPhoto?: string;
+  comment?: string;
+  postId?: string;
+  createdAt?: number;
 }
 
 // export interface InitialSelectedDaysType {

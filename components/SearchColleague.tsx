@@ -11,7 +11,7 @@ const initialPosition = {
   lng: 126.79581,
 };
 
-const MapModal = (props: MapModalProps) => {
+const SearchColleague = (props: MapModalProps) => {
   const { setCoordinate, coordinate } = props;
 
   const [map, setMap] = useState();
@@ -46,6 +46,14 @@ const MapModal = (props: MapModalProps) => {
   // 지역 설정
   const onClickSetRegion = () => {
     setRegion(inputRegion);
+    setInputRegion('');
+  };
+
+  // 엔터 후 지역 설정
+  const onPressSetRegion = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onClickSetRegion();
+    }
   };
 
   // 검색 위치로 지도 재설정
@@ -108,6 +116,7 @@ const MapModal = (props: MapModalProps) => {
       <MapModalMain>
         <input
           onChange={onChangeInputRegion}
+          onKeyUp={onPressSetRegion}
           value={inputRegion}
           placeholder="원하는 지역을 검색하세요!"
         />
@@ -153,7 +162,7 @@ const MapModal = (props: MapModalProps) => {
   );
 };
 
-export default MapModal;
+export default SearchColleague;
 
 // 게시글 작성에서 '운동 장소 등록'이 필요함
 // '운동 장소 등록'을 누르면 map 모달을 띄우고 사용자가 거기서 좌표를 선택하게 한다.
@@ -164,5 +173,5 @@ export default MapModal;
 const MapModalMain = styled.section`
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  width: 50vw;
 `;

@@ -54,6 +54,14 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   // 지역 설정
   const onClickSetRegion = () => {
     setRegion(inputRegion);
+    setInputRegion('');
+  };
+
+  // 엔터 후 지역 설정
+  const onPressSetRegion = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onClickSetRegion();
+    }
   };
 
   // 확인 버튼
@@ -103,6 +111,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
         <div style={{ height: '20%', width: '100%', backgroundColor: 'blue' }}>
           <input
             onChange={onChangeInputRegion}
+            onKeyUp={onPressSetRegion}
             value={inputRegion}
             placeholder="예시) 서울 종로구"
           />
