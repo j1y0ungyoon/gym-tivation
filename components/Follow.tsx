@@ -1,9 +1,9 @@
-import { Follows } from '@/pages/follow';
-import { useState } from 'react';
 import { authService } from '@/firebase';
 import { updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 import styled from 'styled-components';
+import { Follows } from './SearchUser';
+import { useRouter } from 'next/router';
 
 type FollowInformation = {
   item: Follows;
@@ -21,6 +21,13 @@ const Follow = ({
   following,
 }: FollowInformation) => {
   const user = authService.currentUser;
+  const router = useRouter();
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${item.id}`,
+      query: { id },
+    });
+  };
 
   const FollowOnClick = async () => {
     if (user !== null) {
@@ -52,7 +59,11 @@ const Follow = ({
   return (
     <FollowWrapper>
       <OnOffBox>
-        <ProfilePhoto>
+        <ProfilePhoto
+          onClick={() => {
+            goToMyPage(item.id);
+          }}
+        >
           <Photo src={item.photoURL} />
         </ProfilePhoto>
         <TextBox>
@@ -96,6 +107,9 @@ const ProfilePhoto = styled.div`
   margin-right: 1vw;
   border-radius: 70%;
   overflow: hidden;
+  :hover {
+    cursor: pointer;
+  }
 `;
 const Photo = styled.img`
   width: 100%;
