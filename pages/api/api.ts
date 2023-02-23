@@ -27,6 +27,11 @@ export const editRecruitPost = async ({
   );
 };
 
+// 댓글 삭제하기
+export const deleteComment = async (commentId: string) => {
+  await deleteDoc(doc(dbService, 'comments', commentId));
+};
+
 // 동료 모집글 가져오기(위도, 경도를 뽑기 위해)
 // export const fetchRecruitPosts = async () => {
 //   const querySnapshot = await getDocs(collection(dbService, 'recruitments'));

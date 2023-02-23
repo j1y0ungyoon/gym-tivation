@@ -8,7 +8,7 @@ import {
   RecruitPostType,
 } from '../../type';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { dbService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
 import {
   DayAndTimeContainer,
@@ -22,6 +22,7 @@ import {
 } from '../mapBoard/WritingRecruitment';
 import UseDropDown from '@/components/UseDropDown';
 import SearchMyGym from '@/components/SearchMyGym';
+import CommentList from '@/components/CommentList';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -161,11 +162,6 @@ const RecruitDetail = ({ params }: any) => {
       setEditTitle('');
       setEditContent('');
       setChangeForm(false);
-
-      // detail에서 변경된 정보를 바로 불러오지 못하기 때문에 mapBoard로 경로 이동 시켜줘야 함.
-      // useQuery를 이용하면 경로 이동을 안해도 될 것이므로 사용자가 수정하자마자 수정 내용을 바로 확인할 수 있게 가능할 것 같음.
-      // 하지만 통신 비용이 더 들 수 있다.
-      // router.push('/mapBoard');
     } catch (error) {
       console.log('에러입니다', error);
     }
@@ -207,6 +203,9 @@ const RecruitDetail = ({ params }: any) => {
           id: data?.id,
           title: data?.title,
           content: data?.content,
+          userId: data?.userId,
+          nickName: data?.nickName,
+          userPhoto: data?.userPhoto,
           gymName: data?.gymName,
           region: data?.region,
           startTime: data?.startTime,
@@ -227,10 +226,6 @@ const RecruitDetail = ({ params }: any) => {
   if (!refetchedPost) {
     return <div>데이터를 불러오고 있습니다.</div>;
   }
-
-  // if (isLoading) {
-  //   return <div>로딩중입니다....</div>;
-  // }
 
   return (
     <>
@@ -294,16 +289,30 @@ const RecruitDetail = ({ params }: any) => {
                 />
               </TextAreaContainer>
               <br />
-              <span>{refetchedPost?.createdAt}</span> <br />
-              <button onClick={onSubmitEdittedPost}>수정 완료</button>
-              <button onClick={onClickChangeForm}>취소</button>
+              <div>
+                <button onClick={onSubmitEdittedPost}>수정 완료</button>
+                <button onClick={onClickChangeForm}>취소</button>
+              </div>
             </DetailPostFormMain>
           ) : (
             <DetailPostFormMain>
-              <h3>{refetchedPost?.title}</h3>
+              <TitleContainer>
+                <TitleText>{refetchedPost?.title}</TitleText>
+                {authService.currentUser?.uid === refetchedPost.userId ? (
+                  <ButtonBox>
+                    <StyledButton onClick={onClickChangeForm}>
+                      수정
+                    </StyledButton>
+                    <StyledButton onClick={onClickDeletePost}>
+                      삭제
+                    </StyledButton>
+                  </ButtonBox>
+                ) : null}
+              </TitleContainer>
               <PostInfoContainer>
                 <PostInfoTextBox>{refetchedPost.region}</PostInfoTextBox>
                 <PostInfoTextBox>{refetchedPost.gymName}</PostInfoTextBox>
+
                 <PostInfoTextBox>
                   {refetchedPost?.selectedDays?.map((day) => {
                     return <span>{day}</span>;
@@ -313,11 +322,13 @@ const RecruitDetail = ({ params }: any) => {
                   {`${refetchedPost?.startTime} ~ ${refetchedPost?.endTime}`}
                 </PostInfoTextBox>
               </PostInfoContainer>
+              <UserInfoContainer>
+                <ProfileImage src={refetchedPost.userPhoto} />
+                <span>{refetchedPost.nickName}</span>
+              </UserInfoContainer>
               <h4>{refetchedPost?.content}</h4>
-              <span>{refetchedPost?.createdAt}</span> <br />
               <div>
-                <button onClick={onClickChangeForm}>수정</button>
-                <button onClick={onClickDeletePost}>삭제</button>
+                <CommentList id={id} />
               </div>
             </DetailPostFormMain>
           )}
@@ -352,8 +363,9 @@ const DetailPostFormMain = styled.main`
   flex-direction: column;
   background-color: #d9d9d9;
   height: 100vh;
+  width: 100vw;
   padding: 1rem;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 const PostInfoContainer = styled.section`
@@ -369,4 +381,42 @@ const PostInfoTextBox = styled.div`
   border-radius: 0.6rem;
   gap: 0.6rem;
   padding: 6px;
+`;
+
+const ProfileImage = styled.img`
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  margin-left: 1rem;
+  margin-right: 0.6rem;
+`;
+
+const ButtonBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.6rem;
+`;
+
+const StyledButton = styled.button`
+  height: 2rem;
+  width: 4rem;
+  border-radius: 0.6rem;
+`;
+
+const UserInfoContainer = styled.section`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const TitleContainer = styled.section`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+`;
+
+const TitleText = styled.span`
+  font-size: 2rem;
 `;

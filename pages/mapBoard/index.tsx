@@ -51,28 +51,52 @@ const MapBoard = () => {
 
   return (
     <>
-      <SearchColleague setCoordinate={setCoordinate} coordinate={coordinate} />
-      <MapBoardContainer>
-        <div>
-          <h2>MapBoard</h2>
-          {recruitPosts?.map((post) => {
-            return <RecruitPost post={post} key={post.id} />;
-          })}
-          <h2>운동 메이트 구하기!</h2>
-          <button onClick={goToWrite}>작성하기</button> <br />
-        </div>
-      </MapBoardContainer>
+      <MapWrapper>
+        <MapBoardContainer>
+          <MapBoardHeadContainer>
+            <span>운동 메이트 구하기!</span>
+            <button onClick={goToWrite}>작성하기</button>
+          </MapBoardHeadContainer>
+          <SearchColleague
+            setCoordinate={setCoordinate}
+            coordinate={coordinate}
+          />
+        </MapBoardContainer>
+      </MapWrapper>
+      <MapBoardWrapper>
+        {recruitPosts?.map((post) => {
+          return <RecruitPost post={post} key={post.id} />;
+        })}
+      </MapBoardWrapper>
     </>
   );
 };
 
 export default MapBoard;
 
+const MapWrapper = styled.main`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const MapBoardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2rem;
+  background-color: #d9d9d9;
+  border-radius: 2rem;
+  width: 55vw;
+`;
+
+const MapBoardHeadContainer = styled.section``;
+
 const MapBoardContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  width: 40vh;
+  width: 100vh;
   background-color: antiquewhite;
   gap: 1rem;
 `;
