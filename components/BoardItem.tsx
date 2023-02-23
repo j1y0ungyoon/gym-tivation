@@ -1,14 +1,25 @@
 import styled from 'styled-components';
 import BoardPost from './BoardPost';
 import type { BoardPostType } from '@/pages/type';
+import { useRouter } from 'next/router';
 
 interface BoardItemProps {
   boardPosts: BoardPostType[];
   category?: string;
+  nickName?: string;
 }
 
 const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
-  // const [category, setCategory] = useState('');
+  const router = useRouter();
+  //@ts-ignore
+  // const itemSearch = decodeURI(router.query.q)?.toLowerCase() || '';
+  // const searchedItem = itemSearch
+  //   ? boardPosts.filter(
+  //       (search: any) =>
+  //         search.title.toLowerCase().includes(itemSearch) ||
+  //         search.content.toLowerCase().includes(itemSearch),
+  //     )
+  //   : boardPosts;
 
   const filteredCategory = boardPosts?.filter(
     (item) => item.category === category,
@@ -22,7 +33,10 @@ const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
             item={boardPost.item}
             title={boardPost.title}
             id={boardPost.id}
-            content={boardPost.content}
+            nickName={boardPost.nickName}
+            category={boardPost.category}
+            photo={boardPost.photo}
+            like={boardPost.like}
           />
         );
       })}
@@ -31,12 +45,10 @@ const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
 };
 
 const BoardList = styled.div`
-  width: 95%;
+  width: 100%;
   height: 100%;
-  border: 1px solid black;
   margin: 0.5rem;
-  background-color: white;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   overflow: scroll;
 `;
 

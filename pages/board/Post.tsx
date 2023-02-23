@@ -1,4 +1,4 @@
-import { dbService, storage } from '@/firebase';
+import { authService, dbService, storage } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -27,8 +27,8 @@ const Post = () => {
 
   const router = useRouter();
 
-  //   const userid = authService.currentUser?.uid;
-  //   const displayName = authService.currentUser?.displayName;
+  const uid = authService.currentUser?.uid;
+  const displayName = authService.currentUser?.displayName;
 
   const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
@@ -95,9 +95,10 @@ const Post = () => {
       content: boardContent,
       category: category,
       createdAt: Date.now(),
-      // userId: uid,
-      //   nickName: displayName,
+      user: uid,
+      nickName: displayName,
       photo: imageUrl,
+      like: [],
     };
 
     await addDoc(collection(dbService, 'posts'), newPost)

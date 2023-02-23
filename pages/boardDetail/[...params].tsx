@@ -1,4 +1,4 @@
-import { dbService, storage } from '@/firebase';
+import { authService, dbService, storage } from '@/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import {
   deleteObject,
@@ -10,6 +10,8 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
+import Like from '@/components/Like';
+import BoardComment from '@/components/BoardComment';
 
 interface DetailProps {
   id?: string;
@@ -20,6 +22,8 @@ interface DetailProps {
   item?: any;
   category?: string;
   detailPost?: any;
+  like?: string[];
+  uid?: string | undefined;
 }
 
 const Detail = ({ params }: any) => {
@@ -39,7 +43,7 @@ const Detail = ({ params }: any) => {
 
   const [id] = params;
   const router = useRouter();
-
+  const uid = authService.currentUser?.uid;
   // 게시글, 저장된 이미지 파일 delete
   const onClickDeleteBoardPost = async () => {
     console.log('photo', detailPost?.photo);
@@ -125,23 +129,30 @@ const Detail = ({ params }: any) => {
     uploadEditedImage();
   }, [editImageUpload]);
 
-  useEffect(() => {
+  const getEditPost = () => {
     const unsubscribe = onSnapshot(doc(dbService, 'posts', id), (doc) => {
       const data = doc.data();
 
       const getDetailPost: any = {
-        id: data?.id,
+        id: doc.id,
         title: data?.title,
         content: data?.content,
         createdAt: data?.createdAt,
-        creationTime: data?.creationTime,
         category: data?.category,
         photo: data?.photo,
+        like: data?.like,
       };
 
       setDetailPost(getDetailPost);
       setPrevPhotoUrl(data?.photo);
     });
+    return () => {
+      unsubscribe();
+    };
+  };
+  useEffect(() => {
+    const unsubscribe = getEditPost();
+
     return () => {
       unsubscribe();
     };
@@ -199,10 +210,10 @@ const Detail = ({ params }: any) => {
                 <CategorySelect
                   type="radio"
                   name="category"
-                  value="헬스용품"
+                  value="헬스용품추천"
                   onChange={onChangeBoardCategory}
                 />
-                <CategoryText>헬스용품</CategoryText>
+                <CategoryText>헬스용품추천</CategoryText>
               </CategoryLabel>
             </CategoryWrapper>
             <ContentContainer>
@@ -224,6 +235,7 @@ const Detail = ({ params }: any) => {
       ) : (
         <PostWrapper>
           <DetailContent>
+            <Like detailPost={detailPost} />
             <TitleContainer>
               제목:
               <DetailPostTitle>{detailPost?.title}</DetailPostTitle>
@@ -234,6 +246,7 @@ const Detail = ({ params }: any) => {
               <DetailPostPhoto src={detailPost?.photo} />
               <DetailPostContent>{detailPost?.content}</DetailPostContent>
             </ContentContainer>
+            <BoardComment />
             <button onClick={onClickChangeDetail}>수정</button>
             <button onClick={onClickDeleteBoardPost}>삭제</button>
           </DetailContent>
