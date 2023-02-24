@@ -5,6 +5,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 import MyLocation from './MyLocationMarker';
+import SearchIcon from '@/public/assets/icons/searchIcon.png';
 
 const initialPosition = {
   lat: 33.5563,
@@ -114,17 +115,22 @@ const SearchColleague = (props: MapModalProps) => {
   return (
     <>
       <MapModalMain>
-        <input
-          onChange={onChangeInputRegion}
-          onKeyUp={onPressSetRegion}
-          value={inputRegion}
-          placeholder="원하는 지역을 검색하세요!"
-        />
-        <button onClick={onClickSetRegion}>검색하기</button>
+        <SearchBar>
+          <SerachImg
+            src="/assets/icons/searchIcon.png"
+            onClick={onClickSetRegion}
+          />
+          <SerachInput
+            onChange={onChangeInputRegion}
+            onKeyUp={onPressSetRegion}
+            value={inputRegion}
+            placeholder="원하는 지역을 검색하세요!"
+          />
+        </SearchBar>
         <Map
           key={`map-${myPosition.center.lat}-${myPosition.center.lng}`}
           center={myPosition.center}
-          style={{ width: '100%', height: '90vh', borderRadius: '2rem' }}
+          style={{ width: '52rem', height: '53rem', borderRadius: '2rem' }}
           //@ts-ignore
           onCreate={setMap}
           // onTileLoaded={(map) =>
@@ -173,5 +179,33 @@ export default SearchColleague;
 const MapModalMain = styled.section`
   display: flex;
   flex-direction: column;
-  width: 50vw;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;
+
+const SearchBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52rem;
+  background-color: white;
+  border-radius: 24px;
+  margin-bottom: 10px;
+`;
+
+const SerachImg = styled.img`
+  width: 20px;
+  margin-right: 20px;
+  margin-left: 5px;
+  cursor: pointer;
+`;
+
+const SerachInput = styled.input`
+  width: 90%;
+  height: 40px;
+  margin-left: 2px;
+  border: none;
+  outline: none;
+  background-color: #fff;
 `;

@@ -51,53 +51,95 @@ const MapBoard = () => {
 
   return (
     <>
-      <MapWrapper>
-        <MapBoardContainer>
-          <MapBoardHeadContainer>
-            <span>운동 메이트 구하기!</span>
-            <button onClick={goToWrite}>작성하기</button>
-          </MapBoardHeadContainer>
-          <SearchColleague
-            setCoordinate={setCoordinate}
-            coordinate={coordinate}
-          />
-        </MapBoardContainer>
-      </MapWrapper>
-      <MapBoardWrapper>
-        {recruitPosts?.map((post) => {
-          return <RecruitPost post={post} key={post.id} />;
-        })}
-      </MapBoardWrapper>
+      <Wrapper>
+        <MapBoardHeadContainer>
+          <MapBoardWritingButton onClick={goToWrite}>
+            모집글 작성하기
+          </MapBoardWritingButton>
+        </MapBoardHeadContainer>
+
+        <Wapper2>
+          <MapWrapper>
+            <MapBoardContainer>
+              <SearchColleague
+                setCoordinate={setCoordinate}
+                coordinate={coordinate}
+              />
+            </MapBoardContainer>
+          </MapWrapper>
+          <MapBoardWrapper>
+            {recruitPosts?.map((post) => {
+              return <RecruitPost post={post} key={post.id} />;
+            })}
+          </MapBoardWrapper>
+        </Wapper2>
+      </Wrapper>
     </>
   );
 };
 
 export default MapBoard;
 
+const Wrapper = styled.main`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const Wapper2 = styled.section`
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-top: -10px;
+`;
+
 const MapWrapper = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #d9d9d9;
+  border-radius: 2rem;
 `;
 
 const MapBoardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
   padding: 2rem;
   background-color: #d9d9d9;
   border-radius: 2rem;
-  width: 55vw;
+  width: 55rem;
+  height: 60rem;
 `;
 
-const MapBoardHeadContainer = styled.section``;
+const MapBoardHeadContainer = styled.section`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+`;
+
+const MapBoardWritingButton = styled.button`
+  padding: 10px;
+  margin-right: 75px;
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 1rem;
+`;
 
 const MapBoardContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100vh;
-  background-color: antiquewhite;
+  background-color: #d9d9d9;
+  border-radius: 2rem;
+  width: 55rem;
+  height: 60rem;
   gap: 1rem;
 `;
 

@@ -1,5 +1,5 @@
 import { SearchMyGymProps } from '@/type';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 
@@ -25,6 +25,16 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
   const [region, setRegion] = useState('서울');
+
+  // 모달 창 닫기 currentTarget 저장용
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // 모달 창 닫기
+  const closeMap = (event: any) => {
+    if (modalRef.current === event.target) {
+      setOpenMap(false);
+    }
+  };
 
   // 상세 주소 얻기
   const getDetailAddress = () => {
@@ -106,22 +116,20 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   }, [map, region]);
 
   return (
-    <BackgroundContainer>
+    <BackgroundContainer onClick={closeMap} ref={modalRef}>
       <ModalContainer>
-        <div style={{ height: '20%', width: '100%', backgroundColor: 'blue' }}>
-          <input
+        <SerachBar>
+          <SerachInput
             onChange={onChangeInputRegion}
             onKeyUp={onPressSetRegion}
             value={inputRegion}
             placeholder="예시) 서울 종로구"
           />
-          <button onClick={onClickSetRegion}>위치 입력</button> <br />
-          <p>
-            {info
-              ? `lat: ${info.position.lat}, lng: ${info.position.lng}`
-              : '선택한 곳 없음'}
-          </p>
-        </div>
+          <SerachImg
+            src="/assets/icons/searchIcon.png"
+            onClick={onClickSetRegion}
+          />
+        </SerachBar>
         <Map // 로드뷰를 표시할 Container
           center={{
             lat: 37.566826,
@@ -129,7 +137,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
           }}
           style={{
             width: '100%',
-            height: '70%',
+            height: '80%',
           }}
           level={3}
           // @ts-ignore
@@ -154,7 +162,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
             </MapMarker>
           ))}
         </Map>
-        <button onClick={onClickOkButton}>선택 완료</button>
+        <ConfirmButton onClick={onClickOkButton}>선택 완료</ConfirmButton>
       </ModalContainer>
     </BackgroundContainer>
   );
@@ -180,11 +188,50 @@ const ModalContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px black solid;
+  border-radius: 2rem;
   align-items: center;
   justify-content: center;
   width: 1000px;
   height: 1000px;
   background-color: white;
   z-index: 1000;
+`;
+
+const SerachBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52rem;
+  background-color: white;
+  border-radius: 24px;
+  margin-bottom: 10px;
+`;
+
+const SerachImg = styled.img`
+  width: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+
+const SerachInput = styled.input`
+  width: 90%;
+  height: 40px;
+  margin-left: 2px;
+  border: none;
+  /* outline: none; */
+  border-radius: 1.5rem;
+  padding: 1rem;
+`;
+
+const ConfirmButton = styled.button`
+  width: 6rem;
+  height: 3rem;
+  background-color: #d9d9d9;
+  border-radius: 1rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  &:hover {
+    background-color: black;
+    color: white;
+  }
 `;
