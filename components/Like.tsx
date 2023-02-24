@@ -5,7 +5,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 const Like = ({ detailPost }: any) => {
-  const [likes, setLikes] = useState(false);
+  // const [likes, setLikes] = useState(false);
   const likeCount = detailPost?.like?.length;
   const user: any = String(authService.currentUser?.uid);
 

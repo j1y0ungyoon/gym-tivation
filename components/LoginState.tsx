@@ -18,7 +18,6 @@ const LoginState = ({
   toggle,
   following,
   follower,
-  paramsId,
 }: ProfileEditProps) => {
   const router = useRouter();
 

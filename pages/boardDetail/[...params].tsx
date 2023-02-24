@@ -408,6 +408,7 @@ const DetailPostContent = styled.div`
   font-size: 1.5rem;
   margin: 1rem;
   border: 1px solid #777;
+  overflow-y: auto;
 `;
 
 const DetailPostPhoto = styled.img`
