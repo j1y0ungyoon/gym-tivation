@@ -130,7 +130,7 @@ const SearchColleague = (props: MapModalProps) => {
         <Map
           key={`map-${myPosition.center.lat}-${myPosition.center.lng}`}
           center={myPosition.center}
-          style={{ width: '52rem', height: '53rem', borderRadius: '2rem' }}
+          style={{ width: '40vw', height: '85vh', borderRadius: '2rem' }}
           //@ts-ignore
           onCreate={setMap}
           // onTileLoaded={(map) =>
@@ -188,7 +188,7 @@ const SearchBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52rem;
+  width: 50rem;
   background-color: white;
   border-radius: 24px;
   margin-bottom: 10px;
