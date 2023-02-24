@@ -141,18 +141,16 @@ const Chat = () => {
 
   return (
     <ChatWrapper>
-      <TEST>
-        <CategoryBtn
-          onClick={() => {
-            onClickDm();
-          }}
-        >
-          DM 버튼
-        </CategoryBtn>
-      </TEST>
       <CategoryContainer>
         <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
         <CategoryBtn onClick={() => setIsMyDmOn(true)}>DM</CategoryBtn>
+        {/* <CategoryBtn
+          onClick={() => {
+            onClickDm;
+          }}
+        >
+          DM 로직
+        </CategoryBtn> */}
       </CategoryContainer>
 
       {isMyDmOn ? (
@@ -197,14 +195,15 @@ const Chat = () => {
             {chatLogs.map((chatLog) => (
               <ChatBox key={chatLog.id}>
                 <UserImg src={`${chatLog.photoURL}`} />
-                <p>
+                <ChatText>
                   {chatLog.username} : {chatLog.msg}
-                </p>
+                </ChatText>
               </ChatBox>
             ))}
           </ChatLogBox>
 
           <ChatInput
+            placeholder="채팅을 입력하세요."
             type="text"
             onKeyPress={postChat}
             value={inputValue}
@@ -225,13 +224,12 @@ const ChatWrapper = styled.div`
   max-height: 100%;
   padding: 30px;
   background-color: #eee;
-  border: 3px solid blue;
 `;
 
 const DmContainer = styled.div`
   display: flex;
   width: 100%;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 200px);
 `;
 
 const MyDmListBox = styled.section`
@@ -278,24 +276,24 @@ const MyDmList = styled.div`
   margin: 10px 0;
 `;
 
-const ChatContainer = styled.div`
+const ChatContainer = styled.section`
   background-color: #ddd;
-  border-radius: 40px;
+  border-radius: 20px;
   padding: 30px;
   width: 100%;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 200px);
 `;
 
 const ChatLogBox = styled.div`
   max-width: 100%;
-  height: 670px;
+  height: calc(100% - 30px);
   overflow-y: auto;
   word-break: break-all;
 `;
 
 const ChatBox = styled.div`
   display: flex;
-  margin: 10px 0;
+  margin-bottom: 16px;
 `;
 
 const UserImg = styled.img`
@@ -306,16 +304,18 @@ const UserImg = styled.img`
   margin-right: 10px;
 `;
 
-const ChatInput = styled.input`
-  margin-top: 30px;
-  width: 100%;
-  height: 30px;
+const ChatText = styled.span`
+  margin: 0;
 `;
 
-const TEST = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const ChatInput = styled.input`
+  width: 100%;
+  height: 40px;
+  outline: none;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 20px;
+  font-size: 0.875rem;
 `;
 
 const CategoryContainer = styled.div`
@@ -326,18 +326,20 @@ const CategoryContainer = styled.div`
 `;
 
 const CategoryBtn = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-
-  width: 140px;
+  width: 120px;
   height: 40px;
+  padding: 0;
+  margin-bottom: 20px;
+  margin-right: 10px;
 
-  border-radius: 10px;
-  background-color: #ddd;
-  font-size: 1rem;
-  text-decoration: none;
+  border-radius: 50px;
+  border: none;
+  background-color: #d9d9d9;
+  color: #000;
+  :hover {
+    background-color: #000;
+    color: #fff;
+  }
 `;
 
 export default Chat;

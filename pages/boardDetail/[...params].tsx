@@ -323,7 +323,7 @@ const DetailContent = styled.div`
   /* height: 95%; */
   background-color: #f2f2f2;
   border-radius: 2rem;
-  overflow: scroll;
+  overflow: auto;
 `;
 const DetailImageWrapper = styled.div`
   display: flex;
