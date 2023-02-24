@@ -6,7 +6,7 @@ import {
 } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { tou, pi, lb } from '@/components/TermsOfUse';
 import styled from 'styled-components';
 import {
@@ -17,6 +17,7 @@ import {
 } from 'react-icons/ai';
 import UploadImage from '@/components/ProfileUpLoad';
 import { useRouter } from 'next/router';
+import { getDocs, collection, query } from 'firebase/firestore';
 
 const SignUp = () => {
   //회원가입
@@ -43,6 +44,10 @@ const SignUp = () => {
   const [showPasword, setShowPassword] = useState(false);
   const [showPaswordCheck, setShowPasswordCheck] = useState(false);
 
+  //이메일, 닉네임 중복 체크
+  const [nickNameInformation, setNickNameInformation] = useState([] as any);
+  const [emailInformation, setEmailInformation] = useState([] as any);
+
   //유효성 검사
   const [emailMessage, setEmailMessage] = useState<string>('');
   const [isValidEmail, setIsValiEmail] = useState(false);
@@ -56,17 +61,38 @@ const SignUp = () => {
 
   const router = useRouter();
 
+  //이메일, 닉네임 중복 체크
+  const emailCheck = emailInformation.includes(email);
+  const nickNameCheck = nickNameInformation.includes(nickName);
+
+  const EmailNickNameGetDoc = async () => {
+    const q = query(collection(dbService, 'profile'));
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setNickNameInformation((prev: any) => [...prev, doc.data().displayName]);
+      setEmailInformation((prev: any) => [...prev, doc.data().email]);
+    });
+  };
+
   //유효헝 검사
 
   const signUpdisabled =
-    isValidEmail && isValidPassword && isValidNickName && isValidPasswordCheck;
-
+    isValidEmail &&
+    isValidPassword &&
+    isValidNickName &&
+    isValidPasswordCheck &&
+    !emailCheck &&
+    !nickNameCheck;
   const onChangeEmail = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const emailRegex =
         /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
       const emailCurrent = e.target.value;
       setEmail(emailCurrent);
+      // if (emailInformation.includes(emailCurrent)) {
+      //   setEmailMessage('중복된 메일입니다.');
+      //   setIsValiEmail(false);
+      // }
       if (!emailRegex.test(emailCurrent)) {
         setEmailMessage('이메일 형식을 확인해주세요');
         setIsValiEmail(false);
@@ -129,25 +155,23 @@ const SignUp = () => {
   );
 
   const emailIcon =
-    isValidEmail === true ? (
+    isValidEmail && !emailCheck ? (
       <AiFillCheckCircle color="green" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
-  const passwordIcon =
-    isValidPassword === true ? (
-      <AiFillCheckCircle color="green" />
-    ) : (
-      <AiFillCheckCircle color="red" />
-    );
-  const passwordCheckIcon =
-    isValidPasswordCheck === true ? (
-      <AiFillCheckCircle color="green" />
-    ) : (
-      <AiFillCheckCircle color="red" />
-    );
+  const passwordIcon = isValidPassword ? (
+    <AiFillCheckCircle color="green" />
+  ) : (
+    <AiFillCheckCircle color="red" />
+  );
+  const passwordCheckIcon = isValidPasswordCheck ? (
+    <AiFillCheckCircle color="green" />
+  ) : (
+    <AiFillCheckCircle color="red" />
+  );
   const nickNameIcon =
-    isValidNickName === true ? (
+    isValidNickName && !nickNameCheck ? (
       <AiFillCheckCircle color="green" />
     ) : (
       <AiFillCheckCircle color="red" />
@@ -207,6 +231,14 @@ const SignUp = () => {
     }
   };
 
+  useEffect(() => {
+    EmailNickNameGetDoc();
+
+    return () => {
+      EmailNickNameGetDoc();
+    };
+  }, [email]);
+
   return (
     <SignUpWrapper>
       {change !== false ? (
@@ -228,6 +260,7 @@ const SignUp = () => {
                 <TextValidation
                   className={`message ${isValidEmail ? 'success' : 'error'}`}
                 >
+                  {emailCheck ? '중복된 이메일입니다' : ''}
                   {emailMessage}
                 </TextValidation>
               </IconValidation>
@@ -248,6 +281,7 @@ const SignUp = () => {
                 <TextValidation
                   className={`message ${isValidNickName ? 'success' : 'error'}`}
                 >
+                  {nickNameCheck ? '중복된 닉네임입니다' : ''}
                   {nickNameMessage}
                 </TextValidation>
               </IconValidation>

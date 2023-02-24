@@ -290,7 +290,7 @@ const Schedule = styled.div`
 const NavigationBox = styled.div`
   display: flex;
   float: left;
-  width: 65%;
+  width: 67%;
   height: 7%;
   text-align: left;
   margin-left: 4vw;
