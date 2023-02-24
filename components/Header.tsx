@@ -1,12 +1,16 @@
 import { authService, dbService } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import Link from 'next/link';
+import { useState } from 'react';
+import SearchUser from './SearchUser';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
+
+  const [searchOpen, setSearchOpen] = useState<Boolean>(false);
+  const [searchName, setSearchName] = useState<string>('');
   const onLogout = async () => {
     try {
       const user = authService.currentUser;
@@ -31,9 +35,21 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
       <Itembox>
         <SearchBar>
-          <SearchInput />
+          <SearchInput
+            value={searchName}
+            onChange={(e) => {
+              setSearchName(e.target.value);
+            }}
+            onFocus={() => {
+              setSearchOpen(true);
+            }}
+          />
           <SearchIcon src="/assets/icons/searchIcon.png" />
         </SearchBar>
+        {searchOpen && (
+          <SearchUser setSearchOpen={setSearchOpen} searchName={searchName} />
+        )}
+
         {!isLoggedIn ? (
           <SignBox>
             <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>/
@@ -111,13 +127,13 @@ const LogoutBtn = styled.button`
   height: 40px;
   margin-right: 25px;
   padding: 0;
-  border-radius: 20px;
+  border-radius: 50px;
   border: none;
-  background-color: #cecece;
-  color: #222;
+  background-color: #d9d9d9;
+  color: #000;
   :hover {
-    background-color: #222;
-    color: #eee;
+    background-color: #000;
+    color: #fff;
   }
 `;
 

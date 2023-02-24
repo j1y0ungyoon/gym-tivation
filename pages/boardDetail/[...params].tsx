@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
-import BoardComment from '@/components/BoardComment';
+import BoardCommentList from '@/components/BoardCommentList';
 
 interface DetailProps {
   id?: string;
@@ -23,7 +23,7 @@ interface DetailProps {
   category?: string;
   detailPost?: any;
   like?: string[];
-  uid?: string | undefined;
+  userId?: string;
 }
 
 const Detail = ({ params }: any) => {
@@ -43,7 +43,7 @@ const Detail = ({ params }: any) => {
 
   const [id] = params;
   const router = useRouter();
-  const uid = authService.currentUser?.uid;
+  const user = authService.currentUser?.uid;
   // 게시글, 저장된 이미지 파일 delete
   const onClickDeleteBoardPost = async () => {
     console.log('photo', detailPost?.photo);
@@ -105,6 +105,7 @@ const Detail = ({ params }: any) => {
     deleteObject(ref(storage, prevPhotoUrl));
     uploadEditedImage();
     setChangeDetailPost(false);
+    toBoard();
   };
 
   //image onchange
@@ -128,7 +129,11 @@ const Detail = ({ params }: any) => {
   useEffect(() => {
     uploadEditedImage();
   }, [editImageUpload]);
-
+  const toBoard = () => {
+    router.push({
+      pathname: `/board`,
+    });
+  };
   const getEditPost = () => {
     const unsubscribe = onSnapshot(doc(dbService, 'posts', id), (doc) => {
       const data = doc.data();
@@ -141,6 +146,9 @@ const Detail = ({ params }: any) => {
         category: data?.category,
         photo: data?.photo,
         like: data?.like,
+        userId: data?.userId,
+        nickName: data?.nickName,
+        userPhoto: data?.userPhoto,
       };
 
       setDetailPost(getDetailPost);
@@ -186,50 +194,57 @@ const Detail = ({ params }: any) => {
                 defaultValue={detailPost?.title}
               />
             </TitleContainer>
-            {/* <BoardCategory category={category} setCategory={setCategory} /> */}
-            <CategoryWrapper>
-              <CategoryLabel>
-                <CategorySelect
-                  type="radio"
-                  name="category"
-                  value="운동정보"
-                  onChange={onChangeBoardCategory}
-                />
-                <CategoryText>운동정보</CategoryText>
-              </CategoryLabel>
-              <CategoryLabel>
-                <CategorySelect
-                  type="radio"
-                  name="category"
-                  value="헬스장정보"
-                  onChange={onChangeBoardCategory}
-                />
-                <CategoryText>헬스장정보</CategoryText>
-              </CategoryLabel>
-              <CategoryLabel>
-                <CategorySelect
-                  type="radio"
-                  name="category"
-                  value="헬스용품추천"
-                  onChange={onChangeBoardCategory}
-                />
-                <CategoryText>헬스용품추천</CategoryText>
-              </CategoryLabel>
-            </CategoryWrapper>
             <ContentContainer>
-              <ImageInput
-                type="file"
-                accept="image/*"
-                onChange={onChangeImage}
-              />
-              <ImagePreview id="image" src={prevPhotoUrl}></ImagePreview>
-              <ContentInput
-                onChange={onChangeEditContent}
-                defaultValue={detailPost?.content}
-              />
+              <CategoryWrapper>
+                <CategoryLabel>
+                  <CategorySelect
+                    type="radio"
+                    name="category"
+                    value="운동정보"
+                    onChange={onChangeBoardCategory}
+                  />
+                  <CategoryText>운동정보</CategoryText>
+                </CategoryLabel>
+                <CategoryLabel>
+                  <CategorySelect
+                    type="radio"
+                    name="category"
+                    value="헬스장정보"
+                    onChange={onChangeBoardCategory}
+                  />
+                  <CategoryText>헬스장정보</CategoryText>
+                </CategoryLabel>
+                <CategoryLabel>
+                  <CategorySelect
+                    type="radio"
+                    name="category"
+                    value="헬스용품추천"
+                    onChange={onChangeBoardCategory}
+                  />
+                  <CategoryText>헬스용품추천</CategoryText>
+                </CategoryLabel>
+              </CategoryWrapper>
+              <ContentBox>
+                <DetailImageWrapper>
+                  <ImageInput
+                    type="file"
+                    accept="image/*"
+                    onChange={onChangeImage}
+                  />
+                  <ImagePreview id="image" src={prevPhotoUrl}></ImagePreview>
+                </DetailImageWrapper>
+                <ContentInput
+                  onChange={onChangeEditContent}
+                  defaultValue={detailPost?.content}
+                />
+              </ContentBox>
             </ContentContainer>
-            <button onClick={onClickChangeDetail}>취소</button>
-            <PostButton type="submit">수정완료</PostButton>
+            <DetailButtonWrapper>
+              <DetailPostButton onClick={onClickChangeDetail}>
+                취소
+              </DetailPostButton>
+              <DetailPostButton type="submit">수정완료</DetailPostButton>
+            </DetailButtonWrapper>
           </PostContent>
         </PostWrapper>
       ) : (
@@ -241,15 +256,33 @@ const Detail = ({ params }: any) => {
               <DetailPostTitle>{detailPost?.title}</DetailPostTitle>
             </TitleContainer>
             <ContentContainer>
-              <CategoryText>{detailPost?.category}</CategoryText>
-              <div>created At{detailPost?.createdAt}</div>
-              <DetailPostPhoto src={detailPost?.photo} />
-              <DetailPostContent>{detailPost?.content}</DetailPostContent>
+              <CategoryWrapper>
+                <CategoryText>{detailPost?.category}</CategoryText>
+              </CategoryWrapper>
+              {/* <div>created At{detailPost?.createdAt}</div> */}
+              <ContentBox>
+                <DetailImageWrapper>
+                  <DetailPostPhoto src={detailPost?.photo} />
+                </DetailImageWrapper>
+                <DetailPostContent>{detailPost?.content}</DetailPostContent>
+              </ContentBox>
             </ContentContainer>
-            <BoardComment />
-            <button onClick={onClickChangeDetail}>수정</button>
-            <button onClick={onClickDeleteBoardPost}>삭제</button>
+            <BottomWrapper>
+              <CommentWrapper>
+                <BoardCommentList id={id} />
+              </CommentWrapper>
+            </BottomWrapper>
           </DetailContent>
+          {user === detailPost?.userId ? (
+            <DetailButtonWrapper>
+              <DetailPostButton onClick={onClickChangeDetail}>
+                수정
+              </DetailPostButton>
+              <DetailPostButton onClick={onClickDeleteBoardPost}>
+                삭제
+              </DetailPostButton>
+            </DetailButtonWrapper>
+          ) : null}
         </PostWrapper>
       )}
     </>
@@ -257,13 +290,21 @@ const Detail = ({ params }: any) => {
 };
 const PostWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100vw;
   height: 95vh;
-  border: 1px solid black;
   background-color: white;
   border-radius: 2rem;
+`;
+const BottomWrapper = styled.div`
+  display: flex;
+`;
+const CommentWrapper = styled.div`
+  display: flex;
+
+  flex-direction: column; ;
 `;
 const PostContent = styled.form`
   display: flex;
@@ -271,7 +312,7 @@ const PostContent = styled.form`
   align-items: center;
   width: 97%;
   height: 95%;
-  background-color: pink;
+  background-color: #f2f2f2;
   border-radius: 2rem;
 `;
 const DetailContent = styled.div`
@@ -279,49 +320,110 @@ const DetailContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 97%;
-  height: 95%;
-  background-color: pink;
+  /* height: 95%; */
+  background-color: #f2f2f2;
   border-radius: 2rem;
+  overflow: auto;
 `;
-const TitleContainer = styled.div``;
+const DetailImageWrapper = styled.div`
+  display: flex;
+  width: 50%;
+  height: 90%;
+  flex-direction: column;
+  margin: 1rem;
+`;
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  width: 100%;
+  font-size: 2rem;
+`;
+const ContentBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+`;
 const PostTitle = styled.input`
-  width: 30rem;
+  width: 80%;
+  height: 3rem;
+  border-radius: 1rem;
+  border: none;
+  margin: 1rem;
 `;
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 80%;
+  padding: 2rem;
 `;
+
 const ContentInput = styled.textarea`
-  font-size: 1rem;
-  width: 500px;
-  height: 50px;
-  border: 1px solid black;
+  display: flex;
+  padding: 1rem;
+  width: 50%;
+  height: 90%;
+  border-radius: 2rem;
+  font-size: 1.5rem;
+  margin: 1rem;
+  resize: none;
+  border: none;
 `;
-const PostButton = styled.button``;
-const ImageInput = styled.input``;
+const DetailPostButton = styled.button`
+  width: 10rem;
+  height: 2rem;
+  border-radius: 1rem;
+  background-color: #d9d9d9;
+  margin: 1rem;
+  border: none;
+`;
+
+const ImageInput = styled.input`
+  width: 100%;
+  height: 2rem;
+`;
 const ImagePreview = styled.img`
-  width: 500px;
-  height: 500px;
+  margin-top: 1rem;
+  width: 100%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 2rem;
 `;
 const DetailPostTitle = styled.p`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
   font-size: 2rem;
-  width: 100%;
-  height: 50px;
-  border: 1px solid black;
 `;
-const DetailPostContent = styled.p`
-  font-size: 1rem;
-  width: 500px;
-  height: 50px;
-  border: 1px solid black;
+const DetailPostContent = styled.div`
+  display: flex;
+  padding: 1rem;
+  width: 50%;
+  height: 90%;
+  border-radius: 2rem;
+  font-size: 1.5rem;
+  margin: 1rem;
+  border: 1px solid #777;
 `;
 
 const DetailPostPhoto = styled.img`
-  width: 500px;
-  height: 500px;
-  border: 1px solid black;
+  margin-top: 1rem;
+  width: 100%;
+  height: 90%;
+  border-radius: 2rem;
+  object-fit: cover;
 `;
-
+const DetailButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  height: 20%;
+  padding: 2rem;
+`;
 const CategoryWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -332,7 +434,9 @@ const CategoryText = styled.span`
   width: 110px;
   height: 35px;
   background: #e6e6e6;
-  border-radius: 50px;
+  border-radius: 2rem;
+  margin-right: 1rem;
+  margin-bottom: 2rem;
   border: none;
   display: flex;
   justify-content: center;

@@ -8,14 +8,14 @@ import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { authService, dbService } from '@/firebase';
 import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 
-import Link from 'next/link';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
+import DmChat from '@/components/DmChat';
 
 type ChatLog = {
   id: number;
   msg: string;
   username: string;
+  photoURL?: string | null | undefined;
 };
 
 type DmList = {
@@ -27,10 +27,16 @@ type DmList = {
 const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([
-    { id: 1, msg: '전체채팅에 접속하셨습니다.', username: '관리자' },
+    {
+      id: 1,
+      msg: '전체채팅에 접속하셨습니다.',
+      username: '관리자',
+      photoURL: authService.currentUser?.photoURL,
+    },
   ]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
   const [dmLists, setDmLists] = useState<any>();
+  const [roomNum, setRoomNum] = useState<string>(nanoid());
 
   const [isMyDmOn, setIsMyDmOn] = useState(false);
 
@@ -38,10 +44,12 @@ const Chat = () => {
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
 
-  const router = useRouter();
-
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
+    if (user) {
+      setRoomNum(user.uid);
+    }
+
     // socket.io 접속 함수
     const connectToSocket = async () => {
       await fetch('/api/chat');
@@ -80,11 +88,16 @@ const Chat = () => {
       id: nanoid(),
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
+      photoURL: user ? user.photoURL : null,
     };
 
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
     socket?.emit('chat', chatLog);
     setInputValue('');
+  };
+
+  const onChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
 
   // 처음에 dms 불러오는 함수
@@ -107,16 +120,13 @@ const Chat = () => {
     getDmList();
   }, []);
 
-  const onChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const onClickDm = () => {
     dmLists.filter((dmList: DmList) => {
       if (
         dmList.id ===
         (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
       ) {
+        setRoomNum(dmList.id);
         return;
       } else {
         addDoc(collection(dbService, 'dms'), {
@@ -124,56 +134,76 @@ const Chat = () => {
           enterUser: [user?.uid, 'DM보낼 상대 id'],
           chatLog: [],
         });
+        setRoomNum(user?.uid + 'DM보낼 상대 id');
       }
     });
-
-    router.push(`/chat/room/${user?.uid + 'DM보낼 상대 id'}`);
   };
 
   return (
     <ChatWrapper>
-      <TEST>
-        <CategoryBtn
-          onClick={() => {
-            onClickDm();
-          }}
-        >
-          DM 버튼
-        </CategoryBtn>
-      </TEST>
       <CategoryContainer>
         <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
         <CategoryBtn onClick={() => setIsMyDmOn(true)}>DM</CategoryBtn>
+        {/* <CategoryBtn
+          onClick={() => {
+            onClickDm;
+          }}
+        >
+          DM 로직
+        </CategoryBtn> */}
       </CategoryContainer>
 
       {isMyDmOn ? (
-        <div>
-          {dmLists?.map((dmList: DmList) => {
-            return (
-              <div key={dmList.id}>
-                {dmList.enterUser[0] || dmList.enterUser[1] === user?.uid ? (
-                  <Link href={`/chat/room/${dmList.id}`}>
-                    <button>{dmList.id}</button>
-                  </Link>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
+        <DmContainer>
+          <MyDmListBox>
+            <SearchBar>
+              <SearchInput />
+              <SearchIcon src="/assets/icons/searchIcon.png" />
+            </SearchBar>
+            <MyDmList
+              onClick={() => {
+                if (user?.uid) {
+                  setRoomNum(user?.uid);
+                } else {
+                  setRoomNum(nanoid());
+                }
+              }}
+            >
+              메모
+            </MyDmList>
+            {dmLists?.map((dmList: DmList) => {
+              return (
+                <div key={dmList.id}>
+                  {dmList.enterUser[0] || dmList.enterUser[1] === user?.uid ? (
+                    <MyDmList onClick={() => setRoomNum(dmList.id)}>
+                      {dmList.enterUser.map((enterUser) => {
+                        if (enterUser !== user?.uid) {
+                          return enterUser;
+                        }
+                      })}
+                    </MyDmList>
+                  ) : null}
+                </div>
+              );
+            })}
+          </MyDmListBox>
+          <DmChat roomNum={roomNum} />
+        </DmContainer>
       ) : (
         <ChatContainer>
           <ChatLogBox>
             {chatLogs.map((chatLog) => (
               <ChatBox key={chatLog.id}>
-                <UserImg src={`${user?.photoURL}`} />
-                <p>
+                <UserImg src={`${chatLog.photoURL}`} />
+                <ChatText>
                   {chatLog.username} : {chatLog.msg}
-                </p>
+                </ChatText>
               </ChatBox>
             ))}
           </ChatLogBox>
 
           <ChatInput
+            placeholder="채팅을 입력하세요."
             type="text"
             onKeyPress={postChat}
             value={inputValue}
@@ -194,24 +224,76 @@ const ChatWrapper = styled.div`
   max-height: 100%;
   padding: 30px;
   background-color: #eee;
-  border: 3px solid blue;
 `;
 
-const ChatContainer = styled.div`
-  background-color: #add;
+const DmContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 200px);
+`;
+
+const MyDmListBox = styled.section`
+  width: 40%;
+  min-width: 240px;
+  background-color: #ddd;
+  padding: 10px 20px;
+  border-radius: 20px;
+  overflow-y: auto;
+`;
+
+const SearchBar = styled.div`
+  width: 100%;
+  height: 50px;
+  margin: 10px 0 20px 0;
+  background-color: #eee;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const SearchInput = styled.input`
+  width: calc(100% - 65px);
+  height: 40px;
+  margin-left: 20px;
+  border: none;
+  outline: none;
+  background-color: #eee;
+`;
+
+const SearchIcon = styled.img`
+  width: 20px;
+  margin-right: 20px;
+  margin-left: 5px;
+`;
+
+const MyDmList = styled.div`
+  background-color: #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 10px 0;
+`;
+
+const ChatContainer = styled.section`
+  background-color: #ddd;
+  border-radius: 20px;
   padding: 30px;
   width: 100%;
+  height: calc(100vh - 200px);
 `;
 
 const ChatLogBox = styled.div`
   max-width: 100%;
-  height: 670px;
+  height: calc(100% - 30px);
   overflow-y: auto;
   word-break: break-all;
 `;
 
 const ChatBox = styled.div`
   display: flex;
+  margin-bottom: 16px;
 `;
 
 const UserImg = styled.img`
@@ -222,16 +304,18 @@ const UserImg = styled.img`
   margin-right: 10px;
 `;
 
-const ChatInput = styled.input`
-  margin-top: 30px;
-  width: 100%;
-  height: 30px;
+const ChatText = styled.span`
+  margin: 0;
 `;
 
-const TEST = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const ChatInput = styled.input`
+  width: 100%;
+  height: 40px;
+  outline: none;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 20px;
+  font-size: 0.875rem;
 `;
 
 const CategoryContainer = styled.div`
@@ -242,18 +326,20 @@ const CategoryContainer = styled.div`
 `;
 
 const CategoryBtn = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-
-  width: 140px;
+  width: 120px;
   height: 40px;
+  padding: 0;
+  margin-bottom: 20px;
+  margin-right: 10px;
 
-  border-radius: 10px;
-  background-color: #ddd;
-  font-size: 1rem;
-  text-decoration: none;
+  border-radius: 50px;
+  border: none;
+  background-color: #d9d9d9;
+  color: #000;
+  :hover {
+    background-color: #000;
+    color: #fff;
+  }
 `;
 
 export default Chat;

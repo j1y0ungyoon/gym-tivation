@@ -1,4 +1,4 @@
-import { GalleryBoardPostType } from '@/pages/type';
+import { GalleryBoardPostType } from '@/type';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
@@ -24,11 +24,15 @@ const GalleryPostWrapper = styled.div`
   height: 14rem;
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 `;
 const GalleryImage = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 1rem;
+  cursor: pointer;
   object-fit: cover;
 `;
 export default GalleryPost;

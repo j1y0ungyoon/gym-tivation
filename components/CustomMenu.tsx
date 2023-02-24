@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Form from 'react-bootstrap/Form';
 import styled from 'styled-components';
 
 // forwardRef again here!
@@ -37,12 +36,12 @@ const CustomMenu = React.forwardRef(
   },
 );
 
-
+CustomMenu.displayName = 'CustomMenu';
 
 export default CustomMenu;
 
 const StyledUl = styled.ul`
   height: 18rem;
-  overflow: scroll;
+  overflow: auto;
   overflow-x: hidden;
 `;

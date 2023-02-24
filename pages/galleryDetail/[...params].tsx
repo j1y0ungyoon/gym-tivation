@@ -1,4 +1,6 @@
-import { dbService, storage } from '@/firebase';
+import GalleryCommentList from '@/components/GalleryCommentList';
+import Like from '@/components/Like';
+import { authService, dbService, storage } from '@/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import {
   deleteObject,
@@ -19,6 +21,8 @@ interface GalleryDetailProps {
   createdAt?: string;
   item?: any;
   like?: string[];
+  userId?: string;
+  detailGalleryPosts?: any;
 }
 
 const GalleryDetail = ({ params }: any) => {
@@ -38,6 +42,7 @@ const GalleryDetail = ({ params }: any) => {
 
   const [id] = params;
   const router = useRouter();
+  const user = authService.currentUser?.uid;
 
   const onClickDeleteGalleryPost = async () => {
     try {
@@ -54,6 +59,9 @@ const GalleryDetail = ({ params }: any) => {
       const getGalleryPost: any = {
         id: doc.id,
         title: data?.title,
+        userId: data?.userId,
+        nickName: data?.nickName,
+        userPhoto: data?.userPhoto,
         content: data?.content,
         createdAt: data?.createdAt,
         photo: data?.photo,
@@ -86,6 +94,13 @@ const GalleryDetail = ({ params }: any) => {
   ) => {
     setEditGalleryContent(event.target.value);
   };
+
+  const toGallery = () => {
+    router.push({
+      pathname: `/gallery`,
+    });
+  };
+
   //갤러리 수정 업데이트
   const onSubmitEditGallery = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -100,6 +115,7 @@ const GalleryDetail = ({ params }: any) => {
     deleteObject(ref(storage, prevPhotoUrl));
     uploadEditedGalleryImage();
     setChangeGalleryPost(false);
+    toGallery();
   };
   //image onchange
   const onChangeGalleryImage = (event: any) => {
@@ -136,6 +152,7 @@ const GalleryDetail = ({ params }: any) => {
         });
     }
   };
+  console.log(detailGalleryPost);
   // image upload 불러오기
   useEffect(() => {
     uploadEditedGalleryImage();
@@ -193,6 +210,7 @@ const GalleryDetail = ({ params }: any) => {
       ) : (
         <GalleryPostWrapper>
           <GalleryContent>
+            <Like detailGalleryPost={detailGalleryPost} />
             <GalleryTitleContainer>
               제목:
               <DetailGalleryTitle>
@@ -207,6 +225,13 @@ const GalleryDetail = ({ params }: any) => {
                 {detailGalleryPost?.content}
               </DetailGalleryContent>
             </GalleryContentContainer>
+            <BottomWrapper>
+              <CommentWrapper>
+                <GalleryCommentList id={id} />
+              </CommentWrapper>
+            </BottomWrapper>
+          </GalleryContent>
+          {user === detailGalleryPost?.userId ? (
             <GalleryButtonWrapper>
               <GalleryPostButton onClick={onClickChangeGalleryDetail}>
                 수정
@@ -215,7 +240,7 @@ const GalleryDetail = ({ params }: any) => {
                 삭제
               </GalleryPostButton>
             </GalleryButtonWrapper>
-          </GalleryContent>
+          ) : null}
         </GalleryPostWrapper>
       )}
     </>
@@ -224,6 +249,7 @@ const GalleryDetail = ({ params }: any) => {
 
 const GalleryPostWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100vw;
@@ -231,7 +257,14 @@ const GalleryPostWrapper = styled.div`
   background-color: white;
   border-radius: 2rem;
 `;
+const CommentWrapper = styled.div`
+  display: flex;
 
+  flex-direction: column; ;
+`;
+const BottomWrapper = styled.div`
+  display: flex;
+`;
 const GalleryContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -240,6 +273,7 @@ const GalleryContent = styled.div`
   height: 95%;
   background-color: #f2f2f2;
   border-radius: 2rem;
+  overflow: auto;
 `;
 const DetailGalleryContent = styled.div`
   display: flex;
@@ -257,7 +291,6 @@ const DetailGalleryTitle = styled.div`
   align-items: center;
   justify-content: center;
   margin: 1rem;
-
   font-size: 2rem;
 `;
 const GalleryPostContent = styled.form`
@@ -311,8 +344,8 @@ const GalleryButtonWrapper = styled.div`
 `;
 const GalleryPostButton = styled.button`
   width: 10rem;
-  height: 2rem;
-  border-radius: 1rem;
+  height: 2.5rem;
+  border-radius: 2rem;
   background-color: #d9d9d9;
   margin: 1rem;
   border: none;
@@ -332,7 +365,9 @@ const GalleryImageWarpper = styled.div`
 const GalleryImagePreview = styled.img`
   margin-top: 1rem;
   width: 100%;
+  height: 90%;
   border-radius: 2rem;
+  object-fit: cover;
 `;
 export function getServerSideProps({ params: { params } }: any) {
   return {
