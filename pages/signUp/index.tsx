@@ -58,10 +58,6 @@ const SignUp = () => {
 
   //유효헝 검사
 
-  const nickName_validation = new RegExp(
-    /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
-  );
-
   const signUpdisabled =
     isValidEmail && isValidPassword && isValidNickName && isValidPasswordCheck;
 

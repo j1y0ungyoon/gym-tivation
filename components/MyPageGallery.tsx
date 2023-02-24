@@ -70,7 +70,6 @@ const LoginStateWrapper = styled.div`
   display: flex;
   overflow: auto;
   flex-wrap: wrap;
-
   padding-bottom: 1vh;
   padding-left: 1.5vw;
   padding-right: 1.5vw;
@@ -81,42 +80,10 @@ const GalleryContainer = styled.div`
 `;
 
 const GalleryPhoto = styled.img`
-  width: 10vw;
+  width: 14vw;
   height: 18vh;
+
   :hover {
     cursor: pointer;
   }
-`;
-const Photo = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-const FollowText = styled.span`
-  font-size: 16px;
-  text-align: center;
-  font-weight: bolder;
-`;
-const OnLineState = styled.li`
-  font-size: 12px;
-  ::marker {
-    color: green;
-    font-size: 16px;
-  }
-`;
-const OFFLineState = styled.li`
-  font-size: 12px;
-  ::marker {
-    font-size: 16px;
-  }
-`;
-const TextBox = styled.div`
-  margin-top: 2vh;
-  text-align: left;
-  width: 20vw;
-`;
-const StateBox = styled.div`
-  margin-top: 3vh;
-  text-align: right;
-  width: 20vw; ;
 `;

@@ -82,7 +82,7 @@ const MyPageCalendar = () => {
   return (
     <CalendarWrapper>
       <>
-        <Test>
+        <CalendarCSS>
           <Calendar
             onChange={setValue}
             value={value}
@@ -113,8 +113,7 @@ const MyPageCalendar = () => {
               );
             }}
           />
-        </Test>
-        <DateText>{markDate}</DateText>
+        </CalendarCSS>
         {markCompare === undefined ? (
           <>
             <CalendarAdd markDate={markDate} userUid={userUid} />
@@ -157,17 +156,18 @@ const CalendarDot = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: #f87171;
+  background-color: green;
 `;
-const DateText = styled.h3`
-  margin-top: 2vh;
-`;
-const Test = styled.div`
+
+const CalendarCSS = styled.div`
   .react-calendar {
     width: 350px;
     max-width: 100%;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;
+    border-bottom-style: solid;
+    border-color: #bdbdbd;
+    border-width: 0.1rem;
   }
   .react-calendar--doubleView {
     width: 700px;
@@ -248,18 +248,20 @@ const Test = styled.div`
     line-height: 16px;
   }
   .react-calendar__tile:disabled {
-    background-color: #f0f0f0;
+    background-color: white;
+    border-radius: 50%;
   }
   .react-calendar__tile:enabled:hover,
   .react-calendar__tile:enabled:focus {
-    background-color: #e6e6e6;
+    background-color: white;
+    border-radius: 50%;
   }
   .react-calendar__tile--now {
-    background: #ffff76;
+    background: white;
   }
   .react-calendar__tile--now:enabled:hover,
   .react-calendar__tile--now:enabled:focus {
-    background: #ffffa9;
+    background: white;
   }
   .react-calendar__tile--hasActive {
     background: #76baff;
@@ -269,12 +271,14 @@ const Test = styled.div`
     background: #a9d4ff;
   }
   .react-calendar__tile--active {
-    background: #006edc;
-    color: white;
+    background: white;
+    border-radius: 50%;
+    color: black;
   }
   .react-calendar__tile--active:enabled:hover,
   .react-calendar__tile--active:enabled:focus {
-    background: #1087ff;
+    background: white;
+    border-radius: 50%;
   }
   .react-calendar--selectRange .react-calendar__tile--hover {
     background-color: #e6e6e6;
@@ -283,23 +287,22 @@ const Test = styled.div`
     font-size: 20px;
     font-weight: bold;
   }
-  /* .react-calendar__tile--now {
-    background: white;
+  .react-calendar__tile--now {
+    background: #e0e0e0;
+    border-radius: 50%;
     color: black;
   }
-  .react-calendar__tile--now:enabled:hover {
-    background-color: white;
-  }
-  .react-calendar__tile--now:enabled:focus {
-    color: red;
-  } */
+
   .react-calendar__month-view__weekdays {
     text-align: center;
-    font-size: 16px;
+    font-size: 1rem;
     margin-top: 10px;
     margin-bottom: 10px;
     border-bottom-style: solid;
-    border-bottom-color: black;
-    border-width: 1px;
+    border-bottom-color: #bdbdbd;
+    border-width: 0.1rem;
+  }
+  abbr[title] {
+    text-decoration: none;
   }
 `;

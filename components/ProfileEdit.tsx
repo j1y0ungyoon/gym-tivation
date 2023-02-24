@@ -9,6 +9,9 @@ import { ProfileItem } from '@/pages/myPage/[...params]';
 type ProfileEditProps = {
   item: ProfileItem;
   paramsId: string;
+  follower: [];
+  following: [];
+  setFollowModal: (p: boolean) => void;
 };
 
 const OPTIONS = [
@@ -26,7 +29,13 @@ const OPTIONS = [
 const DEFAULT_PHOTO_URL =
   'https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg';
 
-const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
+const ProfileEdit = ({
+  item,
+  paramsId,
+  follower,
+  following,
+  setFollowModal,
+}: ProfileEditProps) => {
   const [isProfileEdit, setIsProfileEdit] = useState(false);
   //닉네임, 사진 불러오기
   const [photoURL, setPhotoURL] = useState(DEFAULT_PHOTO_URL);
@@ -92,18 +101,6 @@ const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
     <>
       {!isProfileEdit ? (
         <>
-          <MyPageHeader>
-            <HeaderText>프로필</HeaderText>
-            {authService.currentUser?.uid === paramsId && (
-              <ClickText
-                onClick={() => {
-                  setIsProfileEdit(true);
-                }}
-              >
-                수정하기
-              </ClickText>
-            )}
-          </MyPageHeader>
           <InformationBox>
             <EditPhotoBox>
               <ProfilePhoto>
@@ -113,82 +110,124 @@ const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
                   <Photo src={item.photoURL} />
                 )}
               </ProfilePhoto>
+              <LevelBox>
+                <LevelText>헬린이</LevelText>
+                <LevelTextNumber>LV20 </LevelTextNumber>
+              </LevelBox>
             </EditPhotoBox>
             <EditNickNameBox>
               <NickNameAreaBox>
-                <NickNameText>{item.displayName}</NickNameText>
-                <AreaText>{item.area}</AreaText>
+                <NameBox>
+                  <NickNameText>{item.displayName}</NickNameText>
+                  <AreaText>{item.area}</AreaText>
+                  {authService.currentUser?.uid === paramsId && (
+                    <EditButton
+                      onClick={() => {
+                        setIsProfileEdit(true);
+                      }}
+                    >
+                      프로필 수정
+                    </EditButton>
+                  )}
+                </NameBox>
+                <InstagramBox>
+                  <a href={`https://www.instagram.com/${instagram}/`}>
+                    {instagram}
+                  </a>
+                  <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
+                </InstagramBox>
               </NickNameAreaBox>
-              <p>1일째 운동중</p>
-              <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
-              <InstagramBox>
-                <a href={`https://www.instagram.com/${instagram}/`}>
-                  {instagram}
-                </a>
-              </InstagramBox>
+              <FollowBox
+                onClick={() => {
+                  setFollowModal(true);
+                }}
+              >
+                <FollowText>팔로워 </FollowText>
+                <FollowNumberText>
+                  {follower === undefined ? '0' : follower.length}
+                </FollowNumberText>
+                <FollowText>팔로잉</FollowText>
+                <FollowNumberText>
+                  {following === undefined ? '0' : following.length}
+                </FollowNumberText>
+              </FollowBox>
+
+              <IntroductionText
+                readOnly
+                value={item.introduction}
+                placeholder="자기소개를 적어주세요."
+              />
             </EditNickNameBox>
-            <IntroductionText
-              readOnly
-              value={item.introduction}
-              placeholder="자기소개를 적어주세요."
-            />
           </InformationBox>
         </>
       ) : (
         <>
           <form onSubmit={onClickProfileEdit}>
-            <MyPageHeader>
-              <HeaderText>프로필</HeaderText>
-              <ClickText type="submit">완료하기</ClickText>
-            </MyPageHeader>
             <InformationBox>
               <EditPhotoBox>
                 <ProfilePhoto>
                   <UploadImage imageURL={photoURL} setImageURL={setPhotoURL} />
                 </ProfilePhoto>
+                <LevelBox>
+                  <LevelText>헬린이</LevelText>
+                  <LevelTextNumber>LV20 </LevelTextNumber>
+                </LevelBox>
               </EditPhotoBox>
               <EditNickNameBox>
-                <TextInput
-                  value={nickName}
+                <NickNameAreaBox>
+                  <NameBox>
+                    <TextInput
+                      spellCheck="false"
+                      value={nickName}
+                      onChange={(e) => {
+                        setNickName(e.target.value);
+                      }}
+                      placeholder="닉네임"
+                      maxLength={8}
+                    />
+                    <Select
+                      onChange={(e) => {
+                        setArea(e.target.value);
+                      }}
+                      defaultValue={area}
+                    >
+                      {OPTIONS.map((option) => (
+                        <option key={option.area} value={option.area}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </Select>
+                    <EditButton type="submit">완료하기</EditButton>
+                  </NameBox>
+                  <InstagramBox>
+                    <InstagramInput
+                      spellCheck="false"
+                      value={instagram}
+                      onChange={(e) => {
+                        setInstagram(e.target.value);
+                      }}
+                      placeholder="아이디"
+                      maxLength={20}
+                    />
+                    <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
+                  </InstagramBox>
+                </NickNameAreaBox>
+                <FollowBox>
+                  <FollowText>팔로워 </FollowText>
+                  <FollowNumberText>{following.length}</FollowNumberText>
+                  <FollowText>팔로잉</FollowText>
+                  <FollowNumberText> {follower.length}</FollowNumberText>
+                </FollowBox>
+                <IntroductionText
+                  spellCheck="false"
+                  value={introduction}
                   onChange={(e) => {
-                    setNickName(e.target.value);
+                    setIntroduction(e.target.value);
                   }}
-                  placeholder="닉네임"
-                  maxLength={8}
+                  maxLength={104}
+                  placeholder="자기소개를 입력해주세요."
                 />
-                <Select
-                  onChange={(e) => {
-                    setArea(e.target.value);
-                  }}
-                  defaultValue={area}
-                >
-                  {OPTIONS.map((option) => (
-                    <option key={option.area} value={option.area}>
-                      {option.name}
-                    </option>
-                  ))}
-                </Select>
-                <p>1일째 운동중</p>
-                <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
-                <InstagramBox>
-                  <InstagramInput
-                    value={instagram}
-                    onChange={(e) => {
-                      setInstagram(e.target.value);
-                    }}
-                    placeholder="아이디"
-                    maxLength={20}
-                  />
-                </InstagramBox>
               </EditNickNameBox>
-              <IntroductionText
-                value={introduction}
-                onChange={(e) => {
-                  setIntroduction(e.target.value);
-                }}
-                maxLength={104}
-                placeholder="자기소개를 입력해주세요."
-              />
             </InformationBox>
           </form>
         </>
@@ -200,18 +239,30 @@ const ProfileEdit = ({ item, paramsId }: ProfileEditProps) => {
 export default ProfileEdit;
 
 const InformationBox = styled.div`
-  background-color: #e9ecef;
-  width: 26vw;
-  height: 42vh;
-  border-radius: 16px;
-  margin-bottom: 4vh;
+  width: 100%;
+  height: 100%;
   padding-top: 1vh;
+  overflow: hidden;
+`;
+const EditPhotoBox = styled.div`
+  padding-top: 1vh;
+  width: 14vw;
+  height: 50vh;
+  float: left;
 `;
 
+const EditNickNameBox = styled.div`
+  width: 25vw;
+  height: 50vh;
+  float: left;
+  text-align: left;
+`;
+const NameBox = styled.div`
+  height: 67%;
+`;
 const ProfilePhoto = styled.div`
   width: 150px;
   height: 150px;
-  margin-bottom: 2vh;
   margin: auto;
   border-radius: 70%;
   overflow: hidden;
@@ -221,109 +272,100 @@ const Photo = styled.img`
   height: 100%;
   object-fit: cover;
 `;
+const LevelBox = styled.div`
+  margin-top: 2vh;
+`;
+const LevelText = styled.span`
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: black;
+`;
+const LevelTextNumber = styled.span`
+  margin-left: 0.2vw;
+  font-size: 1.2rem;
+  font-weight: bolder;
+  color: green;
+`;
 const NickNameAreaBox = styled.div`
-  margin-top: 3vh;
+  margin-top: 1vh;
+  height: 15%;
 `;
 const NickNameText = styled.span`
-  font-size: 18px;
+  font-size: 1.2rem;
   font-weight: bold;
   margin-right: 1vw;
 `;
 const AreaText = styled.span`
-  font-size: 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: black;
 `;
 const IntroductionText = styled.textarea`
-  margin: 1vw;
+  margin-top: 4vh;
   font-size: 16px;
-  width: 24vw;
-  height: 16vh;
-  float: left;
-  border-radius: 16px;
-  background-color: white;
-  text-align: left;
-  padding: 1vw;
   border: none;
+  width: 24vw;
+  height: 8vh;
+  text-align: left;
   resize: none;
   overflow: hidden;
   :focus {
     outline: none;
   }
 `;
-const MyPageHeader = styled.div`
-  display: flex;
-  margin-bottom: 2vh;
-  color: #495057;
-`;
-const HeaderText = styled.span`
-  margin-right: auto;
-  font-size: 20px;
-  :hover {
-    cursor: pointer;
-    color: black;
-  }
-`;
-const ClickText = styled.button`
-  background-color: white;
+
+const EditButton = styled.button`
+  background-color: #eeeeee;
+  border-radius: 2rem;
   border: none;
-  font-size: 16px;
+  width: 6vw;
+  height: 4.5vh;
+  margin-left: 1vw;
   :hover {
     cursor: pointer;
-    color: black;
+    background-color: gray;
+    color: white;
   }
 `;
 
 const TextInput = styled.input`
   width: 8vw;
-  margin-top: 3vh;
   border: none;
-  background-color: #e9ecef;
-  font-size: 18px;
+  font-size: 1.2rem;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   :focus {
     outline: none;
   }
 `;
-const EditPhotoBox = styled.div`
-  padding-top: 1vh;
-  padding-left: 2vw;
-  width: 20vh;
-  float: left;
-`;
-
-const EditNickNameBox = styled.div`
-  padding-right: 1vw;
-  width: 29vh;
-  float: right;
-`;
 
 const Select = styled.select`
   width: 4vw;
-  font-size: 16px;
-  background-color: #e9ecef;
+  font-size: 1rem;
+  margin-right: 2vw;
   border: none;
-  border-radius: 30px;
   :focus {
     outline: none;
   }
 `;
 const InstagramInput = styled.input`
-  width: 9vw;
+  width: 8vw;
   height: 2vh;
   border: none;
-  background-color: #e9ecef;
   font-size: 15px;
   color: black;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
   :focus {
     outline: none;
   }
 `;
 const InstagramImage = styled.img`
-  width: 30px;
+  width: 1.5rem;
+  margin-left: 1vh;
 `;
 const InstagramBox = styled.div`
+  margin-top: 1vh;
   color: black;
   font-weight: 700;
   a:link {
@@ -337,4 +379,20 @@ const InstagramBox = styled.div`
   a:hover {
     color: lightgray;
   }
+`;
+const FollowBox = styled.div`
+  margin-top: 4vh;
+  :hover {
+    cursor: pointer;
+  }
+`;
+
+const FollowText = styled.span`
+  font-weight: bold;
+  font-size: 1.2rem;
+`;
+const FollowNumberText = styled.span`
+  font-weight: bolder;
+  font-size: 1.2rem;
+  margin-right: 1vw;
 `;
