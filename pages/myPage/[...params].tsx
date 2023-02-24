@@ -15,6 +15,7 @@ import MyPageGalley from '@/components/MyPageGallery';
 import MyPageLike from '@/components/MyPageLike';
 import { useRouter } from 'next/router';
 import { type } from 'os';
+import MyPageBoard from '@/components/MyPageBoard';
 
 export type ProfileItem = {
   id: string;
@@ -192,10 +193,9 @@ const MyPage = ({ params }: any) => {
           <MypageBox>
             <MyPageHeader>
               {board && (
-                <>
-                  <HeaderText>최근 교류</HeaderText>
-                  <ClickText>전체보기</ClickText>
-                </>
+                <GalleyBox>
+                  <MyPageBoard paramsId={paramsId} />
+                </GalleyBox>
               )}
             </MyPageHeader>
             {followModal && (
@@ -280,6 +280,7 @@ const ProfileBox = styled.div`
 const ScheduleBox = styled.div`
   float: right;
   width: 25%;
+  height: 100vh;
 `;
 const Schedule = styled.div`
   background-color: #eeeeee;
@@ -295,8 +296,6 @@ const NavigationBox = styled.div`
   margin-left: 4vw;
   border-bottom-style: solid;
   border-color: #eeeeee;
-  padding-bottom: 8vh;
-  margin-bottom: 3vh;
 `;
 const GalleyButton2 = styled.button`
   margin-right: 4vw;
@@ -317,6 +316,11 @@ const GalleyButton = styled.button`
   border: none;
   width: 6vw;
   height: 4.5vh;
+  :hover {
+    cursor: pointer;
+    background-color: gray;
+    color: white;
+  }
 `;
 const NavigationButton = styled.button`
   margin-right: 4vw;
@@ -408,7 +412,7 @@ const FollowToggleButton = styled.button`
   }
 `;
 const LoginStateBox = styled.div`
-  height: 90%;
+  height: 85%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -436,7 +440,7 @@ const FollowModal = styled.div`
   border-radius: 15px;
   background-color: white;
   transform: translate(-50%, -50%) !important;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
   border-style: solid;
   border-width: 1px;
   border-color: gray;

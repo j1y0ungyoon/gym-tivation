@@ -142,11 +142,11 @@ const ProfileEdit = ({
                   setFollowModal(true);
                 }}
               >
-                <FollowText>팔로워 </FollowText>
+                <FollowText> 팔로워 </FollowText>
                 <FollowNumberText>
                   {follower === undefined ? '0' : follower.length}
                 </FollowNumberText>
-                <FollowText>팔로잉</FollowText>
+                <FollowText> 팔로잉 </FollowText>
                 <FollowNumberText>
                   {following === undefined ? '0' : following.length}
                 </FollowNumberText>
@@ -213,10 +213,14 @@ const ProfileEdit = ({
                   </InstagramBox>
                 </NickNameAreaBox>
                 <FollowBox>
-                  <FollowText>팔로워 </FollowText>
-                  <FollowNumberText>{following.length}</FollowNumberText>
-                  <FollowText>팔로잉</FollowText>
-                  <FollowNumberText> {follower.length}</FollowNumberText>
+                  <FollowText> 팔로워 </FollowText>
+                  <FollowNumberText>
+                    {follower === undefined ? '0' : follower.length}{' '}
+                  </FollowNumberText>
+                  <FollowText> 팔로잉 </FollowText>
+                  <FollowNumberText>
+                    {following === undefined ? '0' : following.length}{' '}
+                  </FollowNumberText>
                 </FollowBox>
                 <IntroductionText
                   spellCheck="false"
@@ -394,5 +398,4 @@ const FollowText = styled.span`
 const FollowNumberText = styled.span`
   font-weight: bolder;
   font-size: 1.2rem;
-  margin-right: 1vw;
 `;

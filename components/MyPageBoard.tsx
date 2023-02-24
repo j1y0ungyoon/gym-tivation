@@ -5,66 +5,66 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-type Gallery = {
+type Board = {
   id: string;
   photo: string;
   userId: string;
 };
 
-const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
-  const [galleryInformation, setGalleryInFormation] = useState<Gallery[]>([]);
+const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
+  const [boardInformation, setBoardInFormation] = useState<Board[]>([]);
   const router = useRouter();
-  const goToGalleryDetailPost = (id: any) => {
+  const goToBoardDetailPost = (id: any) => {
     router.push({
-      pathname: `/galleryDetail/${id}`,
+      pathname: `/boardDetail/${id}`,
       query: {
         id,
       },
     });
   };
 
-  const getGalleryPost = async () => {
+  const getBoardPost = async () => {
     const q = query(
-      collection(dbService, 'gallery'),
+      collection(dbService, 'posts'),
       orderBy('createdAt', 'desc'),
     );
     const data = await getDocs(q);
-    const getGalleryData = data.docs.map((doc: any) => ({
+    const getBoardData = data.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    setGalleryInFormation(getGalleryData);
+    setBoardInFormation(getBoardData);
   };
 
   useEffect(() => {
-    getGalleryPost();
-
+    getBoardPost();
     return () => {
-      getGalleryPost();
+      getBoardPost();
     };
   }, [authService.currentUser?.uid]);
 
-  console.log(galleryInformation);
+  console.log('데이터', boardInformation);
+
   return (
-    <MyPageGalleyWrapper>
-      {galleryInformation
+    <MyPageBoardWrapper>
+      {boardInformation
         .filter((item) => item.userId === paramsId)
         .map((item) => {
           return (
-            <GalleryContainer
+            <MyPageBoardContainer
               key={item.id}
-              onClick={() => goToGalleryDetailPost(item.id)}
+              onClick={() => goToBoardDetailPost(item.id)}
             >
-              <GalleryPhoto src={item.photo} />
-            </GalleryContainer>
+              <BoardPhoto src={item.photo} />
+            </MyPageBoardContainer>
           );
         })}
-    </MyPageGalleyWrapper>
+    </MyPageBoardWrapper>
   );
 };
 
-export default MyPageGalley;
-const MyPageGalleyWrapper = styled.div`
+export default MyPageBoard;
+const MyPageBoardWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -75,11 +75,11 @@ const MyPageGalleyWrapper = styled.div`
   padding-right: 1.5vw;
 `;
 
-const GalleryContainer = styled.div`
+const MyPageBoardContainer = styled.div`
   margin: 1vh;
 `;
 
-const GalleryPhoto = styled.img`
+const BoardPhoto = styled.img`
   width: 14vw;
   height: 18vh;
 
