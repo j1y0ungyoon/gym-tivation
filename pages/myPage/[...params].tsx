@@ -59,19 +59,60 @@ const MyPage = ({ params }: any) => {
   const [meeting, setMeeting] = useState(false);
   const [followModal, setFollowModal] = useState(false);
 
-  const galleyButton =
-    galley === false ? (
-      <GalleyButton
-        onClick={() => {
-          setGalley(true), setBoard(false), setLike(false), setMeeting(false);
-        }}
-      >
-        오운완 갤러리
-      </GalleyButton>
-    ) : (
-      <GalleyButton2>오운완 갤러리</GalleyButton2>
-    );
+  //버튼
+  const galleyButton = !galley ? (
+    <GalleyButton
+      onClick={() => {
+        setGalley(true), setBoard(false), setLike(false), setMeeting(false);
+      }}
+    >
+      오운완 갤러리
+    </GalleyButton>
+  ) : (
+    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+      오운완 갤러리
+    </GalleyButton>
+  );
+  const boardButton = !board ? (
+    <GalleyButton
+      onClick={() => {
+        setGalley(false), setBoard(true), setLike(false), setMeeting(false);
+      }}
+    >
+      게시판
+    </GalleyButton>
+  ) : (
+    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+      게시판
+    </GalleyButton>
+  );
 
+  const likeButton = !like ? (
+    <GalleyButton
+      onClick={() => {
+        setGalley(false), setBoard(false), setLike(true), setMeeting(false);
+      }}
+    >
+      좋아요
+    </GalleyButton>
+  ) : (
+    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+      좋아요
+    </GalleyButton>
+  );
+  const meetingButton = !meeting ? (
+    <GalleyButton
+      onClick={() => {
+        setGalley(false), setBoard(false), setLike(false), setMeeting(true);
+      }}
+    >
+      참여중 모임
+    </GalleyButton>
+  ) : (
+    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+      참여중 모임
+    </GalleyButton>
+  );
   //Calendar 업로드 시간 설정
 
   const profileOnSnapShot = () => {
@@ -153,36 +194,9 @@ const MyPage = ({ params }: any) => {
           </ScheduleBox>
           <NavigationBox>
             {galleyButton}
-            <NavigationButton
-              onClick={() => {
-                setGalley(false),
-                  setBoard(true),
-                  setLike(false),
-                  setMeeting(false);
-              }}
-            >
-              게시판
-            </NavigationButton>
-            <NavigationButton
-              onClick={() => {
-                setGalley(false),
-                  setBoard(false),
-                  setLike(true),
-                  setMeeting(false);
-              }}
-            >
-              좋아요
-            </NavigationButton>
-            <NavigationButton
-              onClick={() => {
-                setGalley(false),
-                  setBoard(false),
-                  setLike(false),
-                  setMeeting(true);
-              }}
-            >
-              참여중 모임
-            </NavigationButton>
+            {boardButton}
+            {likeButton}
+            {meetingButton}
           </NavigationBox>
           {galley && (
             <GalleyBox>
@@ -297,18 +311,7 @@ const NavigationBox = styled.div`
   border-bottom-style: solid;
   border-color: #eeeeee;
 `;
-const GalleyButton2 = styled.button`
-  margin-right: 4vw;
-  background-color: gray;
-  color: white;
-  border-radius: 2rem;
-  border: none;
-  width: 6vw;
-  height: 4.5vh;
-  :hover {
-    cursor: pointer;
-  }
-`;
+
 const GalleyButton = styled.button`
   margin-right: 4vw;
   background-color: #eeeeee;
