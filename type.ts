@@ -73,6 +73,28 @@ export interface CommentType {
   createdAt?: number;
 }
 
+export interface DayType {
+  mon: boolean;
+  tus: boolean;
+  wed: boolean;
+  thurs: boolean;
+  fri: boolean;
+  sat: boolean;
+  sun: boolean;
+  every: boolean;
+  selectedDays: string[];
+  setMon: React.Dispatch<React.SetStateAction<boolean>>;
+  setTus: React.Dispatch<React.SetStateAction<boolean>>;
+  setWed: React.Dispatch<React.SetStateAction<boolean>>;
+  setThurs: React.Dispatch<React.SetStateAction<boolean>>;
+  setFri: React.Dispatch<React.SetStateAction<boolean>>;
+  setSat: React.Dispatch<React.SetStateAction<boolean>>;
+  setSun: React.Dispatch<React.SetStateAction<boolean>>;
+
+  setEvery: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedDays: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
 export interface BoardCommentType {
   id: string;
   user?: string;

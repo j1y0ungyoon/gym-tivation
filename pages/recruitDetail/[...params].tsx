@@ -10,19 +10,10 @@ import {
 import { doc, onSnapshot } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
-import {
-  DayAndTimeContainer,
-  DayBox,
-  DetailAddressText,
-  PlaceContainer,
-  PlaceText,
-  StyledText,
-  TextAreaContainer,
-  TitleInput,
-} from '../mapBoard/WritingRecruitment';
 import UseDropDown from '@/components/UseDropDown';
 import SearchMyGym from '@/components/SearchMyGym';
 import CommentList from '@/components/CommentList';
+import SelectDay from '@/components/SelectDay';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -58,6 +49,17 @@ const RecruitDetail = ({ params }: any) => {
 
   // 선택한 요일에 대한 state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+
+  // 버튼 박스 클릭 시 색상 변경을 위한 state 나중에 수정 필요
+  const [mon, setMon] = useState(false);
+  const [tus, setTus] = useState(false);
+  const [wed, setWed] = useState(false);
+  const [thurs, setThurs] = useState(false);
+  const [fri, setFri] = useState(false);
+  const [sat, setSat] = useState(false);
+  const [sun, setSun] = useState(false);
+  const [every, setEvery] = useState(false);
+
   // 맵 모달창 오픈
   const [openMap, setOpenMap] = useState(false);
 
@@ -144,6 +146,26 @@ const RecruitDetail = ({ params }: any) => {
       return;
     }
 
+    if (!detailAddress) {
+      alert('운동 장소를 입력해 주세요!');
+      return;
+    }
+
+    if (start === '') {
+      alert('운동 시간을 입력해 주세요!');
+      return;
+    }
+
+    if (end === '') {
+      alert('운동 시간을 입력해 주세요!');
+      return;
+    }
+
+    if (selectedDays.length === 0) {
+      alert('운동 요일을 입력해 주세요!');
+      return;
+    }
+
     let edittedRecruitPost = {};
 
     Object.assign(edittedRecruitPost, {
@@ -164,26 +186,6 @@ const RecruitDetail = ({ params }: any) => {
       setChangeForm(false);
     } catch (error) {
       console.log('에러입니다', error);
-    }
-  };
-
-  // 요일 선택하기
-  const onClickSelectDay = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const {
-      currentTarget: { value }, // 무슨 요일인지 꺼냈음
-    } = event;
-
-    // 선택한 요일이 기존 배열에 포함되어 있으면 아래와 같이 동작
-    if (selectedDays.includes(value)) {
-      const newArr = selectedDays.filter((day) => day !== value);
-      setSelectedDays([...newArr]);
-      return;
-    }
-
-    // 선택한 요일이 기존 배열이 포함되어 있지 않으면 아래와 같이 동작
-    if (!selectedDays.includes(value)) {
-      setSelectedDays((prev) => [...prev, value]);
-      return;
     }
   };
 
@@ -236,65 +238,89 @@ const RecruitDetail = ({ params }: any) => {
       ) : (
         <>
           {changeForm ? (
-            <DetailPostFormMain>
-              <TitleInput
-                defaultValue={refetchedPost?.title}
-                onChange={onChangeEditTitle}
-                ref={editTitleRef}
-              />
-              <br />
+            // 수정 모드 form
+            <WritingFormMain>
+              <EditTitleContainer>
+                <StyledText>제목 </StyledText>
+                <TitleInput
+                  defaultValue={refetchedPost?.title}
+                  onChange={onChangeEditTitle}
+                  ref={editTitleRef}
+                />
+              </EditTitleContainer>
+
               <PlaceContainer>
                 <StyledText>운동 장소</StyledText>
+                <SearchLocationButton onClick={onClickOpenMap}>
+                  <SearchButtonText>위치 찾기</SearchButtonText>
+                </SearchLocationButton>
                 {refetchedPost.gymName ? (
-                  <div>
+                  <GymLocationBox>
                     <PlaceText>{refetchedPost.gymName}</PlaceText>
                     <DetailAddressText>
                       ({refetchedPost.region})
                     </DetailAddressText>
-                  </div>
+                  </GymLocationBox>
                 ) : (
                   <DetailAddressText>
                     원하는 헬스장을 검색해 주세요!
                   </DetailAddressText>
                 )}
-                <button onClick={onClickOpenMap}>운동 장소 선택 </button> <br />
               </PlaceContainer>
               <DayAndTimeContainer>
                 <StyledText>가능 요일 </StyledText>
-                {days.map((day) => {
-                  return (
-                    <>
-                      <DayBox value={day} onClick={onClickSelectDay}>
-                        {day}
-                      </DayBox>
-                    </>
-                  );
-                })}
+
+                <SelectDay
+                  mon={mon}
+                  tus={tus}
+                  wed={wed}
+                  thurs={thurs}
+                  fri={fri}
+                  sat={sat}
+                  sun={sun}
+                  every={every}
+                  setMon={setMon}
+                  setTus={setTus}
+                  setWed={setWed}
+                  setThurs={setThurs}
+                  setFri={setFri}
+                  setSat={setSat}
+                  setSun={setSun}
+                  setEvery={setEvery}
+                  selectedDays={selectedDays}
+                  setSelectedDays={setSelectedDays}
+                />
+
                 <StyledText>가능 시간</StyledText>
                 <UseDropDown setStart={setStart} setEnd={setEnd}>
                   시작 시간
                 </UseDropDown>
-                {start ? start : ''}
+                {start ? start : '00시 00분'}
                 <span> ~ </span>
                 <UseDropDown setStart={setStart} setEnd={setEnd}>
                   종료 시간
                 </UseDropDown>
-                {end ? end : ''}
+                {end ? end : '00시 00분'}
               </DayAndTimeContainer>
+
               <TextAreaContainer>
-                <textarea
+                <TextAreaInput
                   defaultValue={refetchedPost?.content}
                   onChange={onChangeEditContent}
                   ref={editContentRef}
                 />
+                <ButtonContainer>
+                  <SubmitAndCancelButton onClick={onSubmitEdittedPost}>
+                    수정 완료
+                  </SubmitAndCancelButton>
+                  <SubmitAndCancelButton onClick={onClickChangeForm}>
+                    취소
+                  </SubmitAndCancelButton>
+                </ButtonContainer>
               </TextAreaContainer>
-              <br />
-              <div>
-                <button onClick={onSubmitEdittedPost}>수정 완료</button>
-                <button onClick={onClickChangeForm}>취소</button>
-              </div>
-            </DetailPostFormMain>
+            </WritingFormMain>
           ) : (
+            // 수정 전 모드 form
             <DetailPostFormMain>
               <TitleContainer>
                 <TitleText>{refetchedPost?.title}</TitleText>
@@ -309,24 +335,32 @@ const RecruitDetail = ({ params }: any) => {
                   </ButtonBox>
                 ) : null}
               </TitleContainer>
-              <PostInfoContainer>
-                <PostInfoTextBox>{refetchedPost.region}</PostInfoTextBox>
-                <PostInfoTextBox>{refetchedPost.gymName}</PostInfoTextBox>
+              <InfoContainer>
+                <PostInfoContainer>
+                  <RecruitInfoTextBox>
+                    {refetchedPost.region}
+                  </RecruitInfoTextBox>
+                  <RecruitInfoTextBox>
+                    {refetchedPost.gymName}
+                  </RecruitInfoTextBox>
 
-                <PostInfoTextBox>
-                  {refetchedPost?.selectedDays?.map((day) => {
-                    return <span>{day}</span>;
-                  })}
-                </PostInfoTextBox>
-                <PostInfoTextBox>
-                  {`${refetchedPost?.startTime} ~ ${refetchedPost?.endTime}`}
-                </PostInfoTextBox>
-              </PostInfoContainer>
-              <UserInfoContainer>
-                <ProfileImage src={refetchedPost.userPhoto} />
-                <span>{refetchedPost.nickName}</span>
-              </UserInfoContainer>
-              <h4>{refetchedPost?.content}</h4>
+                  <RecruitInfoTextBox>
+                    {refetchedPost?.selectedDays?.map((day) => {
+                      return <span>{day}</span>;
+                    })}
+                  </RecruitInfoTextBox>
+                  <RecruitInfoTextBox>
+                    {`${refetchedPost?.startTime} ~ ${refetchedPost?.endTime}`}
+                  </RecruitInfoTextBox>
+                </PostInfoContainer>
+                <UserInfoContainer>
+                  <ProfileImage src={refetchedPost.userPhoto} />
+                  <span>{refetchedPost.nickName}</span>
+                </UserInfoContainer>
+              </InfoContainer>
+              <ContentBox>
+                <h4>{refetchedPost?.content}</h4>
+              </ContentBox>
               <div>
                 <CommentList id={id} />
               </div>
@@ -361,9 +395,11 @@ export default RecruitDetail;
 const DetailPostFormMain = styled.main`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: #d9d9d9;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   padding: 1rem;
   gap: 1rem;
 `;
@@ -374,9 +410,22 @@ const PostInfoContainer = styled.section`
   gap: 0.8rem;
 `;
 
-const PostInfoTextBox = styled.div`
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 60rem;
+  height: 13rem;
+  gap: 1.7rem;
+`;
+
+const RecruitInfoTextBox = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 2.2rem;
   background-color: white;
   border-radius: 0.6rem;
   gap: 0.6rem;
@@ -414,9 +463,136 @@ const TitleContainer = styled.section`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem;
+  width: 60rem;
+  padding: 1rem;
+  border-bottom: 1px solid black;
+`;
+
+const EditTitleContainer = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 `;
 
 const TitleText = styled.span`
   font-size: 2rem;
+`;
+
+const ContentBox = styled.div`
+  width: 60rem;
+  height: 25rem;
+  padding: 2rem;
+  border-radius: 2rem;
+  background-color: white;
+`;
+
+export const DayAndTimeContainer = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const DetailAddressText = styled.span`
+  font-size: large;
+`;
+
+export const PlaceContainer = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+export const PlaceText = styled.span`
+  font-size: larger;
+  font-weight: bold;
+`;
+
+export const StyledText = styled.span`
+  font-size: x-large;
+  font-weight: bold;
+`;
+
+export const TextAreaContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+`;
+
+export const TitleInput = styled.input`
+  width: 62rem;
+  height: 3rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 2rem;
+  margin-left: 3rem;
+`;
+
+export const WritingFormMain = styled.main`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #d9d9d9;
+  width: 100%;
+  height: 100vh;
+  padding: 1rem;
+  gap: 2rem;
+`;
+
+export const SearchButtonText = styled.span`
+  font-size: large;
+  font-weight: bold;
+`;
+
+export const SearchLocationButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 7rem;
+  height: 2.5rem;
+  border: 1px solid black;
+  border-radius: 1rem;
+  background-color: white;
+`;
+
+export const GymLocationBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 2rem;
+  width: 54rem;
+  height: 3rem;
+  padding: 1rem;
+`;
+
+export const TextAreaInput = styled.textarea`
+  resize: none;
+  width: 70rem;
+  height: 40rem;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 2rem;
+`;
+
+const SubmitAndCancelButton = styled.button`
+  margin-top: 2rem;
+  width: 10rem;
+  height: 3rem;
+  font-size: large;
+  font-weight: bold;
+  border-radius: 1rem;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 30rem;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
 `;

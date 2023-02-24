@@ -41,21 +41,48 @@ const Comment = ({ comment }: { comment: CommentType }) => {
 
   return (
     <>
-      <div>
+      <CommentWrapper>
         <ProfileImage src={comment.userPhoto} />
-        <span>{comment.nickName}</span>
-        <span>{comment.comment}</span>
+        <NickName>{comment.nickName}</NickName>
+        <CommentListWrapper>{comment.comment}</CommentListWrapper>
         {authService.currentUser?.uid === comment.userId ? (
-          <button onClick={onClickDeleteComment}>삭제</button>
+          <DeleteButton onClick={onClickDeleteComment}>삭제</DeleteButton>
         ) : null}
-      </div>
+      </CommentWrapper>
     </>
   );
 };
 
 export default Comment;
 
+const CommentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const CommentListWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 80%;
+  margin: 1rem;
+`;
+const NickName = styled.div`
+  display: flex;
+  width: 3rem;
+  align-items: center;
+  margin: 1rem;
+`;
+const DeleteButton = styled.button`
+  width: 5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  border-radius: 1rem;
+  border: 0.1px solid black;
+`;
 const ProfileImage = styled.img`
+  display: flex;
+  align-items: center;
   width: 3rem;
   height: 3rem;
   border-radius: 50%;

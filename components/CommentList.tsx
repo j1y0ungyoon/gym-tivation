@@ -9,6 +9,7 @@ import {
   query,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 // props로 받은 id는 해당 recruitPost의 id임
 const CommentList = ({ id }: { id: string }) => {
@@ -74,23 +75,55 @@ const CommentList = ({ id }: { id: string }) => {
   }, []);
 
   return (
-    <>
-      {comments
-        .filter((comment) => comment.postId === id)
-        .map((comment) => {
-          return <Comment key={comment.id} comment={comment} />;
-        })}
-
-      <div>
-        <input
+    <CommentListWrapper>
+      <InputWrapper>
+        <CommentInput
           onChange={onChangeInputComment}
           onKeyUp={onPressSubmitComment}
           value={inputComment}
         />
-        <button onClick={onSubmitComment}>댓글 작성</button>
-      </div>
-    </>
+        <ButtonWrapper>
+          <SubmitCommentButton onClick={onSubmitComment}>
+            등록
+          </SubmitCommentButton>
+        </ButtonWrapper>
+      </InputWrapper>
+      <CommentWrapper>
+        {comments
+          .filter((comment) => comment.postId === id)
+          .map((comment) => {
+            return <Comment comment={comment} />;
+          })}
+      </CommentWrapper>
+    </CommentListWrapper>
   );
 };
 
 export default CommentList;
+
+const CommentListWrapper = styled.div``;
+const CommentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const InputWrapper = styled.div`
+  display: flex;
+`;
+
+const CommentInput = styled.input`
+  width: 40rem;
+  height: 2.5rem;
+  margin-top: 1rem;
+  border-radius: 1rem;
+  border: 0.1px solid black;
+`;
+const ButtonWrapper = styled.div``;
+const SubmitCommentButton = styled.button`
+  width: 4rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  border-radius: 1rem;
+  border: 0.1px solid black;
+`;
