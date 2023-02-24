@@ -45,7 +45,7 @@ const RecruitPostBox = styled.div`
   justify-content: start;
   align-items: center;
   gap: 0.8rem;
-  width: 50rem;
+  width: 98%;
   height: 5rem;
   border: 1px solid black;
   border-radius: 1.2rem;

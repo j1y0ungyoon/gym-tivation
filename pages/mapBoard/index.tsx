@@ -112,7 +112,7 @@ const MapBoardWrapper = styled.div`
   padding: 2rem;
   background-color: #d9d9d9;
   border-radius: 2rem;
-  width: 55rem;
+  width: 40%;
   height: 60rem;
 `;
 
@@ -122,6 +122,7 @@ const MapBoardHeadContainer = styled.section`
   align-items: center;
   padding: 10px;
   margin-top: 10px;
+  margin-right: 2.3rem;
 `;
 
 const MapBoardWritingButton = styled.button`
@@ -138,7 +139,7 @@ const MapBoardContainer = styled.div`
   justify-content: center;
   background-color: #d9d9d9;
   border-radius: 2rem;
-  width: 55rem;
+  width: 35%;
   height: 60rem;
   gap: 1rem;
 `;
