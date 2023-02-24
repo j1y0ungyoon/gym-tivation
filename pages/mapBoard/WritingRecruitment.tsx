@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { CoordinateType, WorkOutTimeType } from '../../type';
 import SearchMyGym from '@/components/SearchMyGym';
 import UseDropDown from '@/components/UseDropDown';
+import SelectDay from '@/components/SelectDay';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -37,12 +38,19 @@ const WritingRecruitment = () => {
   // 시작 시간, 종료 시간을 위한 state
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
-  // 클릭한 요일을 표시하는 state
-  const [isClicked, setIsClicked] = useState(false);
+
   // 선택한 요일에 대한 state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  // 요일 배열
-  const days = ['월', '화', '수', '목', '금', '토', '일', '매일'];
+
+  // 버튼 박스 클릭 시 색상 변경을 위한 state 나중에 수정 필요
+  const [mon, setMon] = useState(false);
+  const [tus, setTus] = useState(false);
+  const [wed, setWed] = useState(false);
+  const [thurs, setThurs] = useState(false);
+  const [fri, setFri] = useState(false);
+  const [sat, setSat] = useState(false);
+  const [sun, setSun] = useState(false);
+  const [every, setEvery] = useState(false);
 
   const router = useRouter();
 
@@ -117,26 +125,6 @@ const WritingRecruitment = () => {
     setOpenMap(!openMap);
   };
 
-  // 요일 선택하기
-  const onClickSelectDay = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const {
-      currentTarget: { value }, // 무슨 요일인지 꺼냈음
-    } = event;
-
-    // 선택한 요일이 기존 배열에 포함되어 있으면 아래와 같이 동작
-    if (selectedDays.includes(value)) {
-      const newArr = selectedDays.filter((day) => day !== value);
-      setSelectedDays([...newArr]);
-      return;
-    }
-
-    // 선택한 요일이 기존 배열이 포함되어 있지 않으면 아래와 같이 동작
-    if (!selectedDays.includes(value)) {
-      setSelectedDays((prev) => [...prev, value]);
-      return;
-    }
-  };
-
   return (
     <>
       <WritingFormMain>
@@ -147,47 +135,64 @@ const WritingRecruitment = () => {
             value={recruitTitle}
             placeholder={'제목을 작성하세요'}
           />
-          <br />
         </TitleContainer>
+
         <PlaceContainer>
           <StyledText>운동 장소</StyledText>
+          <SearchLocationButton onClick={onClickOpenMap}>
+            <SearchButtonText>위치 찾기</SearchButtonText>
+          </SearchLocationButton>
           {gymName ? (
-            <div>
+            <GymLocationBox>
               <PlaceText>{gymName}</PlaceText>
               <DetailAddressText>({detailAddress})</DetailAddressText>
-            </div>
+            </GymLocationBox>
           ) : (
-            <DetailAddressText>
-              원하는 헬스장을 검색해 주세요!
-            </DetailAddressText>
+            <GymLocationBox>원하는 헬스장을 검색해 주세요!</GymLocationBox>
           )}
-          <button onClick={onClickOpenMap}>운동 장소 선택 </button> <br />
         </PlaceContainer>
         <DayAndTimeContainer>
           <StyledText>가능 요일 </StyledText>
-          {days.map((day) => {
-            return (
-              <>
-                <DayBox value={day} onClick={onClickSelectDay}>
-                  {day}
-                </DayBox>
-              </>
-            );
-          })}
+
+          <SelectDay
+            mon={mon}
+            tus={tus}
+            wed={wed}
+            thurs={thurs}
+            fri={fri}
+            sat={sat}
+            sun={sun}
+            every={every}
+            setMon={setMon}
+            setTus={setTus}
+            setWed={setWed}
+            setThurs={setThurs}
+            setFri={setFri}
+            setSat={setSat}
+            setSun={setSun}
+            setEvery={setEvery}
+            selectedDays={selectedDays}
+            setSelectedDays={setSelectedDays}
+          />
+
           <StyledText>가능 시간</StyledText>
           <UseDropDown setStart={setStart} setEnd={setEnd}>
             시작 시간
           </UseDropDown>
-          {start ? start : ''}
+          {start ? start : '00시 00분'}
           <span> ~ </span>
           <UseDropDown setStart={setStart} setEnd={setEnd}>
             종료 시간
           </UseDropDown>
-          {end ? end : ''}
+          {end ? end : '00시 00분'}
         </DayAndTimeContainer>
 
         <TextAreaContainer>
-          <textarea onChange={onChangeRecruitContent} value={recruitContent} />{' '}
+          <TextAreaInput
+            onChange={onChangeRecruitContent}
+            value={recruitContent}
+            placeholder="문구 입력.."
+          />
           <UploadButtonBox onClick={onSubmitRecruitPost}>
             작성 완료
           </UploadButtonBox>
@@ -208,10 +213,13 @@ const WritingRecruitment = () => {
 
 export default WritingRecruitment;
 
-const WritingFormMain = styled.main`
+export const WritingFormMain = styled.main`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background-color: #d9d9d9;
+  width: 100%;
   height: 100vh;
   padding: 1rem;
   gap: 2rem;
@@ -226,6 +234,7 @@ export const TitleContainer = styled.section`
 export const PlaceContainer = styled.section`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
 `;
 
@@ -244,14 +253,50 @@ export const DayAndTimeContainer = styled.section`
   gap: 1rem;
 `;
 
+export const DayText = styled.span`
+  font-weight: bold;
+  font-size: large;
+`;
+
 export const DayBox = styled.button`
-  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 1rem;
   cursor: pointer;
   padding: 5px;
-  &:focus {
-    background-color: black;
-    color: white;
-  }
+  background-color: white;
+`;
+
+export const SearchLocationButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 7rem;
+  height: 2.5rem;
+  border: 1px solid black;
+  border-radius: 1rem;
+  background-color: white;
+`;
+
+export const SearchButtonText = styled.span`
+  font-size: large;
+  font-weight: bold;
+`;
+
+export const GymLocationBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 2rem;
+  width: 54rem;
+  height: 3rem;
+  padding: 1rem;
 `;
 
 const SelectedDayBox = styled.div`
@@ -262,15 +307,30 @@ const SelectedDayBox = styled.div`
   color: white;
 `;
 
+export const TextAreaInput = styled.textarea`
+  resize: none;
+  width: 70rem;
+  height: 40rem;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 2rem;
+`;
+
 export const TextAreaContainer = styled.section`
   display: flex;
   flex-direction: column;
-  background-color: green;
+  justify-content: center;
+  align-items: center;
   width: 60%;
 `;
 
 export const UploadButtonBox = styled.button`
+  margin-top: 2rem;
   width: 10rem;
+  height: 3rem;
+  font-size: large;
+  font-weight: bold;
+  border-radius: 1rem;
 `;
 
 export const StyledText = styled.span`
@@ -279,9 +339,10 @@ export const StyledText = styled.span`
 `;
 
 export const TitleInput = styled.input`
-  width: 25rem;
-  height: 1rem;
-  padding: 10px;
+  width: 62rem;
+  height: 3rem;
+  padding: 1rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 2rem;
+  margin-left: 3rem;
 `;

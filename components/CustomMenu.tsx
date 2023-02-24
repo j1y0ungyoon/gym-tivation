@@ -37,9 +37,12 @@ const CustomMenu = React.forwardRef(
   },
 );
 
+
+
 export default CustomMenu;
 
 const StyledUl = styled.ul`
   height: 18rem;
   overflow: scroll;
+  overflow-x: hidden;
 `;
