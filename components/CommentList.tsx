@@ -30,20 +30,28 @@ const CommentList = ({ id }: { id: string }) => {
       return;
     }
 
-    const newComment = {
-      postId: id,
-      userId: authService.currentUser?.uid,
-      nickName: authService.currentUser?.displayName,
-      userPhoto: authService.currentUser?.photoURL,
-      comment: inputComment,
-      createdAt: Date.now(),
-    };
+    if (authService.currentUser) {
+      const newComment = {
+        postId: id,
+        userId: authService.currentUser?.uid,
+        nickName: authService.currentUser?.displayName,
+        userPhoto: authService.currentUser?.photoURL,
+        comment: inputComment,
+        createdAt: Date.now(),
+      };
 
-    await addDoc(collection(dbService, 'comments'), newComment)
-      .then(() => console.log('데이터 전송 성공'))
-      .catch((error) => console.log('에러 발생', error));
+      await addDoc(collection(dbService, 'comments'), newComment)
+        .then(() => console.log('데이터 전송 성공'))
+        .catch((error) => console.log('에러 발생', error));
 
-    setInputComment('');
+      setInputComment('');
+    }
+
+    if (!authService.currentUser) {
+      alert('로그인을 먼저 해주세요!');
+      setInputComment('');
+      return;
+    }
   };
 
   // 엔터 후 댓글 작성 완료

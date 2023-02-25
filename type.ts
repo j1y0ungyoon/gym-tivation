@@ -5,6 +5,11 @@ export interface CoordinateType {
   lng: number;
 }
 
+export interface ParticipationType {
+  userId: string[];
+  userPhoto: string[];
+}
+
 export interface RecruitPostType {
   title?: string;
   content?: string;
@@ -18,6 +23,7 @@ export interface RecruitPostType {
   endTime?: string;
   coordinate?: CoordinateType;
   selectedDays?: string[];
+  participation?: ParticipationType;
   createdAt?: number;
 }
 

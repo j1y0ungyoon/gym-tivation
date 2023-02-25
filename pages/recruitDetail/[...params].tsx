@@ -7,7 +7,7 @@ import {
   EditRecruitPostParameterType,
   RecruitPostType,
 } from '../../type';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
 import UseDropDown from '@/components/UseDropDown';
@@ -194,6 +194,58 @@ const RecruitDetail = ({ params }: any) => {
     setOpenMap(!openMap);
   };
 
+  // 운동에 참여하기 클릭 이벤트
+  const onClcikParticipate = async () => {
+    // 비로그인 사용자가 참여 버튼을 눌렀을 때
+    if (!authService.currentUser) {
+      alert('로그인 후 이용해주세요!');
+      return;
+    }
+
+    // 로그인 사용자가 참여 버튼을 눌렀을 때
+    if (authService.currentUser) {
+      // participation이 undefined일 가능성이 있다고 type에러가 났기 때문에 아래와 같이 if문 활용
+      if (refetchedPost?.participation) {
+        // useMutation을 사용할 때, 아래와 같이 객체를 만들어서 reviseRecruitPost의 파라미터로 주어야 한다.
+        // 그렇지 않으면 이미 reviseRecruitPost의 파라미터 타입을 준 것이 있기 때문에 그것의 영향으로 타입 에러가 발생한다.
+        let edittedRecruitPost = {};
+
+        Object.assign(edittedRecruitPost, {
+          participation: {
+            userId: [
+              ...refetchedPost?.participation.userId,
+              authService.currentUser?.uid,
+            ],
+
+            userPhoto: [
+              ...refetchedPost?.participation.userPhoto,
+              authService.currentUser.photoURL,
+            ],
+          },
+        });
+
+        const profileRef = doc(
+          dbService,
+          'profile',
+          authService.currentUser.uid,
+        );
+
+        // 참여 버튼 누른 user id를 해당 게시물의 필드에 넣어주기
+        await reviseRecruitPost({ recruitPostId: id, edittedRecruitPost });
+
+        // 참여 버튼 누른 post id를 해당 유저의 필드에 넣어주기
+        // api 파일에 profile 업데이트 관련 로직이 없어서 useMutation은 활용 못 함
+        await updateDoc(profileRef, {
+          userId: [
+            ...refetchedPost.participation.userId,
+            authService.currentUser.uid,
+          ],
+        });
+      }
+      alert('참여가 완료 되었습니다!');
+    }
+  };
+
   useEffect(() => {
     // 수정한 게시글을 실시간 감지해서 화면에 반영하기 위함.
     const unsubscribe = onSnapshot(
@@ -213,6 +265,7 @@ const RecruitDetail = ({ params }: any) => {
           startTime: data?.startTime,
           endTime: data?.endTime,
           selectedDays: data?.selectedDays,
+          participation: data?.participation,
           createdAt: data?.createdAt,
         };
 
@@ -333,10 +386,22 @@ const RecruitDetail = ({ params }: any) => {
                       삭제
                     </StyledButton>
                   </ButtonBox>
-                ) : null}
+                ) : (
+                  <ButtonBox>
+                    <StyledButton onClick={onClcikParticipate}>
+                      참여하기
+                    </StyledButton>
+                  </ButtonBox>
+                )}
               </TitleContainer>
               <InfoContainer>
                 <PostInfoContainer>
+                  <span>참가자</span>
+                  {refetchedPost.participation?.userPhoto
+                    ? refetchedPost.participation.userPhoto.map((photo) => {
+                        return <ProfileImage src={photo} />;
+                      })
+                    : null}
                   <RecruitInfoTextBox>
                     {refetchedPost.region}
                   </RecruitInfoTextBox>
