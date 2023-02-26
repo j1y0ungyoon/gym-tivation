@@ -45,6 +45,7 @@ const CalendarEdit = ({
     <CalendarContentBox key={item.id}>
       <CalendarTextArea
         value={textAreaContent}
+        spellCheck="false"
         onChange={(e) => {
           setTextAreaContent(e.target.value);
         }}

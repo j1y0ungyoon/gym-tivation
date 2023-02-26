@@ -30,6 +30,7 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
   return (
     <CalendarContentBox>
       <CalendarTextArea
+        spellCheck="false"
         value={calendarText}
         onChange={(e) => {
           setCalendarText(e.target.value);

@@ -1,10 +1,19 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import UploadImage from '@/components/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  query,
+  collection,
+  getDocs,
+  where,
+} from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage/[...params]';
+import { AiFillCheckCircle } from 'react-icons/ai';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -41,48 +50,93 @@ const ProfileEdit = ({
   const [photoURL, setPhotoURL] = useState(DEFAULT_PHOTO_URL);
 
   //프로필 변경
-  const [nickName, setNickName] = useState('');
+  const [nickName, setNickName] = useState<string>('');
   const [introduction, setIntroduction] = useState(item.introduction);
   const [area, setArea] = useState(item.area);
   const [instagram, setInstagram] = useState(item.instagram);
+  const [nickNameMessage, setNickNameMessage] = useState<string>('');
+  const [isValidNickName, setIsValidNickName] = useState(true);
+  const [nickNameInformation, setNickNameInformation] = useState([] as any);
 
-  const nickName_validation = new RegExp(
-    /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
-  );
+  const nickNameCheck = nickNameInformation.includes(nickName);
+  const user = String(authService.currentUser?.uid);
+  console.log(isValidNickName);
+  //닉네임 중복 검사
+  const EmailNickNameGetDoc = async () => {
+    const q = query(collection(dbService, 'profile'), where('uid', '!=', user));
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setNickNameInformation((prev: any) => [...prev, doc.data().displayName]);
+    });
+  };
+  const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const nickName_validation = new RegExp(
+      /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+    );
+    const nickNameCurrent = e.target.value;
+    setNickName(nickNameCurrent);
+    if (nickName_validation.test(nickNameCurrent)) {
+      setNickNameMessage('');
+      setIsValidNickName(true);
+    } else {
+      setNickNameMessage('2글자 이상 8글자 이하로 입력해주세요.');
+      setIsValidNickName(false);
+    }
+  }, []);
+
+  const nickNameIcon =
+    isValidNickName && !nickNameCheck ? (
+      <AiFillCheckCircle color="green" />
+    ) : (
+      <AiFillCheckCircle color="red" />
+    );
+  const [message, setMessage] = useState('');
+  //Level 메시지
+  const Level = Number(item.lv);
+  const helpLevel = () => {
+    if (item.lvName === '일반인' && Level < 5) {
+      setMessage(`헬애기까지 Lv${5 - Level} 남았습니다. `);
+    } else if (item.lvName === '헬애기' && Level < 15) {
+      setMessage(`헬린이까지 Lv${15 - Level} 남았습니다.`);
+    } else if (item.lvName === '헬린이' && Level < 30) {
+      setMessage(`헬른이까지 Lv${30 - Level} 남았습니다.`);
+    } else if (item.lvName === '헬른이' && Level < 60) {
+      setMessage(`헬애비까지 Lv${60 - Level} 남았습니다.`);
+    }
+  };
 
   //프로필 수정
   const onClickProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (nickName_validation.test(nickName)) {
-      try {
-        const user = authService.currentUser;
-        if (user !== null) {
-          await updateProfile(user, {
-            displayName: nickName,
-            photoURL,
-          });
-          setIsProfileEdit(false);
-          await updateDoc(doc(dbService, 'profile', user.uid), {
-            introduction: introduction,
-            area: area,
-            instagram: instagram,
-            displayName: nickName,
-            photoURL: photoURL,
-            email: user.email,
-            uid: user.uid,
-          });
-        }
-        alert('변경완료');
-      } catch (error: any) {
-        alert(error.message);
+
+    try {
+      const user = authService.currentUser;
+      if (user !== null) {
+        await updateProfile(user, {
+          displayName: nickName,
+          photoURL,
+        });
+        setIsProfileEdit(false);
+        await updateDoc(doc(dbService, 'profile', user.uid), {
+          introduction: introduction,
+          area: area,
+          instagram: instagram,
+          displayName: nickName,
+          photoURL: photoURL,
+          email: user.email,
+          uid: user.uid,
+        });
       }
-    } else {
-      alert('닉네임은 특수문자 제외 2글자 이상 8글자 이하로 적어주세요.');
+      alert('변경완료');
+    } catch (error: any) {
+      alert(error.message);
     }
   };
 
   //사진 주소, 닉네임 불러오기
   useEffect(() => {
+    EmailNickNameGetDoc();
+    helpLevel();
     authService.onAuthStateChanged((user) => {
       if (user !== null) {
         if (user.displayName !== null) {
@@ -111,8 +165,20 @@ const ProfileEdit = ({
                 )}
               </ProfilePhoto>
               <LevelBox>
-                <LevelText>헬린이</LevelText>
-                <LevelTextNumber>LV20 </LevelTextNumber>
+                <LevelText>{item.lvName}</LevelText>
+                <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
+                <LevelHelpBox className="levelHelpBox">
+                  <LevelHelpTextBox>
+                    <HelpLvText>Lv이란?</HelpLvText>
+                    <LevelHelpText>
+                      게시판 및 오운완 갤러리 글 작성시 Lv이 증가하며, 일정 Lv
+                      달성시 타이틀을 획득할 수 있습니다.
+                    </LevelHelpText>
+                    <LevelHelpTextBox>
+                      <LevelMessage>{message}</LevelMessage>
+                    </LevelHelpTextBox>
+                  </LevelHelpTextBox>
+                </LevelHelpBox>
               </LevelBox>
             </EditPhotoBox>
             <EditNickNameBox>
@@ -126,7 +192,7 @@ const ProfileEdit = ({
                         setIsProfileEdit(true);
                       }}
                     >
-                      프로필 수정
+                      수정
                     </EditButton>
                   )}
                 </NameBox>
@@ -169,8 +235,20 @@ const ProfileEdit = ({
                   <UploadImage imageURL={photoURL} setImageURL={setPhotoURL} />
                 </ProfilePhoto>
                 <LevelBox>
-                  <LevelText>헬린이</LevelText>
-                  <LevelTextNumber>LV20 </LevelTextNumber>
+                  <LevelText>{item.lvName}</LevelText>
+                  <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
+                  <LevelHelpBox className="levelHelpBox">
+                    <LevelHelpTextBox>
+                      <HelpLvText>Lv이란?</HelpLvText>
+                      <LevelHelpText>
+                        게시판 및 오운완 갤러리 글 작성시 Lv이 증가하며, 일정 Lv
+                        달성시 타이틀을 획득할 수 있습니다.
+                      </LevelHelpText>
+                      <LevelHelpTextBox>
+                        <LevelMessage>{message}</LevelMessage>
+                      </LevelHelpTextBox>
+                    </LevelHelpTextBox>
+                  </LevelHelpBox>
                 </LevelBox>
               </EditPhotoBox>
               <EditNickNameBox>
@@ -179,9 +257,7 @@ const ProfileEdit = ({
                     <TextInput
                       spellCheck="false"
                       value={nickName}
-                      onChange={(e) => {
-                        setNickName(e.target.value);
-                      }}
+                      onChange={onChangeName}
                       placeholder="닉네임"
                       maxLength={8}
                     />
@@ -197,7 +273,30 @@ const ProfileEdit = ({
                         </option>
                       ))}
                     </Select>
-                    <EditButton type="submit">완료하기</EditButton>
+                    <EditButton onClick={() => setIsProfileEdit(false)}>
+                      취소
+                    </EditButton>
+                    <EditButton
+                      type="submit"
+                      disabled={isValidNickName === nickNameCheck}
+                    >
+                      완료
+                    </EditButton>
+                    <InputBox>
+                      {nickName !== item.displayName && (
+                        <>
+                          {nickNameIcon}
+                          <TextValidation
+                            className={`message ${
+                              isValidNickName ? 'success' : 'error'
+                            }`}
+                          >
+                            {nickNameCheck ? '중복된 닉네임입니다' : ''}
+                            {nickNameMessage}
+                          </TextValidation>
+                        </>
+                      )}
+                    </InputBox>
                   </NameBox>
                   <InstagramBox>
                     <InstagramInput
@@ -222,7 +321,7 @@ const ProfileEdit = ({
                     {following === undefined ? '0' : following.length}{' '}
                   </FollowNumberText>
                 </FollowBox>
-                <IntroductionText
+                <IntroductionEditText
                   spellCheck="false"
                   value={introduction}
                   onChange={(e) => {
@@ -256,13 +355,13 @@ const EditPhotoBox = styled.div`
 `;
 
 const EditNickNameBox = styled.div`
-  width: 25vw;
+  width: 30vw;
   height: 50vh;
   float: left;
   text-align: left;
 `;
 const NameBox = styled.div`
-  height: 67%;
+  height: 80%;
 `;
 const ProfilePhoto = styled.div`
   width: 150px;
@@ -277,18 +376,58 @@ const Photo = styled.img`
   object-fit: cover;
 `;
 const LevelBox = styled.div`
+  position: relative;
   margin-top: 2vh;
+  :hover {
+    cursor: help;
+    .levelHelpBox {
+      display: flex;
+    }
+  }
+`;
+const LevelHelpBox = styled.div`
+  display: none;
+  z-index: 2000;
+  width: 20%;
+  height: 15%;
+  top: 42%;
+  left: 18%;
+  position: fixed;
+  border-radius: 15px;
+  background-color: white;
+  transform: translate(-50%, -50%) !important;
+  padding: 0.9rem;
+  border-style: solid;
+  border-width: 1px;
+  border-color: gray;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+const LevelMessage = styled.div`
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  color: green;
+  font-weight: bolder;
+`;
+const LevelHelpTextBox = styled.div`
+  text-align: left;
+`;
+const LevelHelpText = styled.span`
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
 `;
 const LevelText = styled.span`
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: black;
+  font-weight: bolder;
+  font-size: 1.2rem;
+  color: green;
 `;
 const LevelTextNumber = styled.span`
   margin-left: 0.2vw;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bolder;
-  color: green;
+  color: red;
 `;
 const NickNameAreaBox = styled.div`
   margin-top: 1vh;
@@ -305,7 +444,7 @@ const AreaText = styled.span`
   color: black;
 `;
 const IntroductionText = styled.textarea`
-  margin-top: 4vh;
+  margin-top: 3vh;
   font-size: 16px;
   border: none;
   width: 24vw;
@@ -317,13 +456,29 @@ const IntroductionText = styled.textarea`
     outline: none;
   }
 `;
+const IntroductionEditText = styled.textarea`
+  margin-top: 3vh;
+  font-size: 16px;
+  border: none;
+  width: 24vw;
+  height: 8vh;
+  text-align: left;
+  resize: none;
+  overflow: hidden;
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-width: 0.1rem;
+  :focus {
+    outline: none;
+  }
+`;
 
 const EditButton = styled.button`
   background-color: #eeeeee;
   border-radius: 2rem;
   border: none;
-  width: 6vw;
-  height: 4.5vh;
+  width: 4vw;
+  height: 3.9vh;
   margin-left: 1vw;
   :hover {
     cursor: pointer;
@@ -334,10 +489,14 @@ const EditButton = styled.button`
 
 const TextInput = styled.input`
   width: 8vw;
+  height: 2.6vh;
   border: none;
   font-size: 1.2rem;
   font-weight: bold;
   text-align: left;
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 0.1rem;
   :focus {
     outline: none;
   }
@@ -346,7 +505,7 @@ const TextInput = styled.input`
 const Select = styled.select`
   width: 4vw;
   font-size: 1rem;
-  margin-right: 2vw;
+  margin-left: 1vw;
   border: none;
   :focus {
     outline: none;
@@ -360,6 +519,9 @@ const InstagramInput = styled.input`
   color: black;
   font-weight: 700;
   text-align: left;
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 0.1rem;
   :focus {
     outline: none;
   }
@@ -388,6 +550,7 @@ const FollowBox = styled.div`
   margin-top: 4vh;
   :hover {
     cursor: pointer;
+    color: gray;
   }
 `;
 
@@ -398,4 +561,19 @@ const FollowText = styled.span`
 const FollowNumberText = styled.span`
   font-weight: bolder;
   font-size: 1.2rem;
+`;
+
+const TextValidation = styled.span`
+  color: red;
+  margin-left: 1vw;
+  font-size: 12px;
+`;
+const InputBox = styled.div`
+  height: 15vh;
+`;
+
+const HelpLvText = styled.span`
+  font-size: 1.2rem;
+  font-weight: bolder;
+  color: red;
 `;

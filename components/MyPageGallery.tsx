@@ -66,13 +66,17 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
 export default MyPageGalley;
 const MyPageGalleyWrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: 61%;
   display: flex;
   overflow: auto;
   flex-wrap: wrap;
   padding-bottom: 1vh;
   padding-left: 1.5vw;
   padding-right: 1.5vw;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const GalleryContainer = styled.div`
@@ -82,8 +86,9 @@ const GalleryContainer = styled.div`
 const GalleryPhoto = styled.img`
   width: 14vw;
   height: 18vh;
-
   :hover {
     cursor: pointer;
+
+    transform: scale(1.2, 1.2); /* 가로2배 새로 1.5배 로 커짐 */
   }
 `;

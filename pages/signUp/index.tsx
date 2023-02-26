@@ -222,6 +222,8 @@ const SignUp = () => {
         uid: user.uid,
         following: '',
         follower: '',
+        lv: 1,
+        lvName: '일반인',
       });
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();

@@ -29,6 +29,8 @@ export type ProfileItem = {
   following?: string;
   follower?: string;
   uid?: string;
+  lv?: number;
+  lvName?: string;
 };
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
 const MyPage = ({ params }: any) => {
@@ -325,28 +327,11 @@ const GalleyButton = styled.button`
     color: white;
   }
 `;
-const NavigationButton = styled.button`
-  margin-right: 4vw;
-  background-color: #eeeeee;
-  border-radius: 2rem;
-  border: none;
-  width: 6vw;
-  height: 4.5vh;
-  :hover {
-    cursor: pointer;
-    background-color: gray;
-    color: white;
-  }
-  :focus {
-    cursor: pointer;
-    background-color: gray;
-    color: white;
-  }
-`;
 
 const GalleyBox = styled.div`
   position: absolute;
   width: 65%;
+  height: 100%;
   margin-left: 2vw;
   top: 52%;
 `;
@@ -436,7 +421,6 @@ const FollowModal = styled.div`
   z-index: 2000;
   width: 27%;
   height: 60%;
-  background-color: black;
   position: fixed;
   top: 50%;
   left: 50%;
