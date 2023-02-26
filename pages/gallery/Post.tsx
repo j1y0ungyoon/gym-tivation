@@ -3,6 +3,7 @@ import { addDoc, collection } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 const Post = () => {
@@ -12,7 +13,7 @@ const Post = () => {
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
   const router = useRouter();
-
+  const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
   const uploadBoardImage = () => {
@@ -74,10 +75,22 @@ const Post = () => {
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!galleryContent) {
+      toast.warn('제목을 입력해주세요');
+      return;
+    }
+    if (!galleryContent) {
+      toast.warn('내용을 입력해주세요');
+      return;
+    }
+    if (!galleryPhoto) {
+      toast.warn('사진을 선택해주세요');
+      return;
+    }
     const newGalleryPost = {
       title: galleryTitle,
       content: galleryContent,
-      createdAt: Date.now(),
+      createdAt: today,
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
       photo: imageUrl,
