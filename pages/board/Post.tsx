@@ -6,6 +6,7 @@ import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
 
+import { toast } from 'react-toastify';
 const Post = () => {
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
@@ -15,7 +16,7 @@ const Post = () => {
   const [boardPhoto, setBoardPhoto] = useState('');
 
   const router = useRouter();
-
+  const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
   };
@@ -76,11 +77,24 @@ const Post = () => {
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!boardTitle) {
+      toast.warn('제목을 입력해주세요!');
+      return;
+    }
+    if (!boardContent) {
+      toast.warn('내용을 입력해주세요!');
+      return;
+    }
+    if (!category) {
+      toast.warn('카테고리를 선택해주세요!');
+      return;
+    }
     const newPost = {
       title: boardTitle,
       content: boardContent,
       category: category,
-      createdAt: Date.now(),
+      createdAt: today,
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
       photo: imageUrl,
@@ -113,6 +127,7 @@ const Post = () => {
                 type="file"
                 accept="image/*"
                 onChange={onChangeImage}
+                multiple
               />
               <ImagePreview id="image" />
             </PostImageWrapper>

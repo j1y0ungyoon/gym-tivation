@@ -12,22 +12,23 @@ import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
 import BoardCommentList from '@/components/BoardCommentList';
+import { BoardPostType } from '@/type';
 
-interface DetailProps {
-  id?: string;
-  title?: string;
-  content?: string;
-  createdAt?: number;
-  photo?: string;
-  item?: any;
-  category?: string;
-  detailPost?: any;
-  like?: string[];
-  userId?: string;
-}
+// interface DetailProps {
+//   id?: string;
+//   title?: string;
+//   content?: string;
+//   createdAt?: number;
+//   photo?: string;
+//   item?: any;
+//   category?: string;
+//   detailPost?: any;
+//   like?: string[];
+//   userId?: string;
+// }
 
 const Detail = ({ params }: any) => {
-  const [detailPost, setDetailPost] = useState<DetailProps>();
+  const [detailPost, setDetailPost] = useState<BoardPostType>();
   const [changeDetailPost, setChangeDetailPost] = useState(false);
   const [editDetailTitle, setEditDetailTitle] = useState<string | undefined>(
     '',
