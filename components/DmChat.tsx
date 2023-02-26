@@ -12,6 +12,7 @@ type ChatLog = {
   msg: string;
   username: string;
   photoURL?: string | null | undefined;
+  date?: string;
   roomNum: any;
 };
 
@@ -24,15 +25,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   console.log('roomNum', roomNum);
 
   const [inputValue, setInputValue] = useState('');
-  const [chatLogs, setChatLogs] = useState<ChatLog[]>([
-    {
-      id: 1,
-      msg: `${roomNum}채팅에 접속하셨습니다.`,
-      username: '관리자',
-      photoURL: authService.currentUser?.photoURL,
-      roomNum,
-    },
-  ]);
+  const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
 
   const user = authService.currentUser;
   const username = user?.displayName;
@@ -43,7 +36,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   // /room/roomnum 으로 들어온 상태에서 새로고침 해도 잘 돌아가게 해주기
   useEffect(() => {
     router.isReady;
-  }, []);
+  }, [roomNum]);
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
@@ -84,11 +77,20 @@ const DmChat = ({ roomNum }: DmChatProps) => {
     if (e.key !== 'Enter') return;
     if (inputValue === '') return;
 
+    // 날짜 추가
+    const newDate = new Date();
+
+    const hours = newDate.getHours(); // 시
+    const minutes = newDate.getMinutes(); // 분
+    const seconds = newDate.getSeconds(); // 초
+    const time = `${hours}:${minutes}:${seconds}`;
+
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
       photoURL: user ? user.photoURL : null,
+      date: time,
       roomNum,
     };
 
@@ -104,12 +106,21 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   return (
     <DmChatWrapper>
       <DmLogBox>
+        <DmBox>
+          <UserImg src={`${authService.currentUser?.photoURL}`} />
+          <div>
+            <DmName>{username}</DmName>
+            <DmText>{roomNum}방에 입장하셨습니다.</DmText>
+          </div>
+        </DmBox>
         {chatLogs?.map((chatLog) => (
           <DmBox key={chatLog?.id}>
             <UserImg src={`${chatLog.photoURL}`} />
-            <DmText>
-              {chatLog?.username} : {chatLog?.msg}
-            </DmText>
+            <div>
+              <DmName>{chatLog?.username}</DmName>
+              <DmText>{chatLog?.msg}</DmText>
+              <DmTime>{chatLog.date}</DmTime>
+            </div>
           </DmBox>
         ))}
       </DmLogBox>
@@ -151,7 +162,16 @@ const UserImg = styled.img`
   border-radius: 50px;
   margin-right: 10px;
 `;
+const DmName = styled.div`
+  font-weight: bold;
+`;
 const DmText = styled.span`
+  margin: 0;
+  display: block;
+`;
+const DmTime = styled.span`
+  font-size: 0.875rem;
+  color: gray;
   margin: 0;
 `;
 

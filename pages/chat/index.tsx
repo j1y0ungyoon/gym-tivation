@@ -16,6 +16,7 @@ type ChatLog = {
   msg: string;
   username: string;
   photoURL?: string | null | undefined;
+  date?: string;
 };
 
 type DmList = {
@@ -84,11 +85,20 @@ const Chat = () => {
     if (e.key !== 'Enter') return;
     if (inputValue === '') return;
 
+    // 날짜 추가
+    const newDate = new Date();
+
+    const hours = newDate.getHours(); // 시
+    const minutes = newDate.getMinutes(); // 분
+    const seconds = newDate.getSeconds(); // 초
+    const time = `${hours}:${minutes}:${seconds}`;
+
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
       photoURL: user ? user.photoURL : null,
+      date: time,
     };
 
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
@@ -195,9 +205,11 @@ const Chat = () => {
             {chatLogs.map((chatLog) => (
               <ChatBox key={chatLog.id}>
                 <UserImg src={`${chatLog.photoURL}`} />
-                <ChatText>
-                  {chatLog.username} : {chatLog.msg}
-                </ChatText>
+                <div>
+                  <ChatName>{chatLog.username}</ChatName>
+                  <ChatText>{chatLog.msg}</ChatText>
+                  <ChatTime>{chatLog.date}</ChatTime>
+                </div>
               </ChatBox>
             ))}
           </ChatLogBox>
@@ -304,7 +316,18 @@ const UserImg = styled.img`
   margin-right: 10px;
 `;
 
+const ChatName = styled.div`
+  font-weight: bold;
+`;
+
 const ChatText = styled.span`
+  display: block;
+  margin: 0;
+`;
+
+const ChatTime = styled.span`
+  font-size: 0.875rem;
+  color: gray;
   margin: 0;
 `;
 
