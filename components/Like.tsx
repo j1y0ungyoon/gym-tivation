@@ -1,17 +1,16 @@
 import { authService, dbService } from '@/firebase';
 
 import { doc, updateDoc } from 'firebase/firestore';
+import Image from 'next/image';
 import { useState } from 'react';
 import styled from 'styled-components';
-
+import like from '../public/assets/images/like.png';
+import checkedLike from '../public/assets/images/checkedLike.png';
 const Like = ({ detailPost }: any) => {
-  // const [likes, setLikes] = useState(false);
+  const [likes, setLikes] = useState(false);
   const likeCount = detailPost?.like?.length;
   const user: any = String(authService.currentUser?.uid);
 
-  // const likeClick=()=>{
-  //     if(likee)
-  // }
   const likeChecked = detailPost?.like?.includes(user);
   const likeCounter = async () => {
     if (authService.currentUser) {
@@ -19,18 +18,27 @@ const Like = ({ detailPost }: any) => {
         await updateDoc(doc(dbService, 'posts', detailPost.id), {
           like: [...detailPost.like, user],
         });
+        setLikes(true);
       }
       if (likeChecked) {
         await updateDoc(doc(dbService, 'posts', detailPost.id), {
           like: detailPost?.like.filter((prev: any) => prev !== user),
         });
+        setLikes(false);
       }
     }
   };
 
   return (
     <LikeWrapper>
-      <LikeButton onClick={likeCounter}>좋아요 누르기</LikeButton>
+      <Image
+        src={likes ? checkedLike : like}
+        onClick={likeCounter}
+        alt="좋아요"
+        width={50}
+        height={50}
+      />
+
       <LikeCount>{likeCount}</LikeCount>
     </LikeWrapper>
   );
