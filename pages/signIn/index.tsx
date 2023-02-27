@@ -142,6 +142,9 @@ const SignIn = () => {
           area: '지역',
           instagram: '인스타그램',
           loginState: true,
+          lv: 1,
+          lvName: '일반인',
+          photoURL: authService.currentUser?.photoURL,
         });
       }
       alert('로그인 완료');
