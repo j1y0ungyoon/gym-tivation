@@ -45,6 +45,7 @@ const CalendarEdit = ({
     <CalendarContentBox key={item.id}>
       <CalendarTextArea
         value={textAreaContent}
+        spellCheck="false"
         onChange={(e) => {
           setTextAreaContent(e.target.value);
         }}
@@ -65,10 +66,11 @@ export default CalendarEdit;
 
 const CalendarContentBox = styled.div``;
 const CalendarTextArea = styled.textarea`
-  margin-top: 1vh;
+  margin-top: 4vh;
+  margin-bottom: 2vh;
   padding: 12px;
   width: 18vw;
-  height: 39vh;
+  height: 50vh;
   border-radius: 20px;
   border: none;
   background-color: white;

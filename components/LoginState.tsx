@@ -42,9 +42,11 @@ const LoginState = ({
                   goToMyPage(item.id);
                 }}
               >
-                <ProfilePhoto>
-                  <Photo src={item.photoURL} />
-                </ProfilePhoto>
+                <PhotoBox>
+                  <ProfilePhoto>
+                    <Photo src={item.photoURL} />
+                  </ProfilePhoto>
+                </PhotoBox>
                 <TextBox>
                   <FollowText> {item.displayName}</FollowText>
                   <div>{item.email}</div>
@@ -67,9 +69,11 @@ const LoginState = ({
                   goToMyPage(item.id);
                 }}
               >
-                <ProfilePhoto>
-                  <Photo src={item.photoURL} />
-                </ProfilePhoto>
+                <PhotoBox>
+                  <ProfilePhoto>
+                    <Photo src={item.photoURL} />
+                  </ProfilePhoto>
+                </PhotoBox>
                 <TextBox>
                   <FollowText> {item.displayName}</FollowText>
                   <div>{item.email}</div>
@@ -97,20 +101,21 @@ const LoginStateWrapper = styled.div``;
 const OnOffBox = styled.div`
   display: flex;
   margin: auto;
-  margin-bottom: 2vh;
   width: 24vw;
   height: 8vh;
-  border-radius: 15px;
+  margin-bottom: 2vh;
   :hover {
     cursor: pointer;
   }
 `;
-
+const PhotoBox = styled.div`
+  width: 25%;
+  height: 100%;
+`;
 const ProfilePhoto = styled.div`
-  width: 100px;
+  width: 50px;
   height: 50px;
   margin-top: 2vh;
-  margin-left: 1vw;
   margin-right: 1vw;
   border-radius: 70%;
   overflow: hidden;
@@ -121,19 +126,19 @@ const Photo = styled.img`
   object-fit: cover;
 `;
 const FollowText = styled.span`
-  font-size: 16px;
+  font-size: 1rem;
   text-align: center;
   font-weight: bolder;
 `;
 const OnLineState = styled.li`
-  font-size: 12px;
+  font-size: 0.8rem;
   ::marker {
     color: green;
     font-size: 16px;
   }
 `;
 const OFFLineState = styled.li`
-  font-size: 12px;
+  font-size: 0.8rem;
   ::marker {
     font-size: 16px;
   }
@@ -141,7 +146,6 @@ const OFFLineState = styled.li`
 const TextBox = styled.div`
   margin-top: 2vh;
   text-align: left;
-  width: 20vw;
 `;
 const StateBox = styled.div`
   margin-top: 3vh;
