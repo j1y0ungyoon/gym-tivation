@@ -7,6 +7,7 @@ import { CoordinateType, WorkOutTimeType } from '../../type';
 import SearchMyGym from '@/components/SearchMyGym';
 import UseDropDown from '@/components/UseDropDown';
 import SelectDay from '@/components/SelectDay';
+import { useEffect } from 'react';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -107,6 +108,7 @@ const WritingRecruitment = () => {
       startTime: start,
       endTime: end,
       selectedDays,
+      participation: [],
       createdAt: Date.now(),
     };
 
@@ -124,6 +126,17 @@ const WritingRecruitment = () => {
   const onClickOpenMap = () => {
     setOpenMap(!openMap);
   };
+
+  useEffect(() => {
+    if (!authService.currentUser) {
+      alert('로그인을 먼저 해주세요!');
+      router.push('/mapBoard');
+    }
+  }, []);
+
+  if (!authService.currentUser) {
+    return <div>로그인이 필요합니다.</div>;
+  }
 
   return (
     <>

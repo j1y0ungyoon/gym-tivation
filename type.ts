@@ -5,6 +5,11 @@ export interface CoordinateType {
   lng: number;
 }
 
+export interface ParticipationType {
+  userId?: string;
+  userPhoto?: string;
+}
+
 export interface RecruitPostType {
   title?: string;
   content?: string;
@@ -18,12 +23,34 @@ export interface RecruitPostType {
   endTime?: string;
   coordinate?: CoordinateType;
   selectedDays?: string[];
+  participation?: ParticipationType[];
   createdAt?: number;
+}
+
+export interface UserProfileType {
+  area?: string;
+  displayName?: string;
+  email?: string;
+  follower?: string[];
+  following?: string[];
+  instagram?: string;
+  introduction?: string;
+  lv?: number;
+  lvName?: string;
+  photoURL?: string;
+  loginState?: boolean;
+  userParticipation?: RecruitPostType[];
+  uid?: string;
 }
 
 export interface EditRecruitPostParameterType {
   recruitPostId: string;
   edittedRecruitPost: object;
+}
+
+export interface editUserParticipationParameterType {
+  userId: string;
+  edittedProfile: object;
 }
 
 export interface MapModalProps {

@@ -222,6 +222,8 @@ const SignUp = () => {
         uid: user.uid,
         following: '',
         follower: '',
+        // 운동 참여 버튼 테스트를 위해 가입시 필드 추가
+        userParticipation: [],
         lv: 1,
         lvName: '일반인',
       });
