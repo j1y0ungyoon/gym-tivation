@@ -185,11 +185,6 @@ const MyPage = ({ params }: any) => {
                   />
                 );
               })}
-            {/* <MyPageHeader>
-              <HeaderText>좋아요</HeaderText>
-              <ClickText>전체보기</ClickText>
-            </MyPageHeader>
-            <InformationBox>{/* <MyPageLike /> </InformationBox> */}
           </ProfileBox>
           <ScheduleBox>
             <Schedule>{isLoadCalendar && <MyPageCalendar />}</Schedule>
@@ -211,6 +206,13 @@ const MyPage = ({ params }: any) => {
               {board && (
                 <GalleyBox>
                   <MyPageBoard paramsId={paramsId} />
+                </GalleyBox>
+              )}
+            </MyPageHeader>
+            <MyPageHeader>
+              {like && (
+                <GalleyBox>
+                  <MyPageLike paramsId={paramsId} />
                 </GalleyBox>
               )}
             </MyPageHeader>

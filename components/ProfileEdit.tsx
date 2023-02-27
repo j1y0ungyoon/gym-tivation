@@ -50,7 +50,7 @@ const ProfileEdit = ({
   const [photoURL, setPhotoURL] = useState(DEFAULT_PHOTO_URL);
 
   //프로필 변경
-  const [nickName, setNickName] = useState<string>('');
+  const [nickName, setNickName] = useState(item.displayName);
   const [introduction, setIntroduction] = useState(item.introduction);
   const [area, setArea] = useState(item.area);
   const [instagram, setInstagram] = useState(item.instagram);
@@ -198,7 +198,7 @@ const ProfileEdit = ({
                 </NameBox>
                 <InstagramBox>
                   <a href={`https://www.instagram.com/${instagram}/`}>
-                    {instagram}
+                    {item.instagram}
                   </a>
                   <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
                 </InstagramBox>
@@ -273,7 +273,14 @@ const ProfileEdit = ({
                         </option>
                       ))}
                     </Select>
-                    <EditButton onClick={() => setIsProfileEdit(false)}>
+                    <EditButton
+                      onClick={() => {
+                        setIsProfileEdit(false);
+                        setNickName(item.displayName);
+                        setInstagram(item.instagram);
+                        setIntroduction(item.introduction);
+                      }}
+                    >
                       취소
                     </EditButton>
                     <EditButton
