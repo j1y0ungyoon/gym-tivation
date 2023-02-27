@@ -37,7 +37,7 @@ const Chat = () => {
   ]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
   const [dmLists, setDmLists] = useState<any>();
-  const [roomNum, setRoomNum] = useState<string>(nanoid());
+  const [roomNum, setRoomNum] = useState<string | undefined>(nanoid());
 
   const [isMyDmOn, setIsMyDmOn] = useState(false);
 
@@ -81,7 +81,7 @@ const Chat = () => {
   }, []);
 
   // 채팅 전송시 실행 함수
-  const postChat = (e: React.KeyboardEvent<EventTarget>) => {
+  const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
     if (inputValue === '') return;
 
@@ -124,29 +124,40 @@ const Chat = () => {
           return dm;
         }
       });
-
+      console.log(myDms);
       setDmLists([...myDms]);
     };
     getDmList();
   }, []);
 
   const onClickDm = () => {
-    dmLists.filter((dmList: DmList) => {
-      if (
-        dmList.id ===
-        (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
-      ) {
-        setRoomNum(dmList.id);
-        return;
-      } else {
-        addDoc(collection(dbService, 'dms'), {
-          id: user?.uid + 'DM보낼 상대 id',
-          enterUser: [user?.uid, 'DM보낼 상대 id'],
-          chatLog: [],
-        });
-        setRoomNum(user?.uid + 'DM보낼 상대 id');
-      }
-    });
+    if (dmLists.length === 0) {
+      addDoc(collection(dbService, 'dms'), {
+        id: user?.uid + 'DM보낼 상대 id',
+        enterUser: [user?.uid, 'DM보낼 상대 id'],
+        chatLog: [],
+      });
+      setRoomNum(user?.uid + 'DM보낼 상대 id');
+      return;
+    } else {
+      dmLists.filter((dmList: DmList) => {
+        if (
+          dmList.id ===
+          (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
+        ) {
+          setRoomNum(dmList.id);
+          return;
+        } else {
+          addDoc(collection(dbService, 'dms'), {
+            id: user?.uid + 'DM보낼 상대 id',
+            enterUser: [user?.uid, 'DM보낼 상대 id'],
+            chatLog: [],
+          });
+          setRoomNum(user?.uid + 'DM보낼 상대 id');
+          return;
+        }
+      });
+    }
   };
 
   return (
@@ -154,13 +165,13 @@ const Chat = () => {
       <CategoryContainer>
         <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
         <CategoryBtn onClick={() => setIsMyDmOn(true)}>DM</CategoryBtn>
-        {/* <CategoryBtn
+        <CategoryBtn
           onClick={() => {
-            onClickDm;
+            onClickDm();
           }}
         >
           DM 로직
-        </CategoryBtn> */}
+        </CategoryBtn>
       </CategoryContainer>
 
       {isMyDmOn ? (
@@ -172,11 +183,7 @@ const Chat = () => {
             </SearchBar>
             <MyDmList
               onClick={() => {
-                if (user?.uid) {
-                  setRoomNum(user?.uid);
-                } else {
-                  setRoomNum(nanoid());
-                }
+                setRoomNum(user?.uid);
               }}
             >
               메모

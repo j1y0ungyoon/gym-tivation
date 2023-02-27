@@ -4,16 +4,25 @@ import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Socket } from 'socket.io';
 import { nanoid } from 'nanoid';
 import io from 'socket.io-client';
-import { authService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
+import {
+  collection,
+  doc,
+  getDocs,
+  where,
+  query,
+  updateDoc,
+  arrayUnion,
+} from 'firebase/firestore';
 
 type ChatLog = {
-  id: number;
-  msg: string;
-  username: string;
+  id?: number;
+  msg?: string;
+  username?: string;
   photoURL?: string | null | undefined;
   date?: string;
-  roomNum: any;
+  roomNum?: any;
 };
 
 type DmChatProps = {
@@ -33,8 +42,38 @@ const DmChat = ({ roomNum }: DmChatProps) => {
 
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
 
-  // /room/roomnum 으로 들어온 상태에서 새로고침 해도 잘 돌아가게 해주기
+  const [chatId, setChatId] = useState('');
+
+  // 처음에 채팅로그 받아오기
   useEffect(() => {
+    // DB에서 roomNum 과 같은 doc의 id 받아와서 chatId에 입력해줌
+    const getDocId = async () => {
+      const data = await getDocs(
+        query(collection(dbService, 'dms'), where('id', '==', roomNum)),
+      );
+      data.docs.map((doc) => {
+        if (doc.data().id == roomNum) {
+          console.log(doc.id);
+          return setChatId(doc.id);
+        }
+      });
+    };
+
+    // DB에서 챗로그 가져오기
+    const chatLogsGetDoc = async () => {
+      const chatDoc = await getDocs(
+        query(collection(dbService, 'dms'), where('id', '==', roomNum)),
+      );
+
+      const prevChatLog = chatDoc?.docs[0]?.data().chatLog;
+      console.log(prevChatLog);
+      setChatLogs(prevChatLog);
+    };
+
+    // roomNum 바뀔때마다 챗로그 비우고, DB에서 채팅로그 받아옴
+    setChatLogs([]);
+    getDocId();
+    chatLogsGetDoc();
     router.isReady;
   }, [roomNum]);
 
@@ -59,7 +98,13 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
       socket.on('chat', (chatLog: any) => {
         if (roomNum === chatLog.roomNum) {
-          setChatLogs((prev) => [...prev, chatLog]);
+          setChatLogs((prev) => {
+            if (prev) {
+              return [...prev, chatLog];
+            } else {
+              return [chatLog];
+            }
+          });
         }
       });
     };
@@ -73,7 +118,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   }, [router.isReady, roomNum]);
 
   // 채팅 전송시 실행 함수
-  const postChat = (e: React.KeyboardEvent<EventTarget>) => {
+  const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
     if (inputValue === '') return;
 
@@ -93,6 +138,17 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       date: time,
       roomNum,
     };
+
+    await updateDoc(doc(dbService, 'dms', chatId), {
+      chatLog: arrayUnion({
+        id: chatId,
+        msg: chatLog.msg,
+        username: chatLog.username,
+        photoURL: chatLog.photoURL,
+        date: chatLog.date,
+        roomNum: chatLog.roomNum,
+      }),
+    });
 
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
     socket?.emit('chat', chatLog);
