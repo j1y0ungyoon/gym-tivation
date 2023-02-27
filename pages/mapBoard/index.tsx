@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { RecruitPostType } from '../../type';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { dbService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import RecruitPost from '@/components/RecruitPost';
 import styled from 'styled-components';
 import { CoordinateType } from '../../type';
@@ -23,7 +23,14 @@ const MapBoard = () => {
 
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
-    router.push('/mapBoard/WritingRecruitment');
+    if (!authService.currentUser) {
+      alert('로그인을 먼저 해주세요!');
+      return;
+    }
+
+    if (authService.currentUser) {
+      router.push('/mapBoard/WritingRecruitment');
+    }
   };
 
   // 마운트 시 post 실시간으로 불러오기
@@ -67,6 +74,7 @@ const MapBoard = () => {
               />
             </MapBoardContainer>
           </MapWrapper>
+
           <MapBoardWrapper>
             {recruitPosts?.map((post) => {
               return <RecruitPost post={post} key={post.id} />;

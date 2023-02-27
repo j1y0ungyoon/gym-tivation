@@ -149,7 +149,7 @@ const SearchColleague = (props: MapModalProps) => {
             if (post.coordinate) {
               return (
                 <MapMarker
-                  key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}`}
+                  key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
                   position={{
                     lat: post.coordinate?.lat,
                     lng: post?.coordinate?.lng,

@@ -1,6 +1,5 @@
 import { authService, dbService } from '@/firebase';
-
-import { doc, updateDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -19,12 +18,18 @@ const Like = ({ detailPost }: any) => {
           like: [...detailPost.like, user],
         });
         setLikes(true);
+        await updateDoc(doc(dbService, 'profile', user), {
+          postLike: arrayUnion(detailPost.id),
+        });
       }
       if (likeChecked) {
         await updateDoc(doc(dbService, 'posts', detailPost.id), {
           like: detailPost?.like.filter((prev: any) => prev !== user),
         });
         setLikes(false);
+        await updateDoc(doc(dbService, 'profile', user), {
+          postLike: arrayRemove(detailPost.id),
+        });
       }
     }
   };

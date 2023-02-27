@@ -7,17 +7,6 @@ import styled from 'styled-components';
 const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
 
-  const goToMapBoard = () => {
-    if (authService.currentUser) {
-      router.push('/mapBoard');
-      return;
-    }
-
-    if (!authService.currentUser) {
-      alert('로그인이 필요합니다!');
-      router.push('/signIn');
-    }
-  };
   const id = authService.currentUser?.uid;
   const goToDetailMyPage = () => {
     router.push({
@@ -31,7 +20,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <NavBtn onClick={() => router.push('/')}>Home</NavBtn>
       <NavBtn onClick={() => router.push('/chat')}>채팅</NavBtn>
       <NavBtn onClick={() => router.push('/board')}>게시판</NavBtn>
-      <NavBtn onClick={goToMapBoard}>주변 동료 모집</NavBtn>
+      <NavBtn onClick={() => router.push('/mapBoard')}>주변 동료 모집</NavBtn>
       <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
       {isLoggedIn && (
         <NavBtn onClick={() => goToDetailMyPage()}>마이페이지</NavBtn>

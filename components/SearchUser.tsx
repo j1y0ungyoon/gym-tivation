@@ -126,14 +126,18 @@ const SearchUser = ({
 export default SearchUser;
 
 const UserWrapper = styled.div`
+  z-index: 1000;
   position: absolute;
   overflow: auto;
   width: 27vw;
   height: 50vh;
-  margin-top: 58vh;
-  left: 67vw;
+  top: 10%;
+  right: 3%;
   background-color: white;
   background-color: rgba(255, 255, 255, 0.7);
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const UserClose = styled.div`

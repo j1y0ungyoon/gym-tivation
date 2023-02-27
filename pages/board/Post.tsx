@@ -1,10 +1,20 @@
-import { authService, dbService, storage } from '@/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { authService, database, dbService, storage } from '@/firebase';
+import {
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+  getDoc,
+  Firestore,
+} from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
+import { count } from 'console';
+
+import { runTransaction } from 'firebase/firestore';
 
 import { toast } from 'react-toastify';
 const Post = () => {
@@ -107,6 +117,37 @@ const Post = () => {
       .catch((error) => {
         console.log('에러 발생!', error);
       });
+    //lv 추가 및 lvName 추가
+    const id = String(authService.currentUser?.uid);
+    try {
+      await runTransaction(dbService, async (transaction) => {
+        const sfDocRef = doc(dbService, 'profile', id);
+        const sfDoc = await transaction.get(sfDocRef);
+        console.log('sfdoc', sfDoc);
+        if (!sfDoc.exists()) {
+          throw '데이터가 없습니다.';
+        }
+        const newwLvName = sfDoc.data().lvName;
+        const newLv = sfDoc.data().lv + 1;
+        transaction.update(sfDocRef, { lv: newLv });
+        console.log('랩', newLv);
+        if (newwLvName === '일반인' && newLv > 4) {
+          transaction.update(sfDocRef, { lvName: '헬애기' });
+          transaction.update(sfDocRef, { lv: 1 });
+        } else if (newwLvName === '헬애기' && newLv > 14) {
+          transaction.update(sfDocRef, { lvName: '헬린이' });
+          transaction.update(sfDocRef, { lv: 1 });
+        } else if (newwLvName === '헬린이' && newLv > 29) {
+          transaction.update(sfDocRef, { lvName: '헬른이' });
+          transaction.update(sfDocRef, { lv: 1 });
+        } else if (newwLvName === '헬른이' && newLv > 59) {
+          transaction.update(sfDocRef, { lvName: '헬애비' });
+          transaction.update(sfDocRef, { lv: 1 });
+        }
+      });
+    } catch (error: any) {
+      alert(error.message);
+    }
 
     uploadBoardImage();
     goToBoard();
