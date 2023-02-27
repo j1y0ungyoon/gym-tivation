@@ -27,6 +27,7 @@ import UseDropDown from '@/components/UseDropDown';
 import SearchMyGym from '@/components/SearchMyGym';
 import CommentList from '@/components/CommentList';
 import SelectDay from '@/components/SelectDay';
+import { nanoid } from 'nanoid';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -521,7 +522,12 @@ const RecruitDetail = ({ params }: any) => {
                   <span>참가자</span>
                   {refetchedPost.participation
                     ? refetchedPost.participation.map((item) => {
-                        return <ProfileImage src={item.userPhoto} />;
+                        return (
+                          <ProfileImage
+                            key={`image-${item.userId}`}
+                            src={item.userPhoto}
+                          />
+                        );
                       })
                     : null}
                   <RecruitInfoTextBox>
@@ -533,7 +539,7 @@ const RecruitDetail = ({ params }: any) => {
 
                   <RecruitInfoTextBox>
                     {refetchedPost?.selectedDays?.map((day) => {
-                      return <span>{day}</span>;
+                      return <span key={`day-${nanoid()}`}>{day}</span>;
                     })}
                   </RecruitInfoTextBox>
                   <RecruitInfoTextBox>
@@ -549,7 +555,7 @@ const RecruitDetail = ({ params }: any) => {
                 <h4>{refetchedPost?.content}</h4>
               </ContentBox>
               <div>
-                <CommentList id={id} />
+                <CommentList id={id} category="동료 모집" />
               </div>
             </DetailPostFormMain>
           )}

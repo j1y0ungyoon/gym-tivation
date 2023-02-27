@@ -4,6 +4,7 @@ import CustomMenu from './CustomMenu';
 import CustomToggle from './CustomToggle';
 import { PropsWithChildren } from 'react';
 import { DropDownProps } from '@/type';
+import { nanoid } from 'nanoid';
 
 const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
   const timeArray = [
@@ -88,7 +89,12 @@ const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
             {timeArray.map((time) => {
               return (
                 <>
-                  <Dropdown.Item eventKey={time}>{time}</Dropdown.Item>
+                  <Dropdown.Item
+                    key={`${children}-${nanoid()}}`}
+                    eventKey={time}
+                  >
+                    {time}
+                  </Dropdown.Item>
                 </>
               );
             })}
@@ -103,7 +109,9 @@ const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
             {timeArray.map((time) => {
               return (
                 <>
-                  <Dropdown.Item eventKey={time}>{time}</Dropdown.Item>
+                  <Dropdown.Item key={nanoid()} eventKey={time}>
+                    {time}
+                  </Dropdown.Item>
                 </>
               );
             })}

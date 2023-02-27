@@ -30,7 +30,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // 모달 창 닫기
-  const closeMap = (event: any) => {
+  const closeMap = (event: React.MouseEvent<HTMLDivElement>) => {
     if (modalRef.current === event.target) {
       setOpenMap(false);
     }

@@ -143,7 +143,7 @@ const SignIn = () => {
           instagram: '인스타그램',
           displayName: authService.currentUser?.displayName,
           photoURL: authService.currentUser?.photoURL,
-          email: authService.currentUser?.email,
+          email: user.email,
           uid: user.uid,
           following: '',
           follower: '',

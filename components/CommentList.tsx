@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 // props로 받은 id는 해당 recruitPost의 id임
-const CommentList = ({ id }: { id: string }) => {
+const CommentList = ({ id, category }: { id: string; category: string }) => {
   const [inputComment, setInputComment] = useState('');
   const [comments, setComments] = useState<CommentType[]>([]);
 
@@ -36,15 +36,20 @@ const CommentList = ({ id }: { id: string }) => {
         userId: authService.currentUser?.uid,
         nickName: authService.currentUser?.displayName,
         userPhoto: authService.currentUser?.photoURL,
+        category,
+        like: [],
+        likeCount: 0,
         comment: inputComment,
         createdAt: Date.now(),
       };
 
-      await addDoc(collection(dbService, 'comments'), newComment)
-        .then(() => console.log('데이터 전송 성공'))
-        .catch((error) => console.log('에러 발생', error));
-
-      setInputComment('');
+      if (category === '동료 모집') {
+        await addDoc(collection(dbService, 'comments'), newComment)
+          .then(() => console.log('데이터 전송 성공'))
+          .catch((error) => console.log('에러 발생', error));
+        setInputComment('');
+        return;
+      }
     }
 
     if (!authService.currentUser) {
@@ -100,7 +105,7 @@ const CommentList = ({ id }: { id: string }) => {
         {comments
           .filter((comment) => comment.postId === id)
           .map((comment) => {
-            return <Comment comment={comment} />;
+            return <Comment key={comment.id} comment={comment} />;
           })}
       </CommentWrapper>
     </CommentListWrapper>
