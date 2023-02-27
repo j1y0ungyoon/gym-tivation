@@ -6,13 +6,19 @@ import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 import { authService, dbService } from '@/firebase';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+} from 'firebase/firestore';
 
 import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
 
 type ChatLog = {
-  id: number;
+  id: string | undefined;
   msg: string;
   username: string;
   photoURL?: string | null | undefined;
@@ -29,7 +35,7 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([
     {
-      id: 1,
+      id: authService.currentUser?.uid,
       msg: '전체채팅에 접속하셨습니다.',
       username: '관리자',
       photoURL: authService.currentUser?.photoURL,
@@ -37,7 +43,7 @@ const Chat = () => {
   ]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
   const [dmLists, setDmLists] = useState<any>();
-  const [roomNum, setRoomNum] = useState<string | undefined>(nanoid());
+  const [roomNum, setRoomNum] = useState<string | undefined>();
 
   const [isMyDmOn, setIsMyDmOn] = useState(false);
 
@@ -47,10 +53,6 @@ const Chat = () => {
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
-    if (user) {
-      setRoomNum(user.uid);
-    }
-
     // socket.io 접속 함수
     const connectToSocket = async () => {
       await fetch('/api/chat');
@@ -78,7 +80,7 @@ const Chat = () => {
     return () => {
       socket?.disconnect();
     };
-  }, []);
+  }, [roomNum]);
 
   // 채팅 전송시 실행 함수
   const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
@@ -112,59 +114,63 @@ const Chat = () => {
 
   // 처음에 dms 불러오는 함수
   useEffect(() => {
-    const getDmList = async () => {
-      const q = await getDocs(query(collection(dbService, 'dms')));
-
-      const dms = q.docs.map((doc) => {
-        return doc.data();
-      });
-
-      const myDms = dms.filter((dm) => {
-        if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
-          return dm;
+    onSnapshot(query(collection(dbService, 'dms')), (snapshot: any) => {
+      const dms = snapshot.docs.map((doc: any) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      const myDms = dms.filter((dm: any) => {
+        if (dm.enterUser) {
+          if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
+            return dm;
+          }
         }
       });
-      console.log(myDms);
       setDmLists([...myDms]);
-    };
-    getDmList();
+    });
   }, []);
 
-  const onClickDm = () => {
-    if (dmLists.length === 0) {
-      addDoc(collection(dbService, 'dms'), {
-        id: user?.uid + 'DM보낼 상대 id',
-        enterUser: [user?.uid, 'DM보낼 상대 id'],
-        chatLog: [],
-      });
-      setRoomNum(user?.uid + 'DM보낼 상대 id');
-      return;
-    } else {
-      dmLists.filter((dmList: DmList) => {
-        if (
-          dmList.id ===
-          (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
-        ) {
-          setRoomNum(dmList.id);
-          return;
-        } else {
-          addDoc(collection(dbService, 'dms'), {
-            id: user?.uid + 'DM보낼 상대 id',
-            enterUser: [user?.uid, 'DM보낼 상대 id'],
-            chatLog: [],
-          });
-          setRoomNum(user?.uid + 'DM보낼 상대 id');
-          return;
-        }
-      });
-    }
+  const onClickDm = async () => {
+    dmLists.filter((dmList: DmList) => {
+      if (
+        dmList.id ===
+        (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
+      ) {
+        setRoomNum(dmList.id);
+        return;
+      } else {
+        addDoc(collection(dbService, 'dms'), {
+          id: user?.uid + 'DM보낼 상대 id',
+          enterUser: [user?.uid, 'DM보낼 상대 id'],
+          chatLog: [],
+        });
+        setRoomNum(user?.uid + 'DM보낼 상대 id');
+        return;
+      }
+    });
   };
 
   return (
     <ChatWrapper>
       <CategoryContainer>
         <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-        <CategoryBtn onClick={() => setIsMyDmOn(true)}>DM</CategoryBtn>
+        <CategoryBtn
+          onClick={() => {
+            setIsMyDmOn(true);
+            if (dmLists.length === 0) {
+              addDoc(collection(dbService, 'dms'), {
+                id: user?.uid,
+                enterUser: [user?.uid, '나와의채팅'],
+                chatLog: [],
+              });
+              setRoomNum(user?.uid);
+              return;
+            }
+            setRoomNum(user?.uid);
+          }}
+        >
+          DM
+        </CategoryBtn>
         <CategoryBtn
           onClick={() => {
             onClickDm();
@@ -181,17 +187,10 @@ const Chat = () => {
               <SearchInput />
               <SearchIcon src="/assets/icons/searchIcon.png" />
             </SearchBar>
-            <MyDmList
-              onClick={() => {
-                setRoomNum(user?.uid);
-              }}
-            >
-              메모
-            </MyDmList>
             {dmLists?.map((dmList: DmList) => {
               return (
                 <div key={dmList.id}>
-                  {dmList.enterUser[0] || dmList.enterUser[1] === user?.uid ? (
+                  {dmList.enterUser?.includes(`${user?.uid}`) ? (
                     <MyDmList onClick={() => setRoomNum(dmList.id)}>
                       {dmList.enterUser.map((enterUser) => {
                         if (enterUser !== user?.uid) {

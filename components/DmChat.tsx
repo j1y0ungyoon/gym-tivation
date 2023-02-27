@@ -22,7 +22,7 @@ type ChatLog = {
   username?: string;
   photoURL?: string | null | undefined;
   date?: string;
-  roomNum?: any;
+  roomNum?: string;
 };
 
 type DmChatProps = {
@@ -33,7 +33,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   const router = useRouter();
   console.log('roomNum', roomNum);
 
-  const [inputValue, setInputValue] = useState('');
+  const [dmInputValue, setDmInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
 
   const user = authService.currentUser;
@@ -120,7 +120,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   // 채팅 전송시 실행 함수
   const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
-    if (inputValue === '') return;
+    if (dmInputValue === '') return;
 
     // 날짜 추가
     const newDate = new Date();
@@ -152,11 +152,11 @@ const DmChat = ({ roomNum }: DmChatProps) => {
 
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
     socket?.emit('chat', chatLog);
-    setInputValue('');
+    setDmInputValue('');
   };
 
   const onChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    setDmInputValue(e.target.value);
   };
 
   return (
@@ -184,7 +184,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
         placeholder="채팅을 입력하세요."
         type="text"
         onKeyPress={postChat}
-        value={inputValue}
+        value={dmInputValue}
         onChange={onChangeInputValue}
       />
     </DmChatWrapper>
