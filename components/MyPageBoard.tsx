@@ -75,7 +75,7 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
                   <Photo src={item.photo} />
                 </ProfilePhoto>
               </PhotoBox>
-              <Test>
+              <TitleNickNameBox>
                 <TitleBox>
                   <BoardCategory>{item.category}</BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
@@ -94,7 +94,7 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
                   <NickNameText>2023.02.27</NickNameText>
                   <NickNameText>Like {item.like.length}</NickNameText>
                 </NickNameBox>
-              </Test>
+              </TitleNickNameBox>
             </MyPageBoardContainer>
           );
         })}
@@ -184,7 +184,7 @@ const NickNameBox = styled.div`
   width: 60%;
   height: 30%;
 `;
-const Test = styled.div`
+const TitleNickNameBox = styled.div`
   width: 100%;
   height: 100%;
 `;
