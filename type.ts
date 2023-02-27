@@ -53,6 +53,11 @@ export interface editUserParticipationParameterType {
   edittedProfile: object;
 }
 
+export interface EditCommentLikeParameterType {
+  commentId: string;
+  edittedComment: object;
+}
+
 export interface MapModalProps {
   setCoordinate: React.Dispatch<React.SetStateAction<CoordinateType>>;
   coordinate: CoordinateType;
@@ -97,6 +102,8 @@ export interface CommentType {
   userPhoto?: string;
   comment?: string;
   postId?: string;
+  like?: [];
+  likeCount?: number;
   createdAt?: number;
 }
 
