@@ -46,7 +46,7 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
 
   console.log(galleryInformation);
   return (
-    <LoginStateWrapper>
+    <MyPageGalleyWrapper>
       {galleryInformation
         .filter((item) => item.userId === paramsId)
         .map((item) => {
@@ -59,21 +59,24 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
             </GalleryContainer>
           );
         })}
-    </LoginStateWrapper>
+    </MyPageGalleyWrapper>
   );
 };
 
 export default MyPageGalley;
-const LoginStateWrapper = styled.div`
+const MyPageGalleyWrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: 61%;
   display: flex;
   overflow: auto;
   flex-wrap: wrap;
-
   padding-bottom: 1vh;
   padding-left: 1.5vw;
   padding-right: 1.5vw;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const GalleryContainer = styled.div`
@@ -81,42 +84,11 @@ const GalleryContainer = styled.div`
 `;
 
 const GalleryPhoto = styled.img`
-  width: 10vw;
+  width: 14vw;
   height: 18vh;
   :hover {
     cursor: pointer;
+
+    transform: scale(1.2, 1.2); /* 가로2배 새로 1.5배 로 커짐 */
   }
-`;
-const Photo = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-const FollowText = styled.span`
-  font-size: 16px;
-  text-align: center;
-  font-weight: bolder;
-`;
-const OnLineState = styled.li`
-  font-size: 12px;
-  ::marker {
-    color: green;
-    font-size: 16px;
-  }
-`;
-const OFFLineState = styled.li`
-  font-size: 12px;
-  ::marker {
-    font-size: 16px;
-  }
-`;
-const TextBox = styled.div`
-  margin-top: 2vh;
-  text-align: left;
-  width: 20vw;
-`;
-const StateBox = styled.div`
-  margin-top: 3vh;
-  text-align: right;
-  width: 20vw; ;
 `;

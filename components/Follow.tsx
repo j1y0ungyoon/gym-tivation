@@ -73,7 +73,10 @@ const Follow = ({
 
         <StateBox>
           {follwoingInformation.includes(item.id) ? (
-            <ClickFollowButton onClick={FollowReMoveOnClick}>
+            <ClickFollowButton
+              style={{ backgroundColor: 'gray', color: 'white' }}
+              onClick={FollowReMoveOnClick}
+            >
               팔로잉
             </ClickFollowButton>
           ) : (
@@ -133,11 +136,13 @@ const StateBox = styled.div`
   width: 20vw; ;
 `;
 const ClickFollowButton = styled.button`
-  background-color: white;
+  background-color: #eeeeee;
+  border: none;
   border-radius: 15px;
   font-size: 16px;
   :hover {
     cursor: pointer;
-    background-color: lightgray;
+    background-color: gray;
+    color: white;
   }
 `;

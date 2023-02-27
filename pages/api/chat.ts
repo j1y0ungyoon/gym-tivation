@@ -33,9 +33,9 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       socket.on('chat', (data) => {
         console.log('채팅 받음', data);
         if (!data.roomNum) {
-          socket.emit('chat', data);
+          io.emit('chat', data);
         } else {
-          socket.to(data.roomNum).emit('chat', data);
+          io.to(data.roomNum).emit('chat', data);
         }
       });
 

@@ -15,12 +15,12 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     try {
       const user = authService.currentUser;
       if (user !== null) {
-        alert('로그아웃');
-        router.push('/');
-        authService.signOut();
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: false,
         });
+        router.push('/');
+        authService.signOut();
+        alert('로그아웃');
       }
     } catch {
       (error: any) => {
