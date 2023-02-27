@@ -108,7 +108,7 @@ const WritingRecruitment = () => {
       startTime: start,
       endTime: end,
       selectedDays,
-      participation: { userId: [], userPhoto: [] },
+      participation: [],
       createdAt: Date.now(),
     };
 

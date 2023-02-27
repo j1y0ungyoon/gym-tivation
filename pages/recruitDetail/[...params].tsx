@@ -1,13 +1,26 @@
 import { useRouter } from 'next/router';
 import { useState, useRef, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { editRecruitPost, deleteRecruitPost } from '../api/api';
+import {
+  editRecruitPost,
+  deleteRecruitPost,
+  editUserParticipation,
+} from '../api/api';
 import {
   CoordinateType,
   EditRecruitPostParameterType,
+  editUserParticipationParameterType,
   RecruitPostType,
+  UserProfileType,
 } from '../../type';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import {
+  arrayUnion,
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+} from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
 import UseDropDown from '@/components/UseDropDown';
@@ -62,6 +75,27 @@ const RecruitDetail = ({ params }: any) => {
 
   // 맵 모달창 오픈
   const [openMap, setOpenMap] = useState(false);
+
+  // 유저 profile들을 담기 위한 배열 state
+  const [userProfiles, setUserProfiles] = useState<UserProfileType[]>([]);
+
+  // 현재 접속중인 유저 profile을 담기 위한 state
+  const [currentUserProfile, setCurrentUserProfile] =
+    useState<UserProfileType>();
+
+  // 유저 프로필 수정 useMutation (운동 참여 버튼 클릭 시 필요)
+  const { mutate: reviseUserProfile } = useMutation(
+    ['editUserProfile', currentUserProfile?.uid],
+    (body: editUserParticipationParameterType) => editUserParticipation(body),
+    {
+      onSuccess: () => {
+        console.log('프로필 수정 성공');
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
 
   // 게시글 수정 useMutation
   const { isLoading: isEditting, mutate: reviseRecruitPost } = useMutation(
@@ -201,48 +235,108 @@ const RecruitDetail = ({ params }: any) => {
       alert('로그인 후 이용해주세요!');
       return;
     }
-
+    console.log('sdf', refetchedPost?.participation);
     // 로그인 사용자가 참여 버튼을 눌렀을 때
     if (authService.currentUser) {
-      // participation이 undefined일 가능성이 있다고 type에러가 났기 때문에 아래와 같이 if문 활용
-      if (refetchedPost?.participation) {
-        // useMutation을 사용할 때, 아래와 같이 객체를 만들어서 reviseRecruitPost의 파라미터로 주어야 한다.
-        // 그렇지 않으면 이미 reviseRecruitPost의 파라미터 타입을 준 것이 있기 때문에 그것의 영향으로 타입 에러가 발생한다.
-        let edittedRecruitPost = {};
+      // 유저가 이미 운동 참여를 눌렀는지 아닌지 확인하기 위함
+      const exist = refetchedPost?.participation?.findIndex(
+        (item) => item.userId === authService.currentUser?.uid,
+      );
 
-        Object.assign(edittedRecruitPost, {
-          participation: {
-            userId: [
-              ...refetchedPost?.participation.userId,
-              authService.currentUser?.uid,
+      // exist가 -1이면 운동 참여 버튼을 누르지 않았다는 뜻
+      if (exist === -1) {
+        // participation이 undefined일 가능성이 있다고 type에러가 났기 때문에 아래와 같이 if문 활용
+        if (refetchedPost?.participation) {
+          // useMutation을 사용할 때, 아래와 같이 객체를 만들어서 reviseRecruitPost의 파라미터로 주어야 한다.
+          // 그렇지 않으면 이미 reviseRecruitPost의 파라미터 타입을 준 것이 있기 때문에 그것의 영향으로 타입 에러가 발생한다.
+          let edittedRecruitPost = {};
+
+          Object.assign(edittedRecruitPost, {
+            participation: [
+              ...refetchedPost.participation,
+              {
+                userId: authService.currentUser.uid,
+                userPhoto: authService.currentUser.photoURL,
+              },
             ],
+          });
 
-            userPhoto: [
-              ...refetchedPost?.participation.userPhoto,
-              authService.currentUser.photoURL,
-            ],
-          },
-        });
+          // 참여 버튼 누른 user id를 해당 게시물의 필드에 넣어주기
+          await reviseRecruitPost({ recruitPostId: id, edittedRecruitPost });
 
-        const profileRef = doc(
-          dbService,
-          'profile',
-          authService.currentUser.uid,
-        );
+          if (currentUserProfile?.userParticipation) {
+            // 참여 버튼 누른 post를 해당 유저 프로필에 필드에 넣어주기
+            let edittedProfile = {};
 
-        // 참여 버튼 누른 user id를 해당 게시물의 필드에 넣어주기
-        await reviseRecruitPost({ recruitPostId: id, edittedRecruitPost });
+            Object.assign(edittedProfile, {
+              userParticipation: arrayUnion(
+                // ...currentUserProfile.userParticipation,
+                {
+                  title: refetchedPost.title,
+                  content: refetchedPost.content,
+                  id: refetchedPost.id,
+                  userId: refetchedPost.userId,
+                  nickName: refetchedPost.nickName,
+                  userPhoto: refetchedPost.userPhoto,
+                  region: refetchedPost.region,
+                  gymName: refetchedPost.gymName,
+                  startTime: refetchedPost.startTime,
+                  endTime: refetchedPost.endTime,
 
-        // 참여 버튼 누른 post id를 해당 유저의 필드에 넣어주기
-        // api 파일에 profile 업데이트 관련 로직이 없어서 useMutation은 활용 못 함
-        await updateDoc(profileRef, {
-          userId: [
-            ...refetchedPost.participation.userId,
-            authService.currentUser.uid,
-          ],
-        });
+                  selectedDays: refetchedPost.selectedDays,
+                  participation: refetchedPost.participation,
+                  createdAt: refetchedPost.createdAt,
+                },
+              ),
+            });
+
+            await reviseUserProfile({
+              userId: authService.currentUser.uid,
+              edittedProfile,
+            });
+            alert('참여가 완료 되었습니다!');
+            return;
+          }
+
+          // if (!currentUserProfile?.userParticipation) {
+          //   alert('userParticipation is undefined');
+          //   console.log(
+          //     'userParticipation',
+          //     currentUserProfile?.userParticipation,
+          //   );
+          //   return;
+          // }
+        }
       }
-      alert('참여가 완료 되었습니다!');
+
+      // exist가 -1이 아니면 운동 참여 버튼을 눌렀다는 뜻
+      if (exist !== -1) {
+        if (refetchedPost?.participation) {
+          // 게시물 participation에서 해당 유저 삭제해주기
+          const edittedRecruitPostsArr = refetchedPost?.participation?.filter(
+            (item) => item.userId !== authService.currentUser?.uid,
+          );
+
+          await updateDoc(doc(dbService, 'recruitments', id), {
+            participation: [...edittedRecruitPostsArr],
+          });
+        }
+
+        if (currentUserProfile?.userParticipation) {
+          // 유저 프로필 userParticipation에서 해당 게시물 삭제하기
+          const edittedProfilesArr =
+            currentUserProfile?.userParticipation.filter(
+              (item) => item.id !== id,
+            );
+
+          await updateDoc(
+            doc(dbService, 'profile', authService.currentUser.uid),
+            { userParticipation: [...edittedProfilesArr] },
+          );
+        }
+        alert('참여를 취소했습니다!');
+        return;
+      }
     }
   };
 
@@ -252,9 +346,10 @@ const RecruitDetail = ({ params }: any) => {
       doc(dbService, 'recruitments', id),
       (doc) => {
         const data = doc.data();
+        console.log('data', data?.participation);
 
         const newObj: RecruitPostType = {
-          id: data?.id,
+          id: doc.id,
           title: data?.title,
           content: data?.content,
           userId: data?.userId,
@@ -273,10 +368,37 @@ const RecruitDetail = ({ params }: any) => {
       },
     );
 
+    // 언마운트 시 구독 끊기
     return () => {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    // 모든 유저 프로필 정보 불러오기
+    const profileRef = collection(dbService, 'profile');
+    const q = query(profileRef);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedProfiles = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+      setUserProfiles(fetchedProfiles);
+    });
+
+    // 현재 유저의 프로필만 담아주기
+    const getCurrentUserProfile = () => {
+      userProfiles
+        ?.filter((profile) => profile.uid === authService.currentUser?.uid)
+        .forEach((profile) => setCurrentUserProfile(profile));
+    };
+
+    getCurrentUserProfile();
+
+    // 언마운트 시 구독 끊기
+    return () => {
+      unsubscribe();
+    };
+  }, [refetchedPost]);
 
   if (!refetchedPost) {
     return <div>데이터를 불러오고 있습니다.</div>;
@@ -397,9 +519,9 @@ const RecruitDetail = ({ params }: any) => {
               <InfoContainer>
                 <PostInfoContainer>
                   <span>참가자</span>
-                  {refetchedPost.participation?.userPhoto
-                    ? refetchedPost.participation.userPhoto.map((photo) => {
-                        return <ProfileImage src={photo} />;
+                  {refetchedPost.participation
+                    ? refetchedPost.participation.map((item) => {
+                        return <ProfileImage src={item.userPhoto} />;
                       })
                     : null}
                   <RecruitInfoTextBox>

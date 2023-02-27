@@ -1,6 +1,9 @@
 import { dbService, storage } from '../../firebase';
-import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { EditRecruitPostParameterType } from '../../type';
+import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  EditRecruitPostParameterType,
+  editUserParticipationParameterType,
+} from '../../type';
 import { deleteObject, ref } from 'firebase/storage';
 import { query } from 'firebase/database';
 import { describe } from 'node:test';
@@ -19,6 +22,14 @@ export const editRecruitPost = async ({
     doc(dbService, 'recruitments', recruitPostId),
     edittedRecruitPost,
   );
+};
+
+// 운동 참가 버튼 누른 후 유저 프로필 수정하기
+export const editUserParticipation = async ({
+  userId,
+  edittedProfile,
+}: editUserParticipationParameterType) => {
+  await updateDoc(doc(dbService, 'profile', userId), edittedProfile);
 };
 
 // 댓글 삭제하기

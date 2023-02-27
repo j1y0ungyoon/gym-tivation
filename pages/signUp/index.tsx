@@ -202,6 +202,8 @@ const SignUp = () => {
         uid: user.uid,
         following: '',
         follower: '',
+        // 운동 참여 버튼 테스트를 위해 가입시 필드 추가
+        userParticipation: [],
       });
       alert('인증 메일 확인 후 로그인 해주세요.');
       authService.signOut();
