@@ -175,6 +175,8 @@ const BoardTitleText = styled.span`
 `;
 const TimeText = styled.button`
   height: 4vh;
+  padding-left: 0.5vw;
+  padding-right: 0.5vw;
   font-size: 1.3rem;
   font-weight: bold;
   background-color: white;

@@ -222,19 +222,19 @@ const ProfileEdit = ({
               </ProfilePhoto>
               <LevelBox>
                 {item.lvName === '일반인' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/10/10699.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/8712/8712070.png" />
                 )}
                 {item.lvName === '헬애기' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/8566/8566886.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/4700/4700514.png" />
                 )}
                 {item.lvName === '헬린이' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185618.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/1845/1845861.png" />
                 )}
                 {item.lvName === '헬른이' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185590.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/2548/2548532.png" />
                 )}
                 {item.lvName === '헬애비' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/6793/6793958.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/2376/2376399.png" />
                 )}
                 <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
                 <LevelText>{item.lvName}</LevelText>
@@ -332,19 +332,19 @@ const ProfileEdit = ({
                 </ProfilePhoto>
                 <LevelBox>
                   {item.lvName === '일반인' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/10/10699.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/8712/8712070.png" />
                   )}
                   {item.lvName === '헬애기' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/8566/8566886.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/4700/4700514.png" />
                   )}
                   {item.lvName === '헬린이' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185618.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/1845/1845861.png" />
                   )}
                   {item.lvName === '헬른이' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185590.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/2548/2548532.png" />
                   )}
                   {item.lvName === '헬애비' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/6793/6793958.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/2376/2376399.png" />
                   )}
                   <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
                   <LevelText>{item.lvName}</LevelText>
@@ -729,6 +729,5 @@ const LevelIcon = styled.img`
   height: 2.5rem;
   margin-right: 0.3vw;
   margin-bottom: 0.5vh;
-  background-color: white;
   border-radius: 50%;
 `;

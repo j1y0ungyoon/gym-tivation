@@ -57,9 +57,6 @@ const MyPageLike = ({ paramsId }: { paramsId: string }) => {
     };
   }, [authService.currentUser?.uid]);
 
-  console.log('데이터잉', boardInformation);
-  console.log('좋아요정보', String(likeInformation));
-  console.log('비교');
   return (
     <MyPageBoardWrapper>
       {boardInformation
