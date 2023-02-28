@@ -44,10 +44,10 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
       };
 
       if (category === '동료 모집') {
+        setInputComment('');
         await addDoc(collection(dbService, 'comments'), newComment)
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
-        setInputComment('');
         return;
       }
     }

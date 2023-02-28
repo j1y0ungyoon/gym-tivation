@@ -63,8 +63,6 @@ const Comment = ({ comment }: { comment: CommentType }) => {
       (userId) => userId === authService.currentUser?.uid,
     );
 
-    console.log('exist', exist);
-
     if (exist === -1) {
       console.log('likeCount', comment.likeCount);
       if (comment.likeCount || comment.likeCount === 0) {

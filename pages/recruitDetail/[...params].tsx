@@ -270,25 +270,22 @@ const RecruitDetail = ({ params }: any) => {
             let edittedProfile = {};
 
             Object.assign(edittedProfile, {
-              userParticipation: arrayUnion(
-                // ...currentUserProfile.userParticipation,
-                {
-                  title: refetchedPost.title,
-                  content: refetchedPost.content,
-                  id: refetchedPost.id,
-                  userId: refetchedPost.userId,
-                  nickName: refetchedPost.nickName,
-                  userPhoto: refetchedPost.userPhoto,
-                  region: refetchedPost.region,
-                  gymName: refetchedPost.gymName,
-                  startTime: refetchedPost.startTime,
-                  endTime: refetchedPost.endTime,
+              userParticipation: arrayUnion({
+                title: refetchedPost.title,
+                content: refetchedPost.content,
+                id: refetchedPost.id,
+                userId: refetchedPost.userId,
+                nickName: refetchedPost.nickName,
+                userPhoto: refetchedPost.userPhoto,
+                region: refetchedPost.region,
+                gymName: refetchedPost.gymName,
+                startTime: refetchedPost.startTime,
+                endTime: refetchedPost.endTime,
 
-                  selectedDays: refetchedPost.selectedDays,
-                  participation: refetchedPost.participation,
-                  createdAt: refetchedPost.createdAt,
-                },
-              ),
+                selectedDays: refetchedPost.selectedDays,
+                participation: refetchedPost.participation,
+                createdAt: refetchedPost.createdAt,
+              }),
             });
 
             await reviseUserProfile({
@@ -298,15 +295,6 @@ const RecruitDetail = ({ params }: any) => {
             alert('참여가 완료 되었습니다!');
             return;
           }
-
-          // if (!currentUserProfile?.userParticipation) {
-          //   alert('userParticipation is undefined');
-          //   console.log(
-          //     'userParticipation',
-          //     currentUserProfile?.userParticipation,
-          //   );
-          //   return;
-          // }
         }
       }
 
@@ -347,7 +335,6 @@ const RecruitDetail = ({ params }: any) => {
       doc(dbService, 'recruitments', id),
       (doc) => {
         const data = doc.data();
-        console.log('data', data?.participation);
 
         const newObj: RecruitPostType = {
           id: doc.id,
