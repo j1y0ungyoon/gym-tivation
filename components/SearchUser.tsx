@@ -134,7 +134,7 @@ const UserWrapper = styled.div`
   top: 10%;
   right: 3%;
   background-color: white;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
   ::-webkit-scrollbar {
     display: none;
   }

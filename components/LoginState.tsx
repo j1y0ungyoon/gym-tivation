@@ -35,7 +35,7 @@ const LoginState = ({
       <LoginStateWrapper>
         {toggle ? (
           <>
-            {String(follower).includes(item.id) ? (
+            {String(follower).includes(item.id) && (
               <OnOffBox
                 onClick={() => {
                   goToMyPage(item.id);
@@ -58,11 +58,11 @@ const LoginState = ({
                   )}
                 </StateBox>
               </OnOffBox>
-            ) : null}
+            )}
           </>
         ) : (
           <>
-            {String(following).includes(item.id) ? (
+            {String(following).includes(item.id) && (
               <OnOffBox
                 onClick={() => {
                   goToMyPage(item.id);
@@ -85,7 +85,7 @@ const LoginState = ({
                   )}
                 </StateBox>
               </OnOffBox>
-            ) : null}
+            )}
           </>
         )}
       </LoginStateWrapper>
