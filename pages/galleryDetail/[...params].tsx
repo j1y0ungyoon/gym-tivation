@@ -187,7 +187,7 @@ const GalleryDetail = ({ params }: any) => {
             </GalleryTitleContainer>
             <GalleryContentContainer>
               <GalleryImageWarpper>
-                <GalleryImagePreview id="image" src={prevPhoto} />
+                <GalleryImagePreview src={prevPhoto} />
               </GalleryImageWarpper>
               <DetailGalleryContent>
                 {detailGalleryPost?.content}
