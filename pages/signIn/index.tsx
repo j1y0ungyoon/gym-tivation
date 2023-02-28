@@ -138,9 +138,9 @@ const SignIn = () => {
         });
       } else {
         await setDoc(doc(dbService, 'profile', user.uid), {
-          introduction: '자기소개를 적어주세요.',
+          introduction: '',
           area: '지역',
-          instagram: '인스타그램',
+          instagram: '',
           displayName: authService.currentUser?.displayName,
           photoURL: authService.currentUser?.photoURL,
           email: authService.currentUser?.email,

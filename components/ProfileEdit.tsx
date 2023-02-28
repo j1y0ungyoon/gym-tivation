@@ -228,13 +228,13 @@ const ProfileEdit = ({
                   <LevelIcon src="https://cdn-icons-png.flaticon.com/128/8566/8566886.png" />
                 )}
                 {item.lvName === '헬린이' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/7126/7126790.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185618.png" />
                 )}
                 {item.lvName === '헬른이' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/4205/4205505.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185590.png" />
                 )}
                 {item.lvName === '헬애비' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/6793/6793958.png" />
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/6793/6793958.png" />
                 )}
                 <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
                 <LevelText>{item.lvName}</LevelText>
@@ -338,13 +338,13 @@ const ProfileEdit = ({
                     <LevelIcon src="https://cdn-icons-png.flaticon.com/128/8566/8566886.png" />
                   )}
                   {item.lvName === '헬린이' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/7126/7126790.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185618.png" />
                   )}
                   {item.lvName === '헬른이' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/4205/4205505.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/185/185590.png" />
                   )}
                   {item.lvName === '헬애비' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/6793/6793958.png" />
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/6793/6793958.png" />
                   )}
                   <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
                   <LevelText>{item.lvName}</LevelText>
