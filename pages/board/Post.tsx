@@ -5,10 +5,9 @@ import styled from 'styled-components';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
-
 import { runTransaction } from 'firebase/firestore';
-
 import { toast } from 'react-toastify';
+import { nanoid } from 'nanoid';
 
 const Post = () => {
   const [boardTitle, setBoardTitle] = useState('');
@@ -35,8 +34,7 @@ const Post = () => {
   };
 
   useEffect(() => {
-    const imageRef = ref(storage, `images/${imageUpload.name}`);
-
+    const imageRef = ref(storage, `images/${nanoid()}`);
     if (!imageUpload) return;
     uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
@@ -85,6 +83,7 @@ const Post = () => {
       .catch((error) => {
         console.log('에러 발생!', error);
       });
+
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
     try {

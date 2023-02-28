@@ -14,6 +14,7 @@ import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
 import BoardCommentList from '@/components/BoardCommentList';
 import { BoardPostType } from '@/type';
+import { nanoid } from 'nanoid';
 
 const Detail = ({ params }: any) => {
   const [detailPost, setDetailPost] = useState<BoardPostType>();
@@ -81,7 +82,7 @@ const Detail = ({ params }: any) => {
     setEditImageUpload(event.target.files?.[0]);
   };
   useEffect(() => {
-    const imageRef = ref(storage, `image/${editImageUpload.name}`);
+    const imageRef = ref(storage, `image/${nanoid()}`);
     if (!editImageUpload) return;
     uploadBytes(imageRef, editImageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
