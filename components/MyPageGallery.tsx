@@ -44,7 +44,6 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
     };
   }, [authService.currentUser?.uid]);
 
-  console.log(galleryInformation);
   return (
     <MyPageGalleyWrapper>
       {galleryInformation
@@ -66,9 +65,8 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
 export default MyPageGalley;
 const MyPageGalleyWrapper = styled.div`
   width: 100%;
-  height: 61%;
+  height: 100%;
   display: flex;
-  overflow: auto;
   flex-wrap: wrap;
   padding-bottom: 1vh;
   padding-left: 1.5vw;
@@ -86,9 +84,10 @@ const GalleryContainer = styled.div`
 const GalleryPhoto = styled.img`
   width: 14vw;
   height: 18vh;
+  border-radius: 1rem;
   :hover {
     cursor: pointer;
-
-    transform: scale(1.2, 1.2); /* 가로2배 새로 1.5배 로 커짐 */
+    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
   }
 `;

@@ -1,85 +1,81 @@
 import { authService, dbService } from '@/firebase';
+import { collection, orderBy, getDocs, query, where } from 'firebase/firestore';
 
-import { collection, orderBy, getDocs, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 type Board = {
   id: string;
-  photo: string;
+  title: string;
   userId: string;
   nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  like: [];
+  userPhoto: string;
+  participation: any;
+  selectedDays: string;
+  startTime: string;
+  endTime: string;
 };
 
-const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
-  const [boardInformation, setBoardInFormation] = useState<Board[]>([]);
+const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
   const [getComment, setGetComment] = useState([] as any);
+  const [getRecruit, setGetRecruit] = useState([] as any);
   const router = useRouter();
-  const goToBoardDetailPost = (id: any) => {
+  const goToRecruitDetailDetailPost = (id: any) => {
     router.push({
-      pathname: `/boardDetail/${id}`,
+      pathname: `/recruitDetail/${id}`,
       query: {
         id,
       },
     });
   };
 
-  const getBoardPost = async () => {
+  const getRecruitments = async () => {
     const q = query(
-      collection(dbService, 'posts'),
-      orderBy('createdAt', 'desc'),
+      collection(dbService, 'profile'),
+      where('uid', '==', paramsId),
     );
     const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setBoardInFormation(getBoardData);
+    data.docs.map((doc) => {
+      setGetRecruit(() => [doc.data().userParticipation]);
+    });
   };
 
   const getCommentNumber = async () => {
-    const q = query(collection(dbService, 'boardComment'));
+    const q = query(collection(dbService, 'comments'));
     const data = await getDocs(q);
     data.docs.map((doc) => {
       setGetComment((prev: any) => [...prev, doc.data().postId]);
     });
   };
   useEffect(() => {
-    getBoardPost();
+    getRecruitments();
     getCommentNumber();
     return () => {
-      getBoardPost();
+      getRecruitments();
       getCommentNumber();
     };
-  }, [authService.currentUser?.uid]);
-
-  console.log('데이터', getComment);
+  }, [paramsId]);
 
   return (
     <MyPageBoardWrapper>
-      {boardInformation
-        .filter((item) => item.userId === paramsId)
-        .map((item) => {
+      {getRecruit.map((items: []) => {
+        return items.map((item: Board) => {
           return (
             <MyPageBoardContainer
+              onClick={() => {
+                goToRecruitDetailDetailPost(item.id);
+              }}
               key={item.id}
-              onClick={() => goToBoardDetailPost(item.id)}
             >
               <PhotoBox>
                 <ProfilePhoto>
-                  <Photo src={item.photo} />
+                  <Photo src={item.userPhoto} />
                 </ProfilePhoto>
               </PhotoBox>
               <TitleNickNameBox>
                 <TitleBox>
-                  <BoardCategory>{item.category}</BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
-
                   <RecruitComment>
                     [
                     {
@@ -90,22 +86,33 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
                   </RecruitComment>
                 </TitleBox>
                 <NickNameBox>
-                  <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>2023.02.27</NickNameText>
-                  <NickNameText>Like {item.like.length}</NickNameText>
+                  <TimeText> {item.selectedDays} </TimeText>
+                  <TimeText>
+                    {item.startTime} ~ {item.endTime}
+                  </TimeText>
+                  <RecruitLength>
+                    {item.participation.length}명 참여중
+                  </RecruitLength>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
           );
-        })}
+        });
+      })}
+
+      {/* // <MyPageBoardContainer
+          //   key={nanoid()}
+          //   // onClick={() => goToBoardDetailPost(item.id)}
+          // > */}
     </MyPageBoardWrapper>
   );
 };
 
-export default MyPageBoard;
+export default MyPageRecruit;
 const MyPageBoardWrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: 61%;
+  overflow: auto;
   flex-wrap: wrap;
   padding-bottom: 1vh;
   padding-left: 1.5vw;
@@ -123,7 +130,6 @@ const MyPageBoardContainer = styled.div`
   padding: 2vh;
   height: 15vh;
   background-color: white;
-  border-color: black;
   border-style: solid;
   border-width: 0.1rem;
   border-radius: 15px;
@@ -136,13 +142,13 @@ const MyPageBoardContainer = styled.div`
 `;
 
 const PhotoBox = styled.div`
-  width: 20%;
+  width: 12%;
   height: 100%;
 `;
 const ProfilePhoto = styled.div`
-  width: 8vw;
-  height: 11vh;
-  border-radius: 1rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 70%;
   overflow: hidden;
 `;
 const Photo = styled.img`
@@ -154,14 +160,11 @@ const Photo = styled.img`
     transform: scale(1.2, 1.2);
   }
 `;
-const BoardCategory = styled.button`
-  width: 8vw;
-  height: 4.5vh;
-  font-size: 1.3rem;
+const RecruitLength = styled.span`
+  font-size: 1rem;
+  margin-right: 0.5vw;
+  margin-top: 1vh;
   font-weight: bold;
-  background-color: white;
-  border-radius: 2rem;
-  margin-right: 1vw;
 `;
 
 const BoardTitleText = styled.span`
@@ -169,15 +172,17 @@ const BoardTitleText = styled.span`
   font-weight: bolder;
   margin-top: 0.8vh;
 `;
-const NickNameText = styled.span`
-  font-size: 1rem;
-  margin-right: 0.5vw;
+const TimeText = styled.button`
+  height: 4vh;
+  font-size: 1.3rem;
+  font-weight: bold;
+  background-color: white;
+  border-radius: 2rem;
+  margin-right: 1vw;
 `;
 
 const TitleBox = styled.div`
   display: flex;
-  margin-top: 0.7vh;
-  margin-bottom: 0.7vh;
   width: 80%;
   height: 50%;
 `;

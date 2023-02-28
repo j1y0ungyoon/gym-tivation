@@ -141,11 +141,17 @@ const SignIn = () => {
           introduction: '자기소개를 적어주세요.',
           area: '지역',
           instagram: '인스타그램',
-          loginState: true,
+          displayName: authService.currentUser?.displayName,
+          photoURL: authService.currentUser?.photoURL,
+          email: authService.currentUser?.email,
+          uid: user.uid,
+          following: '',
+          follower: '',
+          // 운동 참여 버튼 테스트를 위해 가입시 필드 추가
+          userParticipation: [],
           lv: 1,
           lvName: '일반인',
-          photoURL: authService.currentUser?.photoURL,
-          displayName: authService.currentUser?.displayName,
+          loginState: true,
         });
       }
       alert('로그인 완료');

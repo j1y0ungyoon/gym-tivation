@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useId } from 'react';
 import UploadImage from '@/components/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
 import {
   doc,
-  setDoc,
   updateDoc,
   query,
   collection,
   getDocs,
   where,
+  arrayRemove,
+  arrayUnion,
 } from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
@@ -18,9 +19,8 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 type ProfileEditProps = {
   item: ProfileItem;
   paramsId: string;
-  follower: [];
-  following: [];
   setFollowModal: (p: boolean) => void;
+  setToggle: (p: boolean) => void;
 };
 
 const OPTIONS = [
@@ -41,9 +41,10 @@ const DEFAULT_PHOTO_URL =
 const ProfileEdit = ({
   item,
   paramsId,
-  follower,
-  following,
+  // follower,
+  // following,
   setFollowModal,
+  setToggle,
 }: ProfileEditProps) => {
   const [isProfileEdit, setIsProfileEdit] = useState(false);
   //닉네임, 사진 불러오기
@@ -57,10 +58,11 @@ const ProfileEdit = ({
   const [nickNameMessage, setNickNameMessage] = useState<string>('');
   const [isValidNickName, setIsValidNickName] = useState(true);
   const [nickNameInformation, setNickNameInformation] = useState([] as any);
+  const [PostNumber, setPostNumber] = useState([] as any);
 
   const nickNameCheck = nickNameInformation.includes(nickName);
   const user = String(authService.currentUser?.uid);
-  console.log(isValidNickName);
+
   //닉네임 중복 검사
   const EmailNickNameGetDoc = async () => {
     const q = query(collection(dbService, 'profile'), where('uid', '!=', user));
@@ -102,13 +104,14 @@ const ProfileEdit = ({
       setMessage(`헬른이까지 Lv${30 - Level} 남았습니다.`);
     } else if (item.lvName === '헬른이' && Level < 60) {
       setMessage(`헬애비까지 Lv${60 - Level} 남았습니다.`);
+    } else if (item.lvName === '헬애비') {
+      setMessage(`최고 타이틀까지 도달하셨습니다!`);
     }
   };
 
   //프로필 수정
   const onClickProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
       const user = authService.currentUser;
       if (user !== null) {
@@ -132,11 +135,58 @@ const ProfileEdit = ({
       alert(error.message);
     }
   };
+  //팔로우, 팔로잉
+  const FollowOnClick = async () => {
+    if (user !== null) {
+      await updateDoc(doc(dbService, 'profile', user), {
+        following: arrayUnion(paramsId),
+      });
+      await updateDoc(doc(dbService, 'profile', item.id), {
+        follower: arrayUnion(user),
+      });
+
+      alert('팔로우 완료');
+    }
+  };
+
+  const FollowReMoveOnClick = async () => {
+    if (user !== null) {
+      await updateDoc(doc(dbService, 'profile', user), {
+        following: arrayRemove(paramsId),
+      });
+      await updateDoc(doc(dbService, 'profile', item.id), {
+        follower: arrayRemove(user),
+      });
+      alert('언파로우 완료');
+    }
+  };
+  const getBoardNumber = async () => {
+    const q = query(
+      collection(dbService, 'posts'),
+      where('userId', '==', paramsId),
+    );
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setPostNumber((prev: any) => [...prev, doc.data().title]);
+    });
+  };
+  const getGallery = async () => {
+    const q = query(
+      collection(dbService, 'gallery'),
+      where('userId', '==', paramsId),
+    );
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setPostNumber((prev: any) => [...prev, doc.data().title]);
+    });
+  };
 
   //사진 주소, 닉네임 불러오기
   useEffect(() => {
     EmailNickNameGetDoc();
     helpLevel();
+    getBoardNumber();
+    getGallery();
     authService.onAuthStateChanged((user) => {
       if (user !== null) {
         if (user.displayName !== null) {
@@ -149,7 +199,13 @@ const ProfileEdit = ({
         }
       }
     });
-  }, []);
+    return () => {
+      getBoardNumber();
+      getGallery();
+      EmailNickNameGetDoc();
+      helpLevel();
+    };
+  }, [paramsId]);
 
   return (
     <>
@@ -165,8 +221,24 @@ const ProfileEdit = ({
                 )}
               </ProfilePhoto>
               <LevelBox>
-                <LevelText>{item.lvName}</LevelText>
+                {item.lvName === '일반인' && (
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/10/10699.png" />
+                )}
+                {item.lvName === '헬애기' && (
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/8566/8566886.png" />
+                )}
+                {item.lvName === '헬린이' && (
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/7126/7126790.png" />
+                )}
+                {item.lvName === '헬른이' && (
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/4205/4205505.png" />
+                )}
+                {item.lvName === '헬애비' && (
+                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/6793/6793958.png" />
+                )}
                 <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
+                <LevelText>{item.lvName}</LevelText>
+
                 <LevelHelpBox className="levelHelpBox">
                   <LevelHelpTextBox>
                     <HelpLvText>Lv이란?</HelpLvText>
@@ -186,7 +258,8 @@ const ProfileEdit = ({
                 <NameBox>
                   <NickNameText>{item.displayName}</NickNameText>
                   <AreaText>{item.area}</AreaText>
-                  {authService.currentUser?.uid === paramsId && (
+
+                  {authService.currentUser?.uid === paramsId ? (
                     <EditButton
                       onClick={() => {
                         setIsProfileEdit(true);
@@ -194,6 +267,15 @@ const ProfileEdit = ({
                     >
                       수정
                     </EditButton>
+                  ) : item.follower?.includes(user) ? (
+                    <EditButton
+                      style={{ backgroundColor: 'black', color: 'white' }}
+                      onClick={FollowReMoveOnClick}
+                    >
+                      팔로잉
+                    </EditButton>
+                  ) : (
+                    <EditButton onClick={FollowOnClick}>팔로워</EditButton>
                   )}
                 </NameBox>
                 <InstagramBox>
@@ -203,18 +285,32 @@ const ProfileEdit = ({
                   <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
                 </InstagramBox>
               </NickNameAreaBox>
-              <FollowBox
-                onClick={() => {
-                  setFollowModal(true);
-                }}
-              >
-                <FollowText> 팔로워 </FollowText>
+              <FollowBox>
+                <PostNumberText>게시글</PostNumberText>
                 <FollowNumberText>
-                  {follower === undefined ? '0' : follower.length}
+                  {PostNumber === undefined ? '0' : PostNumber.length}
                 </FollowNumberText>
-                <FollowText> 팔로잉 </FollowText>
+                <FollowText
+                  onClick={() => {
+                    setFollowModal(true);
+                    setToggle(true);
+                  }}
+                >
+                  팔로워
+                </FollowText>
                 <FollowNumberText>
-                  {following === undefined ? '0' : following.length}
+                  {item.follower === undefined ? '0' : item.follower.length}
+                </FollowNumberText>
+                <FollowText
+                  onClick={() => {
+                    setFollowModal(true);
+                    setToggle(false);
+                  }}
+                >
+                  팔로잉
+                </FollowText>
+                <FollowNumberText>
+                  {item.following === undefined ? '0' : item.following.length}
                 </FollowNumberText>
               </FollowBox>
 
@@ -235,8 +331,23 @@ const ProfileEdit = ({
                   <UploadImage imageURL={photoURL} setImageURL={setPhotoURL} />
                 </ProfilePhoto>
                 <LevelBox>
-                  <LevelText>{item.lvName}</LevelText>
+                  {item.lvName === '일반인' && (
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/10/10699.png" />
+                  )}
+                  {item.lvName === '헬애기' && (
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/8566/8566886.png" />
+                  )}
+                  {item.lvName === '헬린이' && (
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/7126/7126790.png" />
+                  )}
+                  {item.lvName === '헬른이' && (
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/4205/4205505.png" />
+                  )}
+                  {item.lvName === '헬애비' && (
+                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/6793/6793958.png" />
+                  )}
                   <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
+                  <LevelText>{item.lvName}</LevelText>
                   <LevelHelpBox className="levelHelpBox">
                     <LevelHelpTextBox>
                       <HelpLvText>Lv이란?</HelpLvText>
@@ -312,20 +423,38 @@ const ProfileEdit = ({
                       onChange={(e) => {
                         setInstagram(e.target.value);
                       }}
-                      placeholder="아이디"
+                      placeholder="인스타그램"
                       maxLength={20}
                     />
                     <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
                   </InstagramBox>
                 </NickNameAreaBox>
                 <FollowBox>
-                  <FollowText> 팔로워 </FollowText>
+                  <PostNumberText>게시글</PostNumberText>
                   <FollowNumberText>
-                    {follower === undefined ? '0' : follower.length}{' '}
+                    {PostNumber === undefined ? '0' : PostNumber.length}
                   </FollowNumberText>
-                  <FollowText> 팔로잉 </FollowText>
+                  <FollowText
+                    onClick={() => {
+                      setFollowModal(true);
+                      setToggle(true);
+                    }}
+                  >
+                    팔로워
+                  </FollowText>
                   <FollowNumberText>
-                    {following === undefined ? '0' : following.length}{' '}
+                    {item.follower === undefined ? '0' : item.follower.length}
+                  </FollowNumberText>
+                  <FollowText
+                    onClick={() => {
+                      setFollowModal(true);
+                      setToggle(false);
+                    }}
+                  >
+                    팔로잉
+                  </FollowText>
+                  <FollowNumberText>
+                    {item.following === undefined ? '0' : item.following.length}
                   </FollowNumberText>
                 </FollowBox>
                 <IntroductionEditText
@@ -384,7 +513,7 @@ const Photo = styled.img`
 `;
 const LevelBox = styled.div`
   position: relative;
-  margin-top: 2vh;
+  margin-top: 1vh;
   :hover {
     cursor: help;
     .levelHelpBox {
@@ -425,14 +554,14 @@ const LevelHelpText = styled.span`
   margin-left: 0.5rem;
   font-size: 0.9rem;
 `;
-const LevelText = styled.span`
+const LevelText = styled.div`
   font-weight: bolder;
   font-size: 1.2rem;
   color: green;
 `;
 const LevelTextNumber = styled.span`
   margin-left: 0.2vw;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: bolder;
   color: red;
 `;
@@ -459,6 +588,7 @@ const IntroductionText = styled.textarea`
   text-align: left;
   resize: none;
   overflow: hidden;
+  background-color: #fffcf3;
   :focus {
     outline: none;
   }
@@ -472,6 +602,7 @@ const IntroductionEditText = styled.textarea`
   text-align: left;
   resize: none;
   overflow: hidden;
+  background-color: #fffcf3;
   border-bottom-color: black;
   border-bottom-style: solid;
   border-width: 0.1rem;
@@ -481,15 +612,14 @@ const IntroductionEditText = styled.textarea`
 `;
 
 const EditButton = styled.button`
-  background-color: #eeeeee;
   border-radius: 2rem;
-  border: none;
+  background-color: white;
   width: 4vw;
   height: 3.9vh;
   margin-left: 1vw;
   :hover {
     cursor: pointer;
-    background-color: gray;
+    background-color: black;
     color: white;
   }
 `;
@@ -501,6 +631,7 @@ const TextInput = styled.input`
   font-size: 1.2rem;
   font-weight: bold;
   text-align: left;
+  background-color: #fffcf3;
   border-bottom-color: black;
   border-bottom-style: solid;
   border-bottom-width: 0.1rem;
@@ -512,6 +643,7 @@ const TextInput = styled.input`
 const Select = styled.select`
   width: 4vw;
   font-size: 1rem;
+  background-color: #fffcf3;
   margin-left: 1vw;
   border: none;
   :focus {
@@ -526,6 +658,7 @@ const InstagramInput = styled.input`
   color: black;
   font-weight: 700;
   text-align: left;
+  background-color: #fffcf3;
   border-bottom-color: black;
   border-bottom-style: solid;
   border-bottom-width: 0.1rem;
@@ -555,19 +688,26 @@ const InstagramBox = styled.div`
 `;
 const FollowBox = styled.div`
   margin-top: 4vh;
-  :hover {
-    cursor: pointer;
-    color: gray;
-  }
 `;
 
 const FollowText = styled.span`
   font-weight: bold;
   font-size: 1.2rem;
+  margin-right: 0.5vw;
+  :hover {
+    cursor: pointer;
+    color: gray;
+  }
+`;
+const PostNumberText = styled.span`
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-right: 0.5vw;
 `;
 const FollowNumberText = styled.span`
   font-weight: bolder;
   font-size: 1.2rem;
+  margin-right: 0.5vw;
 `;
 
 const TextValidation = styled.span`
@@ -583,4 +723,12 @@ const HelpLvText = styled.span`
   font-size: 1.2rem;
   font-weight: bolder;
   color: red;
+`;
+const LevelIcon = styled.img`
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 0.3vw;
+  margin-bottom: 0.5vh;
+  background-color: white;
+  border-radius: 50%;
 `;
