@@ -22,17 +22,15 @@ type LikeGet = {
   paramsId: string;
   galleryInformation: Gallery[];
   boardInformation: Board[];
-  getComment: [];
 };
 
 const MyPageLike = ({
   paramsId,
   galleryInformation,
   boardInformation,
-  getComment,
 }: LikeGet) => {
   const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
-  const [getGalleyComment, setGetGalleyComment] = useState([] as any);
+
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -52,7 +50,6 @@ const MyPageLike = ({
   };
   //배열 합치기
   const combineData = boardInformation.concat(galleryInformation);
-  const combineCommentData = getComment.concat(getGalleyComment);
 
   const getPostLike = async () => {
     const q = query(
@@ -65,23 +62,10 @@ const MyPageLike = ({
     });
   };
 
-  const getGalleyNumber = async () => {
-    const q = query(collection(dbService, 'galleryComment'));
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetGalleyComment((prev: any) => [...prev, doc.data().postId]);
-    });
-  };
-
-  console.log('데이터', getGalleyComment);
-
   useEffect(() => {
     getPostLike();
 
-    getGalleyNumber();
-    return () => {
-      getGalleyNumber();
-    };
+    return () => {};
   }, [paramsId]);
 
   return (
@@ -110,15 +94,7 @@ const MyPageLike = ({
                   </BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
 
-                  <RecruitComment>
-                    [
-                    {
-                      combineCommentData.filter(
-                        (element: any) => item.id === element,
-                      ).length
-                    }
-                    ]
-                  </RecruitComment>
+                  <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>

@@ -43,6 +43,7 @@ export type Board = {
   content: string;
   category: string;
   createdAt: number;
+  comment: number;
   like: [];
 };
 export type Gallery = {
@@ -54,6 +55,7 @@ export type Gallery = {
   content: string;
   category: string;
   createdAt: number;
+  comment: number;
   like: [];
 };
 
@@ -69,7 +71,7 @@ const MyPage = ({ params }: any) => {
   );
   //MyPageBoard 불러오기
   const [boardInformation, setBoardInFormation] = useState([] as any);
-  const [getComment, setGetComment] = useState([] as any);
+
   //MyPageGallery 불러오기
   const [galleryInformation, setGalleryInFormation] = useState([] as any);
 
@@ -174,13 +176,7 @@ const MyPage = ({ params }: any) => {
     setBoardInFormation(getBoardData);
   };
   //post 댓글 불러오기
-  const getCommentNumber = async () => {
-    const q = query(collection(dbService, 'boardComment'));
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetComment((prev: any) => [...prev, doc.data().postId]);
-    });
-  };
+
   //MyPageGallery 불러오기
   const getGalleryPost = async () => {
     const q = query(
@@ -197,12 +193,12 @@ const MyPage = ({ params }: any) => {
   useEffect(() => {
     profileOnSnapShot();
     getBoardPost();
-    getCommentNumber();
+
     getGalleryPost();
     return () => {
       profileOnSnapShot();
       getBoardPost();
-      getCommentNumber();
+
       getGalleryPost();
       // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
     };
@@ -252,7 +248,6 @@ const MyPage = ({ params }: any) => {
                   <MyPageBoard
                     paramsId={paramsId}
                     boardInformation={boardInformation}
-                    getComment={getComment}
                   />
                 </GalleyBox>
               )}
@@ -263,7 +258,6 @@ const MyPage = ({ params }: any) => {
                   <MyPageLike
                     galleryInformation={galleryInformation}
                     boardInformation={boardInformation}
-                    getComment={getComment}
                     paramsId={paramsId}
                   />
                 </GalleyBox>

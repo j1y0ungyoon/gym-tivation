@@ -72,6 +72,7 @@ const Post = () => {
       photo: galleryPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
+      comment: 0,
     };
 
     await addDoc(collection(dbService, 'gallery'), newGalleryPost)
@@ -92,7 +93,6 @@ const Post = () => {
         const newwLvName = sfDoc.data().lvName;
         const newLv = sfDoc.data().lv + 1;
         transaction.update(sfDocRef, { lv: newLv });
-        console.log('랩', newLv);
         if (newwLvName === '일반인' && newLv > 4) {
           transaction.update(sfDocRef, { lvName: '헬애기' });
           transaction.update(sfDocRef, { lv: 1 });

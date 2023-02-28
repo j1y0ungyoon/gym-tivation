@@ -40,7 +40,6 @@ const LoginState = ({
     );
     const data = await getDocs(q);
     data.docs.map((doc) => {
-      console.log('파람스아이디', paramsId);
       setFollowing(doc.data().following);
       setFollower(doc.data().follower);
     });

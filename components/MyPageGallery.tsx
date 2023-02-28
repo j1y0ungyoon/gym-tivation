@@ -1,7 +1,4 @@
-import { authService, dbService } from '@/firebase';
 import { Gallery } from '@/pages/myPage/[...params]';
-
-import { collection, orderBy, getDocs, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -22,27 +19,6 @@ const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
       },
     });
   };
-
-  // const getGalleryPost = async () => {
-  //   const q = query(
-  //     collection(dbService, 'gallery'),
-  //     orderBy('createdAt', 'desc'),
-  //   );
-  //   const data = await getDocs(q);
-  //   const getGalleryData = data.docs.map((doc: any) => ({
-  //     id: doc.id,
-  //     ...doc.data(),
-  //   }));
-  //   setGalleryInFormation(getGalleryData);
-  // };
-
-  // useEffect(() => {
-  //   getGalleryPost();
-
-  //   return () => {
-  //     getGalleryPost();
-  //   };
-  // }, [paramsId]);
 
   return (
     <MyPageGalleyWrapper>

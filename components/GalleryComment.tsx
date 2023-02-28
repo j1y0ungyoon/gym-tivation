@@ -1,10 +1,11 @@
 import React from 'react';
-
 import styled from 'styled-components';
 import { useMutation } from '@tanstack/react-query';
 import { authService } from '@/firebase';
 import { GalleryCommentType } from '@/type';
 import { deleteGalleryComment } from '@/pages/api/api';
+import { doc, runTransaction } from 'firebase/firestore';
+import { dbService } from '@/firebase';
 
 const GalleryComment = ({ item }: { item: GalleryCommentType }) => {
   console.log('dd', item);
@@ -30,6 +31,15 @@ const GalleryComment = ({ item }: { item: GalleryCommentType }) => {
     if (answer) {
       try {
         await removeGalleryComment(item.id);
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'gallery', String(item.postId));
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment - 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
       } catch (error) {
         console.log('에러입니다', error);
       }
