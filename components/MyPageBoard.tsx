@@ -1,9 +1,10 @@
 import { authService, dbService } from '@/firebase';
-
 import { collection, orderBy, getDocs, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import checkedLike from '../public/assets/images/checkedLike.png';
+import Image from 'next/image';
 
 type Board = {
   id: string;
@@ -13,6 +14,7 @@ type Board = {
   title: string;
   content: string;
   category: string;
+  createdAt: number;
   like: [];
 };
 
@@ -49,6 +51,7 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
       setGetComment((prev: any) => [...prev, doc.data().postId]);
     });
   };
+
   useEffect(() => {
     getBoardPost();
     getCommentNumber();
@@ -91,8 +94,15 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>2023.02.27</NickNameText>
-                  <NickNameText>Like {item.like.length}</NickNameText>
+                  <NickNameText>{item.createdAt}</NickNameText>
+                  <Image
+                    src={checkedLike}
+                    alt="좋아요"
+                    width={20}
+                    height={20}
+                    style={{ marginRight: '0.1vw', marginTop: '0.2vh' }}
+                  />
+                  <NickNameText> {item.like.length}</NickNameText>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
