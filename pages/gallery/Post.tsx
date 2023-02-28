@@ -1,12 +1,8 @@
 import { authService, dbService, storage } from '@/firebase';
 import { addDoc, collection, runTransaction, doc } from 'firebase/firestore';
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-  uploadString,
-} from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { nanoid } from 'nanoid';
+
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -17,6 +13,7 @@ const Post = () => {
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
+
   const router = useRouter();
 
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
@@ -40,9 +37,9 @@ const Post = () => {
   const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     setImageUpload(event.target.files?.[0]);
   };
+
   useEffect(() => {
-    const imageRef = ref(storage, `gallery/${imageUpload.name}`);
-    console.log('img', imageUpload);
+    const imageRef = ref(storage, `gallery/${nanoid()}}`);
     if (!imageUpload) return;
     uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
@@ -61,10 +58,10 @@ const Post = () => {
       toast.warn('내용을 입력해주세요');
       return;
     }
-    // if (!galleryPhoto) {
-    //   toast.warn('사진을 선택해주세요');
-    //   return;
-    // }
+    if (!galleryPhoto) {
+      toast.warn('사진을 선택해주세요');
+      return;
+    }
 
     const newGalleryPost = {
       title: galleryTitle,
@@ -136,7 +133,7 @@ const Post = () => {
               onChange={onChangeUpload}
             />
 
-            <GalleryImagePreview src={galleryPhoto} id="image" />
+            <GalleryImagePreview src={galleryPhoto} />
           </GalleryImageWarpper>
           <GalleryContentInput
             placeholder="글을 입력해주세요"

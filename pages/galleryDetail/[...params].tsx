@@ -2,12 +2,8 @@ import GalleryCommentList from '@/components/GalleryCommentList';
 import Like from '@/components/Like';
 import { authService, dbService, storage } from '@/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -104,17 +100,13 @@ const GalleryDetail = ({ params }: any) => {
   const onSubmitEditGallery = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    //photo값이 없을 때는 prev로 조건 걸어주기
-
     const editGalleryPost = {
       title: editGalleryTitle,
       content: editGalleryContent,
       photo: editGalleryPhoto,
     };
-    //수정할 때 사진을 넣지 않고 올리면 업로드에 photo가 빈값으로 업데이트 되어야 함
 
     editGalleryBoard({ id, editGalleryPost });
-    deleteObject(ref(storage, prevPhoto));
     setChangeGalleryPost(false);
     setEditGalleryPhoto('');
     toGallery();
@@ -127,8 +119,7 @@ const GalleryDetail = ({ params }: any) => {
 
   // image upload 불러오기
   useEffect(() => {
-    const imageRef = ref(storage, `gallery/${editImageUpload.name}`);
-
+    const imageRef = ref(storage, `gallery/${nanoid()}`);
     if (!editImageUpload) return;
     uploadBytes(imageRef, editImageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
