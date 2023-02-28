@@ -73,10 +73,6 @@ const MyPage = ({ params }: any) => {
   //MyPageGallery 불러오기
   const [galleryInformation, setGalleryInFormation] = useState([] as any);
 
-  //팔로우 정보 불러오기
-  const [following, setFollowing] = useState([] as any);
-  const [follower, setFollower] = useState([] as any);
-
   //토글
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {
@@ -163,18 +159,7 @@ const MyPage = ({ params }: any) => {
     });
   };
   // 팔로워, 팔로잉 불러오기
-  const followGetDoc = async () => {
-    const q = query(
-      collection(dbService, 'profile'),
-      where('uid', '==', paramsId),
-    );
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      console.log('파람스아이디', paramsId);
-      setFollowing(doc.data().following);
-      setFollower(doc.data().follower);
-    });
-  };
+
   //MyPageBoard 불러오기
   const getBoardPost = async () => {
     const q = query(
@@ -211,7 +196,6 @@ const MyPage = ({ params }: any) => {
   };
   useEffect(() => {
     profileOnSnapShot();
-    followGetDoc();
     getBoardPost();
     getCommentNumber();
     getGalleryPost();
@@ -222,7 +206,7 @@ const MyPage = ({ params }: any) => {
       getGalleryPost();
       // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
     };
-  }, [followModal, paramsId, authService.currentUser]);
+  }, [paramsId, authService.currentUser]);
 
   return (
     <MyPageWrapper>
@@ -325,11 +309,10 @@ const MyPage = ({ params }: any) => {
                     {profileInformation.map((item) => {
                       return (
                         <LoginState
+                          followModal={followModal}
                           key={item.id}
                           item={item}
                           toggle={toggle}
-                          follower={follower}
-                          following={following}
                           paramsId={paramsId}
                         />
                       );
