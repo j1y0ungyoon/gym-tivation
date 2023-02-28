@@ -59,7 +59,7 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
       getBoardPost();
       getCommentNumber();
     };
-  }, [authService.currentUser?.uid]);
+  }, [paramsId]);
 
   console.log('데이터', getComment);
 

@@ -49,8 +49,6 @@ const MyPage = ({ params }: any) => {
 
   const [following, setFollowing] = useState([] as any);
   const [follower, setFollower] = useState([] as any);
-  // const follwoingInformation = following.join();
-  // const followerInformation = follower.join();
 
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {

@@ -104,13 +104,12 @@ const MyPageLike = ({ paramsId }: { paramsId: string }) => {
     getCommentNumber();
     getGalleyNumber();
     return () => {
-      getPostLike();
       getBoardPost();
       getGalleryPost();
       getCommentNumber();
       getGalleyNumber();
     };
-  }, [authService.currentUser?.uid]);
+  }, [paramsId]);
 
   return (
     <MyPageBoardWrapper>

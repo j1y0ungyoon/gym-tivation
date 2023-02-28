@@ -42,7 +42,7 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
     return () => {
       getGalleryPost();
     };
-  }, [authService.currentUser?.uid]);
+  }, [paramsId]);
 
   return (
     <MyPageGalleyWrapper>
