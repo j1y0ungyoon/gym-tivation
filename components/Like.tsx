@@ -1,42 +1,88 @@
 import { authService, dbService } from '@/firebase';
-import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { useState } from 'react';
+import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
+import Image from 'next/image';
+
 import styled from 'styled-components';
-
-const Like = ({ detailPost }: any) => {
-  const [likes, setLikes] = useState(false);
-  const likeCount = detailPost?.like?.length;
+import like from '../public/assets/images/like.png';
+import checkedLike from '../public/assets/images/checkedLike.png';
+import { useRouter } from 'next/router';
+const Like = ({ detailPost, detailGalleryPost }: any) => {
+  const router = useRouter();
+  const boardLikeCount = detailPost?.like?.length;
+  const galleryLikeCount = detailGalleryPost?.like?.length;
   const user: any = String(authService.currentUser?.uid);
+  const boardLikeChecked = detailPost?.like?.includes(user);
+  const galleryLikeChecked = detailGalleryPost?.like?.includes(user);
+  const board = router.pathname === '/boardDetail/[...params]';
+  const gallery = router.pathname === '/galleryDetail/[...params]';
 
-  // const likeClick=()=>{
-  //     if(likee)
-  // }
-  const likeChecked = detailPost?.like?.includes(user);
+  console.log(router.pathname);
   const likeCounter = async () => {
     if (authService.currentUser) {
-      if (!likeChecked) {
-        await updateDoc(doc(dbService, 'posts', detailPost.id), {
-          like: [...detailPost.like, user],
-        });
-        await updateDoc(doc(dbService, 'profile', user), {
-          postLike: arrayUnion(detailPost.id),
-        });
+      if (board) {
+        if (!boardLikeChecked) {
+          await updateDoc(doc(dbService, 'posts', detailPost.id), {
+            like: [...detailPost.like, user],
+          });
+          await updateDoc(doc(dbService, 'profile', user), {
+            postLike: arrayUnion(detailPost.id),
+          });
+        } else {
+          await updateDoc(doc(dbService, 'posts', detailPost.id), {
+            like: detailPost?.like.filter((prev: any) => prev !== user),
+          });
+          await updateDoc(doc(dbService, 'profile', user), {
+            postLike: arrayRemove(detailPost.id),
+          });
+        }
       }
-      if (likeChecked) {
-        await updateDoc(doc(dbService, 'posts', detailPost.id), {
-          like: detailPost?.like.filter((prev: any) => prev !== user),
-        });
-        await updateDoc(doc(dbService, 'profile', user), {
-          postLike: arrayRemove(detailPost.id),
-        });
+      if (gallery) {
+        if (!galleryLikeChecked) {
+          await updateDoc(doc(dbService, 'gallery', detailGalleryPost.id), {
+            like: [...detailGalleryPost.like, user],
+          });
+          await updateDoc(doc(dbService, 'profile', user), {
+            postLike: arrayUnion(detailGalleryPost.id),
+          });
+        } else {
+          await updateDoc(doc(dbService, 'gallery', detailGalleryPost.id), {
+            like: detailGalleryPost?.like.filter((prev: any) => prev !== user),
+          });
+          await updateDoc(doc(dbService, 'profile', user), {
+            postLike: arrayRemove(detailGalleryPost.id),
+          });
+        }
       }
     }
   };
 
   return (
     <LikeWrapper>
-      <LikeButton onClick={likeCounter}>좋아요 누르기</LikeButton>
-      <LikeCount>{likeCount}</LikeCount>
+      {board ? (
+        <>
+          <Image
+            src={boardLikeChecked ? checkedLike : like}
+            onClick={likeCounter}
+            alt="좋아요"
+            width={50}
+            height={50}
+          />
+
+          <LikeCount>{boardLikeCount}</LikeCount>
+        </>
+      ) : (
+        <>
+          <Image
+            src={galleryLikeChecked ? checkedLike : like}
+            onClick={likeCounter}
+            alt="좋아요"
+            width={50}
+            height={50}
+          />
+
+          <LikeCount>{galleryLikeCount}</LikeCount>
+        </>
+      )}
     </LikeWrapper>
   );
 };
@@ -47,14 +93,6 @@ const LikeWrapper = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const LikeButton = styled.button`
-  width: 10rem;
-  height: 2rem;
-  border-radius: 1rem;
-  background-color: #d9d9d9;
-  margin: 1rem;
-  border: none;
-  cursor: pointer;
-`;
+
 const LikeCount = styled.div``;
 export default Like;

@@ -1,31 +1,24 @@
-import { authService, database, dbService, storage } from '@/firebase';
-import {
-  addDoc,
-  collection,
-  doc,
-  updateDoc,
-  getDoc,
-  Firestore,
-} from 'firebase/firestore';
+import { authService, dbService, storage } from '@/firebase';
+import { addDoc, collection, doc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
-import { count } from 'console';
-
 import { runTransaction } from 'firebase/firestore';
+import { toast } from 'react-toastify';
+import { nanoid } from 'nanoid';
 
 const Post = () => {
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
   const [category, setCategory] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [imageUpload, setImageUpload] = useState(null);
+
+  const [imageUpload, setImageUpload] = useState<any>('');
   const [boardPhoto, setBoardPhoto] = useState('');
 
   const router = useRouter();
-
+  const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
   };
@@ -36,46 +29,20 @@ const Post = () => {
     setBoardContent(event.target.value);
   };
 
+  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUpload(event.target.files?.[0]);
+  };
+
   useEffect(() => {
-    uploadBoardImage();
-  }, [boardPhoto]);
-  //image upload
-  const uploadBoardImage = () => {
-    //@ts-ignore
-    const imageRef = ref(storage, `images/${imageUpload?.name}`);
-    const imageDataUrl = localStorage.getItem('imageDataUrl');
+    const imageRef = ref(storage, `images/${nanoid()}`);
+    if (!imageUpload) return;
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setBoardPhoto(url);
+      });
+    });
+  }, [imageUpload]);
 
-    if (imageDataUrl) {
-      uploadString(imageRef, imageDataUrl, 'data_url')
-        .then((response) => {
-          getDownloadURL(response.ref).then((response) => {
-            setImageUrl(response);
-          });
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  };
-  //input에 바뀌는 이미지  보여주기
-  const onChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //@ts-ignore
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    if (file !== null) {
-      //@ts-ignore
-      setImageUpload(file);
-      reader.readAsDataURL(file);
-    }
-    reader.onloadend = (finishedEvent: any) => {
-      const imageDataUrl = finishedEvent.currentTarget.result;
-      localStorage.setItem('imageDataUrl', imageDataUrl);
-      //@ts-ignore
-      document.getElementById('image').src = imageDataUrl;
-      setBoardPhoto(imageDataUrl);
-    };
-  };
   //Board로 이동
   const goToBoard = () => {
     router.push({
@@ -86,14 +53,27 @@ const Post = () => {
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!boardTitle) {
+      toast.warn('제목을 입력해주세요!');
+      return;
+    }
+    if (!boardContent) {
+      toast.warn('내용을 입력해주세요!');
+      return;
+    }
+    if (!category) {
+      toast.warn('카테고리를 선택해주세요!');
+      return;
+    }
     const newPost = {
       title: boardTitle,
       content: boardContent,
       category: category,
-      createdAt: Date.now(),
+      createdAt: today,
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
-      photo: imageUrl,
+      photo: boardPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
     };
@@ -103,6 +83,7 @@ const Post = () => {
       .catch((error) => {
         console.log('에러 발생!', error);
       });
+
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
     try {
@@ -135,8 +116,8 @@ const Post = () => {
       alert(error.message);
     }
 
-    uploadBoardImage();
     goToBoard();
+    setBoardPhoto('');
   };
 
   return (
@@ -152,10 +133,11 @@ const Post = () => {
             <PostImageWrapper>
               <ImageInput
                 type="file"
-                accept="image/*"
-                onChange={onChangeImage}
+                accept="boardPhoto/*"
+                onChange={onChangeUpload}
+                multiple
               />
-              <ImagePreview id="image" />
+              <ImagePreview src={boardPhoto} />
             </PostImageWrapper>
             <ContentInput
               onChange={onChangeBoardContent}

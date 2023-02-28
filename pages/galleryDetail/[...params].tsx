@@ -2,12 +2,8 @@ import GalleryCommentList from '@/components/GalleryCommentList';
 import Like from '@/components/Like';
 import { authService, dbService, storage } from '@/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadString,
-} from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -32,13 +28,12 @@ const GalleryDetail = ({ params }: any) => {
   const [editGalleryTitle, setEditGalleryTitle] = useState<string | undefined>(
     '',
   );
-  const [editGalleryPhoto, setEditGalleryPhoto] = useState<string | any>('');
-  const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
+  const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
+  const [prevPhoto, setPrevPhoto] = useState('');
   const [editGalleryContent, setEditGalleryContent] = useState<string | any>(
     '',
   );
-  const [editImageUpload, setEditImageUpload] = useState('');
-  const [editImageUrl, setEditImageUrl] = useState('');
+  const [editImageUpload, setEditImageUpload] = useState<any>('');
 
   const [id] = params;
   const router = useRouter();
@@ -69,7 +64,7 @@ const GalleryDetail = ({ params }: any) => {
       };
 
       setDetailGalleryPost(getGalleryPost);
-      setPrevPhotoUrl(data?.photo);
+      setPrevPhoto(data?.photo);
     });
     return () => {
       unsubscribe();
@@ -108,54 +103,29 @@ const GalleryDetail = ({ params }: any) => {
     const editGalleryPost = {
       title: editGalleryTitle,
       content: editGalleryContent,
-      photo: editImageUrl,
+      photo: editGalleryPhoto,
     };
 
     editGalleryBoard({ id, editGalleryPost });
-    deleteObject(ref(storage, prevPhotoUrl));
-    uploadEditedGalleryImage();
     setChangeGalleryPost(false);
+    setEditGalleryPhoto('');
     toGallery();
   };
   //image onchange
-  const onChangeGalleryImage = (event: any) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    if (file !== null) {
-      setEditImageUpload(file);
-      reader.readAsDataURL(file);
-    }
-    reader.onloadend = (finishedEvent: any) => {
-      const imageDataUrl = finishedEvent.currentTarget.result;
-      localStorage.setItem('imageDataUrl', imageDataUrl);
-      //@ts-ignore
-      document.getElementById('image').src = imageDataUrl;
-      setEditGalleryPhoto(imageDataUrl);
-    };
+  //
+  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditImageUpload(event.target.files?.[0]);
   };
-  //image upload
-  const uploadEditedGalleryImage = () => {
-    //@ts-ignore
-    const imageRef = ref(storage, `gallery/${editImageUpload?.name}`);
-    const imageDataUrl = localStorage.getItem('imageDataUrl');
 
-    if (imageDataUrl) {
-      uploadString(imageRef, imageDataUrl, 'data_url')
-        .then((response) => {
-          getDownloadURL(response.ref).then((response) => {
-            setEditImageUrl(response);
-          });
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  };
-  console.log(detailGalleryPost);
   // image upload 불러오기
   useEffect(() => {
-    uploadEditedGalleryImage();
+    const imageRef = ref(storage, `gallery/${nanoid()}`);
+    if (!editImageUpload) return;
+    uploadBytes(imageRef, editImageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setEditGalleryPhoto(url);
+      });
+    });
   }, [editImageUpload]);
   const onClickChangeGalleryDetail = () => {
     setChangeGalleryPost(!changeGalleryPost);
@@ -167,7 +137,7 @@ const GalleryDetail = ({ params }: any) => {
     //@ts-ignore
     setEditGalleryPhoto(detailGalleryPost?.photo);
   };
-  console.log(detailGalleryPost);
+
   return (
     <>
       {changeGalleryPost ? (
@@ -183,15 +153,13 @@ const GalleryDetail = ({ params }: any) => {
 
             <GalleryContentContainer>
               <GalleryImageWarpper>
-                {' '}
                 <GalleryImageInput
                   type="file"
                   accept="image/*"
-                  onChange={onChangeGalleryImage}
+                  onChange={onChangeUpload}
                 />
                 <GalleryImagePreview
-                  id="image"
-                  src={prevPhotoUrl}
+                  src={editGalleryPhoto}
                 ></GalleryImagePreview>
               </GalleryImageWarpper>
               <GalleryContentInput
@@ -219,7 +187,7 @@ const GalleryDetail = ({ params }: any) => {
             </GalleryTitleContainer>
             <GalleryContentContainer>
               <GalleryImageWarpper>
-                <GalleryImagePreview id="image" src={prevPhotoUrl} />
+                <GalleryImagePreview src={prevPhoto} />
               </GalleryImageWarpper>
               <DetailGalleryContent>
                 {detailGalleryPost?.content}
