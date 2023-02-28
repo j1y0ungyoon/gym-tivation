@@ -7,6 +7,7 @@ import {
   onSnapshot,
   where,
   getDocs,
+  orderBy,
 } from 'firebase/firestore';
 import ProfileEdit from '@/components/ProfileEdit';
 import MyPageCalendar from '@/components/MyPageCalendar';
@@ -33,34 +34,62 @@ export type ProfileItem = {
   lv?: number;
   lvName?: string;
 };
+export type Board = {
+  id: string;
+  photo: string;
+  userId: string;
+  nickName: string;
+  title: string;
+  content: string;
+  category: string;
+  createdAt: number;
+  like: [];
+};
+export type Gallery = {
+  id: string;
+  photo: string;
+  userId: string;
+  nickName: string;
+  title: string;
+  content: string;
+  category: string;
+  createdAt: number;
+  like: [];
+};
+
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
 const MyPage = ({ params }: any) => {
-  //불러오기
-  //캘린더
+  //전달받은 id
   const paramsId = String(params);
 
-  console.log(authService.currentUser?.uid);
-  console.log(paramsId);
   const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
-
+  //프로필 정보 불러오기
   const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
     [],
   );
+  //MyPageBoard 불러오기
+  const [boardInformation, setBoardInFormation] = useState([] as any);
+  const [getComment, setGetComment] = useState([] as any);
+  //MyPageGallery 불러오기
+  const [galleryInformation, setGalleryInFormation] = useState([] as any);
 
+  //팔로우 정보 불러오기
   const [following, setFollowing] = useState([] as any);
   const [follower, setFollower] = useState([] as any);
 
+  //토글
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {
     setToggle(!toggle);
   };
+
+  //MyPage 메뉴
   const [galley, setGalley] = useState(true);
   const [board, setBoard] = useState(false);
   const [like, setLike] = useState(false);
   const [meeting, setMeeting] = useState(false);
   const [followModal, setFollowModal] = useState(false);
 
-  console.log(authService.currentUser);
   //버튼
   const galleyButton = !galley ? (
     <GalleyButton
@@ -115,8 +144,8 @@ const MyPage = ({ params }: any) => {
       참여중 모임
     </GalleyButton>
   );
-  //Calendar 업로드 시간 설정
 
+  //profile 컬렉션 불러오기
   const profileOnSnapShot = () => {
     paramsId === authService.currentUser?.uid
       ? setIsLoadCalendar(true)
@@ -133,18 +162,7 @@ const MyPage = ({ params }: any) => {
       setProfileInformation(newprofiles);
     });
   };
-  // const followGetDoc = () => {
-  //   const q = query(
-  //     collection(dbService, 'profile'),
-  //     where('uid', '==', paramsId),
-  //   );
-  //   onSnapshot(q, (snapshot) => {
-  //     snapshot.docs.map((doc) => {
-  //       setFollowing((prev: any) => [...prev, doc.data().following]);
-  //       setFollower((prev: any) => [...prev, doc.data().follower]);
-  //     });
-  //   });
-  // };
+  // 팔로워, 팔로잉 불러오기
   const followGetDoc = async () => {
     const q = query(
       collection(dbService, 'profile'),
@@ -157,12 +175,51 @@ const MyPage = ({ params }: any) => {
       setFollower(doc.data().follower);
     });
   };
-
+  //MyPageBoard 불러오기
+  const getBoardPost = async () => {
+    const q = query(
+      collection(dbService, 'posts'),
+      orderBy('createdAt', 'desc'),
+    );
+    const data = await getDocs(q);
+    const getBoardData = data.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setBoardInFormation(getBoardData);
+  };
+  //post 댓글 불러오기
+  const getCommentNumber = async () => {
+    const q = query(collection(dbService, 'boardComment'));
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setGetComment((prev: any) => [...prev, doc.data().postId]);
+    });
+  };
+  //MyPageGallery 불러오기
+  const getGalleryPost = async () => {
+    const q = query(
+      collection(dbService, 'gallery'),
+      orderBy('createdAt', 'desc'),
+    );
+    const data = await getDocs(q);
+    const getGalleryData = data.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setGalleryInFormation(getGalleryData);
+  };
   useEffect(() => {
     profileOnSnapShot();
     followGetDoc();
+    getBoardPost();
+    getCommentNumber();
+    getGalleryPost();
     return () => {
       profileOnSnapShot();
+      getBoardPost();
+      getCommentNumber();
+      getGalleryPost();
       // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
     };
   }, [followModal, paramsId, authService.currentUser]);
@@ -197,7 +254,10 @@ const MyPage = ({ params }: any) => {
           </NavigationBox>
           {galley && (
             <GalleyBox>
-              <MyPageGalley paramsId={paramsId} />
+              <MyPageGalley
+                paramsId={paramsId}
+                galleryInformation={galleryInformation}
+              />
             </GalleyBox>
           )}
 
@@ -205,14 +265,23 @@ const MyPage = ({ params }: any) => {
             <MyPageHeader>
               {board && (
                 <GalleyBox>
-                  <MyPageBoard paramsId={paramsId} />
+                  <MyPageBoard
+                    paramsId={paramsId}
+                    boardInformation={boardInformation}
+                    getComment={getComment}
+                  />
                 </GalleyBox>
               )}
             </MyPageHeader>
             <MyPageHeader>
               {like && (
                 <GalleyBox>
-                  <MyPageLike paramsId={paramsId} />
+                  <MyPageLike
+                    galleryInformation={galleryInformation}
+                    boardInformation={boardInformation}
+                    getComment={getComment}
+                    paramsId={paramsId}
+                  />
                 </GalleyBox>
               )}
             </MyPageHeader>

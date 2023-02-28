@@ -5,22 +5,29 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import checkedLike from '../public/assets/images/checkedLike.png';
 import Image from 'next/image';
+import { Board } from '@/pages/myPage/[...params]';
 
-type Board = {
-  id: string;
-  photo: string;
-  userId: string;
-  nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  createdAt: number;
-  like: [];
+// type Board = {
+//   id: string;
+//   photo: string;
+//   userId: string;
+//   nickName: string;
+//   title: string;
+//   content: string;
+//   category: string;
+//   createdAt: number;
+//   like: [];
+// };
+
+type BoardGet = {
+  boardInformation: Board[];
+  paramsId: string;
+  getComment: [];
 };
 
-const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
-  const [boardInformation, setBoardInFormation] = useState<Board[]>([]);
-  const [getComment, setGetComment] = useState([] as any);
+const MyPageBoard = ({ paramsId, boardInformation, getComment }: BoardGet) => {
+  // const [boardInformation, setBoardInFormation] = useState<Board[]>([]);
+  // const [getComment, setGetComment] = useState([] as any);
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -31,37 +38,35 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
     });
   };
 
-  const getBoardPost = async () => {
-    const q = query(
-      collection(dbService, 'posts'),
-      orderBy('createdAt', 'desc'),
-    );
-    const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setBoardInFormation(getBoardData);
-  };
+  // const getBoardPost = async () => {
+  //   const q = query(
+  //     collection(dbService, 'posts'),
+  //     orderBy('createdAt', 'desc'),
+  //   );
+  //   const data = await getDocs(q);
+  //   const getBoardData = data.docs.map((doc: any) => ({
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   }));
+  //   setBoardInFormation(getBoardData);
+  // };
 
-  const getCommentNumber = async () => {
-    const q = query(collection(dbService, 'boardComment'));
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetComment((prev: any) => [...prev, doc.data().postId]);
-    });
-  };
+  // const getCommentNumber = async () => {
+  //   const q = query(collection(dbService, 'boardComment'));
+  //   const data = await getDocs(q);
+  //   data.docs.map((doc) => {
+  //     setGetComment((prev: any) => [...prev, doc.data().postId]);
+  //   });
+  // };
 
-  useEffect(() => {
-    getBoardPost();
-    getCommentNumber();
-    return () => {
-      getBoardPost();
-      getCommentNumber();
-    };
-  }, [paramsId]);
-
-  console.log('데이터', getComment);
+  // useEffect(() => {
+  //   getBoardPost();
+  //   getCommentNumber();
+  //   return () => {
+  //     getBoardPost();
+  //     getCommentNumber();
+  //   };
+  // }, [paramsId]);
 
   return (
     <MyPageBoardWrapper>

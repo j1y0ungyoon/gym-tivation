@@ -6,8 +6,9 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import GalleryComment from './GalleryComment';
+import { Board, Gallery } from '@/pages/myPage/[...params]';
 
-type Board = {
+type Like = {
   id: string;
   photo: string;
   userId: string;
@@ -17,12 +18,20 @@ type Board = {
   createdAt: number;
   like: string;
 };
+type LikeGet = {
+  paramsId: string;
+  galleryInformation: Gallery[];
+  boardInformation: Board[];
+  getComment: [];
+};
 
-const MyPageLike = ({ paramsId }: { paramsId: string }) => {
-  const [boardInformation, setBoardInFormation] = useState<Board[]>([]);
-  const [galleyInformaiton, setGalleyInformaiton] = useState<Board[]>([]);
-  const [likeInformation, setLikeInFormation] = useState<Board[]>([]);
-  const [getPostComment, setGetPostComment] = useState([] as any);
+const MyPageLike = ({
+  paramsId,
+  galleryInformation,
+  boardInformation,
+  getComment,
+}: LikeGet) => {
+  const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
   const [getGalleyComment, setGetGalleyComment] = useState([] as any);
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
@@ -41,9 +50,10 @@ const MyPageLike = ({ paramsId }: { paramsId: string }) => {
       },
     });
   };
+  //배열 합치기
+  const combineData = boardInformation.concat(galleryInformation);
+  const combineCommentData = getComment.concat(getGalleyComment);
 
-  const combineData = boardInformation.concat(galleyInformaiton);
-  const combineCommentData = getPostComment.concat(getGalleyComment);
   const getPostLike = async () => {
     const q = query(
       collection(dbService, 'profile'),
@@ -55,38 +65,6 @@ const MyPageLike = ({ paramsId }: { paramsId: string }) => {
     });
   };
 
-  const getBoardPost = async () => {
-    const q = query(
-      collection(dbService, 'posts'),
-      orderBy('createdAt', 'desc'),
-    );
-    const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setBoardInFormation(getBoardData);
-  };
-  const getGalleryPost = async () => {
-    const q = query(
-      collection(dbService, 'gallery'),
-      orderBy('createdAt', 'desc'),
-    );
-    const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setGalleyInformaiton(getBoardData);
-  };
-
-  const getCommentNumber = async () => {
-    const q = query(collection(dbService, 'boardComment'));
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetPostComment((prev: any) => [...prev, doc.data().postId]);
-    });
-  };
   const getGalleyNumber = async () => {
     const q = query(collection(dbService, 'galleryComment'));
     const data = await getDocs(q);
@@ -99,14 +77,9 @@ const MyPageLike = ({ paramsId }: { paramsId: string }) => {
 
   useEffect(() => {
     getPostLike();
-    getBoardPost();
-    getGalleryPost();
-    getCommentNumber();
+
     getGalleyNumber();
     return () => {
-      getBoardPost();
-      getGalleryPost();
-      getCommentNumber();
       getGalleyNumber();
     };
   }, [paramsId]);
