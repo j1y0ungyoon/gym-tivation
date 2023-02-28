@@ -6,7 +6,7 @@ import {
   deleteObject,
   getDownloadURL,
   ref,
-  uploadString,
+  uploadBytes,
 } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -32,13 +32,12 @@ const GalleryDetail = ({ params }: any) => {
   const [editGalleryTitle, setEditGalleryTitle] = useState<string | undefined>(
     '',
   );
-  const [editGalleryPhoto, setEditGalleryPhoto] = useState<string | any>('');
-  const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
+  const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
+  const [prevPhoto, setPrevPhoto] = useState('');
   const [editGalleryContent, setEditGalleryContent] = useState<string | any>(
     '',
   );
-  const [editImageUpload, setEditImageUpload] = useState('');
-  const [editImageUrl, setEditImageUrl] = useState('');
+  const [editImageUpload, setEditImageUpload] = useState<any>('');
 
   const [id] = params;
   const router = useRouter();
@@ -69,7 +68,7 @@ const GalleryDetail = ({ params }: any) => {
       };
 
       setDetailGalleryPost(getGalleryPost);
-      setPrevPhotoUrl(data?.photo);
+      setPrevPhoto(data?.photo);
     });
     return () => {
       unsubscribe();
@@ -105,57 +104,37 @@ const GalleryDetail = ({ params }: any) => {
   const onSubmitEditGallery = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    //photo값이 없을 때는 prev로 조건 걸어주기
+
     const editGalleryPost = {
       title: editGalleryTitle,
       content: editGalleryContent,
-      photo: editImageUrl,
+      photo: editGalleryPhoto,
     };
+    //수정할 때 사진을 넣지 않고 올리면 업로드에 photo가 빈값으로 업데이트 되어야 함
 
     editGalleryBoard({ id, editGalleryPost });
-    deleteObject(ref(storage, prevPhotoUrl));
-    uploadEditedGalleryImage();
+    deleteObject(ref(storage, prevPhoto));
     setChangeGalleryPost(false);
+    setEditGalleryPhoto('');
     toGallery();
   };
   //image onchange
-  const onChangeGalleryImage = (event: any) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    if (file !== null) {
-      setEditImageUpload(file);
-      reader.readAsDataURL(file);
-    }
-    reader.onloadend = (finishedEvent: any) => {
-      const imageDataUrl = finishedEvent.currentTarget.result;
-      localStorage.setItem('imageDataUrl', imageDataUrl);
-      //@ts-ignore
-      document.getElementById('image').src = imageDataUrl;
-      setEditGalleryPhoto(imageDataUrl);
-    };
+  //
+  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditImageUpload(event.target.files?.[0]);
   };
-  //image upload
-  const uploadEditedGalleryImage = () => {
-    //@ts-ignore
-    const imageRef = ref(storage, `gallery/${editImageUpload?.name}`);
-    const imageDataUrl = localStorage.getItem('imageDataUrl');
 
-    if (imageDataUrl) {
-      uploadString(imageRef, imageDataUrl, 'data_url')
-        .then((response) => {
-          getDownloadURL(response.ref).then((response) => {
-            setEditImageUrl(response);
-          });
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  };
-  console.log(detailGalleryPost);
   // image upload 불러오기
   useEffect(() => {
-    uploadEditedGalleryImage();
+    const imageRef = ref(storage, `gallery/${editImageUpload.name}`);
+
+    if (!editImageUpload) return;
+    uploadBytes(imageRef, editImageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setEditGalleryPhoto(url);
+      });
+    });
   }, [editImageUpload]);
   const onClickChangeGalleryDetail = () => {
     setChangeGalleryPost(!changeGalleryPost);
@@ -167,7 +146,7 @@ const GalleryDetail = ({ params }: any) => {
     //@ts-ignore
     setEditGalleryPhoto(detailGalleryPost?.photo);
   };
-  console.log(detailGalleryPost);
+
   return (
     <>
       {changeGalleryPost ? (
@@ -183,15 +162,13 @@ const GalleryDetail = ({ params }: any) => {
 
             <GalleryContentContainer>
               <GalleryImageWarpper>
-                {' '}
                 <GalleryImageInput
                   type="file"
                   accept="image/*"
-                  onChange={onChangeGalleryImage}
+                  onChange={onChangeUpload}
                 />
                 <GalleryImagePreview
-                  id="image"
-                  src={prevPhotoUrl}
+                  src={editGalleryPhoto}
                 ></GalleryImagePreview>
               </GalleryImageWarpper>
               <GalleryContentInput
@@ -219,7 +196,7 @@ const GalleryDetail = ({ params }: any) => {
             </GalleryTitleContainer>
             <GalleryContentContainer>
               <GalleryImageWarpper>
-                <GalleryImagePreview id="image" src={prevPhotoUrl} />
+                <GalleryImagePreview id="image" src={prevPhoto} />
               </GalleryImageWarpper>
               <DetailGalleryContent>
                 {detailGalleryPost?.content}

@@ -1,62 +1,28 @@
 import { authService, dbService, storage } from '@/firebase';
 import { addDoc, collection, runTransaction, doc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+  uploadString,
+} from 'firebase/storage';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 const Post = () => {
-  const [imageUrl, setImageUrl] = useState('');
-  const [imageUpload, setImageUpload] = useState(null);
+  const [imageUpload, setImageUpload] = useState<any>('');
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
   const router = useRouter();
+
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
-  const uploadBoardImage = () => {
-    //@ts-ignore
-    const imageRef = ref(storage, `gallery/${imageUpload?.name}`);
-    const imageDataUrl = localStorage.getItem('imageDataUrl');
 
-    if (imageDataUrl) {
-      uploadString(imageRef, imageDataUrl, 'data_url')
-        .then((response) => {
-          getDownloadURL(response.ref).then((response) => {
-            setImageUrl(response);
-          });
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  };
-
-  useEffect(() => {
-    uploadBoardImage();
-  }, [galleryPhoto]);
-
-  //input에 바뀌는 이미지  보여주기
-  const onChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //@ts-ignore
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    if (file !== null) {
-      //@ts-ignore
-      setImageUpload(file);
-      reader.readAsDataURL(file);
-    }
-    reader.onloadend = (finishedEvent: any) => {
-      const imageDataUrl = finishedEvent.currentTarget.result;
-      localStorage.setItem('imageDataUrl', imageDataUrl);
-      //@ts-ignore
-      document.getElementById('image').src = imageDataUrl;
-      setGalleryPhoto(imageDataUrl);
-    };
-  };
   const onChangeGalleryTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGalleryTitle(event.target.value);
   };
@@ -71,7 +37,19 @@ const Post = () => {
       pathname: `/gallery`,
     });
   };
-
+  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUpload(event.target.files?.[0]);
+  };
+  useEffect(() => {
+    const imageRef = ref(storage, `gallery/${imageUpload.name}`);
+    console.log('img', imageUpload);
+    if (!imageUpload) return;
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setGalleryPhoto(url);
+      });
+    });
+  }, [imageUpload]);
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -83,17 +61,18 @@ const Post = () => {
       toast.warn('내용을 입력해주세요');
       return;
     }
-    if (!galleryPhoto) {
-      toast.warn('사진을 선택해주세요');
-      return;
-    }
+    // if (!galleryPhoto) {
+    //   toast.warn('사진을 선택해주세요');
+    //   return;
+    // }
+
     const newGalleryPost = {
       title: galleryTitle,
       content: galleryContent,
       createdAt: today,
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
-      photo: imageUrl,
+      photo: galleryPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
     };
@@ -109,7 +88,7 @@ const Post = () => {
       await runTransaction(dbService, async (transaction) => {
         const sfDocRef = doc(dbService, 'profile', id);
         const sfDoc = await transaction.get(sfDocRef);
-        console.log('sfdoc', sfDoc);
+
         if (!sfDoc.exists()) {
           throw '데이터가 없습니다.';
         }
@@ -135,8 +114,8 @@ const Post = () => {
       alert(error.message);
     }
 
-    uploadBoardImage();
     goToGallery();
+    setGalleryPhoto('');
   };
 
   return (
@@ -154,10 +133,10 @@ const Post = () => {
             <GalleryImageInput
               type="file"
               accept="image/*"
-              onChange={onChangeImage}
+              onChange={onChangeUpload}
             />
 
-            <GalleryImagePreview id="image" />
+            <GalleryImagePreview src={galleryPhoto} id="image" />
           </GalleryImageWarpper>
           <GalleryContentInput
             placeholder="글을 입력해주세요"
