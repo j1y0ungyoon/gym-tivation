@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Socket } from 'socket.io';
@@ -39,6 +39,8 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   const user = authService.currentUser;
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
+
+  const dmLogBoxRef = useRef<HTMLDivElement>();
 
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
 
@@ -117,6 +119,16 @@ const DmChat = ({ roomNum }: DmChatProps) => {
     };
   }, [router.isReady, roomNum]);
 
+  const scrollToBottom = () => {
+    if (dmLogBoxRef.current) {
+      dmLogBoxRef.current.scrollTop = dmLogBoxRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatLogs]);
+
   // 채팅 전송시 실행 함수
   const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
@@ -161,7 +173,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
 
   return (
     <DmChatWrapper>
-      <DmLogBox>
+      <DmLogBox ref={dmLogBoxRef}>
         <DmBox>
           <UserImg src={`${authService.currentUser?.photoURL}`} />
           <div>
@@ -201,7 +213,7 @@ const DmChatWrapper = styled.section`
   overflow-y: auto;
 `;
 
-const DmLogBox = styled.div`
+const DmLogBox = styled.div<any>`
   max-width: 100%;
   height: calc(100% - 40px);
   overflow-y: auto;

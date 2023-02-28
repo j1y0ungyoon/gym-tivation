@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Socket } from 'socket.io';
 import io from 'socket.io-client';
 
@@ -6,13 +6,7 @@ import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 import { authService, dbService } from '@/firebase';
-import {
-  addDoc,
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-} from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 
 import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
@@ -50,9 +44,11 @@ const Chat = () => {
   const user = authService.currentUser;
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
+  const chatLogBoxRef = useRef<HTMLDivElement>();
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
+    socket?.disconnect();
     // socket.io 접속 함수
     const connectToSocket = async () => {
       await fetch('/api/chat');
@@ -73,6 +69,7 @@ const Chat = () => {
         }
       });
     };
+
     // 소켓서버 접속함수 실행
     connectToSocket();
 
@@ -81,6 +78,16 @@ const Chat = () => {
       socket?.disconnect();
     };
   }, [roomNum]);
+
+  const scrollToBottom = () => {
+    if (chatLogBoxRef.current) {
+      chatLogBoxRef.current.scrollTop = chatLogBoxRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatLogs]);
 
   // 채팅 전송시 실행 함수
   const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
@@ -207,7 +214,7 @@ const Chat = () => {
         </DmContainer>
       ) : (
         <ChatContainer>
-          <ChatLogBox>
+          <ChatLogBox ref={chatLogBoxRef}>
             {chatLogs.map((chatLog) => (
               <ChatBox key={chatLog.id}>
                 <UserImg src={`${chatLog.photoURL}`} />
@@ -302,7 +309,7 @@ const ChatContainer = styled.section`
   height: calc(100vh - 200px);
 `;
 
-const ChatLogBox = styled.div`
+const ChatLogBox = styled.div<any>`
   max-width: 100%;
   height: calc(100% - 30px);
   overflow-y: auto;
