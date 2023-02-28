@@ -16,6 +16,7 @@ import MyPageLike from '@/components/MyPageLike';
 import { useRouter } from 'next/router';
 import { type } from 'os';
 import MyPageBoard from '@/components/MyPageBoard';
+import MyPageRecruit from '@/components/MyPageRecruit';
 
 export type ProfileItem = {
   id: string;
@@ -61,6 +62,7 @@ const MyPage = ({ params }: any) => {
   const [meeting, setMeeting] = useState(false);
   const [followModal, setFollowModal] = useState(false);
 
+  console.log(authService.currentUser);
   //버튼
   const galleyButton = !galley ? (
     <GalleyButton
@@ -71,7 +73,7 @@ const MyPage = ({ params }: any) => {
       오운완 갤러리
     </GalleyButton>
   ) : (
-    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+    <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
       오운완 갤러리
     </GalleyButton>
   );
@@ -84,7 +86,7 @@ const MyPage = ({ params }: any) => {
       게시판
     </GalleyButton>
   ) : (
-    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+    <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
       게시판
     </GalleyButton>
   );
@@ -98,7 +100,7 @@ const MyPage = ({ params }: any) => {
       좋아요
     </GalleyButton>
   ) : (
-    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+    <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
       좋아요
     </GalleyButton>
   );
@@ -111,7 +113,7 @@ const MyPage = ({ params }: any) => {
       참여중 모임
     </GalleyButton>
   ) : (
-    <GalleyButton style={{ backgroundColor: 'gray', color: 'white' }}>
+    <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
       참여중 모임
     </GalleyButton>
   );
@@ -152,6 +154,7 @@ const MyPage = ({ params }: any) => {
     );
     const data = await getDocs(q);
     data.docs.map((doc) => {
+      console.log('파람스아이디', paramsId);
       setFollowing(doc.data().following);
       setFollower(doc.data().follower);
     });
@@ -162,9 +165,9 @@ const MyPage = ({ params }: any) => {
     followGetDoc();
     return () => {
       profileOnSnapShot();
-      followGetDoc();
+      // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
     };
-  }, [paramsId, authService.currentUser]);
+  }, [followModal, paramsId, authService.currentUser]);
 
   return (
     <MyPageWrapper>
@@ -179,9 +182,8 @@ const MyPage = ({ params }: any) => {
                     key={item.id}
                     item={item}
                     paramsId={paramsId}
-                    follower={follower}
-                    following={following}
                     setFollowModal={setFollowModal}
+                    setToggle={setToggle}
                   />
                 );
               })}
@@ -216,6 +218,13 @@ const MyPage = ({ params }: any) => {
                 </GalleyBox>
               )}
             </MyPageHeader>
+            <MyPageHeader>
+              {meeting && (
+                <GalleyBox>
+                  <MyPageRecruit paramsId={paramsId} />
+                </GalleyBox>
+              )}
+            </MyPageHeader>
             {followModal && (
               <>
                 <ModalClose
@@ -227,21 +236,21 @@ const MyPage = ({ params }: any) => {
                   <ToggleButtonBox>
                     {toggle ? (
                       <>
-                        <ToggleButton onClick={onClickToggle}>
-                          팔로잉
-                        </ToggleButton>
                         <FollowToggleButton onClick={onClickToggle}>
                           팔로워
                         </FollowToggleButton>
+                        <ToggleButton onClick={onClickToggle}>
+                          팔로잉
+                        </ToggleButton>
                       </>
                     ) : (
                       <>
-                        <FollowToggleButton onClick={onClickToggle}>
-                          팔로잉
-                        </FollowToggleButton>
                         <ToggleButton onClick={onClickToggle}>
                           팔로워
                         </ToggleButton>
+                        <FollowToggleButton onClick={onClickToggle}>
+                          팔로잉
+                        </FollowToggleButton>
                       </>
                     )}
                   </ToggleButtonBox>
@@ -283,6 +292,7 @@ const MyPageWrapper = styled.div`
   display: flex;
   text-align: center;
   width: 100%;
+  background-color: #fffcf3;
 `;
 const MyPageContainer = styled.div`
   width: 100%;
@@ -301,9 +311,8 @@ const ScheduleBox = styled.div`
   height: 100vh;
 `;
 const Schedule = styled.div`
-  background-color: #eeeeee;
+  background-color: white;
   width: 20vw;
-  border-radius: 16px;
 `;
 const NavigationBox = styled.div`
   display: flex;
@@ -313,19 +322,19 @@ const NavigationBox = styled.div`
   text-align: left;
   margin-left: 4vw;
   border-bottom-style: solid;
-  border-color: #eeeeee;
+  border-color: black;
+  border-width: 0.1rem;
 `;
 
 const GalleyButton = styled.button`
   margin-right: 4vw;
-  background-color: #eeeeee;
   border-radius: 2rem;
-  border: none;
+  background-color: white;
   width: 6vw;
   height: 4.5vh;
   :hover {
     cursor: pointer;
-    background-color: gray;
+    background-color: black;
     color: white;
   }
 `;
@@ -333,7 +342,7 @@ const GalleyButton = styled.button`
 const GalleyBox = styled.div`
   position: absolute;
   width: 65%;
-  height: 100%;
+  height: 55%;
   margin-left: 2vw;
   top: 52%;
 `;
@@ -342,32 +351,15 @@ const MypageBox = styled.div`
   float: left;
   width: 70%;
 `;
-const InformationBox = styled.div``;
 
 const MyPageHeader = styled.div`
   display: flex;
   margin-bottom: 2vh;
   color: #495057;
 `;
-const HeaderText = styled.span`
-  margin-right: auto;
-  font-size: 20px;
-  :hover {
-    cursor: pointer;
-    color: black;
-  }
-`;
-const ClickText = styled.button`
-  background-color: white;
-  border: none;
-  font-size: 16px;
-  :hover {
-    cursor: pointer;
-    color: black;
-  }
-`;
+
 const ToggleButtonBox = styled.div`
-  background-color: #eeeeee;
+  background-color: white;
   width: 10vw;
   margin: auto;
   height: 5vh;
@@ -375,16 +367,18 @@ const ToggleButtonBox = styled.div`
   border-radius: 30px;
 `;
 const ToggleButton = styled.button`
+  background-color: white;
   width: 5vw;
   height: 5vh;
   border: none;
   border-radius: 30px;
   :hover {
     cursor: pointer;
-    background-color: lightgray;
+    background-color: black;
+    color: white;
   }
   :focus {
-    background-color: gray;
+    background-color: black;
     color: white;
   }
 `;
@@ -392,14 +386,10 @@ const ToggleButton = styled.button`
 const FollowToggleButton = styled.button`
   width: 5vw;
   height: 5vh;
-  background-color: gray;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 30px;
-  :hover {
-    cursor: pointer;
-    background-color: lightgray;
-  }
 `;
 const LoginStateBox = styled.div`
   height: 85%;
@@ -427,10 +417,10 @@ const FollowModal = styled.div`
   top: 50%;
   left: 50%;
   border-radius: 15px;
-  background-color: white;
+  background-color: #fffcf3;
   transform: translate(-50%, -50%) !important;
   padding-top: 1.5rem;
   border-style: solid;
-  border-width: 1px;
-  border-color: gray;
+  border-width: 0.1rem;
+  border-color: black;
 `;

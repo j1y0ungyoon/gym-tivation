@@ -1,6 +1,7 @@
 import { authService } from '@/firebase';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+
 import React from 'react';
 import styled from 'styled-components';
 
@@ -8,7 +9,8 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
 
   const id = authService.currentUser?.uid;
-  const goToDetailMyPage = () => {
+  const goToDetailMyPage = (id: any) => {
+    console.log('아이디', id);
     router.push({
       pathname: `/myPage/${id}`,
       query: { id },
@@ -23,7 +25,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <NavBtn onClick={() => router.push('/mapBoard')}>주변 동료 모집</NavBtn>
       <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
       {isLoggedIn && (
-        <NavBtn onClick={() => goToDetailMyPage()}>마이페이지</NavBtn>
+        <NavBtn onClick={() => goToDetailMyPage(id)}>마이페이지</NavBtn>
       )}
     </SideNavWrapper>
   );

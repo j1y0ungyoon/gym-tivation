@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 import BoardPost from './BoardPost';
-
-import { useRouter } from 'next/router';
-
 import type { BoardPostType } from '@/type';
 
 interface BoardItemProps {
@@ -12,17 +9,6 @@ interface BoardItemProps {
 }
 
 const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
-  const router = useRouter();
-  //@ts-ignore
-  // const itemSearch = decodeURI(router.query.q)?.toLowerCase() || '';
-  // const searchedItem = itemSearch
-  //   ? boardPosts.filter(
-  //       (search: any) =>
-  //         search.title.toLowerCase().includes(itemSearch) ||
-  //         search.content.toLowerCase().includes(itemSearch),
-  //     )
-  //   : boardPosts;
-
   const filteredCategory = boardPosts?.filter(
     (item) => item.category === category,
   );

@@ -7,6 +7,8 @@ import styled, { ThemeProvider } from 'styled-components';
 import { authService } from '@/firebase';
 import { useState, useEffect } from 'react';
 import { theme } from '@/styles/theme';
+import { Slide, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
@@ -23,6 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+
       <ThemeProvider theme={theme}>
         <Header isLoggedIn={isLoggedIn} />
         <Layout>
@@ -30,6 +33,24 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
       </ThemeProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
+      <Header isLoggedIn={isLoggedIn} />
+      <Layout>
+        <SideNav isLoggedIn={isLoggedIn} />
+        <Component {...pageProps} />
+      </Layout>
     </QueryClientProvider>
   );
 }

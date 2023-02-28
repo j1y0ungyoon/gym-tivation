@@ -17,6 +17,7 @@ const CustomToggle = React.forwardRef(
     </ToggleButton>
   ),
 );
+CustomToggle.displayName = 'CustomToggle';
 
 export default CustomToggle;
 

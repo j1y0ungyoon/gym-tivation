@@ -1,6 +1,7 @@
 import { authService } from '@/firebase';
 import { updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { dbService } from '@/firebase';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Follows } from './SearchUser';
 import { useRouter } from 'next/router';
@@ -22,6 +23,7 @@ const Follow = ({
 }: FollowInformation) => {
   const user = authService.currentUser;
   const router = useRouter();
+
   const goToMyPage = (id: any) => {
     router.push({
       pathname: `/myPage/${item.id}`,
@@ -66,7 +68,11 @@ const Follow = ({
         >
           <Photo src={item.photoURL} />
         </ProfilePhoto>
-        <TextBox>
+        <TextBox
+          onClick={() => {
+            goToMyPage(item.id);
+          }}
+        >
           <FollowText> {item.displayName}</FollowText>
           <div>{item.email}</div>
         </TextBox>
@@ -100,6 +106,11 @@ const OnOffBox = styled.div`
   width: 24vw;
   height: 8vh;
   border-radius: 15px;
+  :hover {
+    cursor: pointer;
+    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
+  }
 `;
 
 const ProfilePhoto = styled.div`
@@ -110,9 +121,6 @@ const ProfilePhoto = styled.div`
   margin-right: 1vw;
   border-radius: 70%;
   overflow: hidden;
-  :hover {
-    cursor: pointer;
-  }
 `;
 const Photo = styled.img`
   width: 100%;

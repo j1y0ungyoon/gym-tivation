@@ -138,12 +138,12 @@ const SignIn = () => {
         });
       } else {
         await setDoc(doc(dbService, 'profile', user.uid), {
-          introduction: '자기소개를 적어주세요.',
+          introduction: '',
           area: '지역',
-          instagram: '인스타그램',
+          instagram: '',
           displayName: authService.currentUser?.displayName,
           photoURL: authService.currentUser?.photoURL,
-          email: user.email,
+          email: authService.currentUser?.email,
           uid: user.uid,
           following: '',
           follower: '',
@@ -151,6 +151,7 @@ const SignIn = () => {
           userParticipation: [],
           lv: 1,
           lvName: '일반인',
+          loginState: true,
         });
       }
       alert('로그인 완료');
