@@ -1,6 +1,7 @@
 import { dbService, storage } from '../../firebase';
 import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import {
+  EditCommentLikeParameterType,
   EditRecruitPostParameterType,
   editUserParticipationParameterType,
 } from '../../type';
@@ -37,8 +38,15 @@ export const deleteComment = async (commentId: string) => {
   await deleteDoc(doc(dbService, 'comments', commentId));
 };
 
-//게시판 댓글 삭제하기
+// 댓글 좋아요 눌렀을 때
+export const editCommentLike = async ({
+  commentId,
+  edittedComment,
+}: EditCommentLikeParameterType) => {
+  await updateDoc(doc(dbService, 'comments', commentId), edittedComment);
+};
 
+//게시판 댓글 삭제하기
 export const deleteBoardComment = async (id: string) => {
   await deleteDoc(doc(dbService, 'boardComment', id));
 };
