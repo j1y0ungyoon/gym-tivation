@@ -36,7 +36,7 @@ const Post = () => {
 
   useEffect(() => {
     const imageRef = ref(storage, `images/${imageUpload.name}`);
-    console.log('img', imageUpload);
+
     if (!imageUpload) return;
     uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
