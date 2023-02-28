@@ -279,7 +279,10 @@ const ProfileEdit = ({
                   )}
                 </NameBox>
                 <InstagramBox>
-                  <a href={`https://www.instagram.com/${instagram}/`}>
+                  <a
+                    href={`https://www.instagram.com/${instagram}/`}
+                    target="_blank"
+                  >
                     {item.instagram}
                   </a>
                   <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
@@ -526,7 +529,7 @@ const LevelHelpBox = styled.div`
   z-index: 2000;
   width: 20%;
   height: 15%;
-  top: 42%;
+  top: 41%;
   left: 18%;
   position: fixed;
   border-radius: 15px;
