@@ -169,6 +169,7 @@ const RecruitLength = styled.span`
 
 const BoardTitleText = styled.span`
   font-size: 1.2rem;
+  color: black;
   font-weight: bolder;
   margin-top: 0.8vh;
 `;
