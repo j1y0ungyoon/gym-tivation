@@ -1,18 +1,15 @@
-import { authService, dbService } from '@/firebase';
-
-import { collection, orderBy, getDocs, query } from 'firebase/firestore';
+import { Gallery } from '@/pages/myPage/[...params]';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-type Gallery = {
-  id: string;
-  photo: string;
-  userId: string;
+type GalleryGet = {
+  paramsId: string;
+  galleryInformation: Gallery[];
 };
 
-const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
-  const [galleryInformation, setGalleryInFormation] = useState<Gallery[]>([]);
+const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
+  // const [galleryInformation, setGalleryInFormation] = useState<Gallery[]>([]);
   const router = useRouter();
   const goToGalleryDetailPost = (id: any) => {
     router.push({
@@ -22,27 +19,6 @@ const MyPageGalley = ({ paramsId }: { paramsId: string }) => {
       },
     });
   };
-
-  const getGalleryPost = async () => {
-    const q = query(
-      collection(dbService, 'gallery'),
-      orderBy('createdAt', 'desc'),
-    );
-    const data = await getDocs(q);
-    const getGalleryData = data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setGalleryInFormation(getGalleryData);
-  };
-
-  useEffect(() => {
-    getGalleryPost();
-
-    return () => {
-      getGalleryPost();
-    };
-  }, [authService.currentUser?.uid]);
 
   return (
     <MyPageGalleyWrapper>

@@ -1,24 +1,18 @@
 import { authService, dbService } from '@/firebase';
-
 import { collection, orderBy, getDocs, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import checkedLike from '../public/assets/images/checkedLike.png';
+import Image from 'next/image';
+import { Board } from '@/pages/myPage/[...params]';
 
-type Board = {
-  id: string;
-  photo: string;
-  userId: string;
-  nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  like: [];
+type BoardGet = {
+  boardInformation: Board[];
+  paramsId: string;
 };
 
-const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
-  const [boardInformation, setBoardInFormation] = useState<Board[]>([]);
-  const [getComment, setGetComment] = useState([] as any);
+const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -28,37 +22,6 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
       },
     });
   };
-
-  const getBoardPost = async () => {
-    const q = query(
-      collection(dbService, 'posts'),
-      orderBy('createdAt', 'desc'),
-    );
-    const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setBoardInFormation(getBoardData);
-  };
-
-  const getCommentNumber = async () => {
-    const q = query(collection(dbService, 'boardComment'));
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetComment((prev: any) => [...prev, doc.data().postId]);
-    });
-  };
-  useEffect(() => {
-    getBoardPost();
-    getCommentNumber();
-    return () => {
-      getBoardPost();
-      getCommentNumber();
-    };
-  }, [authService.currentUser?.uid]);
-
-  console.log('데이터', getComment);
 
   return (
     <MyPageBoardWrapper>
@@ -80,19 +43,19 @@ const MyPageBoard = ({ paramsId }: { paramsId: string }) => {
                   <BoardCategory>{item.category}</BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
 
-                  <RecruitComment>
-                    [
-                    {
-                      getComment.filter((element: any) => item.id === element)
-                        .length
-                    }
-                    ]
-                  </RecruitComment>
+                  <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>2023.02.27</NickNameText>
-                  <NickNameText>Like {item.like.length}</NickNameText>
+                  <NickNameText>{item.createdAt}</NickNameText>
+                  <Image
+                    src={checkedLike}
+                    alt="좋아요"
+                    width={20}
+                    height={20}
+                    style={{ marginRight: '0.1vw', marginTop: '0.2vh' }}
+                  />
+                  <NickNameText> {item.like.length}</NickNameText>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>

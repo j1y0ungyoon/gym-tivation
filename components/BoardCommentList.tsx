@@ -6,6 +6,8 @@ import {
   collection,
   onSnapshot,
   orderBy,
+  doc,
+  runTransaction,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -44,6 +46,15 @@ const BoardCommentList = ({ id }: { id: string }) => {
     };
     await addDoc(collection(dbService, 'boardComment'), newComment);
     setInputBoardComment('');
+    await runTransaction(dbService, async (transaction) => {
+      const sfDocRef = doc(dbService, 'posts', id);
+      const sfDoc = await transaction.get(sfDocRef);
+      if (!sfDoc.exists()) {
+        throw '데이터가 없습니다.';
+      }
+      const commentNumber = sfDoc.data().comment + 1;
+      transaction.update(sfDocRef, { comment: commentNumber });
+    });
   };
 
   useEffect(() => {

@@ -275,7 +275,7 @@ const ProfileEdit = ({
                       팔로잉
                     </EditButton>
                   ) : (
-                    <EditButton onClick={FollowOnClick}>팔로워</EditButton>
+                    <EditButton onClick={FollowOnClick}>팔로우</EditButton>
                   )}
                 </NameBox>
                 <InstagramBox>

@@ -6,6 +6,8 @@ import {
   onSnapshot,
   orderBy,
   query,
+  doc,
+  runTransaction,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -48,6 +50,15 @@ const GalleryCommentList = ({ id }: { id: string }) => {
     };
     await addDoc(collection(dbService, 'galleryComment'), newComment);
     setInputGalleryComment('');
+    await runTransaction(dbService, async (transaction) => {
+      const sfDocRef = doc(dbService, 'gallery', id);
+      const sfDoc = await transaction.get(sfDocRef);
+      if (!sfDoc.exists()) {
+        throw '데이터가 없습니다.';
+      }
+      const commentNumber = sfDoc.data().comment + 1;
+      transaction.update(sfDocRef, { comment: commentNumber });
+    });
   };
   useEffect(() => {
     const commentRef = collection(dbService, 'galleryComment');

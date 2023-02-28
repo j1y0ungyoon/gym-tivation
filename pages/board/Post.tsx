@@ -76,6 +76,7 @@ const Post = () => {
       photo: boardPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
+      comment: 0,
     };
 
     await addDoc(collection(dbService, 'posts'), newPost)
