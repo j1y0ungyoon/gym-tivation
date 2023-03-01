@@ -25,7 +25,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-
       <ThemeProvider theme={theme}>
         <Header isLoggedIn={isLoggedIn} />
         <Layout>
@@ -46,11 +45,6 @@ export default function App({ Component, pageProps }: AppProps) {
         theme="light"
         transition={Slide}
       />
-      <Header isLoggedIn={isLoggedIn} />
-      <Layout>
-        <SideNav isLoggedIn={isLoggedIn} />
-        <Component {...pageProps} />
-      </Layout>
     </QueryClientProvider>
   );
 }
