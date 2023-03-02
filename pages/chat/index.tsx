@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Socket } from 'socket.io';
 import io from 'socket.io-client';
 
@@ -6,16 +6,17 @@ import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 import { authService, dbService } from '@/firebase';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 
 import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
 
 type ChatLog = {
-  id: number;
+  id: string | undefined;
   msg: string;
   username: string;
   photoURL?: string | null | undefined;
+  date?: string;
 };
 
 type DmList = {
@@ -28,7 +29,7 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([
     {
-      id: 1,
+      id: authService.currentUser?.uid,
       msg: '전체채팅에 접속하셨습니다.',
       username: '관리자',
       photoURL: authService.currentUser?.photoURL,
@@ -36,20 +37,18 @@ const Chat = () => {
   ]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
   const [dmLists, setDmLists] = useState<any>();
-  const [roomNum, setRoomNum] = useState<string>(nanoid());
+  const [roomNum, setRoomNum] = useState<string | undefined>();
 
   const [isMyDmOn, setIsMyDmOn] = useState(false);
 
   const user = authService.currentUser;
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
+  const chatLogBoxRef = useRef<HTMLDivElement>();
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
-    if (user) {
-      setRoomNum(user.uid);
-    }
-
+    socket?.disconnect();
     // socket.io 접속 함수
     const connectToSocket = async () => {
       await fetch('/api/chat');
@@ -70,6 +69,7 @@ const Chat = () => {
         }
       });
     };
+
     // 소켓서버 접속함수 실행
     connectToSocket();
 
@@ -77,18 +77,37 @@ const Chat = () => {
     return () => {
       socket?.disconnect();
     };
-  }, []);
+  }, [roomNum]);
+
+  const scrollToBottom = () => {
+    if (chatLogBoxRef.current) {
+      chatLogBoxRef.current.scrollTop = chatLogBoxRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatLogs]);
 
   // 채팅 전송시 실행 함수
-  const postChat = (e: React.KeyboardEvent<EventTarget>) => {
+  const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
     if (inputValue === '') return;
+
+    // 날짜 추가
+    const newDate = new Date();
+
+    const hours = newDate.getHours(); // 시
+    const minutes = newDate.getMinutes(); // 분
+    const seconds = newDate.getSeconds(); // 초
+    const time = `${hours}:${minutes}:${seconds}`;
 
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
       photoURL: user ? user.photoURL : null,
+      date: time,
     };
 
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
@@ -102,25 +121,23 @@ const Chat = () => {
 
   // 처음에 dms 불러오는 함수
   useEffect(() => {
-    const getDmList = async () => {
-      const q = await getDocs(query(collection(dbService, 'dms')));
-
-      const dms = q.docs.map((doc) => {
-        return doc.data();
-      });
-
-      const myDms = dms.filter((dm) => {
-        if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
-          return dm;
+    onSnapshot(query(collection(dbService, 'dms')), (snapshot: any) => {
+      const dms = snapshot.docs.map((doc: any) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      const myDms = dms.filter((dm: any) => {
+        if (dm.enterUser) {
+          if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
+            return dm;
+          }
         }
       });
-
       setDmLists([...myDms]);
-    };
-    getDmList();
+    });
   }, []);
 
-  const onClickDm = () => {
+  const onClickDm = async () => {
     dmLists.filter((dmList: DmList) => {
       if (
         dmList.id ===
@@ -135,6 +152,7 @@ const Chat = () => {
           chatLog: [],
         });
         setRoomNum(user?.uid + 'DM보낼 상대 id');
+        return;
       }
     });
   };
@@ -143,14 +161,30 @@ const Chat = () => {
     <ChatWrapper>
       <CategoryContainer>
         <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-        <CategoryBtn onClick={() => setIsMyDmOn(true)}>DM</CategoryBtn>
-        {/* <CategoryBtn
+        <CategoryBtn
           onClick={() => {
-            onClickDm;
+            setIsMyDmOn(true);
+            if (dmLists.length === 0) {
+              addDoc(collection(dbService, 'dms'), {
+                id: user?.uid,
+                enterUser: [user?.uid, '나와의채팅'],
+                chatLog: [],
+              });
+              setRoomNum(user?.uid);
+              return;
+            }
+            setRoomNum(user?.uid);
+          }}
+        >
+          DM
+        </CategoryBtn>
+        <CategoryBtn
+          onClick={() => {
+            onClickDm();
           }}
         >
           DM 로직
-        </CategoryBtn> */}
+        </CategoryBtn>
       </CategoryContainer>
 
       {isMyDmOn ? (
@@ -160,21 +194,10 @@ const Chat = () => {
               <SearchInput />
               <SearchIcon src="/assets/icons/searchIcon.png" />
             </SearchBar>
-            <MyDmList
-              onClick={() => {
-                if (user?.uid) {
-                  setRoomNum(user?.uid);
-                } else {
-                  setRoomNum(nanoid());
-                }
-              }}
-            >
-              메모
-            </MyDmList>
             {dmLists?.map((dmList: DmList) => {
               return (
                 <div key={dmList.id}>
-                  {dmList.enterUser[0] || dmList.enterUser[1] === user?.uid ? (
+                  {dmList.enterUser?.includes(`${user?.uid}`) ? (
                     <MyDmList onClick={() => setRoomNum(dmList.id)}>
                       {dmList.enterUser.map((enterUser) => {
                         if (enterUser !== user?.uid) {
@@ -191,13 +214,15 @@ const Chat = () => {
         </DmContainer>
       ) : (
         <ChatContainer>
-          <ChatLogBox>
+          <ChatLogBox ref={chatLogBoxRef}>
             {chatLogs.map((chatLog) => (
               <ChatBox key={chatLog.id}>
                 <UserImg src={`${chatLog.photoURL}`} />
-                <ChatText>
-                  {chatLog.username} : {chatLog.msg}
-                </ChatText>
+                <div>
+                  <ChatName>{chatLog.username}</ChatName>
+                  <ChatText>{chatLog.msg}</ChatText>
+                  <ChatTime>{chatLog.date}</ChatTime>
+                </div>
               </ChatBox>
             ))}
           </ChatLogBox>
@@ -284,7 +309,7 @@ const ChatContainer = styled.section`
   height: calc(100vh - 200px);
 `;
 
-const ChatLogBox = styled.div`
+const ChatLogBox = styled.div<any>`
   max-width: 100%;
   height: calc(100% - 30px);
   overflow-y: auto;
@@ -304,7 +329,18 @@ const UserImg = styled.img`
   margin-right: 10px;
 `;
 
+const ChatName = styled.div`
+  font-weight: bold;
+`;
+
 const ChatText = styled.span`
+  display: block;
+  margin: 0;
+`;
+
+const ChatTime = styled.span`
+  font-size: 0.875rem;
+  color: gray;
   margin: 0;
 `;
 

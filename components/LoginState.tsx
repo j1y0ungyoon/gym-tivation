@@ -2,23 +2,25 @@ import { ProfileItem } from '@/pages/myPage/[...params]';
 import { useRouter } from 'next/router';
 import { dbService } from '@/firebase';
 import { getDocs } from 'firebase/firestore';
-
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { collection, doc, query, where } from 'firebase/firestore';
 
 type ProfileEditProps = {
   item: ProfileItem;
   toggle: boolean;
-  follower: [];
-  following: [];
   paramsId: string;
+  followModal: boolean;
 };
 
 const LoginState = ({
   item,
   toggle,
-  following,
-  follower,
+  paramsId,
+  followModal,
 }: ProfileEditProps) => {
+  const [following, setFollowing] = useState([] as any);
+  const [follower, setFollower] = useState([] as any);
   const router = useRouter();
 
   const goToMyPage = (id: any) => {
@@ -30,12 +32,32 @@ const LoginState = ({
     });
   };
 
+  // 팔로워, 팔로잉 불러오기
+  const followGetDoc = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', paramsId),
+    );
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setFollowing(doc.data().following);
+      setFollower(doc.data().follower);
+    });
+  };
+
+  useEffect(() => {
+    followGetDoc();
+    return () => {
+      // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
+    };
+  }, [followModal]);
+
   return (
     <>
       <LoginStateWrapper>
         {toggle ? (
           <>
-            {String(follower).includes(item.id) ? (
+            {String(follower).includes(item.id) && (
               <OnOffBox
                 onClick={() => {
                   goToMyPage(item.id);
@@ -58,11 +80,11 @@ const LoginState = ({
                   )}
                 </StateBox>
               </OnOffBox>
-            ) : null}
+            )}
           </>
         ) : (
           <>
-            {String(following).includes(item.id) ? (
+            {String(following).includes(item.id) && (
               <OnOffBox
                 onClick={() => {
                   goToMyPage(item.id);
@@ -85,7 +107,7 @@ const LoginState = ({
                   )}
                 </StateBox>
               </OnOffBox>
-            ) : null}
+            )}
           </>
         )}
       </LoginStateWrapper>

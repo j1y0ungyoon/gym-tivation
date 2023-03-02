@@ -3,11 +3,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '@/components/Header';
 import SideNav from '@/components/SideNav';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { authService } from '@/firebase';
 import { useState, useEffect } from 'react';
+import { theme } from '@/styles/theme';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -23,6 +25,13 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <Header isLoggedIn={isLoggedIn} />
+        <Layout>
+          <SideNav isLoggedIn={isLoggedIn} />
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeProvider>
       <ToastContainer
         position="top-center"
         autoClose={1000}
@@ -36,11 +45,6 @@ export default function App({ Component, pageProps }: AppProps) {
         theme="light"
         transition={Slide}
       />
-      <Header isLoggedIn={isLoggedIn} />
-      <Layout>
-        <SideNav isLoggedIn={isLoggedIn} />
-        <Component {...pageProps} />
-      </Layout>
     </QueryClientProvider>
   );
 }

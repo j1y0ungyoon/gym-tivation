@@ -1,18 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Socket } from 'socket.io';
 import { nanoid } from 'nanoid';
 import io from 'socket.io-client';
-import { authService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
+import {
+  collection,
+  doc,
+  getDocs,
+  where,
+  query,
+  updateDoc,
+  arrayUnion,
+} from 'firebase/firestore';
 
 type ChatLog = {
-  id: number;
-  msg: string;
-  username: string;
+  id?: number;
+  msg?: string;
+  username?: string;
   photoURL?: string | null | undefined;
-  roomNum: any;
+  date?: string;
+  roomNum?: string;
 };
 
 type DmChatProps = {
@@ -23,27 +33,51 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   const router = useRouter();
   console.log('roomNum', roomNum);
 
-  const [inputValue, setInputValue] = useState('');
-  const [chatLogs, setChatLogs] = useState<ChatLog[]>([
-    {
-      id: 1,
-      msg: `${roomNum}채팅에 접속하셨습니다.`,
-      username: '관리자',
-      photoURL: authService.currentUser?.photoURL,
-      roomNum,
-    },
-  ]);
+  const [dmInputValue, setDmInputValue] = useState('');
+  const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
 
   const user = authService.currentUser;
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
 
+  const dmLogBoxRef = useRef<HTMLDivElement>();
+
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
 
-  // /room/roomnum 으로 들어온 상태에서 새로고침 해도 잘 돌아가게 해주기
+  const [chatId, setChatId] = useState('');
+
+  // 처음에 채팅로그 받아오기
   useEffect(() => {
+    // DB에서 roomNum 과 같은 doc의 id 받아와서 chatId에 입력해줌
+    const getDocId = async () => {
+      const data = await getDocs(
+        query(collection(dbService, 'dms'), where('id', '==', roomNum)),
+      );
+      data.docs.map((doc) => {
+        if (doc.data().id == roomNum) {
+          console.log(doc.id);
+          return setChatId(doc.id);
+        }
+      });
+    };
+
+    // DB에서 챗로그 가져오기
+    const chatLogsGetDoc = async () => {
+      const chatDoc = await getDocs(
+        query(collection(dbService, 'dms'), where('id', '==', roomNum)),
+      );
+
+      const prevChatLog = chatDoc?.docs[0]?.data().chatLog;
+      console.log(prevChatLog);
+      setChatLogs(prevChatLog);
+    };
+
+    // roomNum 바뀔때마다 챗로그 비우고, DB에서 채팅로그 받아옴
+    setChatLogs([]);
+    getDocId();
+    chatLogsGetDoc();
     router.isReady;
-  }, []);
+  }, [roomNum]);
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
@@ -66,7 +100,13 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
       socket.on('chat', (chatLog: any) => {
         if (roomNum === chatLog.roomNum) {
-          setChatLogs((prev) => [...prev, chatLog]);
+          setChatLogs((prev) => {
+            if (prev) {
+              return [...prev, chatLog];
+            } else {
+              return [chatLog];
+            }
+          });
         }
       });
     };
@@ -79,37 +119,76 @@ const DmChat = ({ roomNum }: DmChatProps) => {
     };
   }, [router.isReady, roomNum]);
 
+  const scrollToBottom = () => {
+    if (dmLogBoxRef.current) {
+      dmLogBoxRef.current.scrollTop = dmLogBoxRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatLogs]);
+
   // 채팅 전송시 실행 함수
-  const postChat = (e: React.KeyboardEvent<EventTarget>) => {
+  const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
     if (e.key !== 'Enter') return;
-    if (inputValue === '') return;
+    if (dmInputValue === '') return;
+
+    // 날짜 추가
+    const newDate = new Date();
+
+    const hours = newDate.getHours(); // 시
+    const minutes = newDate.getMinutes(); // 분
+    const seconds = newDate.getSeconds(); // 초
+    const time = `${hours}:${minutes}:${seconds}`;
 
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
       photoURL: user ? user.photoURL : null,
+      date: time,
       roomNum,
     };
 
+    await updateDoc(doc(dbService, 'dms', chatId), {
+      chatLog: arrayUnion({
+        id: chatId,
+        msg: chatLog.msg,
+        username: chatLog.username,
+        photoURL: chatLog.photoURL,
+        date: chatLog.date,
+        roomNum: chatLog.roomNum,
+      }),
+    });
+
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
     socket?.emit('chat', chatLog);
-    setInputValue('');
+    setDmInputValue('');
   };
 
   const onChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    setDmInputValue(e.target.value);
   };
 
   return (
     <DmChatWrapper>
-      <DmLogBox>
+      <DmLogBox ref={dmLogBoxRef}>
+        <DmBox>
+          <UserImg src={`${authService.currentUser?.photoURL}`} />
+          <div>
+            <DmName>{username}</DmName>
+            <DmText>{roomNum}방에 입장하셨습니다.</DmText>
+          </div>
+        </DmBox>
         {chatLogs?.map((chatLog) => (
           <DmBox key={chatLog?.id}>
             <UserImg src={`${chatLog.photoURL}`} />
-            <DmText>
-              {chatLog?.username} : {chatLog?.msg}
-            </DmText>
+            <div>
+              <DmName>{chatLog?.username}</DmName>
+              <DmText>{chatLog?.msg}</DmText>
+              <DmTime>{chatLog.date}</DmTime>
+            </div>
           </DmBox>
         ))}
       </DmLogBox>
@@ -117,7 +196,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
         placeholder="채팅을 입력하세요."
         type="text"
         onKeyPress={postChat}
-        value={inputValue}
+        value={dmInputValue}
         onChange={onChangeInputValue}
       />
     </DmChatWrapper>
@@ -134,7 +213,7 @@ const DmChatWrapper = styled.section`
   overflow-y: auto;
 `;
 
-const DmLogBox = styled.div`
+const DmLogBox = styled.div<any>`
   max-width: 100%;
   height: calc(100% - 40px);
   overflow-y: auto;
@@ -151,7 +230,16 @@ const UserImg = styled.img`
   border-radius: 50px;
   margin-right: 10px;
 `;
+const DmName = styled.div`
+  font-weight: bold;
+`;
 const DmText = styled.span`
+  margin: 0;
+  display: block;
+`;
+const DmTime = styled.span`
+  font-size: 0.875rem;
+  color: gray;
   margin: 0;
 `;
 

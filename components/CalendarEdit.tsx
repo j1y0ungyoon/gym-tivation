@@ -11,12 +11,7 @@ type CalendarProps = {
   setMark: (p: any) => void;
 };
 
-const CalendarEdit = ({
-  item,
-
-  mark,
-  setMark,
-}: CalendarProps) => {
+const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
   const [textAreaContent, setTextAreaContent] = useState(item.content);
 
   const onClickEditCalendar = async (e: any, id: string) => {
@@ -52,12 +47,6 @@ const CalendarEdit = ({
         placeholder="입력시 Enter 키를 눌러주세요."
         onKeyPress={(e) => onClickEditCalendar(e, item.id)}
       />
-      {/* <CalendarButton onClick={() => onClickEditCalendar(item.id)}>
-        수정
-      </CalendarButton> */}
-      {/* <CalendarButton onClick={() => onClickDeleteCalendar(item.id)}>
-        삭제
-      </CalendarButton> */}
     </CalendarContentBox>
   );
 };
@@ -72,8 +61,8 @@ const CalendarTextArea = styled.textarea`
   width: 18vw;
   height: 50vh;
   border-radius: 20px;
-  border: none;
-  background-color: white;
+  border-style: solid;
+  border-width: 0.1rem;
   font-size: 16px;
   overflow: none;
   resize: none;

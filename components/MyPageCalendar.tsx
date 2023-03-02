@@ -140,9 +140,12 @@ const MyPageCalendar = () => {
 export default MyPageCalendar;
 
 const CalendarWrapper = styled.div`
+  border-radius: 16px;
+  border-style: solid;
   padding-top: 2vh;
   padding-left: 1vw;
   padding-right: 1vw;
+  border-width: 0.1rem;
 `;
 const DotBox = styled.div`
   width: 100%;
@@ -166,7 +169,6 @@ const CalendarCSS = styled.div`
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;
     border-bottom-style: solid;
-    border-color: #bdbdbd;
     border-width: 0.1rem;
   }
   .react-calendar--doubleView {
@@ -211,7 +213,7 @@ const CalendarCSS = styled.div`
   }
   .react-calendar__navigation button:enabled:hover,
   .react-calendar__navigation button:enabled:focus {
-    background-color: #e6e6e6;
+    color: gray;
   }
   .react-calendar__month-view__weekdays {
     text-align: center;
@@ -248,20 +250,20 @@ const CalendarCSS = styled.div`
     line-height: 16px;
   }
   .react-calendar__tile:disabled {
-    background-color: white;
+    background-color: #f5f5f5;
     border-radius: 50%;
   }
   .react-calendar__tile:enabled:hover,
   .react-calendar__tile:enabled:focus {
-    background-color: white;
+    background-color: #f5f5f5;
     border-radius: 50%;
   }
   .react-calendar__tile--now {
-    background: white;
+    background: #f5f5f5;
   }
   .react-calendar__tile--now:enabled:hover,
   .react-calendar__tile--now:enabled:focus {
-    background: white;
+    background: #76baff;
   }
   .react-calendar__tile--hasActive {
     background: #76baff;
@@ -271,13 +273,13 @@ const CalendarCSS = styled.div`
     background: #a9d4ff;
   }
   .react-calendar__tile--active {
-    background: white;
+    background: #f5f5f5;
     border-radius: 50%;
     color: black;
   }
   .react-calendar__tile--active:enabled:hover,
   .react-calendar__tile--active:enabled:focus {
-    background: white;
+    background: #f5f5f5;
     border-radius: 50%;
   }
   .react-calendar--selectRange .react-calendar__tile--hover {
@@ -288,7 +290,7 @@ const CalendarCSS = styled.div`
     font-weight: bold;
   }
   .react-calendar__tile--now {
-    background: #e0e0e0;
+    background: #fff8e1;
     border-radius: 50%;
     color: black;
   }
@@ -299,7 +301,6 @@ const CalendarCSS = styled.div`
     margin-top: 10px;
     margin-bottom: 10px;
     border-bottom-style: solid;
-    border-bottom-color: #bdbdbd;
     border-width: 0.1rem;
   }
   abbr[title] {
