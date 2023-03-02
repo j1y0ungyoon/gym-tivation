@@ -1,8 +1,10 @@
 export const theme = {
   color: {
     backgroundColor: '#FFFCF3',
+    brandColor: '#FF4800',
     brandColor100: '#FF3D00',
     brandColor50: '#afsdaa',
+
     black: '#000000',
   },
   btn: {
@@ -26,12 +28,13 @@ export const theme = {
     `,
     btn100: `
       min-width: 120px;
+
       height: 50px;
       padding: 0 25px;
       border-radius: 50px;
       border: none;
       font-size: 16px;
-      
+
       background-color: #d9d9d9;
       color: #000;
       :hover {
@@ -75,6 +78,7 @@ export const theme = {
   mainLayout: {
     wrapper: `
       display : flex;
+      jautisfy-content:center;
       min-width : 1000px;
       width : calc(100vw - 180px);
       min-height : 740px;
@@ -85,9 +89,11 @@ export const theme = {
     container: `
       min-width : 640px;
       width : 100%;
-      max-width : 960px;
+      max-width : 1220px;
+      margin:0 auto;
       height : 100%;
       margin : 20px;
+
     `,
   },
   font: {

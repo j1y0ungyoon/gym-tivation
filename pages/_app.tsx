@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { theme } from '@/styles/theme';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GlobalStyle from '@/styles/GlobalStyle';
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
+        <GlobalStyle />
         <Header isLoggedIn={isLoggedIn} />
         <Layout>
           <SideNav isLoggedIn={isLoggedIn} />

@@ -171,6 +171,9 @@ export interface BoardPostType {
   userId?: string;
   nickName?: string;
   like?: string;
+  usePhoto?: string;
+  lv?: string;
+  lvName?: string;
 }
 export interface GalleryBoardPostType {
   title?: string;

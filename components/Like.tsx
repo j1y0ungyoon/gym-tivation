@@ -59,27 +59,31 @@ const Like = ({ detailPost, detailGalleryPost }: any) => {
     <LikeWrapper>
       {board ? (
         <>
-          <Image
-            src={boardLikeChecked ? checkedLike : like}
-            onClick={likeCounter}
-            alt="좋아요"
-            width={50}
-            height={50}
-          />
-
-          <LikeCount>{boardLikeCount}</LikeCount>
+          <LikeContainer>
+            좋아요
+            <LikeCount>{boardLikeCount}</LikeCount>
+            <Image
+              src={boardLikeChecked ? checkedLike : like}
+              onClick={likeCounter}
+              alt="좋아요"
+              width={50}
+              height={50}
+            />
+          </LikeContainer>
         </>
       ) : (
         <>
-          <Image
-            src={galleryLikeChecked ? checkedLike : like}
-            onClick={likeCounter}
-            alt="좋아요"
-            width={50}
-            height={50}
-          />
-
-          <LikeCount>{galleryLikeCount}</LikeCount>
+          <LikeContainer>
+            좋아요
+            <LikeCount>{galleryLikeCount}</LikeCount>
+            <Image
+              src={galleryLikeChecked ? checkedLike : like}
+              onClick={likeCounter}
+              alt="좋아요"
+              width={50}
+              height={50}
+            />
+          </LikeContainer>
         </>
       )}
     </LikeWrapper>
@@ -88,10 +92,23 @@ const Like = ({ detailPost, detailGalleryPost }: any) => {
 
 const LikeWrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
+const LikeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 15%;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  border: 1px solid black;
+  margin: 20px;
+  padding: 10px;
+`;
 
-const LikeCount = styled.div``;
+const LikeCount = styled.span`
+  display: flex;
+  /* justify-content: center; */
+`;
 export default Like;
