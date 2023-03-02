@@ -2,10 +2,15 @@ import { dbService } from '@/firebase';
 import { MapModalProps, RecruitPostType, CoordinateType } from '@/type';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useRef, useEffect, useState } from 'react';
-import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import {
+  Map,
+  MapInfoWindow,
+  MapMarker,
+  CustomOverlayMap,
+} from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
-import MyLocation from './MyLocationMarker';
-import SearchIcon from '@/public/assets/icons/searchIcon.png';
+import MyLocationMarker from './MyLocationMarker';
+import RecruitPostsWindow from './RecruitPostsWindow';
 
 const initialPosition = {
   lat: 33.5563,
@@ -13,11 +18,14 @@ const initialPosition = {
 };
 
 const SearchColleague = (props: MapModalProps) => {
-  const { setCoordinate, coordinate } = props;
+  const { setCoordinate, coordinate, setMarkerCoordi, region, setRegion } =
+    props;
 
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
-  const [region, setRegion] = useState('서울');
+
+  // InfoWindow 열기
+  const [openInfo, setOpenInfo] = useState(false);
 
   // 서버로부터 fetch된 운동 동료 모집글 배열을 저장하는 state
   const [recruitPosts, setRecruitPosts] = useState<RecruitPostType[]>([]);
@@ -57,6 +65,14 @@ const SearchColleague = (props: MapModalProps) => {
     }
   };
 
+  // 마커의 좌표 가져오기
+  const getCoordinate = (post: RecruitPostType) => {
+    setMarkerCoordi({
+      lat: Number(post.coordinate?.lat),
+      lng: Number(post.coordinate?.lng),
+    });
+  };
+
   // 검색 위치로 지도 재설정
   useEffect(() => {
     if (!map) return;
@@ -75,6 +91,8 @@ const SearchColleague = (props: MapModalProps) => {
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
         //   @ts-ignore
         map.setBounds(bounds);
+        console.log('bounds', bounds);
+        console.log('map', map);
       }
     });
   }, [map, region]);
@@ -130,7 +148,11 @@ const SearchColleague = (props: MapModalProps) => {
         <Map
           key={`map-${myPosition.center.lat}-${myPosition.center.lng}`}
           center={myPosition.center}
-          style={{ width: '40vw', height: '85vh', borderRadius: '2rem' }}
+          style={{
+            width: '40vw',
+            height: '85vh',
+            borderRadius: '2rem',
+          }}
           //@ts-ignore
           onCreate={setMap}
           // onTileLoaded={(map) =>
@@ -148,20 +170,45 @@ const SearchColleague = (props: MapModalProps) => {
           {recruitPosts.map((post) => {
             if (post.coordinate) {
               return (
-                <MapMarker
-                  key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
-                  position={{
-                    lat: post.coordinate?.lat,
-                    lng: post?.coordinate?.lng,
-                  }}
-                >
-                  <div>{post.title}</div>
-                </MapMarker>
+                <>
+                  <MapMarker
+                    key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
+                    position={{
+                      lat: post.coordinate?.lat,
+                      lng: post?.coordinate?.lng,
+                    }}
+                    image={{
+                      src: '/assets/icons/mapBoard/mappin_hand_icon.svg',
+                      size: { width: 50, height: 53 },
+                    }}
+                    onClick={() => getCoordinate(post)}
+                  />
+                  <CustomOverlayMap
+                    position={{
+                      lat: post.coordinate?.lat,
+                      lng: post?.coordinate?.lng,
+                    }}
+                    xAnchor={0.5}
+                    yAnchor={3}
+                  >
+                    {/* <div style={{ backgroundColor: 'white' }}>
+                      여기 사람있어요
+                    </div> */}
+                    <RecruitPostsWindow
+                      post={post}
+                      recruitPosts={recruitPosts}
+                      setMarkerCoordi={setMarkerCoordi}
+                    />
+                  </CustomOverlayMap>
+                </>
               );
             }
           })}
           {/* 나의 위치 표시 */}
-          <MyLocation myPosition={myPosition} setMyPosition={setMyPosition} />
+          <MyLocationMarker
+            myPosition={myPosition}
+            setMyPosition={setMyPosition}
+          />
         </Map>
       </MapModalMain>
     </>

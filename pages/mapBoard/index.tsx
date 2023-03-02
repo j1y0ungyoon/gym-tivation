@@ -21,6 +21,15 @@ const MapBoard = () => {
   const [coordinate, setCoordinate] =
     useState<CoordinateType>(initialCoordinate);
 
+  // 마커 선택한 좌표
+  const [markerCoordi, setMarkerCoordi] = useState<CoordinateType>();
+
+  // 마커 선택한 좌표대로 필터된 모집글 배열
+  const [selectedPosts, setSelectedPosts] = useState<RecruitPostType[]>();
+
+  // SearchMyColleague에서 검색할 때 onChange에 쓰이는 state
+  const [region, setRegion] = useState('서울');
+
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
     if (!authService.currentUser) {
@@ -32,6 +41,21 @@ const MapBoard = () => {
       router.push('/mapBoard/WritingRecruitment');
     }
   };
+
+  // 마커 클릭한 좌표로 RecruitPosts 필터하기
+  useEffect(() => {
+    const filteredPosts = recruitPosts?.filter(
+      (post) =>
+        post.coordinate?.lat === markerCoordi?.lat &&
+        post.coordinate?.lng === markerCoordi?.lng,
+    );
+    setSelectedPosts(filteredPosts);
+  }, [markerCoordi]);
+
+  // 동료 검색을 하면 selectedPosts를 초기화 해준다
+  useEffect(() => {
+    setSelectedPosts([]);
+  }, [region]);
 
   // 마운트 시 post 실시간으로 불러오기
   useEffect(() => {
@@ -71,12 +95,16 @@ const MapBoard = () => {
               <SearchColleague
                 setCoordinate={setCoordinate}
                 coordinate={coordinate}
+                setMarkerCoordi={setMarkerCoordi}
+                region={region}
+                setRegion={setRegion}
               />
             </MapBoardContainer>
           </MapWrapper>
 
           <MapBoardWrapper>
-            {recruitPosts?.map((post) => {
+            <h4>{`"${region}"에서 모임`}</h4>
+            {selectedPosts?.map((post) => {
               return <RecruitPost post={post} key={post.id} />;
             })}
           </MapBoardWrapper>

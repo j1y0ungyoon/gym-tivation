@@ -236,7 +236,6 @@ const RecruitDetail = ({ params }: any) => {
       alert('로그인 후 이용해주세요!');
       return;
     }
-    console.log('sdf', refetchedPost?.participation);
     // 로그인 사용자가 참여 버튼을 눌렀을 때
     if (authService.currentUser) {
       // 유저가 이미 운동 참여를 눌렀는지 아닌지 확인하기 위함

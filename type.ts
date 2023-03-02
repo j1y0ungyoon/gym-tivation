@@ -61,6 +61,11 @@ export interface EditCommentLikeParameterType {
 export interface MapModalProps {
   setCoordinate: React.Dispatch<React.SetStateAction<CoordinateType>>;
   coordinate: CoordinateType;
+  setMarkerCoordi: React.Dispatch<
+    React.SetStateAction<CoordinateType | undefined>
+  >;
+  region: string;
+  setRegion: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface SearchMyGymProps {

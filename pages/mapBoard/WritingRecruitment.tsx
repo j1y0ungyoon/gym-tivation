@@ -8,6 +8,7 @@ import SearchMyGym from '@/components/SearchMyGym';
 import UseDropDown from '@/components/UseDropDown';
 import SelectDay from '@/components/SelectDay';
 import { useEffect } from 'react';
+import { nanoid } from 'nanoid';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -189,15 +190,23 @@ const WritingRecruitment = () => {
           />
 
           <StyledText>가능 시간</StyledText>
-          <UseDropDown setStart={setStart} setEnd={setEnd}>
+          <UseDropDown
+            key={`start-${nanoid()}`}
+            setStart={setStart}
+            setEnd={setEnd}
+          >
             시작 시간
           </UseDropDown>
-          {start ? start : '00시 00분'}
+          {start ? start : '00 : 00'}
           <span> ~ </span>
-          <UseDropDown setStart={setStart} setEnd={setEnd}>
+          <UseDropDown
+            key={`end-${nanoid()}`}
+            setStart={setStart}
+            setEnd={setEnd}
+          >
             종료 시간
           </UseDropDown>
-          {end ? end : '00시 00분'}
+          {end ? end : '00 : 00분'}
         </DayAndTimeContainer>
 
         <TextAreaContainer>

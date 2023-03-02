@@ -2,7 +2,7 @@ import { MyLocationProps } from '@/type';
 import React, { useState, useEffect } from 'react';
 import { MapMarker } from 'react-kakao-maps-sdk';
 
-const MyLocation = (props: MyLocationProps) => {
+const MyLocationMarker = (props: MyLocationProps) => {
   const { setMyPosition, myPosition } = props;
 
   useEffect(() => {
@@ -40,7 +40,13 @@ const MyLocation = (props: MyLocationProps) => {
   return (
     <>
       {!myPosition.isLoading && (
-        <MapMarker position={myPosition.center}>
+        <MapMarker
+          position={myPosition.center}
+          image={{
+            src: '/assets/icons/mapBoard/Vector.svg',
+            size: { width: 50, height: 50 },
+          }}
+        >
           <div style={{ padding: '5px', color: '#000' }}>
             {myPosition.errMsg ? myPosition.errMsg : '내 위치'}
           </div>
@@ -50,4 +56,4 @@ const MyLocation = (props: MyLocationProps) => {
   );
 };
 
-export default MyLocation;
+export default MyLocationMarker;

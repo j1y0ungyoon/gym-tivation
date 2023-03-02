@@ -1,6 +1,6 @@
 import { SearchMyGymProps } from '@/type';
 import React, { useState, useEffect, useRef } from 'react';
-import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import { CustomOverlayMap, Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 
 interface MarkersType {
@@ -25,6 +25,9 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
   const [region, setRegion] = useState('서울');
+
+  // Info window 열고 닫기
+  const [openInfo, setOpenInfo] = useState(false);
 
   // 모달 창 닫기 currentTarget 저장용
   const modalRef = useRef<HTMLDivElement>(null);
@@ -148,6 +151,10 @@ const SearchMyGym = (props: SearchMyGymProps) => {
               key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
               // @ts-ignore
               position={marker.position}
+              image={{
+                src: '/assets/icons/mapBoard/mappin_hand_icon.svg',
+                size: { width: 50, height: 53 },
+              }}
               onClick={() => {
                 setInfo(marker);
                 setCoordinate({
@@ -156,9 +163,18 @@ const SearchMyGym = (props: SearchMyGymProps) => {
                 });
               }}
             >
+              {/* <CustomOverlayMap
+                position={{
+                  lat: Number(marker.position?.lat),
+                  lng: Number(marker.position?.lng),
+                }}
+                xAnchor={0.5}
+                yAnchor={0.5}
+              > */}
               {info && info.content === marker.content && (
-                <div style={{ color: '#000' }}>{marker.content}</div>
+                <InfoBox>{marker.content}</InfoBox>
               )}
+              {/* </CustomOverlayMap> */}
             </MapMarker>
           ))}
         </Map>
@@ -169,6 +185,17 @@ const SearchMyGym = (props: SearchMyGymProps) => {
 };
 
 export default SearchMyGym;
+
+const InfoBox = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 30px;
+  width: 210px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 8px;
+`;
 
 const BackgroundContainer = styled.div`
   position: fixed;
