@@ -6,7 +6,6 @@ const BoardCategory = ({ setCategory }: BoardCategoryProps) => {
   const onChangeBoardCategory = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    console.log(event.target.value);
     setCategory(event?.target.value);
   };
   return (

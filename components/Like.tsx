@@ -16,7 +16,6 @@ const Like = ({ detailPost, detailGalleryPost }: any) => {
   const board = router.pathname === '/boardDetail/[...params]';
   const gallery = router.pathname === '/galleryDetail/[...params]';
 
-  console.log(router.pathname);
   const likeCounter = async () => {
     if (authService.currentUser) {
       if (board) {

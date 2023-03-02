@@ -5,7 +5,6 @@ import {
   getDownloadURL,
   ref,
   uploadBytes,
-  uploadString,
 } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -13,11 +12,55 @@ import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
 import BoardCommentList from '@/components/BoardCommentList';
-import { BoardPostType } from '@/type';
 import { nanoid } from 'nanoid';
 
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
+
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+});
+const modules = {
+  toolbar: [
+    [{ font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ color: [] }, { background: [] }],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    matchVisual: true,
+  },
+};
+
+const formats = [
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'code-block',
+  'color',
+  'background',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+];
 const Detail = ({ params }: any) => {
-  const [detailPost, setDetailPost] = useState<BoardPostType>();
+  const [detailPost, setDetailPost] = useState<any>();
   const [changeDetailPost, setChangeDetailPost] = useState(false);
   const [editDetailTitle, setEditDetailTitle] = useState<string | undefined>(
     '',
@@ -29,7 +72,6 @@ const Detail = ({ params }: any) => {
   const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
   const [editDetailContent, setEditDetailContent] = useState<string | any>('');
   const [editImageUpload, setEditImageUpload] = useState<any>('');
-
   const [id] = params;
   const router = useRouter();
   const user = authService.currentUser?.uid;
@@ -48,10 +90,8 @@ const Detail = ({ params }: any) => {
     setEditDetailTitle(event.target.value);
   };
 
-  const onChangeEditContent = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    setEditDetailContent(event.target.value);
+  const onChangeEditContent = (value: any) => {
+    setEditDetailContent(value);
   };
 
   const onChangeBoardCategory = (
@@ -193,11 +233,14 @@ const Detail = ({ params }: any) => {
                     accept="image/*"
                     onChange={onChangeUpload}
                   />
-                  <ImagePreview id="image" src={editDetailPhoto}></ImagePreview>
+                  <ImagePreview src={editDetailPhoto}></ImagePreview>
                 </DetailImageWrapper>
-                <ContentInput
+
+                <ReactQuill
                   onChange={onChangeEditContent}
                   defaultValue={detailPost?.content}
+                  modules={modules}
+                  formats={formats}
                 />
               </ContentBox>
             </ContentContainer>
@@ -226,7 +269,12 @@ const Detail = ({ params }: any) => {
                 <DetailImageWrapper>
                   <DetailPostPhoto src={detailPost?.photo} />
                 </DetailImageWrapper>
-                <DetailPostContent>{detailPost?.content}</DetailPostContent>
+                {/* {parse(detailPost?.content)} */}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(detailPost?.content),
+                  }}
+                />
               </ContentBox>
             </ContentContainer>
             <BottomWrapper>
@@ -367,7 +415,7 @@ const DetailPostContent = styled.div`
   width: 50%;
   height: 90%;
   border-radius: 2rem;
-  font-size: 1.5rem;
+  /* font-size: 1.5rem; */
   margin: 1rem;
   border: 1px solid #777;
   overflow-y: auto;

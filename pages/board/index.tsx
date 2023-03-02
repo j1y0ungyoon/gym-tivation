@@ -32,7 +32,6 @@ const Board = () => {
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setCategory(event?.currentTarget.id);
-    console.log(category);
   };
 
   const onClickPostButton = () => {

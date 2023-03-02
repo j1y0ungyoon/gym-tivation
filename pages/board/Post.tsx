@@ -1,6 +1,6 @@
 import { authService, dbService, storage } from '@/firebase';
 import { addDoc, collection, doc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
@@ -8,6 +8,13 @@ import BoardCategory from '@/components/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { nanoid } from 'nanoid';
+import dynamic from 'next/dynamic';
+
+import 'react-quill/dist/quill.snow.css';
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+});
 
 const Post = () => {
   const [boardTitle, setBoardTitle] = useState('');
@@ -16,17 +23,62 @@ const Post = () => {
 
   const [imageUpload, setImageUpload] = useState<any>('');
   const [boardPhoto, setBoardPhoto] = useState('');
-
+  const quillRef = useRef();
   const router = useRouter();
-  const today = new Date().toLocaleString('ko-KR').slice(0, 20);
+  const today = new Date().toLocaleString().slice(0, -3);
+  console.log(today);
+
+  // const imageHandler = () => {};
+
+  const modules = {
+    toolbar: [
+      [{ font: [] }],
+      [{ size: [] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ color: [] }, { background: [] }],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
+      ],
+      ['link', 'image'],
+      ['clean'],
+    ],
+
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    },
+    // handler: {
+    //   image: imageHandler,
+    // },
+  };
+
+  const formats = [
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'code-block',
+    'color',
+    'background',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+  ];
+
   const onChangeBoardTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(event.target.value);
   };
 
-  const onChangeBoardContent = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    setBoardContent(event.target.value);
+  const onChangeBoardContent = (value: any) => {
+    setBoardContent(value);
   };
 
   const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +122,7 @@ const Post = () => {
       title: boardTitle,
       content: boardContent,
       category: category,
-      createdAt: today,
+      createdAt: new Date(),
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
       photo: boardPhoto,
@@ -139,9 +191,12 @@ const Post = () => {
               />
               <ImagePreview src={boardPhoto} />
             </PostImageWrapper>
-            <ContentInput
+
+            <ReactQuill
               onChange={onChangeBoardContent}
               value={boardContent}
+              modules={modules}
+              formats={formats}
             />
           </ContentContainer>
           <PostButtonWrapper>
