@@ -5,9 +5,12 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Header from '@/components/Header';
 import SideNav from '@/components/SideNav';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { authService } from '@/firebase';
 import { useState, useEffect } from 'react';
+import { theme } from '@/styles/theme';
+import { Slide, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
@@ -24,11 +27,26 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Header isLoggedIn={isLoggedIn} />
-      <Layout>
-        <SideNav isLoggedIn={isLoggedIn} />
-        <Component {...pageProps} />
-      </Layout>
+      <ThemeProvider theme={theme}>
+        <Header isLoggedIn={isLoggedIn} />
+        <Layout>
+          <SideNav isLoggedIn={isLoggedIn} />
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
     </QueryClientProvider>
   );
 }

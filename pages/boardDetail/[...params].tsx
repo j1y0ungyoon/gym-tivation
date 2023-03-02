@@ -4,6 +4,7 @@ import {
   deleteObject,
   getDownloadURL,
   ref,
+  uploadBytes,
   uploadString,
 } from 'firebase/storage';
 import { useRouter } from 'next/router';
@@ -12,22 +13,11 @@ import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
 import BoardCommentList from '@/components/BoardCommentList';
-
-interface DetailProps {
-  id?: string;
-  title?: string;
-  content?: string;
-  createdAt?: number;
-  photo?: string;
-  item?: any;
-  category?: string;
-  detailPost?: any;
-  like?: string[];
-  userId?: string;
-}
+import { BoardPostType } from '@/type';
+import { nanoid } from 'nanoid';
 
 const Detail = ({ params }: any) => {
-  const [detailPost, setDetailPost] = useState<DetailProps>();
+  const [detailPost, setDetailPost] = useState<BoardPostType>();
   const [changeDetailPost, setChangeDetailPost] = useState(false);
   const [editDetailTitle, setEditDetailTitle] = useState<string | undefined>(
     '',
@@ -35,11 +25,10 @@ const Detail = ({ params }: any) => {
   const [editDetailCategory, setEditDetailCategory] = useState(
     detailPost?.category,
   );
-  const [editDetailPhoto, setEditDetailPhoto] = useState<string | any>('');
+  const [editDetailPhoto, setEditDetailPhoto] = useState<string>('');
   const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
   const [editDetailContent, setEditDetailContent] = useState<string | any>('');
-  const [editImageUpload, setEditImageUpload] = useState('');
-  const [editImageUrl, setEditImageUrl] = useState('');
+  const [editImageUpload, setEditImageUpload] = useState<any>('');
 
   const [id] = params;
   const router = useRouter();
@@ -71,25 +60,6 @@ const Detail = ({ params }: any) => {
     setEditDetailCategory(event.target.value);
   };
 
-  //image upload
-  const uploadEditedImage = () => {
-    //@ts-ignore
-    const imageRef = ref(storage, `images/${editImageUpload?.name}`);
-    const imageDataUrl = localStorage.getItem('imageDataUrl');
-
-    if (imageDataUrl) {
-      uploadString(imageRef, imageDataUrl, 'data_url')
-        .then((response) => {
-          getDownloadURL(response.ref).then((response) => {
-            setEditImageUrl(response);
-          });
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  };
-
   //게시글 수정 업데이트
   const onSubmitEditDetail = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -97,38 +67,30 @@ const Detail = ({ params }: any) => {
     const editDetailPost = {
       title: editDetailTitle,
       content: editDetailContent,
-      photo: editImageUrl,
+      photo: editDetailPhoto,
       category: editDetailCategory,
     };
 
     editBoardPost({ id, editDetailPost });
     deleteObject(ref(storage, prevPhotoUrl));
-    uploadEditedImage();
+
     setChangeDetailPost(false);
     toBoard();
   };
 
-  //image onchange
-  const onChangeImage = (event: any) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    if (file !== null) {
-      setEditImageUpload(file);
-      reader.readAsDataURL(file);
-    }
-    reader.onloadend = (finishedEvent: any) => {
-      const imageDataUrl = finishedEvent.currentTarget.result;
-      localStorage.setItem('imageDataUrl', imageDataUrl);
-      //@ts-ignore
-      document.getElementById('image').src = imageDataUrl;
-      setEditDetailPhoto(imageDataUrl);
-    };
+  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditImageUpload(event.target.files?.[0]);
   };
-  // image upload 불러오기
   useEffect(() => {
-    uploadEditedImage();
+    const imageRef = ref(storage, `image/${nanoid()}`);
+    if (!editImageUpload) return;
+    uploadBytes(imageRef, editImageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setEditDetailPhoto(url);
+      });
+    });
   }, [editImageUpload]);
+
   const toBoard = () => {
     router.push({
       pathname: `/board`,
@@ -229,9 +191,9 @@ const Detail = ({ params }: any) => {
                   <ImageInput
                     type="file"
                     accept="image/*"
-                    onChange={onChangeImage}
+                    onChange={onChangeUpload}
                   />
-                  <ImagePreview id="image" src={prevPhotoUrl}></ImagePreview>
+                  <ImagePreview id="image" src={editDetailPhoto}></ImagePreview>
                 </DetailImageWrapper>
                 <ContentInput
                   onChange={onChangeEditContent}
@@ -408,6 +370,7 @@ const DetailPostContent = styled.div`
   font-size: 1.5rem;
   margin: 1rem;
   border: 1px solid #777;
+  overflow-y: auto;
 `;
 
 const DetailPostPhoto = styled.img`

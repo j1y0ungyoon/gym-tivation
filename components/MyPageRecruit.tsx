@@ -1,125 +1,118 @@
 import { authService, dbService } from '@/firebase';
-import checkedLike from '../public/assets/images/checkedLike.png';
-import Image from 'next/image';
 import { collection, orderBy, getDocs, query, where } from 'firebase/firestore';
+
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import GalleryComment from './GalleryComment';
-import { Board, Gallery } from '@/pages/myPage/[...params]';
 
-type Like = {
+type Board = {
   id: string;
-  photo: string;
-  userId: string;
-  category: string;
   title: string;
+  userId: string;
   nickName: string;
-  createdAt: number;
-  like: string;
-};
-type LikeGet = {
-  paramsId: string;
-  galleryInformation: Gallery[];
-  boardInformation: Board[];
+  userPhoto: string;
+  participation: any;
+  selectedDays: string;
+  startTime: string;
+  endTime: string;
 };
 
-const MyPageLike = ({
-  paramsId,
-  galleryInformation,
-  boardInformation,
-}: LikeGet) => {
-  const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
-
+const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
+  const [getComment, setGetComment] = useState([] as any);
+  const [getRecruit, setGetRecruit] = useState([] as any);
   const router = useRouter();
-  const goToBoardDetailPost = (id: any) => {
+  const goToRecruitDetailDetailPost = (id: any) => {
     router.push({
-      pathname: `/boardDetail/${id}`,
+      pathname: `/recruitDetail/${id}`,
       query: {
         id,
       },
     });
   };
-  const goToGalleryDetailPost = (id: any) => {
-    router.push({
-      pathname: `/galleryDetail/${id}`,
-      query: {
-        id,
-      },
-    });
-  };
-  //배열 합치기
-  const combineData = boardInformation.concat(galleryInformation);
 
-  const getPostLike = async () => {
+  const getRecruitments = async () => {
     const q = query(
       collection(dbService, 'profile'),
       where('uid', '==', paramsId),
     );
     const data = await getDocs(q);
     data.docs.map((doc) => {
-      setLikeInFormation(doc.data().postLike);
+      setGetRecruit(() => [doc.data().userParticipation]);
     });
   };
 
+  const getCommentNumber = async () => {
+    const q = query(collection(dbService, 'comments'));
+    const data = await getDocs(q);
+    data.docs.map((doc) => {
+      setGetComment((prev: any) => [...prev, doc.data().postId]);
+    });
+  };
   useEffect(() => {
-    getPostLike();
-
-    return () => {};
+    getRecruitments();
+    getCommentNumber();
+    return () => {
+      getRecruitments();
+      getCommentNumber();
+    };
   }, [paramsId]);
 
   return (
     <MyPageBoardWrapper>
-      {combineData
-        .filter((item) => String(likeInformation).includes(item.id))
-        .map((item) => {
+      {getRecruit.map((items: []) => {
+        return items.map((item: Board) => {
           return (
             <MyPageBoardContainer
-              key={item.id}
               onClick={() => {
-                item.category === undefined
-                  ? goToGalleryDetailPost(item.id)
-                  : goToBoardDetailPost(item.id);
+                goToRecruitDetailDetailPost(item.id);
               }}
+              key={item.id}
             >
               <PhotoBox>
                 <ProfilePhoto>
-                  <Photo src={item.photo} />
+                  <Photo src={item.userPhoto} />
                 </ProfilePhoto>
               </PhotoBox>
               <TitleNickNameBox>
                 <TitleBox>
-                  <BoardCategory>
-                    {item.category === undefined ? '오운완 갤러리' : '게시판'}
-                  </BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
-
-                  <RecruitComment>[{item.comment}]</RecruitComment>
+                  <RecruitComment>
+                    [
+                    {
+                      getComment.filter((element: any) => item.id === element)
+                        .length
+                    }
+                    ]
+                  </RecruitComment>
                 </TitleBox>
                 <NickNameBox>
-                  <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>{item.createdAt}</NickNameText>
-                  <Image
-                    src={checkedLike}
-                    alt="좋아요"
-                    width={20}
-                    height={20}
-                    style={{ marginRight: '0.1vw', marginTop: '0.2vh' }}
-                  />
-                  <NickNameText> {item.like.length}</NickNameText>
+                  <TimeText> {item.selectedDays} </TimeText>
+                  <TimeText>
+                    {item.startTime} ~ {item.endTime}
+                  </TimeText>
+                  <RecruitLength>
+                    {item.participation.length}명 참여중
+                  </RecruitLength>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
           );
-        })}
+        });
+      })}
+
+      {/* // <MyPageBoardContainer
+          //   key={nanoid()}
+          //   // onClick={() => goToBoardDetailPost(item.id)}
+          // > */}
     </MyPageBoardWrapper>
   );
 };
 
-export default MyPageLike;
+export default MyPageRecruit;
 const MyPageBoardWrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: 61%;
+  overflow: auto;
   flex-wrap: wrap;
   padding-bottom: 1vh;
   padding-left: 1.5vw;
@@ -137,7 +130,6 @@ const MyPageBoardContainer = styled.div`
   padding: 2vh;
   height: 15vh;
   background-color: white;
-  border-color: black;
   border-style: solid;
   border-width: 0.1rem;
   border-radius: 15px;
@@ -150,13 +142,13 @@ const MyPageBoardContainer = styled.div`
 `;
 
 const PhotoBox = styled.div`
-  width: 20%;
+  width: 12%;
   height: 100%;
 `;
 const ProfilePhoto = styled.div`
-  width: 8vw;
-  height: 11vh;
-  border-radius: 1rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 70%;
   overflow: hidden;
 `;
 const Photo = styled.img`
@@ -168,9 +160,23 @@ const Photo = styled.img`
     transform: scale(1.2, 1.2);
   }
 `;
-const BoardCategory = styled.button`
-  width: 8vw;
-  height: 4.5vh;
+const RecruitLength = styled.span`
+  font-size: 1rem;
+  margin-right: 0.5vw;
+  margin-top: 1vh;
+  font-weight: bold;
+`;
+
+const BoardTitleText = styled.span`
+  font-size: 1.2rem;
+  color: black;
+  font-weight: bolder;
+  margin-top: 0.8vh;
+`;
+const TimeText = styled.button`
+  height: 4vh;
+  padding-left: 0.5vw;
+  padding-right: 0.5vw;
   font-size: 1.3rem;
   font-weight: bold;
   background-color: white;
@@ -178,20 +184,8 @@ const BoardCategory = styled.button`
   margin-right: 1vw;
 `;
 
-const BoardTitleText = styled.span`
-  font-size: 1.2rem;
-  font-weight: bolder;
-  margin-top: 0.8vh;
-`;
-const NickNameText = styled.span`
-  font-size: 1rem;
-  margin-right: 0.5vw;
-`;
-
 const TitleBox = styled.div`
   display: flex;
-  margin-top: 0.7vh;
-  margin-bottom: 0.7vh;
   width: 80%;
   height: 50%;
 `;

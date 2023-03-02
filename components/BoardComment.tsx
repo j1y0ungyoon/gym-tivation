@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useMutation } from '@tanstack/react-query';
 import { deleteBoardComment } from '@/pages/api/api';
 import { authService } from '@/firebase';
+import { doc, runTransaction } from 'firebase/firestore';
+import { dbService } from '@/firebase';
 
 const BoardComment = ({ item }: { item: BoardCommentType }) => {
   const user = authService.currentUser?.uid;
@@ -27,6 +29,15 @@ const BoardComment = ({ item }: { item: BoardCommentType }) => {
     if (answer) {
       try {
         await removeBoardComment(item.id);
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'posts', String(item.postId));
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment - 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
       } catch (error) {
         console.log('에러입니다', error);
       }
