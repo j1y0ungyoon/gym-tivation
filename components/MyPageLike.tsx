@@ -173,7 +173,12 @@ const BoardCategory = styled.button`
 
 const BoardTitleText = styled.span`
   font-size: 1.2rem;
+  max-width: 260px;
+  text-align: left;
   font-weight: bolder;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 const NickNameText = styled.span`
   font-size: 1rem;
@@ -184,7 +189,7 @@ const TitleBox = styled.div`
   display: flex;
   margin-top: 10px;
   margin-bottom: 5px;
-  width: 80%;
+  width: 100%;
   height: 50%;
 `;
 const NickNameBox = styled.div`

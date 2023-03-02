@@ -480,7 +480,7 @@ export default ProfileEdit;
 const InformationBox = styled.div`
   width: 900px;
   height: 280px;
-  padding-top: 10px;
+  padding-top: 0.5vh;
   overflow: hidden;
 `;
 const EditPhotoBox = styled.div`
@@ -525,10 +525,9 @@ const LevelBox = styled.div`
 const LevelHelpBox = styled.div`
   display: none;
   z-index: 2000;
-  width: 20%;
-  height: 15%;
-  top: 39%;
-  left: 30%;
+  width: 340px;
+  height: 160px;
+  margin-left: 120px;
   position: fixed;
   border-radius: 15px;
   background-color: white;
@@ -536,7 +535,7 @@ const LevelHelpBox = styled.div`
   padding: 0.9rem;
   border-style: solid;
   border-width: 1px;
-  border-color: gray;
+  border-color: black;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -620,10 +619,8 @@ const IntroductionEditText = styled.textarea`
 `;
 
 const EditButton = styled.button`
-  border-radius: 2rem;
-  background-color: white;
-  width: 60px;
   margin-left: 20px;
+  ${({ theme }) => theme.btn.btn50}
   :hover {
     cursor: pointer;
     background-color: black;

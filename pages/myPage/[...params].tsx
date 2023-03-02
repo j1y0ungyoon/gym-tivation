@@ -254,6 +254,7 @@ const MyPage = ({ params }: any) => {
                 />
               </GalleyBox>
             )}
+
             {meeting && (
               <GalleyBox>
                 <MyPageRecruit paramsId={paramsId} />
@@ -326,7 +327,7 @@ const MyPageWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper}
 `;
 const MyPageContainer = styled.div`
-  ${({ theme }) => theme.mainLayout.container}/* background-color: black; */
+  ${({ theme }) => theme.mainLayout.container}
 `;
 const ProfileBox = styled.div`
   float: left;
@@ -346,8 +347,9 @@ const NavigationBox = styled.div`
   display: flex;
   float: left;
   width: 63%;
-  height: 8%;
+  height: 9%;
   text-align: left;
+  margin-top: 2vh;
   margin-left: 50px;
   margin-bottom: 2vh;
   border-bottom-style: solid;
@@ -357,10 +359,8 @@ const NavigationBox = styled.div`
 
 const GalleyButton = styled.button`
   margin-right: auto;
-  border-radius: 2rem;
   background-color: white;
-  width: 130px;
-  height: 45px;
+  ${({ theme }) => theme.btn.category}
   :hover {
     cursor: pointer;
     background-color: black;
@@ -370,7 +370,7 @@ const GalleyButton = styled.button`
 
 const GalleyBox = styled.div`
   width: 98%;
-  height: 55%;
+  height: 100%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -380,24 +380,22 @@ const GalleyBox = styled.div`
 const MypageBox = styled.div`
   float: left;
   width: 70%;
-  height: 90%;
+  height: 51%;
   margin-left: 10px;
 `;
 
-const MyPageHeader = styled.div``;
-
 const ToggleButtonBox = styled.div`
   background-color: white;
-  width: 10vw;
+  width: 205px;
   margin: auto;
-  height: 5vh;
-  margin-bottom: 2vh;
+  height: 46px;
+  margin-bottom: 20px;
   border-radius: 30px;
 `;
 const ToggleButton = styled.button`
   background-color: white;
-  width: 5vw;
-  height: 5vh;
+  width: 102.5px;
+  height: 46px;
   border: none;
   border-radius: 30px;
   :hover {
@@ -412,15 +410,14 @@ const ToggleButton = styled.button`
 `;
 
 const FollowToggleButton = styled.button`
-  width: 5vw;
-  height: 5vh;
+  width: 102.5px;
+  height: 46px;
   background-color: black;
   color: white;
   border: none;
   border-radius: 30px;
 `;
 const LoginStateBox = styled.div`
-  height: 85%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -439,8 +436,8 @@ const ModalClose = styled.div`
 
 const FollowModal = styled.div`
   z-index: 2000;
-  width: 27%;
-  height: 60%;
+  width: 550px;
+  height: 600px;
   position: fixed;
   top: 50%;
   left: 50%;

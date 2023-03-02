@@ -52,7 +52,7 @@ const MyPageGalleyWrapper = styled.div`
 `;
 
 const GalleryContainer = styled.div`
-  width: 22%;
+  width: 22.5%;
   height: 25%;
   margin: 1vh;
   float: left;

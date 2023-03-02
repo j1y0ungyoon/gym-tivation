@@ -81,10 +81,10 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
                   <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
-                  <TimeText>
+                  <DayText>
                     <IconImg src="/assets/icons/myPage/Tear-off_calendar.svg" />
                     {item.selectedDays}
-                  </TimeText>
+                  </DayText>
                   <TimeText>
                     <IconImg src="/assets/icons/myPage/One_oclock.svg" />
                     {item.startTime} ~ {item.endTime}
@@ -131,22 +131,40 @@ const RecruitLength = styled.span`
   font-weight: bold;
 `;
 
-const TimeText = styled.button`
+const DayText = styled.button`
   height: 40px;
   padding-left: 10px;
   padding-right: 10px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   background-color: white;
   border-radius: 2rem;
   margin-right: 20px;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+const TimeText = styled.button`
+  height: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: white;
+  border-radius: 2rem;
+  margin-right: 20px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const IconImg = styled.img`
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 `;
 
 const MyPageBoardWrapper = styled.div`
@@ -176,7 +194,12 @@ const MyPageBoardContainer = styled.div`
 
 const BoardTitleText = styled.span`
   font-size: 1.2rem;
+  max-width: 260px;
+  text-align: left;
   font-weight: bolder;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 const TitleBox = styled.div`
   display: flex;
