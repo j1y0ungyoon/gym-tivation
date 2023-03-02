@@ -1,12 +1,5 @@
 import { authService, dbService, storage } from '@/firebase';
-import {
-  collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, doc, onSnapshot } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -76,8 +69,6 @@ const Detail = ({ params }: any) => {
   const [editDetailContent, setEditDetailContent] = useState<string | any>('');
   // const [editImageUpload, setEditImageUpload] = useState<any>('');
   const [profile, setProfile] = useState<any>('');
-  const [lv, setLv] = useState<any>('');
-  const [lvName, setLvName] = useState<any>([]);
   const [id] = params;
   const router = useRouter();
   const user = authService.currentUser?.uid;
@@ -174,15 +165,6 @@ const Detail = ({ params }: any) => {
   };
 
   useEffect(() => {
-    // const getProfile = onSnapshot(doc(dbService, 'profile', id), (doc) => {
-    //   const data = doc.data();
-    //   const getProfileData: any = {
-    //     id: doc.id,
-    //     lvName: data?.lvName,
-    //     lv: data?.lv,
-    //   };
-    //   setProfile(getProfileData);
-    // });
     const unsubscribe = getPost();
 
     return () => {
@@ -197,9 +179,6 @@ const Detail = ({ params }: any) => {
     setEditDetailTitle(detailPost?.title);
     setEditDetailCategory(detailPost?.category);
     setEditDetailContent(detailPost?.content);
-    setLv(profile?.lv);
-    setLvName(profile?.lvName);
-
     // setEditDetailPhoto(detailPost?.photo);
   };
   //기존 게시글 read

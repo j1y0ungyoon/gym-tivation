@@ -9,16 +9,15 @@ import {
 } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import { nanoid } from 'nanoid';
+// import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
-import { profile } from 'console';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
