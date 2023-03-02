@@ -43,7 +43,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         createdAt: Date.now(),
       };
 
-      if (category === '동료 모집') {
+      if (category === '동료 모집' || '게시판' || '갤러리') {
         await addDoc(collection(dbService, 'comments'), newComment)
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
