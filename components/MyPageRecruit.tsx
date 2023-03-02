@@ -1,4 +1,4 @@
-import { authService, dbService } from '@/firebase';
+import { dbService } from '@/firebase';
 import { collection, orderBy, getDocs, query, where } from 'firebase/firestore';
 
 import { useRouter } from 'next/router';
@@ -15,13 +15,13 @@ type Board = {
   selectedDays: string;
   startTime: string;
   endTime: string;
+  comment: number;
 };
 
 const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
-  const [getComment, setGetComment] = useState([] as any);
-  const [getRecruit, setGetRecruit] = useState([] as any);
+  const [getRecruit, setGetRecruit] = useState<Board[]>([]);
   const router = useRouter();
-  const goToRecruitDetailDetailPost = (id: any) => {
+  const goToRecruitDetailPost = (id: any) => {
     router.push({
       pathname: `/recruitDetail/${id}`,
       query: {
@@ -30,41 +30,43 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
     });
   };
 
+  //테스트
   const getRecruitments = async () => {
     const q = query(
-      collection(dbService, 'profile'),
-      where('uid', '==', paramsId),
+      collection(dbService, 'recruitments'),
+      orderBy('createdAt', 'desc'),
     );
     const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetRecruit(() => [doc.data().userParticipation]);
-    });
+    const getBoardData = data.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setGetRecruit(getBoardData);
   };
 
-  const getCommentNumber = async () => {
-    const q = query(collection(dbService, 'comments'));
-    const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setGetComment((prev: any) => [...prev, doc.data().postId]);
-    });
-  };
   useEffect(() => {
     getRecruitments();
-    getCommentNumber();
     return () => {
       getRecruitments();
-      getCommentNumber();
     };
   }, [paramsId]);
 
   return (
     <MyPageBoardWrapper>
-      {getRecruit.map((items: []) => {
-        return items.map((item: Board) => {
+      {getRecruit
+        .filter(
+          (item) =>
+            item.participation
+              .map((items: any) => {
+                return items.userId;
+              })
+              .includes(paramsId) || item.userId === paramsId,
+        )
+        .map((item) => {
           return (
             <MyPageBoardContainer
               onClick={() => {
-                goToRecruitDetailDetailPost(item.id);
+                goToRecruitDetailPost(item.id);
               }}
               key={item.id}
             >
@@ -76,73 +78,35 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
               <TitleNickNameBox>
                 <TitleBox>
                   <BoardTitleText>{item.title}</BoardTitleText>
-                  <RecruitComment>
-                    [
-                    {
-                      getComment.filter((element: any) => item.id === element)
-                        .length
-                    }
-                    ]
-                  </RecruitComment>
+                  <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
-                  <TimeText> {item.selectedDays} </TimeText>
                   <TimeText>
+                    <IconImg src="/assets/icons/myPage/Tear-off_calendar.svg" />
+                    {item.selectedDays}
+                  </TimeText>
+                  <TimeText>
+                    <IconImg src="/assets/icons/myPage/One_oclock.svg" />
                     {item.startTime} ~ {item.endTime}
                   </TimeText>
                   <RecruitLength>
-                    {item.participation.length}명 참여중
+                    <IconImg src="/assets/icons/myPage/gymtivation_logo_miniicon.svg" />
+                    {item.userId.split(',').length + item.participation.length}
+                    명 참여중
                   </RecruitLength>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
           );
-        });
-      })}
-
-      {/* // <MyPageBoardContainer
-          //   key={nanoid()}
-          //   // onClick={() => goToBoardDetailPost(item.id)}
-          // > */}
+        })}
     </MyPageBoardWrapper>
   );
 };
 
 export default MyPageRecruit;
-const MyPageBoardWrapper = styled.div`
-  width: 100%;
-  height: 61%;
-  overflow: auto;
-  flex-wrap: wrap;
-  padding-bottom: 1vh;
-  padding-left: 1.5vw;
-  padding-right: 1.5vw;
-  overflow: auto;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const MyPageBoardContainer = styled.div`
-  display: flex;
-  margin-top: 1vh;
-  width: 97%;
-  padding: 2vh;
-  height: 15vh;
-  background-color: white;
-  border-style: solid;
-  border-width: 0.1rem;
-  border-radius: 15px;
-  margin-bottom: 2vh;
-  :hover {
-    cursor: pointer;
-    transform: scale(1.05, 1.05);
-    transition: 0.3s;
-  }
-`;
 
 const PhotoBox = styled.div`
-  width: 12%;
+  width: 17%;
   height: 100%;
 `;
 const ProfilePhoto = styled.div`
@@ -162,46 +126,78 @@ const Photo = styled.img`
 `;
 const RecruitLength = styled.span`
   font-size: 1rem;
-  margin-right: 0.5vw;
-  margin-top: 1vh;
+  margin-top: 5px;
+  margin-right: 10px;
   font-weight: bold;
+`;
+
+const TimeText = styled.button`
+  height: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: white;
+  border-radius: 2rem;
+  margin-right: 20px;
+`;
+
+const IconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5px;
+  margin-bottom: 5px;
+`;
+
+const MyPageBoardWrapper = styled.div`
+  margin-left: 40px;
+  width: 92%;
+  height: 70%;
+  flex-wrap: wrap;
+`;
+
+const MyPageBoardContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 40%;
+  padding: 10px;
+  background-color: white;
+  border-color: black;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-radius: 15px;
+  margin-bottom: 2vh;
+  :hover {
+    cursor: pointer;
+    transform: scale(1.05, 1.05);
+    transition: 0.3s;
+  }
 `;
 
 const BoardTitleText = styled.span`
   font-size: 1.2rem;
-  color: black;
   font-weight: bolder;
-  margin-top: 0.8vh;
 `;
-const TimeText = styled.button`
-  height: 4vh;
-  padding-left: 0.5vw;
-  padding-right: 0.5vw;
-  font-size: 1.3rem;
-  font-weight: bold;
-  background-color: white;
-  border-radius: 2rem;
-  margin-right: 1vw;
-`;
-
 const TitleBox = styled.div`
   display: flex;
-  width: 80%;
-  height: 50%;
+  width: 100%;
+  height: 30%;
+  margin-top: 5px;
+  margin-bottom: 10px;
 `;
 const NickNameBox = styled.div`
   display: flex;
-  width: 60%;
+  width: 100%;
   height: 30%;
 `;
 const TitleNickNameBox = styled.div`
   width: 100%;
   height: 100%;
+  padding-left: 10px;
 `;
 const RecruitComment = styled.span`
   font-size: 1.2rem;
   color: gray;
   font-weight: bolder;
-  margin-left: 0.5vw;
-  margin-top: 0.8vh;
+  margin-left: 15px;
 `;

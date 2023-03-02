@@ -7,6 +7,8 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
+  doc,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -48,6 +50,15 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
         setInputComment('');
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'recruitments', id);
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment + 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
         return;
       }
     }

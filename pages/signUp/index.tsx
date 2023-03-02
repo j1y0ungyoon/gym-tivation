@@ -127,7 +127,7 @@ const SignUp = () => {
 
       if (!passwordRegex.test(passwordCurrent)) {
         setPasswordMessage(
-          '대문자, 소문자, 특수문자 포함 8글자 이상 15글자 이하로 적어주세요',
+          '대문자, 숫자, 특수문자 포함 8글자 이상 15글자 이하로 적어주세요',
         );
         setIsValidPassword(false);
       } else {

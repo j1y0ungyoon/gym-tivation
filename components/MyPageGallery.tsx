@@ -42,8 +42,6 @@ export default MyPageGalley;
 const MyPageGalleyWrapper = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-wrap: wrap;
   padding-bottom: 1vh;
   padding-left: 1.5vw;
   padding-right: 1.5vw;
@@ -54,12 +52,15 @@ const MyPageGalleyWrapper = styled.div`
 `;
 
 const GalleryContainer = styled.div`
+  width: 22%;
+  height: 25%;
   margin: 1vh;
+  float: left;
 `;
 
 const GalleryPhoto = styled.img`
-  width: 14vw;
-  height: 18vh;
+  width: 100%;
+  height: 100%;
   border-radius: 1rem;
   :hover {
     cursor: pointer;

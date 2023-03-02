@@ -85,9 +85,10 @@ export const theme = {
     container: `
       min-width : 640px;
       width : 100%;
-      max-width : 960px;
+      max-width : 1220px;
       height : 100%;
       margin : 20px;
+      margin : 0 auto;
     `,
   },
   font: {

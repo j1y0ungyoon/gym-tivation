@@ -5,7 +5,6 @@ import {
   collection,
   query,
   onSnapshot,
-  where,
   getDocs,
   orderBy,
 } from 'firebase/firestore';
@@ -14,10 +13,9 @@ import MyPageCalendar from '@/components/MyPageCalendar';
 import LoginState from '@/components/LoginState';
 import MyPageGalley from '@/components/MyPageGallery';
 import MyPageLike from '@/components/MyPageLike';
-import { useRouter } from 'next/router';
-import { type } from 'os';
 import MyPageBoard from '@/components/MyPageBoard';
 import MyPageRecruit from '@/components/MyPageRecruit';
+import { theme } from '@/styles/theme';
 
 export type ProfileItem = {
   id: string;
@@ -175,7 +173,6 @@ const MyPage = ({ params }: any) => {
     }));
     setBoardInFormation(getBoardData);
   };
-  //post 댓글 불러오기
 
   //MyPageGallery 불러오기
   const getGalleryPost = async () => {
@@ -193,12 +190,10 @@ const MyPage = ({ params }: any) => {
   useEffect(() => {
     profileOnSnapShot();
     getBoardPost();
-
     getGalleryPost();
     return () => {
       profileOnSnapShot();
       getBoardPost();
-
       getGalleryPost();
       // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
     };
@@ -232,44 +227,38 @@ const MyPage = ({ params }: any) => {
             {likeButton}
             {meetingButton}
           </NavigationBox>
-          {galley && (
-            <GalleyBox>
-              <MyPageGalley
-                paramsId={paramsId}
-                galleryInformation={galleryInformation}
-              />
-            </GalleyBox>
-          )}
-
           <MypageBox>
-            <MyPageHeader>
-              {board && (
-                <GalleyBox>
-                  <MyPageBoard
-                    paramsId={paramsId}
-                    boardInformation={boardInformation}
-                  />
-                </GalleyBox>
-              )}
-            </MyPageHeader>
-            <MyPageHeader>
-              {like && (
-                <GalleyBox>
-                  <MyPageLike
-                    galleryInformation={galleryInformation}
-                    boardInformation={boardInformation}
-                    paramsId={paramsId}
-                  />
-                </GalleyBox>
-              )}
-            </MyPageHeader>
-            <MyPageHeader>
-              {meeting && (
-                <GalleyBox>
-                  <MyPageRecruit paramsId={paramsId} />
-                </GalleyBox>
-              )}
-            </MyPageHeader>
+            {galley && (
+              <GalleyBox>
+                <MyPageGalley
+                  paramsId={paramsId}
+                  galleryInformation={galleryInformation}
+                />
+              </GalleyBox>
+            )}
+
+            {board && (
+              <GalleyBox>
+                <MyPageBoard
+                  paramsId={paramsId}
+                  boardInformation={boardInformation}
+                />
+              </GalleyBox>
+            )}
+            {like && (
+              <GalleyBox>
+                <MyPageLike
+                  galleryInformation={galleryInformation}
+                  boardInformation={boardInformation}
+                  paramsId={paramsId}
+                />
+              </GalleyBox>
+            )}
+            {meeting && (
+              <GalleyBox>
+                <MyPageRecruit paramsId={paramsId} />
+              </GalleyBox>
+            )}
             {followModal && (
               <>
                 <ModalClose
@@ -333,49 +322,45 @@ export function getServerSideProps({ params: { params } }: any) {
 export default MyPage;
 
 const MyPageWrapper = styled.div`
-  display: flex;
   text-align: center;
-  width: 100%;
-  background-color: #fffcf3;
+  ${({ theme }) => theme.mainLayout.wrapper}
 `;
 const MyPageContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  margin-left: 2vw;
-  margin-top: 2vh;
+  ${({ theme }) => theme.mainLayout.container}/* background-color: black; */
 `;
 const ProfileBox = styled.div`
   float: left;
-  width: 60%;
-  height: 32%;
+  width: 70%;
+  height: 35%;
 `;
 const ScheduleBox = styled.div`
   float: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
   width: 25%;
-  height: 100vh;
 `;
 const Schedule = styled.div`
-  background-color: white;
-  width: 20vw;
+  width: 100%;
 `;
 const NavigationBox = styled.div`
   display: flex;
   float: left;
-  width: 67%;
-  height: 7%;
+  width: 63%;
+  height: 8%;
   text-align: left;
-  margin-left: 4vw;
+  margin-left: 50px;
+  margin-bottom: 2vh;
   border-bottom-style: solid;
   border-color: black;
   border-width: 0.1rem;
 `;
 
 const GalleyButton = styled.button`
-  margin-right: 4vw;
+  margin-right: auto;
   border-radius: 2rem;
   background-color: white;
-  width: 6vw;
-  height: 4.5vh;
+  width: 130px;
+  height: 45px;
   :hover {
     cursor: pointer;
     background-color: black;
@@ -384,23 +369,22 @@ const GalleyButton = styled.button`
 `;
 
 const GalleyBox = styled.div`
-  position: absolute;
-  width: 65%;
+  width: 98%;
   height: 55%;
-  margin-left: 2vw;
-  top: 52%;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MypageBox = styled.div`
   float: left;
   width: 70%;
+  height: 90%;
+  margin-left: 10px;
 `;
 
-const MyPageHeader = styled.div`
-  display: flex;
-  margin-bottom: 2vh;
-  color: #495057;
-`;
+const MyPageHeader = styled.div``;
 
 const ToggleButtonBox = styled.div`
   background-color: white;

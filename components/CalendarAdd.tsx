@@ -28,7 +28,7 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
   };
 
   return (
-    <CalendarContentBox>
+    <>
       <CalendarTextArea
         spellCheck="false"
         value={calendarText}
@@ -39,19 +39,16 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
         onKeyPress={onClickCalendarAdd}
       />
       {/* <CalendarButton onClick={onClickCalendarAdd}>등록</CalendarButton> */}
-    </CalendarContentBox>
+    </>
   );
 };
 
 export default CalendarAdd;
 
-const CalendarContentBox = styled.div``;
 const CalendarTextArea = styled.textarea`
-  margin-top: 4vh;
-  margin-bottom: 2vh;
   padding: 12px;
-  width: 18vw;
-  height: 50vh;
+  width: 100%;
+  height: 100%;
   border-radius: 20px;
   border-style: solid;
   border-width: 0.1rem;

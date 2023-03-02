@@ -53,7 +53,7 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
                     alt="좋아요"
                     width={20}
                     height={20}
-                    style={{ marginRight: '0.1vw', marginTop: '0.2vh' }}
+                    style={{ marginRight: '4px', marginTop: '3px' }}
                   />
                   <NickNameText> {item.like.length}</NickNameText>
                 </NickNameBox>
@@ -67,24 +67,17 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
 
 export default MyPageBoard;
 const MyPageBoardWrapper = styled.div`
-  width: 100%;
-  height: 100%;
+  margin-left: 40px;
+  width: 92%;
+  height: 70%;
   flex-wrap: wrap;
-  padding-bottom: 1vh;
-  padding-left: 1.5vw;
-  padding-right: 1.5vw;
-  overflow: auto;
-  ::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 const MyPageBoardContainer = styled.div`
   display: flex;
-  margin-top: 1vh;
-  width: 97%;
-  padding: 2vh;
-  height: 15vh;
+  width: 100%;
+  height: 40%;
+  padding: 10px;
   background-color: white;
   border-color: black;
   border-style: solid;
@@ -99,12 +92,12 @@ const MyPageBoardContainer = styled.div`
 `;
 
 const PhotoBox = styled.div`
-  width: 20%;
+  width: 28%;
   height: 100%;
 `;
 const ProfilePhoto = styled.div`
-  width: 8vw;
-  height: 11vh;
+  width: 95%;
+  height: 100%;
   border-radius: 1rem;
   overflow: hidden;
 `;
@@ -118,45 +111,44 @@ const Photo = styled.img`
   }
 `;
 const BoardCategory = styled.button`
-  width: 8vw;
-  height: 4.5vh;
-  font-size: 1.3rem;
+  width: 150px;
+  height: 40px;
+  font-size: 1.2rem;
   font-weight: bold;
   background-color: white;
   border-radius: 2rem;
-  margin-right: 1vw;
+  margin-right: 15px;
 `;
 
 const BoardTitleText = styled.span`
   font-size: 1.2rem;
   font-weight: bolder;
-  margin-top: 0.8vh;
 `;
 const NickNameText = styled.span`
   font-size: 1rem;
-  margin-right: 0.5vw;
+  margin-right: 10px;
 `;
 
 const TitleBox = styled.div`
   display: flex;
-  margin-top: 0.7vh;
-  margin-bottom: 0.7vh;
+  margin-top: 10px;
+  margin-bottom: 5px;
   width: 80%;
   height: 50%;
 `;
 const NickNameBox = styled.div`
   display: flex;
-  width: 60%;
+  width: 80%;
   height: 30%;
 `;
 const TitleNickNameBox = styled.div`
   width: 100%;
   height: 100%;
+  padding-left: 10px;
 `;
 const RecruitComment = styled.span`
   font-size: 1.2rem;
   color: gray;
   font-weight: bolder;
-  margin-left: 0.5vw;
-  margin-top: 0.8vh;
+  margin-left: 15px;
 `;

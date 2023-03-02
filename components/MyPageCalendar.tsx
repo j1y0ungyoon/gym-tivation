@@ -81,7 +81,7 @@ const MyPageCalendar = () => {
   }, []);
   return (
     <CalendarWrapper>
-      <>
+      <CalendarBox>
         <CalendarCSS>
           <Calendar
             onChange={setValue}
@@ -114,12 +114,14 @@ const MyPageCalendar = () => {
             }}
           />
         </CalendarCSS>
-        {markCompare === undefined ? (
-          <>
-            <CalendarAdd markDate={markDate} userUid={userUid} />
-          </>
-        ) : (
-          calendarInformation
+      </CalendarBox>
+      {markCompare === undefined ? (
+        <CalendarAddBox>
+          <CalendarAdd markDate={markDate} userUid={userUid} />
+        </CalendarAddBox>
+      ) : (
+        <CalendarAddBox>
+          {calendarInformation
             .filter((item) => item.date === markDate)
             .map((item) => {
               return (
@@ -130,9 +132,9 @@ const MyPageCalendar = () => {
                   setMark={setMark}
                 />
               );
-            })
-        )}
-      </>
+            })}
+        </CalendarAddBox>
+      )}
     </CalendarWrapper>
   );
 };
@@ -140,12 +142,15 @@ const MyPageCalendar = () => {
 export default MyPageCalendar;
 
 const CalendarWrapper = styled.div`
+  width: 100%;
   border-radius: 16px;
   border-style: solid;
-  padding-top: 2vh;
-  padding-left: 1vw;
-  padding-right: 1vw;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 15px;
   border-width: 0.1rem;
+  background-color: white;
 `;
 const DotBox = styled.div`
   width: 100%;
@@ -161,10 +166,16 @@ const CalendarDot = styled.div`
   border-radius: 50%;
   background-color: green;
 `;
+const CalendarBox = styled.div`
+  width: 100%;
+  height: 360px;
+`;
+const CalendarAddBox = styled.div`
+  height: 45vh;
+`;
 
 const CalendarCSS = styled.div`
   .react-calendar {
-    width: 350px;
     max-width: 100%;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;

@@ -130,7 +130,6 @@ const ProfileEdit = ({
           uid: user.uid,
         });
       }
-      alert('변경완료');
     } catch (error: any) {
       alert(error.message);
     }
@@ -144,8 +143,6 @@ const ProfileEdit = ({
       await updateDoc(doc(dbService, 'profile', item.id), {
         follower: arrayUnion(user),
       });
-
-      alert('팔로우 완료');
     }
   };
 
@@ -157,7 +154,6 @@ const ProfileEdit = ({
       await updateDoc(doc(dbService, 'profile', item.id), {
         follower: arrayRemove(user),
       });
-      alert('언파로우 완료');
     }
   };
   const getBoardNumber = async () => {
@@ -321,6 +317,7 @@ const ProfileEdit = ({
                 readOnly
                 value={item.introduction}
                 placeholder="자기소개를 적어주세요."
+                maxLength={50}
               />
             </EditNickNameBox>
           </InformationBox>
@@ -466,7 +463,7 @@ const ProfileEdit = ({
                   onChange={(e) => {
                     setIntroduction(e.target.value);
                   }}
-                  maxLength={104}
+                  maxLength={50}
                   placeholder="자기소개를 입력해주세요."
                 />
               </EditNickNameBox>
@@ -481,26 +478,27 @@ const ProfileEdit = ({
 export default ProfileEdit;
 
 const InformationBox = styled.div`
-  width: 100%;
-  height: 100%;
-  padding-top: 1vh;
+  width: 900px;
+  height: 280px;
+  padding-top: 10px;
   overflow: hidden;
 `;
 const EditPhotoBox = styled.div`
-  padding-top: 1vh;
-  width: 14vw;
-  height: 50vh;
+  padding-top: 10px;
+  width: 250px;
+  height: 250px;
   float: left;
 `;
 
 const EditNickNameBox = styled.div`
-  width: 30vw;
-  height: 50vh;
+  width: 600px;
+  padding-top: 10px;
+  height: 250px;
   float: left;
   text-align: left;
 `;
 const NameBox = styled.div`
-  height: 80%;
+  height: 40px;
 `;
 const ProfilePhoto = styled.div`
   width: 150px;
@@ -516,7 +514,7 @@ const Photo = styled.img`
 `;
 const LevelBox = styled.div`
   position: relative;
-  margin-top: 1vh;
+  margin-top: 8px;
   :hover {
     cursor: help;
     .levelHelpBox {
@@ -529,8 +527,8 @@ const LevelHelpBox = styled.div`
   z-index: 2000;
   width: 20%;
   height: 15%;
-  top: 41%;
-  left: 18%;
+  top: 39%;
+  left: 30%;
   position: fixed;
   border-radius: 15px;
   background-color: white;
@@ -569,13 +567,13 @@ const LevelTextNumber = styled.span`
   color: red;
 `;
 const NickNameAreaBox = styled.div`
-  margin-top: 1vh;
-  height: 15%;
+  margin-top: 10px;
+  height: 70px;
 `;
 const NickNameText = styled.span`
   font-size: 1.2rem;
   font-weight: bold;
-  margin-right: 1vw;
+  margin-right: 20px;
 `;
 const AreaText = styled.span`
   font-size: 1rem;
@@ -583,43 +581,49 @@ const AreaText = styled.span`
   color: black;
 `;
 const IntroductionText = styled.textarea`
-  margin-top: 3vh;
+  margin-top: 16px;
   font-size: 16px;
   border: none;
-  width: 24vw;
-  height: 8vh;
+  width: 300px;
+  height: 72px;
   text-align: left;
   resize: none;
-  overflow: hidden;
+  overflow: auto;
   background-color: #fffcf3;
+  overflow: auto;
   :focus {
     outline: none;
   }
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 const IntroductionEditText = styled.textarea`
-  margin-top: 3vh;
+  margin-top: 16px;
   font-size: 16px;
   border: none;
-  width: 24vw;
-  height: 8vh;
+  width: 300px;
+  height: 72px;
   text-align: left;
   resize: none;
-  overflow: hidden;
+  overflow: auto;
   background-color: #fffcf3;
   border-bottom-color: black;
   border-bottom-style: solid;
-  border-width: 0.1rem;
+  border-bottom-width: 0.1rem;
   :focus {
     outline: none;
+  }
+  ::-webkit-scrollbar {
+    display: none;
   }
 `;
 
 const EditButton = styled.button`
   border-radius: 2rem;
   background-color: white;
-  width: 4vw;
-  height: 3.9vh;
-  margin-left: 1vw;
+  width: 60px;
+  margin-left: 20px;
   :hover {
     cursor: pointer;
     background-color: black;
@@ -628,8 +632,8 @@ const EditButton = styled.button`
 `;
 
 const TextInput = styled.input`
-  width: 8vw;
-  height: 2.6vh;
+  width: 160px;
+  height: 26px;
   border: none;
   font-size: 1.2rem;
   font-weight: bold;
@@ -644,20 +648,20 @@ const TextInput = styled.input`
 `;
 
 const Select = styled.select`
-  width: 4vw;
+  width: 60px;
   font-size: 1rem;
   background-color: #fffcf3;
-  margin-left: 1vw;
+  margin-left: 10px;
   border: none;
   :focus {
     outline: none;
   }
 `;
 const InstagramInput = styled.input`
-  width: 8vw;
-  height: 2vh;
+  width: 160px;
+  height: 25px;
   border: none;
-  font-size: 15px;
+  font-size: 16px;
   color: black;
   font-weight: 700;
   text-align: left;
@@ -671,11 +675,12 @@ const InstagramInput = styled.input`
 `;
 const InstagramImage = styled.img`
   width: 1.5rem;
-  margin-left: 1vh;
+  margin-left: 8px;
 `;
 const InstagramBox = styled.div`
-  margin-top: 1vh;
+  margin-top: 10px;
   color: black;
+  font-size: 16px;
   font-weight: 700;
   a:link {
     color: black;
@@ -690,13 +695,13 @@ const InstagramBox = styled.div`
   }
 `;
 const FollowBox = styled.div`
-  margin-top: 4vh;
+  margin-top: 36px; ;
 `;
 
 const FollowText = styled.span`
   font-weight: bold;
   font-size: 1.2rem;
-  margin-right: 0.5vw;
+  margin-right: 8px;
   :hover {
     cursor: pointer;
     color: gray;
@@ -705,12 +710,12 @@ const FollowText = styled.span`
 const PostNumberText = styled.span`
   font-weight: bold;
   font-size: 1.2rem;
-  margin-right: 0.5vw;
+  margin-right: 8px;
 `;
 const FollowNumberText = styled.span`
   font-weight: bolder;
   font-size: 1.2rem;
-  margin-right: 0.5vw;
+  margin-right: 8px;
 `;
 
 const TextValidation = styled.span`
@@ -718,9 +723,7 @@ const TextValidation = styled.span`
   margin-left: 1vw;
   font-size: 12px;
 `;
-const InputBox = styled.div`
-  height: 15vh;
-`;
+const InputBox = styled.div``;
 
 const HelpLvText = styled.span`
   font-size: 1.2rem;
@@ -730,7 +733,7 @@ const HelpLvText = styled.span`
 const LevelIcon = styled.img`
   width: 2.5rem;
   height: 2.5rem;
-  margin-right: 0.3vw;
-  margin-bottom: 0.5vh;
+  margin-right: 8px;
+  margin-bottom: 6px;
   border-radius: 50%;
 `;
