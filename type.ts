@@ -171,6 +171,9 @@ export interface BoardPostType {
   userId?: string;
   nickName?: string;
   like?: string;
+  usePhoto?: string;
+  userLv?: string;
+  userLvName?: string;
 }
 export interface GalleryBoardPostType {
   title?: string;
@@ -182,4 +185,7 @@ export interface GalleryBoardPostType {
   userId?: string;
   nickName?: string;
   like?: string;
+  userPhoto?: string;
+  userLv?: string;
+  userLvName?: string;
 }

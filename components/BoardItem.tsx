@@ -21,10 +21,12 @@ const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
             item={boardPost.item}
             title={boardPost.title}
             id={boardPost.id}
+            userId={boardPost.userId}
             nickName={boardPost.nickName}
             category={boardPost.category}
-            photo={boardPost.photo}
+            // photo={boardPost.photo}
             like={boardPost.like}
+            createdAt={boardPost.createdAt}
           />
         );
       })}
@@ -35,7 +37,6 @@ const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
 const BoardList = styled.div`
   width: 100%;
   height: 100%;
-  border-radius: 1rem;
   overflow: auto;
 `;
 
