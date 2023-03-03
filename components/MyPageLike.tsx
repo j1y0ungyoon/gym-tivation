@@ -82,11 +82,13 @@ const MyPageLike = ({
                   : goToBoardDetailPost(item.id);
               }}
             >
-              <PhotoBox>
-                <ProfilePhoto>
-                  <Photo src={item.photo} />
-                </ProfilePhoto>
-              </PhotoBox>
+              {item.photo ? (
+                <PhotoBox>
+                  <ProfilePhoto>
+                    <Photo src={item.photo} />
+                  </ProfilePhoto>
+                </PhotoBox>
+              ) : null}
               <TitleNickNameBox>
                 <TitleBox>
                   <BoardCategory>
