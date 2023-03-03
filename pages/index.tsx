@@ -2,65 +2,121 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { authService, dbService } from '@/firebase';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
+type ImgBoxProps = {
+  mainImg: string;
+};
 
 const Home = () => {
   const user = authService.currentUser;
 
-  const [mainImg, setMainImg] = useState<any>([]);
+  const [mainImgs, setMainImgs] = useState<any>([]);
 
   useEffect(() => {
     const getGallery = async () => {
-      const q = await getDocs(query(collection(dbService, 'gallery')));
+      const q = await getDocs(
+        query(
+          collection(dbService, 'gallery'),
+          orderBy('like', 'desc'),
+          limit(5),
+        ),
+      );
 
       const gallery = q.docs.map((doc) => {
-        return doc.data();
+        return doc.data().photo;
       });
 
-      setMainImg(gallery);
+      setMainImgs(gallery);
     };
     getGallery();
   }, []);
 
+  const settings = {
+    className: 'center',
+    dots: false,
+    centerMode: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    slidesToShow: 3,
+    slideToScroll: 1,
+    centerPadding: '60px',
+    speed: 500,
+    arrows: false,
+  };
+
   return (
     <HomeWrapper>
-      <TitleText>현재 함께 운동중인 동료들 2683명!</TitleText>
-      <ImgContainer>
-        <ImgBox style={{ zIndex: 0 }} src={`${mainImg[2]?.photo}`} />
-        <ImgBox style={{ zIndex: 50 }} src={`${mainImg[1]?.photo}`} />
-        <ImgBox style={{ zIndex: 100 }} src={`${mainImg[0]?.photo}`} />
-      </ImgContainer>
+      <HomeContainer>
+        <TitleText>현재 함께 운동중인 동료들 2683명!</TitleText>
+        <SliderContainer {...settings}>
+          {mainImgs?.map((mainImg: string) => {
+            return <Img key={mainImg} mainImg={mainImg} />;
+          })}
+        </SliderContainer>
+      </HomeContainer>
     </HomeWrapper>
   );
 };
 
 const HomeWrapper = styled.main`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  ${({ theme }) => theme.mainLayout.wrapper}
+`;
+
+const HomeContainer = styled.div`
+  ${({ theme }) => theme.mainLayout.container}
 `;
 
 const TitleText = styled.h1`
+  height: 60px;
   margin-top: 50px;
   font-size: 3rem;
   font-weight: bold;
+  text-align: center;
 `;
 
-const ImgContainer = styled.section`
-  margin-top: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const Img = styled.div<ImgBoxProps>`
+  background-image: ${(props) => `url(${props.mainImg})`};
+  background-size: cover;
+  background-position: center center;
 `;
 
-const ImgBox = styled.img`
-  margin-left: -50px;
-  width: 400px;
-  height: 600px;
-  /* border: 1px solid red; */
-  border-radius: 200px;
-  object-fit: cover;
+const SliderContainer = styled(Slider)`
+  width: 100%;
+  height: calc(100% - 120px);
+
+  .slick-list {
+    width: 100%;
+    height: 100%;
+  }
+
+  .silck-track {
+  }
+
+  .slick-slide {
+    min-height: 740px;
+    height: calc(100vh - 240px);
+    display: flex;
+    align-items: center;
+  }
+  .slick-slide div {
+    width: 100%;
+  }
+  .slick-slide div div {
+    height: 500px;
+    border-radius: 500px;
+    object-fit: cover;
+  }
+  .slick-center div div {
+    height: 500px;
+    border-radius: 500px;
+    transition: all 300ms ease;
+    transform: scale(1.4);
+  }
 `;
 
 export default Home;

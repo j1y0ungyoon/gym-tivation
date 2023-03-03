@@ -37,7 +37,7 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
   };
 
   return (
-    <CalendarContentBox key={item.id}>
+    <>
       <CalendarTextArea
         value={textAreaContent}
         spellCheck="false"
@@ -47,24 +47,24 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
         placeholder="입력시 Enter 키를 눌러주세요."
         onKeyPress={(e) => onClickEditCalendar(e, item.id)}
       />
-    </CalendarContentBox>
+    </>
   );
 };
 
 export default CalendarEdit;
 
-const CalendarContentBox = styled.div``;
 const CalendarTextArea = styled.textarea`
-  margin-top: 4vh;
-  margin-bottom: 2vh;
-  padding: 12px;
-  width: 18vw;
-  height: 50vh;
+  padding: 8px;
+  height: 100%;
+  width: 100%;
   border-radius: 20px;
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
-  overflow: none;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   resize: none;
   :focus {
     outline: none;

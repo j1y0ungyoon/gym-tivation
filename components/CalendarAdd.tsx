@@ -28,36 +28,36 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
   };
 
   return (
-    <CalendarContentBox>
+    <>
       <CalendarTextArea
         spellCheck="false"
         value={calendarText}
         onChange={(e) => {
           setCalendarText(e.target.value);
         }}
-        placeholder="입력시 Enter 키를 눌러주세요."
+        placeholder="메모장처럼 일지를 작성하세요!"
         onKeyPress={onClickCalendarAdd}
       />
       {/* <CalendarButton onClick={onClickCalendarAdd}>등록</CalendarButton> */}
-    </CalendarContentBox>
+    </>
   );
 };
 
 export default CalendarAdd;
 
-const CalendarContentBox = styled.div``;
 const CalendarTextArea = styled.textarea`
-  margin-top: 4vh;
-  margin-bottom: 2vh;
-  padding: 12px;
-  width: 18vw;
-  height: 50vh;
+  padding: 8px;
+  width: 100%;
+  height: 100%;
   border-radius: 20px;
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
-  overflow: none;
+  overflow: auto;
   resize: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   :focus {
     outline: none;
   }

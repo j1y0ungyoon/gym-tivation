@@ -129,10 +129,10 @@ const UserWrapper = styled.div`
   z-index: 1000;
   position: absolute;
   overflow: auto;
-  width: 27vw;
-  height: 50vh;
-  top: 10%;
-  right: 3%;
+  width: 600px;
+  height: 400px;
+  top: 80px;
+  right: 2%;
   background-color: white;
   background-color: rgba(255, 255, 255, 0.8);
   ::-webkit-scrollbar {

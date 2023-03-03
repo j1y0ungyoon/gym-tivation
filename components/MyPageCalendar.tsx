@@ -81,7 +81,7 @@ const MyPageCalendar = () => {
   }, []);
   return (
     <CalendarWrapper>
-      <>
+      <CalendarBox>
         <CalendarCSS>
           <Calendar
             onChange={setValue}
@@ -114,12 +114,14 @@ const MyPageCalendar = () => {
             }}
           />
         </CalendarCSS>
-        {markCompare === undefined ? (
-          <>
-            <CalendarAdd markDate={markDate} userUid={userUid} />
-          </>
-        ) : (
-          calendarInformation
+      </CalendarBox>
+      {markCompare === undefined ? (
+        <CalendarAddBox>
+          <CalendarAdd markDate={markDate} userUid={userUid} />
+        </CalendarAddBox>
+      ) : (
+        <CalendarAddBox>
+          {calendarInformation
             .filter((item) => item.date === markDate)
             .map((item) => {
               return (
@@ -130,9 +132,9 @@ const MyPageCalendar = () => {
                   setMark={setMark}
                 />
               );
-            })
-        )}
-      </>
+            })}
+        </CalendarAddBox>
+      )}
     </CalendarWrapper>
   );
 };
@@ -140,12 +142,15 @@ const MyPageCalendar = () => {
 export default MyPageCalendar;
 
 const CalendarWrapper = styled.div`
+  width: 100%;
   border-radius: 16px;
   border-style: solid;
-  padding-top: 2vh;
-  padding-left: 1vw;
-  padding-right: 1vw;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
   border-width: 0.1rem;
+  background-color: white;
 `;
 const DotBox = styled.div`
   width: 100%;
@@ -161,10 +166,16 @@ const CalendarDot = styled.div`
   border-radius: 50%;
   background-color: green;
 `;
+const CalendarBox = styled.div`
+  width: 100%;
+  height: 350px;
+`;
+const CalendarAddBox = styled.div`
+  height: 45vh;
+`;
 
 const CalendarCSS = styled.div`
   .react-calendar {
-    width: 350px;
     max-width: 100%;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;
@@ -244,19 +255,20 @@ const CalendarCSS = styled.div`
   }
   .react-calendar__tile {
     max-width: 100%;
-    padding: 10px 6.6667px;
+    padding: 14px 6.6667px;
+    padding-bottom: 3px;
     background: none;
     text-align: center;
     line-height: 16px;
   }
   .react-calendar__tile:disabled {
     background-color: #f5f5f5;
-    border-radius: 50%;
+    border-radius: 8px;
   }
   .react-calendar__tile:enabled:hover,
   .react-calendar__tile:enabled:focus {
     background-color: #f5f5f5;
-    border-radius: 50%;
+    border-radius: 8px;
   }
   .react-calendar__tile--now {
     background: #f5f5f5;
@@ -274,13 +286,13 @@ const CalendarCSS = styled.div`
   }
   .react-calendar__tile--active {
     background: #f5f5f5;
-    border-radius: 50%;
+    border-radius: 8px;
     color: black;
   }
   .react-calendar__tile--active:enabled:hover,
   .react-calendar__tile--active:enabled:focus {
     background: #f5f5f5;
-    border-radius: 50%;
+    border-radius: 8px;
   }
   .react-calendar--selectRange .react-calendar__tile--hover {
     background-color: #e6e6e6;
@@ -290,14 +302,14 @@ const CalendarCSS = styled.div`
     font-weight: bold;
   }
   .react-calendar__tile--now {
-    background: #fff8e1;
-    border-radius: 50%;
+    background: #ff4800;
+    border-radius: 8px;
     color: black;
   }
 
   .react-calendar__month-view__weekdays {
     text-align: center;
-    font-size: 1rem;
+    font-size: 14px;
     margin-top: 10px;
     margin-bottom: 10px;
     border-bottom-style: solid;

@@ -42,35 +42,45 @@ const Gallery = () => {
 
   return (
     <GalleryBoardWrapper>
-      <PostButton onClick={onClickGalleryPostButton}>오운완 업로드</PostButton>
-
-      <GalleryBoardMain>
-        <GalleryBoardContent>
-          <GalleryItem galleryPhotos={galleryPhotos} />
-        </GalleryBoardContent>
-      </GalleryBoardMain>
+      <GalleryBoardContainer>
+        <GalleryBoardMain>
+          <ButtonWrapper>
+            <ButtonContainer>
+              <PostButton onClick={onClickGalleryPostButton}>
+                오운완 업로드
+              </PostButton>
+            </ButtonContainer>
+          </ButtonWrapper>
+          <GalleryContentWrapper>
+            <GalleryBoardContent>
+              <GalleryItem galleryPhotos={galleryPhotos} />
+            </GalleryBoardContent>
+          </GalleryContentWrapper>
+        </GalleryBoardMain>
+      </GalleryBoardContainer>
     </GalleryBoardWrapper>
   );
 };
 const GalleryBoardWrapper = styled.div`
-  display: flex;
+  ${({ theme }) => theme.mainLayout.wrapper};
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  width: calc(100vw - 180px);
-  height: calc(100vh - 80px);
+`;
+const GalleryContentWrapper = styled.div`
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
+  flex-direction: column;
+  border: 1px solid black;
+  display: flex;
+  min-height: 90%;
   background-color: white;
-  border-radius: 2rem;
-  padding: 0;
+`;
+const GalleryBoardContainer = styled.div`
+  ${({ theme }) => theme.mainLayout.container};
+  overflow: auto;
 `;
 const GalleryBoardMain = styled.main`
-  margin: 20px;
-  display: flex;
-  flex-direction: column;
-  width: calc(100% - 40px);
-  height: calc(100% - 110px);
-  background-color: #d9d9d9;
-  border-radius: 2rem;
+  width: 95%;
 `;
 const GalleryBoardContent = styled.div`
   display: flex;
@@ -79,22 +89,20 @@ const GalleryBoardContent = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow: auto;
   padding: 10px;
 `;
+const ButtonWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  margin: 1rem;
+`;
+const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+`;
 const PostButton = styled.button`
-  margin-right: 20px;
-  width: 160px;
-  height: 40px;
-  padding: 0;
-  border-radius: 50px;
-  border: none;
-  background-color: #d9d9d9;
-  color: #000;
-  :hover {
-    background-color: #000;
-    color: #fff;
-  }
+  ${({ theme }) => theme.btn.btn100}
 `;
 
 export default Gallery;

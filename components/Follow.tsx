@@ -102,9 +102,9 @@ const FollowWrapper = styled.div``;
 const OnOffBox = styled.div`
   display: flex;
   margin: auto;
-  margin-bottom: 2vh;
-  width: 24vw;
-  height: 8vh;
+  margin-bottom: 20px;
+  width: 540px;
+  height: 60px;
   border-radius: 15px;
   :hover {
     cursor: pointer;
@@ -116,9 +116,9 @@ const OnOffBox = styled.div`
 const ProfilePhoto = styled.div`
   width: 100px;
   height: 50px;
-  margin-top: 2vh;
-  margin-left: 1vw;
-  margin-right: 1vw;
+  margin-top: 18px;
+  margin-left: 12px;
+  margin-right: 20px;
   border-radius: 70%;
   overflow: hidden;
 `;
@@ -134,14 +134,14 @@ const FollowText = styled.span`
 `;
 
 const TextBox = styled.div`
-  margin-top: 2vh;
+  margin-top: 20px;
   text-align: left;
-  width: 20vw;
+  width: 400px;
 `;
 const StateBox = styled.div`
   margin-top: 3vh;
   text-align: right;
-  width: 20vw; ;
+  width: 400px; ;
 `;
 const ClickFollowButton = styled.button`
   background-color: #eeeeee;

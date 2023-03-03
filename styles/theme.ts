@@ -1,8 +1,10 @@
 export const theme = {
   color: {
     backgroundColor: '#FFFCF3',
+    brandColor: '#FF4800',
     brandColor100: '#FF3D00',
     brandColor50: '#afsdaa',
+
     black: '#000000',
   },
   btn: {
@@ -31,7 +33,6 @@ export const theme = {
       border-radius: 50px;
       border: none;
       font-size: 16px;
-      
       background-color: #d9d9d9;
       color: #000;
       :hover {
@@ -74,7 +75,9 @@ export const theme = {
   },
   mainLayout: {
     wrapper: `
-      display : flex;
+
+    display : flex;
+
       justify-content : center;
       min-width : 1000px;
       width : calc(100vw - 180px);
@@ -88,7 +91,8 @@ export const theme = {
       width : 100%;
       max-width : 1220px;
       margin : 20px auto;
-      height : calc(100%-40px);
+      height:100%;
+
     `,
   },
   font: {

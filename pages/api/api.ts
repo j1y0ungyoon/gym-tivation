@@ -6,8 +6,6 @@ import {
   editUserParticipationParameterType,
 } from '../../type';
 import { deleteObject, ref } from 'firebase/storage';
-import { query } from 'firebase/database';
-import { describe } from 'node:test';
 
 // 동료 모집글 삭제하기
 export const deleteRecruitPost = async (postId: string) => {
@@ -67,8 +65,8 @@ export const deleteGalleryComment = async (id: string) => {
 // };
 
 // 게시판 글 삭제하기
-export const deleteBoardPost = async ({ id, photo }: any) => {
-  await deleteObject(ref(storage, photo));
+export const deleteBoardPost = async ({ id }: any) => {
+  // await deleteObject(ref(storage, photo));
   await deleteDoc(doc(dbService, 'posts', id));
 };
 
