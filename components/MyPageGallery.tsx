@@ -41,9 +41,13 @@ const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
 
 export default MyPageGalley;
 const MyPageGalleyWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  padding-left: 20px;
+  gap: 10px;
   width: 96.8%;
   height: 100%;
-  margin-left: 30px;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -51,10 +55,12 @@ const MyPageGalleyWrapper = styled.div`
 `;
 
 const GalleryContainer = styled.div`
-  width: 22%;
-  height: 40%;
-  margin: 1vh;
-  float: left;
+  width: 23%;
+  height: 100%;
+  min-width: 150px;
+  min-height: 150px;
+  max-width: 180px;
+  max-height: 180px;
   position: relative;
 `;
 
@@ -62,6 +68,7 @@ const GalleryPhoto = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 1rem;
+  object-fit: cover;
   :hover {
     cursor: pointer;
     transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */

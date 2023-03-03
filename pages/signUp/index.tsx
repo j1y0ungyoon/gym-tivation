@@ -538,6 +538,7 @@ const SignUpWrapper = styled.div`
 `;
 const SignUpContainer = styled.form`
   ${({ theme }) => theme.mainLayout.container}
+  height : calc(100%-40px);
   text-align: center;
 `;
 const PasswordShow = styled.div`

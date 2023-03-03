@@ -173,6 +173,7 @@ const MyPage = ({ params }: any) => {
     }));
     setBoardInFormation(getBoardData);
   };
+  //post 댓글 불러오기
 
   //MyPageGallery 불러오기
   const getGalleryPost = async () => {
@@ -328,11 +329,12 @@ const MyPageWrapper = styled.div`
 `;
 const MyPageContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
+  height : calc(100%-40px);
 `;
 const ProfileBox = styled.div`
   float: left;
   width: 70%;
-  height: 35%;
+  height: 270px;
 `;
 const ScheduleBox = styled.div`
   float: right;
@@ -348,11 +350,10 @@ const NavigationBox = styled.div`
   display: flex;
   float: left;
   width: 63%;
-  height: 9%;
+  height: 70px;
   text-align: left;
   margin-top: 2vh;
   margin-left: 50px;
-  margin-bottom: 2vh;
   border-bottom-style: solid;
   border-color: black;
   border-width: 0.1rem;
