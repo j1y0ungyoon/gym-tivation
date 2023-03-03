@@ -328,6 +328,7 @@ const MyPageWrapper = styled.div`
 `;
 const MyPageContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
+  height : calc(100%-40px);
 `;
 const ProfileBox = styled.div`
   float: left;
@@ -373,7 +374,7 @@ const GalleyButton = styled.button`
 
 const GalleyBox = styled.div`
   width: 98%;
-  height: 100%;
+  height: 97%;
 
   overflow: auto;
   ::-webkit-scrollbar {

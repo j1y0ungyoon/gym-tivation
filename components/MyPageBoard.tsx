@@ -78,6 +78,8 @@ const MyPageBoardContainer = styled.div`
   display: flex;
   width: 100%;
   height: 40%;
+
+  max-height: 105px;
   padding: 10px;
   background-color: white;
   border-color: black;
@@ -138,7 +140,7 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-  margin-top: 5px;
+
   margin-bottom: 5px;
   width: 100%;
   height: 50%;
