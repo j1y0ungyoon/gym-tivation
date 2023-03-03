@@ -94,7 +94,7 @@ const MyPageLike = ({
                   </BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
 
-                  <RecruitComment>[{item.comment}]</RecruitComment>
+                  {/* <RecruitComment>[{item.comment}]</RecruitComment> */}
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>

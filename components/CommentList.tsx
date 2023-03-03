@@ -54,6 +54,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         await runTransaction(dbService, async (transaction) => {
           const sfDocRef = doc(dbService, 'recruitments', id);
           const sfDoc = await transaction.get(sfDocRef);
+
           if (!sfDoc.exists()) {
             throw '데이터가 없습니다.';
           }
@@ -112,7 +113,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         {authService.currentUser ? (
           <CommentInput
             onChange={onChangeInputComment}
-            onKeyUp={onPressSubmitComment}
+            onKeyPress={onPressSubmitComment}
             value={inputComment}
             type="text"
             maxLength={90}

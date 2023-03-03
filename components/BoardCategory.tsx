@@ -114,7 +114,7 @@ const CategoryText = styled.span`
 `;
 const CategorySelect = styled.input.attrs({ type: 'radio' })`
   &:checked {
-    background: ${({ theme }) => theme.color.brandColor};
+    background: ${({ theme }) => theme.color.brandColor100};
     display: inline-block;
     padding: 0px 10px;
     text-align: center;
@@ -124,7 +124,7 @@ const CategorySelect = styled.input.attrs({ type: 'radio' })`
     display: none;
   }
   &:checked + ${CategoryText} {
-    background: ${({ theme }) => theme.color.brandColor};
+    background: ${({ theme }) => theme.color.brandColor100};
     color: #fff;
   }
   display: none;

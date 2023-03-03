@@ -5,6 +5,7 @@ import SearchUser from './SearchUser';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
@@ -20,11 +21,11 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         });
         router.push('/');
         authService.signOut();
-        alert('로그아웃');
+        toast.info('로그아웃');
       }
     } catch {
       (error: any) => {
-        alert(error);
+        toast.warn(error);
       };
     }
   };
@@ -70,6 +71,8 @@ const HeaderWrapper = styled.header`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ddd;
+  background-color: black;
+  min-width: 1180px;
 `;
 
 const Logo = styled.img`
@@ -80,23 +83,24 @@ const Logo = styled.img`
 `;
 
 const SearchBar = styled.div`
-  width: 280px;
-  height: 50px;
+  width: 320px;
+  height: 40px;
   background-color: #ddd;
   border-radius: 25px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-right: 20px;
+  background-color: white;
 `;
 
 const SearchInput = styled.input`
-  width: 225px;
+  width: 265px;
   height: 40px;
   margin-left: 20px;
   border: none;
   outline: none;
-  background-color: #ddd;
+  background-color: white;
 `;
 
 const SearchIcon = styled.img`
@@ -116,9 +120,10 @@ const SignBox = styled.div`
 
 const Sign = styled.span`
   margin: 5px;
+  color: white;
   cursor: pointer;
   :hover {
-    color: #79b8df;
+    color: ${({ theme }) => theme.color.brandColor50};
   }
 `;
 
@@ -129,10 +134,10 @@ const LogoutBtn = styled.button`
   padding: 0;
   border-radius: 50px;
   border: none;
-  background-color: #d9d9d9;
+  background-color: white;
   color: #000;
   :hover {
-    background-color: #000;
+    background-color: ${({ theme }) => theme.color.brandColor100};
     color: #fff;
   }
 `;

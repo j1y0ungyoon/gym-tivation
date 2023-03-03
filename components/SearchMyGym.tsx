@@ -124,7 +124,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
         <SerachBar>
           <SerachInput
             onChange={onChangeInputRegion}
-            onKeyUp={onPressSetRegion}
+            onKeyPress={onPressSetRegion}
             value={inputRegion}
             placeholder="예시) 서울 종로구"
           />

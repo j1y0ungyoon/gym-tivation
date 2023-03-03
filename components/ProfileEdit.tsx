@@ -280,10 +280,10 @@ const ProfileEdit = ({
                         <IconImg src="/assets/icons/myPage/Follow.svg" />
                         팔로잉
                       </EditButton>
-                      <EditButton>
+                      {/* <EditButton>
                         <IconImg src="/assets/icons/myPage/DM.svg" />
                         메시지
-                      </EditButton>
+                      </EditButton> */}
                     </>
                   ) : (
                     <>
@@ -291,10 +291,10 @@ const ProfileEdit = ({
                         <IconImg src="/assets/icons/myPage/Follow.svg" />
                         팔로우
                       </EditButton>
-                      <EditButton>
+                      {/* <EditButton>
                         <IconImg src="/assets/icons/myPage/DM.svg" />
                         메시지
-                      </EditButton>
+                      </EditButton> */}
                     </>
                   )}
                 </NameBox>

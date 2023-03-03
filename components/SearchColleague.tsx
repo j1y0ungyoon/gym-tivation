@@ -1,25 +1,19 @@
 import { dbService } from '@/firebase';
-import { MapModalProps, RecruitPostType, CoordinateType } from '@/type';
+import { MapModalProps, RecruitPostType } from '@/type';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useRef, useEffect, useState } from 'react';
-import {
-  Map,
-  MapInfoWindow,
-  MapMarker,
-  CustomOverlayMap,
-} from 'react-kakao-maps-sdk';
+import { Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 import MyLocationMarker from './MyLocationMarker';
 import RecruitPostsWindow from './RecruitPostsWindow';
 
-const initialPosition = {
-  lat: 33.5563,
-  lng: 126.79581,
-};
+// const initialPosition = {
+//   lat: 33.5563,
+//   lng: 126.79581,
+// };
 
 const SearchColleague = (props: MapModalProps) => {
-  const { setCoordinate, coordinate, setMarkerCoordi, region, setRegion } =
-    props;
+  const { coordinate, setMarkerCoordi, region, setRegion } = props;
 
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
