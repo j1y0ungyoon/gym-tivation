@@ -206,7 +206,9 @@ const BackgroundContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+  min-width: 75%;
   height: 100%;
+  min-height: 75%;
   z-index: 999;
   background-color: rgba(0, 0, 0, 0.7);
 `;
@@ -218,20 +220,20 @@ const ModalContainer = styled.div`
   border-radius: 2rem;
   align-items: center;
   justify-content: center;
-  width: 1000px;
-  height: 1000px;
+  width: 40%;
+  min-width: 30%;
+  height: 85%;
+  min-height: 75%;
   background-color: white;
   z-index: 1000;
 `;
 
 const SerachBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52rem;
+  ${({ theme }) => theme.inputDiv}
   background-color: white;
-  border-radius: 24px;
-  margin-bottom: 10px;
+  border: 2px solid black;
+  width: 85%;
+  margin-bottom: 0.7rem;
 `;
 
 const SerachImg = styled.img`
@@ -241,13 +243,8 @@ const SerachImg = styled.img`
 `;
 
 const SerachInput = styled.input`
-  width: 90%;
-  height: 40px;
-  margin-left: 2px;
-  border: none;
-  /* outline: none; */
-  border-radius: 1.5rem;
-  padding: 1rem;
+  ${({ theme }) => theme.input}
+  background-color: white;
 `;
 
 const ConfirmButton = styled.button`

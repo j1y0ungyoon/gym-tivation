@@ -19,6 +19,8 @@ export interface RecruitPostType {
   userPhoto?: string;
   region?: string;
   gymName?: string;
+  lv?: number;
+  lvName?: number;
   startTime?: string;
   endTime?: string;
   coordinate?: CoordinateType;

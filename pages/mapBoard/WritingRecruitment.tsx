@@ -1,5 +1,5 @@
 import { authService, dbService } from '@/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -54,6 +54,10 @@ const WritingRecruitment = () => {
   const [sun, setSun] = useState(false);
   const [every, setEvery] = useState(false);
 
+  // 유저 레벨 저장
+  const [userLvName, setUserLvName] = useState<string>('');
+  const [userLv, setUserLv] = useState<number>();
+
   const router = useRouter();
 
   const onChangeRecruitTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +68,19 @@ const WritingRecruitment = () => {
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     setRecruitContent(event.currentTarget.value);
+  };
+
+  const profileData = async () => {
+    if (!authService.currentUser) return;
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', authService.currentUser?.uid),
+    );
+    const docsData = await getDocs(q);
+    const getLvName = docsData.docs[0].data().lvName;
+    const getLv = docsData.docs[0].data().lv;
+    setUserLvName(getLvName);
+    setUserLv(getLv);
   };
 
   const onSubmitRecruitPost = async () => {
@@ -105,6 +122,8 @@ const WritingRecruitment = () => {
       userPhoto: authService.currentUser?.photoURL,
       region: `${detailAddress.split(' ')[0]} ${detailAddress.split(' ')[1]}`,
       gymName,
+      lv: userLv,
+      lvName: userLvName,
       coordinate,
       startTime: start,
       endTime: end,
@@ -135,91 +154,112 @@ const WritingRecruitment = () => {
     }
   }, []);
 
+  // 현재 유저 프로필에서 LvName, Lv 가져오기
+  useEffect(() => {
+    profileData();
+  }, []);
+
   if (!authService.currentUser) {
     return <div>로그인이 필요합니다.</div>;
   }
 
   return (
     <>
-      <WritingFormMain>
-        <TitleContainer>
-          <StyledText>제목 </StyledText>
-          <TitleInput
-            onChange={onChangeRecruitTitle}
-            value={recruitTitle}
-            placeholder={'제목을 작성하세요'}
-          />
-        </TitleContainer>
+      <WritingFormWrapper>
+        <WritingFormContainer>
+          <WritingFormBox>
+            <UpperBox>
+              <TitleContainer>
+                <StyledText>제목 </StyledText>
+                <TitleInput
+                  onChange={onChangeRecruitTitle}
+                  value={recruitTitle}
+                  placeholder={'제목을 작성하세요'}
+                />
+              </TitleContainer>
 
-        <PlaceContainer>
-          <StyledText>운동 장소</StyledText>
-          <SearchLocationButton onClick={onClickOpenMap}>
-            <SearchButtonText>위치 찾기</SearchButtonText>
-          </SearchLocationButton>
-          {gymName ? (
-            <GymLocationBox>
-              <PlaceText>{gymName}</PlaceText>
-              <DetailAddressText>({detailAddress})</DetailAddressText>
-            </GymLocationBox>
-          ) : (
-            <GymLocationBox>원하는 헬스장을 검색해 주세요!</GymLocationBox>
-          )}
-        </PlaceContainer>
-        <DayAndTimeContainer>
-          <StyledText>가능 요일 </StyledText>
+              <PlaceContainer>
+                <StyledText>운동 장소</StyledText>
+                <SearchLocationButton onClick={onClickOpenMap}>
+                  <SearchButtonText>위치 찾기</SearchButtonText>
+                </SearchLocationButton>
+                {gymName ? (
+                  <GymLocationBox>
+                    <PlaceText>{gymName}</PlaceText>
+                    <DetailAddressText>({detailAddress})</DetailAddressText>
+                  </GymLocationBox>
+                ) : (
+                  <GymLocationBox>
+                    원하는 헬스장을 검색해 주세요!
+                  </GymLocationBox>
+                )}
+              </PlaceContainer>
+              <DayAndTimeContainer>
+                <StyledText>가능 시간 </StyledText>
+                <AllDaysAndTimes>
+                  <AllDaysBox>
+                    <DayImage src="/assets/icons/mapBoard/Tear-off calendar.svg" />
+                    <SmallText>요일</SmallText>
+                    <SelectDay
+                      mon={mon}
+                      tus={tus}
+                      wed={wed}
+                      thurs={thurs}
+                      fri={fri}
+                      sat={sat}
+                      sun={sun}
+                      every={every}
+                      setMon={setMon}
+                      setTus={setTus}
+                      setWed={setWed}
+                      setThurs={setThurs}
+                      setFri={setFri}
+                      setSat={setSat}
+                      setSun={setSun}
+                      setEvery={setEvery}
+                      selectedDays={selectedDays}
+                      setSelectedDays={setSelectedDays}
+                    />
+                  </AllDaysBox>
 
-          <SelectDay
-            mon={mon}
-            tus={tus}
-            wed={wed}
-            thurs={thurs}
-            fri={fri}
-            sat={sat}
-            sun={sun}
-            every={every}
-            setMon={setMon}
-            setTus={setTus}
-            setWed={setWed}
-            setThurs={setThurs}
-            setFri={setFri}
-            setSat={setSat}
-            setSun={setSun}
-            setEvery={setEvery}
-            selectedDays={selectedDays}
-            setSelectedDays={setSelectedDays}
-          />
+                  <AllTimesBox>
+                    <ClockImage src="/assets/icons/mapBoard/One oclock.svg" />
+                    <SmallText>시간</SmallText>
+                    <UseDropDown
+                      key={`start-${nanoid()}`}
+                      setStart={setStart}
+                      setEnd={setEnd}
+                    >
+                      시작 시간
+                    </UseDropDown>
+                    <Time>{start ? `${start}  ~` : '시작 시간  ~'}</Time>
 
-          <StyledText>가능 시간</StyledText>
-          <UseDropDown
-            key={`start-${nanoid()}`}
-            setStart={setStart}
-            setEnd={setEnd}
-          >
-            시작 시간
-          </UseDropDown>
-          {start ? start : '00 : 00'}
-          <span> ~ </span>
-          <UseDropDown
-            key={`end-${nanoid()}`}
-            setStart={setStart}
-            setEnd={setEnd}
-          >
-            종료 시간
-          </UseDropDown>
-          {end ? end : '00 : 00분'}
-        </DayAndTimeContainer>
+                    <UseDropDown
+                      key={`end-${nanoid()}`}
+                      setStart={setStart}
+                      setEnd={setEnd}
+                    >
+                      종료 시간
+                    </UseDropDown>
+                    <Time>{end ? end : '종료 시간'}</Time>
+                  </AllTimesBox>
+                </AllDaysAndTimes>
+              </DayAndTimeContainer>
+            </UpperBox>
 
-        <TextAreaContainer>
-          <TextAreaInput
-            onChange={onChangeRecruitContent}
-            value={recruitContent}
-            placeholder="문구 입력.."
-          />
-          <UploadButtonBox onClick={onSubmitRecruitPost}>
-            작성 완료
-          </UploadButtonBox>
-        </TextAreaContainer>
-      </WritingFormMain>
+            <TextAreaContainer>
+              <TextAreaInput
+                onChange={onChangeRecruitContent}
+                value={recruitContent}
+                placeholder="문구 입력.."
+              />
+              <UploadButtonBox onClick={onSubmitRecruitPost}>
+                작성 완료
+              </UploadButtonBox>
+            </TextAreaContainer>
+          </WritingFormBox>
+        </WritingFormContainer>
+      </WritingFormWrapper>
       {openMap ? (
         <SearchMyGym
           coordinate={coordinate}
@@ -235,62 +275,109 @@ const WritingRecruitment = () => {
 
 export default WritingRecruitment;
 
-export const WritingFormMain = styled.main`
+export const WritingFormWrapper = styled.main`
+  ${({ theme }) => theme.mainLayout.wrapper}
+`;
+
+const WritingFormContainer = styled.section`
+  ${({ theme }) => theme.mainLayout.container}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WritingFormBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background-color: #d9d9d9;
+  justify-content: space-between;
   width: 100%;
-  height: 100vh;
-  padding: 1rem;
-  gap: 2rem;
+  height: 90%;
+  padding: 20px;
+  border: 1px solid black;
+  background-color: white;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
+`;
+
+export const UpperBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 40%;
+  width: 95%;
 `;
 
 export const TitleContainer = styled.section`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-start;
+  height: 20%;
+  width: 100%;
+  margin-top: 16px;
 `;
 
 export const PlaceContainer = styled.section`
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  justify-content: flex-start;
+  height: 20%;
+  width: 100%;
 `;
 
-export const PlaceText = styled.span`
-  font-size: larger;
+const PlaceText = styled.span`
+  font-size: ${({ theme }) => theme.font.font50};
   font-weight: bold;
 `;
 
-export const DetailAddressText = styled.span`
-  font-size: large;
+const DetailAddressText = styled.span`
+  font-size: ${({ theme }) => theme.font.font50};
 `;
 
-export const DayAndTimeContainer = styled.section`
+const DayAndTimeContainer = styled.section`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  height: 40%;
+  width: 100%;
 `;
 
-export const DayText = styled.span`
+const AllDaysAndTimes = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 90%;
+  height: 100%;
+`;
+
+export const AllDaysBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+`;
+
+export const AllTimesBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+`;
+
+export const SmallText = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
   font-weight: bold;
-  font-size: large;
+  width: 5%;
+  margin-left: 2px;
 `;
 
-export const DayBox = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 3rem;
-  height: 2.5rem;
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-  padding: 5px;
-  background-color: white;
+export const Time = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
+  width: 10%;
+  margin-right: 0.5rem;
 `;
 
 export const SearchLocationButton = styled.div`
@@ -298,27 +385,32 @@ export const SearchLocationButton = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 7rem;
-  height: 2.5rem;
+  width: 10%;
+  height: 85%;
   border: 1px solid black;
-  border-radius: 1rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   background-color: white;
+  &:hover {
+    background-color: #ffcab5;
+  }
 `;
 
-export const SearchButtonText = styled.span`
-  font-size: large;
-  font-weight: bold;
+const SearchButtonText = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
 `;
 
-export const GymLocationBox = styled.div`
+const GymLocationBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: white;
-  border-radius: 2rem;
-  width: 54rem;
-  height: 3rem;
+  width: 72%;
+  min-width: 60%;
+  height: 85%;
+  margin-left: 3%;
   padding: 1rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
 `;
 
 const SelectedDayBox = styled.div`
@@ -329,42 +421,59 @@ const SelectedDayBox = styled.div`
   color: white;
 `;
 
-export const TextAreaInput = styled.textarea`
+const TextAreaInput = styled.textarea`
   resize: none;
-  width: 70rem;
-  height: 40rem;
+  width: 100%;
+  height: 75%;
   padding: 1.5rem;
-  border: none;
-  border-radius: 2rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
 `;
-
-export const TextAreaContainer = styled.section`
+const TextAreaContainer = styled.section`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-  width: 60%;
+  margin-top: 2%;
+  width: 95%;
+  height: 80%;
 `;
 
-export const UploadButtonBox = styled.button`
-  margin-top: 2rem;
+const UploadButtonBox = styled.button`
   width: 10rem;
   height: 3rem;
-  font-size: large;
+  font-size: ${({ theme }) => theme.font.font50};
   font-weight: bold;
-  border-radius: 1rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  color: white;
+  border: 1px solid black;
 `;
 
 export const StyledText = styled.span`
-  font-size: x-large;
+  display: flex;
+  align-items: center;
+  font-size: ${({ theme }) => theme.font.font50};
   font-weight: bold;
+  height: 100%;
+  min-width: 10%;
 `;
 
 export const TitleInput = styled.input`
-  width: 62rem;
-  height: 3rem;
+  width: 85%;
+  height: 100%;
+  min-width: 70%;
   padding: 1rem;
-  border: none;
-  border-radius: 2rem;
-  margin-left: 3rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+`;
+
+export const ClockImage = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
+export const DayImage = styled.img`
+  width: 20px;
+  height: 20px;
 `;

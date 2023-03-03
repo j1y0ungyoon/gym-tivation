@@ -82,16 +82,16 @@ const MapBoard = () => {
 
   return (
     <>
-      <Wrapper>
-        <MapBoardHeadContainer>
-          <MapBoardWritingButton onClick={goToWrite}>
-            모집글 작성하기
-          </MapBoardWritingButton>
-        </MapBoardHeadContainer>
+      <MapBoardWrapper>
+        <MapBoardContainer>
+          <MapBoardHeadContainer>
+            <MapBoardWritingButton onClick={goToWrite}>
+              모집글 작성하기
+            </MapBoardWritingButton>
+          </MapBoardHeadContainer>
 
-        <Wapper2>
-          <MapWrapper>
-            <MapBoardContainer>
+          <MapBoardBodyContainer>
+            <MapBox>
               <SearchColleague
                 setCoordinate={setCoordinate}
                 coordinate={coordinate}
@@ -99,85 +99,101 @@ const MapBoard = () => {
                 region={region}
                 setRegion={setRegion}
               />
-            </MapBoardContainer>
-          </MapWrapper>
+            </MapBox>
 
-          <MapBoardWrapper>
-            <h4>{`"${region}"에서 모임`}</h4>
-            {selectedPosts?.map((post) => {
-              return <RecruitPost post={post} key={post.id} />;
-            })}
-          </MapBoardWrapper>
-        </Wapper2>
-      </Wrapper>
+            <MapBoardPostsBox>
+              <MapBoardPostHead>{`"${region}"에서 모임`}</MapBoardPostHead>
+              {selectedPosts?.map((post) => {
+                return <RecruitPost post={post} key={post.id} />;
+              })}
+            </MapBoardPostsBox>
+          </MapBoardBodyContainer>
+        </MapBoardContainer>
+      </MapBoardWrapper>
     </>
   );
 };
 
 export default MapBoard;
 
-const Wrapper = styled.main`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+const MapBoardWrapper = styled.main`
+  ${({ theme }) => theme.mainLayout.wrapper}
 `;
 
-const Wapper2 = styled.section`
+const MapBoardContainer = styled.section`
+  ${({ theme }) => theme.mainLayout.container}
+  flex-direction: column;
+`;
+
+const MapBoardBodyContainer = styled.section`
   display: flex;
   flex-direction: row;
-  padding: 20px;
+  height: calc(100% - 70px);
+  margin-top: 20px;
   align-items: center;
   justify-content: center;
   gap: 30px;
-  margin-top: -10px;
+  /* margin-top: -10px; */
 `;
 
-const MapWrapper = styled.main`
+const MapBox = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #d9d9d9;
+  border: 1px solid black;
   border-radius: 2rem;
+  width: 50%;
+  height: 100%;
+  background-color: white;
 `;
 
-const MapBoardWrapper = styled.div`
+const MapBoardPostsBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 2rem;
-  background-color: #d9d9d9;
+  padding: 1rem;
+  border: 1px solid black;
+  background-color: #ffff;
   border-radius: 2rem;
-  width: 40%;
-  height: 60rem;
+  width: 50%;
+  height: 100%;
+
+  overflow: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const MapBoardPostHead = styled.span`
+  font-size: ${({ theme }) => theme.font.font70};
+  margin-bottom: 16px;
 `;
 
 const MapBoardHeadContainer = styled.section`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 10px;
-  margin-top: 10px;
-  margin-right: 2.3rem;
 `;
 
 const MapBoardWritingButton = styled.button`
-  padding: 10px;
-  margin-right: 75px;
-  background-color: #d9d9d9;
-  border: none;
-  border-radius: 1rem;
+  ${({ theme }) => theme.btn.btn100}
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  color: white;
+  border: 1px solid black;
+  /* &:hover {
+    background-color: #ffcab5;
+  } */
 `;
 
-const MapBoardContainer = styled.div`
+const MapdBox2 = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #d9d9d9;
+  background-color: white;
   border-radius: 2rem;
-  width: 35%;
-  height: 60rem;
+  width: 100%;
+  height: 100%;
   gap: 1rem;
 `;
-
-const PostListSection = styled.div``;

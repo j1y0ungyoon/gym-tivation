@@ -28,6 +28,15 @@ import SearchMyGym from '@/components/SearchMyGym';
 import CommentList from '@/components/CommentList';
 import SelectDay from '@/components/SelectDay';
 import { nanoid } from 'nanoid';
+import {
+  AllDaysBox,
+  AllTimesBox,
+  ClockImage,
+  DayImage,
+  SmallText,
+  Time,
+  UpperBox,
+} from '../mapBoard/WritingRecruitment';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -401,149 +410,237 @@ const RecruitDetail = ({ params }: any) => {
         <>
           {changeForm ? (
             // 수정 모드 form
-            <WritingFormMain>
-              <EditTitleContainer>
-                <StyledText>제목 </StyledText>
-                <TitleInput
-                  defaultValue={refetchedPost?.title}
-                  onChange={onChangeEditTitle}
-                  ref={editTitleRef}
-                />
-              </EditTitleContainer>
+            <WritingFormWrapper>
+              <WritingFormContainer>
+                <WritingFormBox>
+                  <UpperBox>
+                    <EditTitleContainer>
+                      <StyledText>제목 </StyledText>
+                      <TitleInput
+                        defaultValue={refetchedPost?.title}
+                        onChange={onChangeEditTitle}
+                        ref={editTitleRef}
+                      />
+                    </EditTitleContainer>
 
-              <PlaceContainer>
-                <StyledText>운동 장소</StyledText>
-                <SearchLocationButton onClick={onClickOpenMap}>
-                  <SearchButtonText>위치 찾기</SearchButtonText>
-                </SearchLocationButton>
-                {refetchedPost.gymName ? (
-                  <GymLocationBox>
-                    <PlaceText>{refetchedPost.gymName}</PlaceText>
-                    <DetailAddressText>
-                      ({refetchedPost.region})
-                    </DetailAddressText>
-                  </GymLocationBox>
-                ) : (
-                  <DetailAddressText>
-                    원하는 헬스장을 검색해 주세요!
-                  </DetailAddressText>
-                )}
-              </PlaceContainer>
-              <DayAndTimeContainer>
-                <StyledText>가능 요일 </StyledText>
+                    <PlaceContainer>
+                      <StyledText>운동 장소</StyledText>
+                      <SearchLocationButton onClick={onClickOpenMap}>
+                        <SearchButtonText>위치 찾기</SearchButtonText>
+                      </SearchLocationButton>
+                      {refetchedPost.gymName ? (
+                        <GymLocationBox>
+                          <PlaceText>{refetchedPost.gymName}</PlaceText>
+                          <DetailAddressText>
+                            ({refetchedPost.region})
+                          </DetailAddressText>
+                        </GymLocationBox>
+                      ) : (
+                        <GymLocationBox>
+                          원하는 헬스장을 검색해 주세요!
+                        </GymLocationBox>
+                      )}
+                    </PlaceContainer>
+                    <DayAndTimeContainer>
+                      <StyledText>가능 시간 </StyledText>
+                      <AllDaysAndTimes>
+                        <AllDaysBox>
+                          <DayImage src="/assets/icons/mapBoard/Tear-off calendar.svg" />
+                          <SmallText>요일</SmallText>
+                          <SelectDay
+                            mon={mon}
+                            tus={tus}
+                            wed={wed}
+                            thurs={thurs}
+                            fri={fri}
+                            sat={sat}
+                            sun={sun}
+                            every={every}
+                            setMon={setMon}
+                            setTus={setTus}
+                            setWed={setWed}
+                            setThurs={setThurs}
+                            setFri={setFri}
+                            setSat={setSat}
+                            setSun={setSun}
+                            setEvery={setEvery}
+                            selectedDays={selectedDays}
+                            setSelectedDays={setSelectedDays}
+                          />
+                        </AllDaysBox>
 
-                <SelectDay
-                  mon={mon}
-                  tus={tus}
-                  wed={wed}
-                  thurs={thurs}
-                  fri={fri}
-                  sat={sat}
-                  sun={sun}
-                  every={every}
-                  setMon={setMon}
-                  setTus={setTus}
-                  setWed={setWed}
-                  setThurs={setThurs}
-                  setFri={setFri}
-                  setSat={setSat}
-                  setSun={setSun}
-                  setEvery={setEvery}
-                  selectedDays={selectedDays}
-                  setSelectedDays={setSelectedDays}
-                />
+                        <AllTimesBox>
+                          <ClockImage src="/assets/icons/mapBoard/One oclock.svg" />
+                          <SmallText>시간</SmallText>
+                          <UseDropDown
+                            key={`start2-${nanoid()}`}
+                            setStart={setStart}
+                            setEnd={setEnd}
+                          >
+                            시작 시간
+                          </UseDropDown>
+                          <Time>{start ? `${start}  ~` : '시작 시간  ~'}</Time>
 
-                <StyledText>가능 시간</StyledText>
-                <UseDropDown setStart={setStart} setEnd={setEnd}>
-                  시작 시간
-                </UseDropDown>
-                {start ? start : '00시 00분'}
-                <span> ~ </span>
-                <UseDropDown setStart={setStart} setEnd={setEnd}>
-                  종료 시간
-                </UseDropDown>
-                {end ? end : '00시 00분'}
-              </DayAndTimeContainer>
+                          <UseDropDown
+                            key={`end2-${nanoid()}`}
+                            setStart={setStart}
+                            setEnd={setEnd}
+                          >
+                            종료 시간
+                          </UseDropDown>
+                          <Time>{end ? end : '종료 시간'}</Time>
+                        </AllTimesBox>
+                      </AllDaysAndTimes>
+                    </DayAndTimeContainer>
+                  </UpperBox>
 
-              <TextAreaContainer>
-                <TextAreaInput
-                  defaultValue={refetchedPost?.content}
-                  onChange={onChangeEditContent}
-                  ref={editContentRef}
-                />
-                <ButtonContainer>
-                  <SubmitAndCancelButton onClick={onSubmitEdittedPost}>
-                    수정 완료
-                  </SubmitAndCancelButton>
-                  <SubmitAndCancelButton onClick={onClickChangeForm}>
-                    취소
-                  </SubmitAndCancelButton>
-                </ButtonContainer>
-              </TextAreaContainer>
-            </WritingFormMain>
+                  <TextAreaContainer>
+                    <TextAreaInput
+                      defaultValue={refetchedPost?.content}
+                      onChange={onChangeEditContent}
+                      ref={editContentRef}
+                    />
+                    <ButtonContainer>
+                      <SubmitAndCancelButton onClick={onSubmitEdittedPost}>
+                        수정 완료
+                      </SubmitAndCancelButton>
+                      <SubmitAndCancelButton onClick={onClickChangeForm}>
+                        취소
+                      </SubmitAndCancelButton>
+                    </ButtonContainer>
+                  </TextAreaContainer>
+                </WritingFormBox>
+              </WritingFormContainer>
+            </WritingFormWrapper>
           ) : (
             // 수정 전 모드 form
-            <DetailPostFormMain>
-              <TitleContainer>
-                <TitleText>{refetchedPost?.title}</TitleText>
-                {authService.currentUser?.uid === refetchedPost.userId ? (
-                  <ButtonBox>
-                    <StyledButton onClick={onClickChangeForm}>
-                      수정
-                    </StyledButton>
-                    <StyledButton onClick={onClickDeletePost}>
-                      삭제
-                    </StyledButton>
-                  </ButtonBox>
-                ) : (
-                  <ButtonBox>
-                    <StyledButton onClick={onClcikParticipate}>
-                      참여하기
-                    </StyledButton>
-                  </ButtonBox>
-                )}
-              </TitleContainer>
-              <InfoContainer>
-                <PostInfoContainer>
-                  <span>참가자</span>
-                  {refetchedPost.participation
-                    ? refetchedPost.participation.map((item) => {
-                        return (
-                          <ProfileImage
-                            key={`image-${item.userId}`}
-                            src={item.userPhoto}
-                          />
-                        );
-                      })
-                    : null}
-                  <RecruitInfoTextBox>
-                    {refetchedPost.region}
-                  </RecruitInfoTextBox>
-                  <RecruitInfoTextBox>
-                    {refetchedPost.gymName}
-                  </RecruitInfoTextBox>
+            <DetailPostFormWrapper>
+              <DetailPostFormContainer>
+                <DetailPostHeadContainer>
+                  <TitleContainer>
+                    <TitleText>{refetchedPost?.title}</TitleText>
+                    {authService.currentUser?.uid === refetchedPost.userId ? (
+                      <EditAndDeleteButtonBox>
+                        <StyledButton onClick={onClickChangeForm}>
+                          수정
+                        </StyledButton>
+                        <StyledButton onClick={onClickDeletePost}>
+                          삭제
+                        </StyledButton>
+                      </EditAndDeleteButtonBox>
+                    ) : null}
+                  </TitleContainer>
+                  <InfoContainer>
+                    <PostInfoContainer>
+                      {/* 참가자 가져오기 */}
+                      <RecruitInfoTextBox>
+                        {refetchedPost.region}
+                      </RecruitInfoTextBox>
+                      <RecruitInfoTextBox>
+                        {refetchedPost.gymName}
+                      </RecruitInfoTextBox>
 
-                  <RecruitInfoTextBox>
-                    {refetchedPost?.selectedDays?.map((day) => {
-                      return <span key={`day-${nanoid()}`}>{day}</span>;
-                    })}
-                  </RecruitInfoTextBox>
-                  <RecruitInfoTextBox>
-                    {`${refetchedPost?.startTime} ~ ${refetchedPost?.endTime}`}
-                  </RecruitInfoTextBox>
-                </PostInfoContainer>
-                <UserInfoContainer>
-                  <ProfileImage src={refetchedPost.userPhoto} />
-                  <span>{refetchedPost.nickName}</span>
-                </UserInfoContainer>
-              </InfoContainer>
-              <ContentBox>
-                <h4>{refetchedPost?.content}</h4>
-              </ContentBox>
-              <div>
-                <CommentList id={id} category="동료 모집" />
-              </div>
-            </DetailPostFormMain>
+                      <RecruitInfoTextBox>
+                        {refetchedPost?.selectedDays?.map((day) => {
+                          return (
+                            <span key={`day-${nanoid()}-${day}`}>{day}</span>
+                          );
+                        })}
+                      </RecruitInfoTextBox>
+                      <RecruitInfoTextBox>
+                        {`${refetchedPost?.startTime} ~ ${refetchedPost?.endTime}`}
+                      </RecruitInfoTextBox>
+                    </PostInfoContainer>
+                    <UserInfoContainer>
+                      <UserImageAndNameBox>
+                        <ProfileImage src={refetchedPost.userPhoto} />
+                        <UserNameBox>
+                          <NickNameText>{refetchedPost.nickName}</NickNameText>
+                          <span>{`${refetchedPost.lvName} Lv${refetchedPost.lv}`}</span>
+                        </UserNameBox>
+
+                        {/* <FollowAndMessageBox>
+                          <FollowAndMessageImg src="/assets/icons/mapBoard/follow_icon_inactive.svg" />
+                          팔로우
+                        </FollowAndMessageBox>
+                        <FollowAndMessageBox>
+                          <FollowAndMessageImg src="/assets/icons/mapBoard/message_icon_inactive.svg" />
+                          메세지
+                        </FollowAndMessageBox> */}
+                      </UserImageAndNameBox>
+                      {authService.currentUser?.uid ===
+                      refetchedPost.userId ? null : (
+                        <ParticipationImgAndBtnBox>
+                          <ParticipationImgBox>
+                            {refetchedPost.participation
+                              ? refetchedPost.participation.map((item, i) => {
+                                  if (!refetchedPost.participation?.length)
+                                    return;
+                                  if (
+                                    refetchedPost?.participation?.length > 3
+                                  ) {
+                                    if (i >= 1) return;
+                                    return (
+                                      <>
+                                        <ParticipationImage
+                                          key={`image-${refetchedPost.participation[0].userId}`}
+                                          src={
+                                            refetchedPost.participation[0]
+                                              .userPhoto
+                                          }
+                                        />
+                                        <ParticipationImage
+                                          key={`image-${refetchedPost.participation[1].userId}`}
+                                          src={
+                                            refetchedPost.participation[1]
+                                              .userPhoto
+                                          }
+                                        />
+                                        <ParticipationImage
+                                          key={`image-${refetchedPost.participation[2].userId}`}
+                                          src={
+                                            refetchedPost.participation[2]
+                                              .userPhoto
+                                          }
+                                        />
+                                        <SmallText>
+                                          +
+                                          {refetchedPost.participation.length -
+                                            3}
+                                        </SmallText>
+                                      </>
+                                    );
+                                  } else {
+                                    return (
+                                      <ParticipationImage
+                                        key={`image-${item.userId}`}
+                                        src={item.userPhoto}
+                                      />
+                                    );
+                                  }
+                                })
+                              : null}
+                          </ParticipationImgBox>
+
+                          <ButtonBox>
+                            <ParticipationBtn onClick={onClcikParticipate}>
+                              <ParticipationImg src="/assets/icons/mapBoard/like_icon_inactive.svg" />
+                              참여할래요
+                            </ParticipationBtn>
+                          </ButtonBox>
+                        </ParticipationImgAndBtnBox>
+                      )}
+                    </UserInfoContainer>
+                  </InfoContainer>
+                </DetailPostHeadContainer>
+                <ContentBox>
+                  <ContentText>{refetchedPost?.content}</ContentText>
+                </ContentBox>
+                <CommentListBox>
+                  <CommentList id={id} category="동료 모집" />
+                </CommentListBox>
+              </DetailPostFormContainer>
+            </DetailPostFormWrapper>
           )}
           {openMap ? (
             <SearchMyGym
@@ -571,32 +668,51 @@ export function getServerSideProps({ params: { params } }: any) {
 
 export default RecruitDetail;
 
-const DetailPostFormMain = styled.main`
+const DetailPostFormWrapper = styled.main`
+  ${({ theme }) => theme.mainLayout.wrapper}
+`;
+
+const DetailPostFormContainer = styled.section`
+  ${({ theme }) => theme.mainLayout.container}
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: #d9d9d9;
-  height: 100vh;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
+`;
+
+const DetailPostHeadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: #fffcf3;
   width: 100%;
-  padding: 1rem;
-  gap: 1rem;
+  height: 30%;
+  border-top-left-radius: ${({ theme }) => theme.borderRadius.radius100};
+  border-top-right-radius: ${({ theme }) => theme.borderRadius.radius100};
+  border-bottom: 1px solid black;
+  padding: 2rem;
 `;
 
 const PostInfoContainer = styled.section`
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  min-height: 50%;
+
   gap: 0.8rem;
 `;
 
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: flex-start;
-  width: 60rem;
-  height: 13rem;
-  gap: 1.7rem;
+  width: 100%;
+  min-height: 70%;
 `;
 
 const RecruitInfoTextBox = styled.div`
@@ -604,19 +720,32 @@ const RecruitInfoTextBox = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: 2.2rem;
+  height: 2.6rem;
   background-color: white;
-  border-radius: 0.6rem;
-  gap: 0.6rem;
-  padding: 6px;
+  font-size: ${({ theme }) => theme.font.font30};
+  font-weight: bold;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  padding: 16px;
+  gap: 8px;
 `;
 
 const ProfileImage = styled.img`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  margin-left: 1rem;
-  margin-right: 0.6rem;
+  ${({ theme }) => theme.profileDiv}
+  margin-right: 8px;
+`;
+
+const ParticipationImage = styled.img`
+  ${({ theme }) => theme.profileDiv}
+  margin-left: -16px;
+  border: 1px solid white;
+`;
+
+const EditAndDeleteButtonBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.6rem;
+  margin-right: 24px;
 `;
 
 const ButtonBox = styled.div`
@@ -626,15 +755,95 @@ const ButtonBox = styled.div`
 `;
 
 const StyledButton = styled.button`
-  height: 2rem;
+  height: 2.6rem;
   width: 4rem;
-  border-radius: 0.6rem;
+  border: 1px solid black;
+  font-size: ${({ theme }) => theme.font.font30};
+  font-weight: bold;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  background-color: white;
+`;
+
+const ParticipationBtn = styled.button`
+  ${({ theme }) => theme.btn.btn50}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.6rem;
+  background-color: white;
+  border: 1px solid black;
+  font-weight: bold;
+`;
+
+const ParticipationImg = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 `;
 
 const UserInfoContainer = styled.section`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  height: 70%;
+`;
+
+const UserImageAndNameBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 60%;
+`;
+
+const ParticipationImgAndBtnBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  position: absolute;
+  right: 28px;
+  bottom: 8px;
+  gap: 4px;
+`;
+
+const ParticipationImgBox = styled.div``;
+
+const UserNameBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 15%;
+  margin-right: 0.6rem;
+`;
+
+const NickNameText = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
+  font-weight: bold;
+`;
+
+const FollowAndMessageBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  min-width: 16%;
+  height: 2.6rem;
+  margin-right: 0.5rem;
+  font-size: ${({ theme }) => theme.font.font30};
+  font-weight: bold;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  padding: 16px;
+`;
+
+const FollowAndMessageImg = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
 `;
 
 const TitleContainer = styled.section`
@@ -642,129 +851,188 @@ const TitleContainer = styled.section`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 60rem;
-  padding: 1rem;
-  border-bottom: 1px solid black;
+  width: 100%;
+  height: 30%;
 `;
 
 const EditTitleContainer = styled.section`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-start;
+  height: 20%;
+  width: 100%;
+  margin-top: 16px;
 `;
 
 const TitleText = styled.span`
-  font-size: 2rem;
+  font-size: ${({ theme }) => theme.font.font70};
+  width: 80%;
 `;
 
 const ContentBox = styled.div`
-  width: 60rem;
-  height: 25rem;
+  width: 90%;
+  height: 40%;
   padding: 2rem;
-  border-radius: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   background-color: white;
 `;
 
-export const DayAndTimeContainer = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+const ContentText = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
 `;
 
-export const DetailAddressText = styled.span`
-  font-size: large;
-`;
-
-export const PlaceContainer = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-`;
-
-export const PlaceText = styled.span`
-  font-size: larger;
-  font-weight: bold;
-`;
-
-export const StyledText = styled.span`
-  font-size: x-large;
-  font-weight: bold;
-`;
-
-export const TextAreaContainer = styled.section`
+const CommentListBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 60%;
-`;
-
-export const TitleInput = styled.input`
-  width: 62rem;
-  height: 3rem;
-  padding: 1rem;
-  border: none;
-  border-radius: 2rem;
-  margin-left: 3rem;
-`;
-
-export const WritingFormMain = styled.main`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #d9d9d9;
   width: 100%;
-  height: 100vh;
-  padding: 1rem;
-  gap: 2rem;
+  height: 30%;
 `;
 
-export const SearchButtonText = styled.span`
-  font-size: large;
+const DayAndTimeContainer = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40%;
+  width: 100%;
+`;
+
+const DetailAddressText = styled.span`
+  font-size: ${({ theme }) => theme.font.font50};
+`;
+
+const PlaceContainer = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 20%;
+  width: 100%;
+`;
+
+const PlaceText = styled.span`
+  font-size: ${({ theme }) => theme.font.font50};
   font-weight: bold;
 `;
 
-export const SearchLocationButton = styled.div`
+const StyledText = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: ${({ theme }) => theme.font.font50};
+  font-weight: bold;
+  height: 100%;
+  min-width: 10%;
+`;
+
+const TextAreaContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2%;
+  width: 95%;
+  height: 80%;
+`;
+
+const TitleInput = styled.input`
+  width: 85%;
+  min-width: 70%;
+  height: 100%;
+  padding: 1rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+`;
+
+const WritingFormWrapper = styled.main`
+  ${({ theme }) => theme.mainLayout.wrapper}
+`;
+
+const WritingFormContainer = styled.section`
+  ${({ theme }) => theme.mainLayout.container}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WritingFormBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 90%;
+  padding: 20px;
+  border: 1px solid black;
+  background-color: white;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
+`;
+
+const SearchButtonText = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
+`;
+
+const SearchLocationButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 7rem;
-  height: 2.5rem;
+  width: 10%;
+  height: 85%;
   border: 1px solid black;
-  border-radius: 1rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   background-color: white;
+  &:hover {
+    background-color: #ffcab5;
+  }
 `;
 
-export const GymLocationBox = styled.div`
+const GymLocationBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: white;
-  border-radius: 2rem;
-  width: 54rem;
-  height: 3rem;
+  width: 72%;
+  min-width: 60%;
+  height: 85%;
+  margin-left: 3%;
   padding: 1rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
 `;
 
-export const TextAreaInput = styled.textarea`
+const AllDaysAndTimes = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 90%;
+  height: 100%;
+`;
+
+const TextAreaInput = styled.textarea`
   resize: none;
-  width: 70rem;
-  height: 40rem;
+  width: 100%;
+  height: 100%;
   padding: 1.5rem;
-  border: none;
-  border-radius: 2rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
 `;
 
 const SubmitAndCancelButton = styled.button`
-  margin-top: 2rem;
   width: 10rem;
   height: 3rem;
-  font-size: large;
+  margin-top: 12px;
+  font-size: ${({ theme }) => theme.font.font50};
   font-weight: bold;
-  border-radius: 1rem;
+  border: 1px solid black;
+  background-color: white;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  &:hover {
+    background-color: #ffcab5;
+  }
 `;
 
 const ButtonContainer = styled.div`

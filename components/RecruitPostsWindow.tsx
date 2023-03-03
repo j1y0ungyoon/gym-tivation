@@ -46,7 +46,7 @@ const InfoBox = styled.div`
   height: 30px;
   width: 210px;
   background-color: white;
-  border: 2px solid black;
+  border: 1px solid black;
   border-radius: 8px;
 `;
 

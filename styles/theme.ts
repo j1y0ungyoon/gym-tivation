@@ -75,6 +75,7 @@ export const theme = {
   mainLayout: {
     wrapper: `
       display : flex;
+      justify-content : center;
       min-width : 1000px;
       width : calc(100vw - 180px);
       min-height : 740px;
@@ -85,9 +86,9 @@ export const theme = {
     container: `
       min-width : 640px;
       width : 100%;
-      max-width : 960px;
-      height : 100%;
-      margin : 20px;
+      max-width : 1220px;
+      margin : 20px auto;
+      height : calc(100%-40px);
     `,
   },
   font: {

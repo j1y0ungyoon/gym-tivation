@@ -1,4 +1,3 @@
-import { DayBox, DayText } from '@/pages/mapBoard/WritingRecruitment';
 import { DayType } from '@/type';
 import React from 'react';
 import styled from 'styled-components';
@@ -156,9 +155,9 @@ const SelectDay = (props: DayType) => {
           <ToggledDayText>매일</ToggledDayText>
         </ToggledDayBox>
       ) : (
-        <DayBox value="매일 " onClick={onClickSelectDay}>
-          <DayText>매일</DayText>
-        </DayBox>
+        <EveryDayBox value="매일 " onClick={onClickSelectDay}>
+          <EveryDayText>매일</EveryDayText>
+        </EveryDayBox>
       )}
     </>
   );
@@ -170,16 +169,51 @@ const ToggledDayBox = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 3rem;
-  height: 2.5rem;
-  border: none;
-  border-radius: 1rem;
+  width: 40px;
+  height: 40px;
+  margin-right: 0.6rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   cursor: pointer;
-  padding: 5px;
-  background-color: black;
+  background-color: #ffcab5;
 `;
 const ToggledDayText = styled.span`
-  font-weight: bold;
-  font-size: large;
-  color: white;
+  font-size: ${({ theme }) => theme.font.font30};
+  color: black;
+`;
+
+const DayText = styled.span`
+  font-size: ${({ theme }) => theme.font.font30};
+`;
+
+const DayBox = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 0.6rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  cursor: pointer;
+
+  background-color: white;
+`;
+
+const EveryDayBox = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 42px;
+  margin-right: 0.6rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  cursor: pointer;
+
+  background-color: white;
+`;
+
+const EveryDayText = styled.span`
+  font-size: ${({ theme }) => theme.font.font10};
 `;

@@ -81,7 +81,7 @@ const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
           <Dropdown.Toggle as={CustomToggle} id="time-select-dropdown1">
             {children}
           </Dropdown.Toggle>
-          <Dropdown.Menu as={CustomMenu}>
+          <Dropdown.Menu key={`${children}-시작 시간`} as={CustomMenu}>
             {timeArray.map((time) => {
               return (
                 <>
@@ -101,7 +101,7 @@ const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
           <Dropdown.Toggle as={CustomToggle} id="time-select-dropdown2">
             {children}
           </Dropdown.Toggle>
-          <Dropdown.Menu as={CustomMenu}>
+          <Dropdown.Menu key={`${children}-종료 시간`} as={CustomMenu}>
             {timeArray.map((time) => {
               return (
                 <>
