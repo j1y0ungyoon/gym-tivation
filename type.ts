@@ -19,6 +19,8 @@ export interface RecruitPostType {
   userPhoto?: string;
   region?: string;
   gymName?: string;
+  lv?: number;
+  lvName?: number;
   startTime?: string;
   endTime?: string;
   coordinate?: CoordinateType;
@@ -61,6 +63,11 @@ export interface EditCommentLikeParameterType {
 export interface MapModalProps {
   setCoordinate: React.Dispatch<React.SetStateAction<CoordinateType>>;
   coordinate: CoordinateType;
+  setMarkerCoordi: React.Dispatch<
+    React.SetStateAction<CoordinateType | undefined>
+  >;
+  region: string;
+  setRegion: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface SearchMyGymProps {

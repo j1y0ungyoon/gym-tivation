@@ -173,6 +173,7 @@ const MyPage = ({ params }: any) => {
     }));
     setBoardInFormation(getBoardData);
   };
+  //post 댓글 불러오기
 
   //MyPageGallery 불러오기
   const getGalleryPost = async () => {

@@ -31,7 +31,6 @@ export const theme = {
       border-radius: 50px;
       border: none;
       font-size: 16px;
-      
       background-color: #d9d9d9;
       color: #000;
       :hover {
@@ -84,11 +83,11 @@ export const theme = {
       background-color:#FFFCF3;
   `,
     container: `
-    min-width : 640px;
-    width : 100%;
-    max-width : 1220px;
-    margin : 20px auto;
-    height : 100%
+      min-width : 640px;
+      width : 100%;
+      max-width : 1220px;
+      margin : 20px auto;
+      height:100%;
     `,
   },
   font: {
