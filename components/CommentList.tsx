@@ -108,11 +108,16 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
           })}
       </CommentWrapper>
       <InputWrapper>
-        <CommentInput
-          onChange={onChangeInputComment}
-          onKeyUp={onPressSubmitComment}
-          value={inputComment}
-        />
+        {authService.currentUser ? (
+          <CommentInput
+            onChange={onChangeInputComment}
+            onKeyUp={onPressSubmitComment}
+            value={inputComment}
+          />
+        ) : (
+          <CommentInput disabled />
+        )}
+
         <ButtonWrapper>
           <SubmitCommentButton onClick={onSubmitComment}>
             등록

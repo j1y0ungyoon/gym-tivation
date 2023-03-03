@@ -115,23 +115,25 @@ const BoardWrapper = styled.div`
 const BoardMain = styled.main`
   ${({ theme }) => theme.mainLayout.container};
   display: flex;
+
   flex-direction: column;
   align-items: center;
+  overflow: auto;
 `;
 const ContentWrapper = styled.div`
   background-color: white;
   border: 1px solid black;
-  border-radius: 2rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   width: 100%;
   height: 100%;
 `;
 const BoardContent = styled.div`
-  background-color: white;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
+
   width: 100%;
 `;
 const ButtonWrapper = styled.div`

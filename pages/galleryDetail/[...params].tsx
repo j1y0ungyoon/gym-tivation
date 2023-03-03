@@ -378,8 +378,6 @@ const GalleryTitleContainer = styled.div`
   padding: 10px;
   flex-direction: row;
   width: 100%;
-  min-height: 17%;
-  height: 17%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 1px solid black;

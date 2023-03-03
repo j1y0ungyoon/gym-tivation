@@ -72,7 +72,8 @@ const GalleryContentWrapper = styled.div`
   flex-direction: column;
   border: 1px solid black;
   display: flex;
-  min-height: 90%;
+  height: 100%;
+
   background-color: white;
 `;
 const GalleryBoardContainer = styled.div`

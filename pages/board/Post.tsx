@@ -117,9 +117,16 @@ const Post = () => {
     setUserLv(getLv);
   };
   useEffect(() => {
+    if (!authService.currentUser) {
+      toast.error('로그인을 먼저 해주세요!');
+      router.push('/board');
+    }
     profileData();
   }, []);
 
+  if (!authService.currentUser) {
+    return <div>로그인이 필요합니다.</div>;
+  }
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

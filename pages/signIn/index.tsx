@@ -112,7 +112,7 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        toast.warn('로그인 완료');
+        toast.success('로그인 완료');
         router.push('/');
       } else {
         authService.signOut();
@@ -152,7 +152,7 @@ const SignIn = () => {
           loginState: true,
         });
       }
-      toast.warn('로그인 완료');
+      toast.success('로그인 완료');
       router.push('/');
     } catch (error: any) {
       console.log('구글 로그인 에러', error.message);
