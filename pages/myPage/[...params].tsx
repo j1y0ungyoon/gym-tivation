@@ -5,7 +5,6 @@ import {
   collection,
   query,
   onSnapshot,
-  where,
   getDocs,
   orderBy,
 } from 'firebase/firestore';
@@ -14,10 +13,9 @@ import MyPageCalendar from '@/components/MyPageCalendar';
 import LoginState from '@/components/LoginState';
 import MyPageGalley from '@/components/MyPageGallery';
 import MyPageLike from '@/components/MyPageLike';
-import { useRouter } from 'next/router';
-import { type } from 'os';
 import MyPageBoard from '@/components/MyPageBoard';
 import MyPageRecruit from '@/components/MyPageRecruit';
+import { theme } from '@/styles/theme';
 
 export type ProfileItem = {
   id: string;
@@ -175,7 +173,6 @@ const MyPage = ({ params }: any) => {
     }));
     setBoardInFormation(getBoardData);
   };
-  //post 댓글 불러오기
 
   //MyPageGallery 불러오기
   const getGalleryPost = async () => {
@@ -193,12 +190,10 @@ const MyPage = ({ params }: any) => {
   useEffect(() => {
     profileOnSnapShot();
     getBoardPost();
-
     getGalleryPost();
     return () => {
       profileOnSnapShot();
       getBoardPost();
-
       getGalleryPost();
       // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
     };
@@ -232,44 +227,39 @@ const MyPage = ({ params }: any) => {
             {likeButton}
             {meetingButton}
           </NavigationBox>
-          {galley && (
-            <GalleyBox>
-              <MyPageGalley
-                paramsId={paramsId}
-                galleryInformation={galleryInformation}
-              />
-            </GalleyBox>
-          )}
-
           <MypageBox>
-            <MyPageHeader>
-              {board && (
-                <GalleyBox>
-                  <MyPageBoard
-                    paramsId={paramsId}
-                    boardInformation={boardInformation}
-                  />
-                </GalleyBox>
-              )}
-            </MyPageHeader>
-            <MyPageHeader>
-              {like && (
-                <GalleyBox>
-                  <MyPageLike
-                    galleryInformation={galleryInformation}
-                    boardInformation={boardInformation}
-                    paramsId={paramsId}
-                  />
-                </GalleyBox>
-              )}
-            </MyPageHeader>
-            <MyPageHeader>
-              {meeting && (
-                <GalleyBox>
-                  <MyPageRecruit paramsId={paramsId} />
-                </GalleyBox>
-              )}
-            </MyPageHeader>
+            {galley && (
+              <GalleyBox>
+                <MyPageGalley
+                  paramsId={paramsId}
+                  galleryInformation={galleryInformation}
+                />
+              </GalleyBox>
+            )}
+
+            {board && (
+              <GalleyBox>
+                <MyPageBoard
+                  paramsId={paramsId}
+                  boardInformation={boardInformation}
+                />
+              </GalleyBox>
+            )}
+            {like && (
+              <GalleyBox>
+                <MyPageLike
+                  galleryInformation={galleryInformation}
+                  boardInformation={boardInformation}
+                  paramsId={paramsId}
+                />
+              </GalleyBox>
+            )}
+
+            {meeting && (
+              <GalleyBox>
+                <MyPageRecruit paramsId={paramsId} />
+              </GalleyBox>
+            )}
             {followModal && (
               <>
                 <ModalClose
@@ -333,49 +323,47 @@ export function getServerSideProps({ params: { params } }: any) {
 export default MyPage;
 
 const MyPageWrapper = styled.div`
-  display: flex;
   text-align: center;
-  width: 100%;
-  background-color: #fffcf3;
+  ${({ theme }) => theme.mainLayout.wrapper}
 `;
 const MyPageContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  margin-left: 2vw;
-  margin-top: 2vh;
+  ${({ theme }) => theme.mainLayout.container}
 `;
 const ProfileBox = styled.div`
   float: left;
-  width: 60%;
-  height: 32%;
+  width: 70%;
+  height: 35%;
 `;
 const ScheduleBox = styled.div`
   float: right;
+  margin-top: 0.5vh;
+  margin-bottom: 0.5vh;
   width: 25%;
-  height: 100vh;
 `;
 const Schedule = styled.div`
-  background-color: white;
-  width: 20vw;
+  width: 100%;
 `;
 const NavigationBox = styled.div`
+  gap: 16px;
   display: flex;
   float: left;
-  width: 67%;
-  height: 7%;
+  width: 63%;
+  height: 9%;
   text-align: left;
-  margin-left: 4vw;
+  margin-top: 2vh;
+  margin-left: 50px;
+  margin-bottom: 2vh;
   border-bottom-style: solid;
   border-color: black;
   border-width: 0.1rem;
 `;
 
 const GalleyButton = styled.button`
-  margin-right: 4vw;
-  border-radius: 2rem;
+  ${({ theme }) => theme.btn.category}
   background-color: white;
-  width: 6vw;
-  height: 4.5vh;
+  border: black;
+  border-style: solid;
+  border-width: 0.1rem;
   :hover {
     cursor: pointer;
     background-color: black;
@@ -384,36 +372,34 @@ const GalleyButton = styled.button`
 `;
 
 const GalleyBox = styled.div`
-  position: absolute;
-  width: 65%;
-  height: 55%;
-  margin-left: 2vw;
-  top: 52%;
+  width: 98%;
+  height: 100%;
+
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MypageBox = styled.div`
   float: left;
   width: 70%;
-`;
-
-const MyPageHeader = styled.div`
-  display: flex;
-  margin-bottom: 2vh;
-  color: #495057;
+  height: 51%;
+  margin-left: 10px;
 `;
 
 const ToggleButtonBox = styled.div`
   background-color: white;
-  width: 10vw;
+  width: 205px;
   margin: auto;
-  height: 5vh;
-  margin-bottom: 2vh;
+  height: 46px;
+  margin-bottom: 20px;
   border-radius: 30px;
 `;
 const ToggleButton = styled.button`
   background-color: white;
-  width: 5vw;
-  height: 5vh;
+  width: 102.5px;
+  height: 46px;
   border: none;
   border-radius: 30px;
   :hover {
@@ -428,15 +414,14 @@ const ToggleButton = styled.button`
 `;
 
 const FollowToggleButton = styled.button`
-  width: 5vw;
-  height: 5vh;
+  width: 102.5px;
+  height: 46px;
   background-color: black;
   color: white;
   border: none;
   border-radius: 30px;
 `;
 const LoginStateBox = styled.div`
-  height: 85%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -455,15 +440,15 @@ const ModalClose = styled.div`
 
 const FollowModal = styled.div`
   z-index: 2000;
-  width: 27%;
-  height: 60%;
+  width: 550px;
+  height: 600px;
   position: fixed;
   top: 50%;
   left: 50%;
   border-radius: 15px;
-  background-color: #fffcf3;
   transform: translate(-50%, -50%) !important;
   padding-top: 1.5rem;
+  background-color: #fffcf3;
   border-style: solid;
   border-width: 0.1rem;
   border-color: black;

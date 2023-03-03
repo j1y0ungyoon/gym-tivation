@@ -3,8 +3,8 @@ import { CommentType, EditCommentLikeParameterType } from '@/type';
 import styled from 'styled-components';
 import { useMutation } from '@tanstack/react-query';
 import { deleteComment, editCommentLike } from '@/pages/api/api';
-import { authService } from '@/firebase';
-import { arrayUnion } from 'firebase/firestore';
+import { authService, dbService } from '@/firebase';
+import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
 
 const Comment = ({ comment }: { comment: CommentType }) => {
   // 좋아요 눌렀는지 표시
@@ -45,6 +45,19 @@ const Comment = ({ comment }: { comment: CommentType }) => {
     if (answer) {
       try {
         await removeComment(comment.id);
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(
+            dbService,
+            'recruitments',
+            String(comment.postId),
+          );
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment - 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
       } catch (error) {
         console.log('에러입니다', error);
       }

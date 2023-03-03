@@ -122,9 +122,8 @@ const LoginStateWrapper = styled.div``;
 const OnOffBox = styled.div`
   display: flex;
   margin: auto;
-  width: 24vw;
-  height: 8vh;
-  margin-bottom: 2vh;
+  width: 460px;
+  margin-bottom: 16px;
   :hover {
     cursor: pointer;
   }
@@ -136,8 +135,8 @@ const PhotoBox = styled.div`
 const ProfilePhoto = styled.div`
   width: 50px;
   height: 50px;
-  margin-top: 2vh;
-  margin-right: 1vw;
+  margin-top: 20px;
+  margin-right: 16px;
   border-radius: 70%;
   overflow: hidden;
 `;
@@ -165,11 +164,11 @@ const OFFLineState = styled.li`
   }
 `;
 const TextBox = styled.div`
-  margin-top: 2vh;
+  margin-top: 20px;
   text-align: left;
 `;
 const StateBox = styled.div`
-  margin-top: 3vh;
+  margin-top: 30px;
   text-align: right;
-  width: 20vw; ;
+  width: 360px;
 `;

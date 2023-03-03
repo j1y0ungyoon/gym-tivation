@@ -110,6 +110,7 @@ const WritingRecruitment = () => {
       selectedDays,
       participation: [],
       createdAt: Date.now(),
+      comment: 0,
     };
 
     await addDoc(collection(dbService, 'recruitments'), newRecruitPost)

@@ -31,6 +31,7 @@ const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
               onClick={() => goToGalleryDetailPost(item.id)}
             >
               <GalleryPhoto src={item.photo} />
+              <PhotoDate>{item.createdAt}</PhotoDate>
             </GalleryContainer>
           );
         })}
@@ -40,13 +41,9 @@ const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
 
 export default MyPageGalley;
 const MyPageGalleyWrapper = styled.div`
-  width: 100%;
+  width: 96.8%;
   height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  padding-bottom: 1vh;
-  padding-left: 1.5vw;
-  padding-right: 1.5vw;
+  margin-left: 30px;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -54,16 +51,28 @@ const MyPageGalleyWrapper = styled.div`
 `;
 
 const GalleryContainer = styled.div`
+  width: 22%;
+  height: 40%;
   margin: 1vh;
+  float: left;
+  position: relative;
 `;
 
 const GalleryPhoto = styled.img`
-  width: 14vw;
-  height: 18vh;
+  width: 100%;
+  height: 100%;
   border-radius: 1rem;
   :hover {
     cursor: pointer;
     transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
     transition: 0.3s;
   }
+`;
+const PhotoDate = styled.p`
+  position: absolute;
+  top: 2%;
+  left: 6%;
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
 `;
