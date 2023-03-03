@@ -299,9 +299,11 @@ const ProfileEdit = ({
                   )}
                 </NameBox>
                 <InstagramBox>
+
                   <NickNameText>{item.displayName}</NickNameText>
                   <AreaImage src="/assets/icons/myPage/Area.svg" />
                   <AreaText>{item.area}</AreaText>
+
                 </InstagramBox>
               </NickNameAreaBox>
               <FollowBox>
