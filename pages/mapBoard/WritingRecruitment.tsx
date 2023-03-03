@@ -9,6 +9,7 @@ import UseDropDown from '@/components/UseDropDown';
 import SelectDay from '@/components/SelectDay';
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
+import { toast } from 'react-toastify';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -85,32 +86,32 @@ const WritingRecruitment = () => {
 
   const onSubmitRecruitPost = async () => {
     if (!recruitTitle) {
-      alert('제목을 입력해 주세요!');
+      toast.info('제목을 입력해 주세요!');
       return;
     }
 
     if (!recruitContent) {
-      alert('내용을 입력해 주세요!');
+      toast.info('내용을 입력해 주세요!');
       return;
     }
 
     if (!detailAddress) {
-      alert('운동 장소를 입력해 주세요!');
+      toast.info('운동 장소를 입력해 주세요!');
       return;
     }
 
     if (start === '') {
-      alert('운동 시간을 입력해 주세요!');
+      toast.info('운동 시간을 입력해 주세요!');
       return;
     }
 
     if (end === '') {
-      alert('운동 시간을 입력해 주세요!');
+      toast.info('운동 시간을 입력해 주세요!');
       return;
     }
 
     if (selectedDays.length === 0) {
-      alert('운동 요일을 입력해 주세요!');
+      toast.info('운동 요일을 입력해 주세요!');
       return;
     }
 
@@ -150,7 +151,7 @@ const WritingRecruitment = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      alert('로그인을 먼저 해주세요!');
+      toast.info('로그인을 먼저 해주세요!');
       router.push('/mapBoard');
     }
   }, []);

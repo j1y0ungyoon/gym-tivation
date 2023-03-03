@@ -37,6 +37,7 @@ import {
   Time,
   UpperBox,
 } from '../mapBoard/WritingRecruitment';
+import { toast } from 'react-toastify';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -47,6 +48,7 @@ const initialCoordinate: CoordinateType = {
 const RecruitDetail = ({ params }: any) => {
   const router = useRouter();
   const [id] = params;
+
   // 요일 배열
   const days = ['월', '화', '수', '목', '금', '토', '일', '매일'];
   // 위도, 경도 담아주기 (좌표 -> coordinate)
@@ -179,34 +181,34 @@ const RecruitDetail = ({ params }: any) => {
   // 게시글 수정
   const onSubmitEdittedPost = async () => {
     if (!editTitle) {
-      alert('제목을 작성해주세요!');
+      toast.info('제목을 작성해주세요!');
       editTitleRef.current?.focus();
       return;
     }
 
     if (!editContent) {
-      alert('내용을 작성해주세요!');
+      toast.info('내용을 작성해주세요!');
       editContentRef.current?.focus();
       return;
     }
 
     if (!detailAddress) {
-      alert('운동 장소를 입력해 주세요!');
+      toast.info('운동 장소를 입력해 주세요!');
       return;
     }
 
     if (start === '') {
-      alert('운동 시간을 입력해 주세요!');
+      toast.info('운동 시간을 입력해 주세요!');
       return;
     }
 
     if (end === '') {
-      alert('운동 시간을 입력해 주세요!');
+      toast.info('운동 시간을 입력해 주세요!');
       return;
     }
 
     if (selectedDays.length === 0) {
-      alert('운동 요일을 입력해 주세요!');
+      toast.info('운동 요일을 입력해 주세요!');
       return;
     }
 
@@ -242,7 +244,7 @@ const RecruitDetail = ({ params }: any) => {
   const onClcikParticipate = async () => {
     // 비로그인 사용자가 참여 버튼을 눌렀을 때
     if (!authService.currentUser) {
-      alert('로그인 후 이용해주세요!');
+      toast.info('로그인 후 이용해주세요!');
       return;
     }
     // 로그인 사용자가 참여 버튼을 눌렀을 때
@@ -300,7 +302,7 @@ const RecruitDetail = ({ params }: any) => {
               userId: authService.currentUser.uid,
               edittedProfile,
             });
-            alert('참여가 완료 되었습니다!');
+            toast.success('참여가 완료 되었습니다!');
             return;
           }
         }
@@ -331,7 +333,7 @@ const RecruitDetail = ({ params }: any) => {
             { userParticipation: [...edittedProfilesArr] },
           );
         }
-        alert('참여를 취소했습니다!');
+        toast.info('참여를 취소했습니다!');
         return;
       }
     }
@@ -889,7 +891,7 @@ const CommentListBox = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 80%;
   height: 30%;
 `;
 

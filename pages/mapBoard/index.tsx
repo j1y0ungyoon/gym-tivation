@@ -7,6 +7,7 @@ import RecruitPost from '@/components/RecruitPost';
 import styled from 'styled-components';
 import { CoordinateType } from '../../type';
 import SearchColleague from '@/components/SearchColleague';
+import { toast } from 'react-toastify';
 
 const initialCoordinate: CoordinateType = {
   lat: 33.5563,
@@ -33,7 +34,7 @@ const MapBoard = () => {
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
     if (!authService.currentUser) {
-      alert('로그인을 먼저 해주세요!');
+      toast.info('로그인을 먼저 해주세요!');
       return;
     }
 
