@@ -17,12 +17,12 @@ export const theme = {
       background-color: #d9d9d9;
       color: #000;
       :hover {
-        background-color: #000;
+        background-color: #FF3D00;
         color: #fff;
       }
       :focus {
-        background-color:#ff0000;
-        color:#00ff00;
+        background-color:#FF3D00;
+        color:white;
       }
     `,
     btn100: `
@@ -74,7 +74,7 @@ export const theme = {
   },
   mainLayout: {
     wrapper: `
-    display : flex;
+      display : flex;
       justify-content : center;
       min-width : 1000px;
       width : calc(100vw - 180px);

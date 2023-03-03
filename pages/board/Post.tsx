@@ -117,9 +117,16 @@ const Post = () => {
     setUserLv(getLv);
   };
   useEffect(() => {
+    if (!authService.currentUser) {
+      toast.info('로그인을 먼저 해주세요!');
+      router.push('/board');
+    }
     profileData();
   }, []);
 
+  if (!authService.currentUser) {
+    return <div>로그인이 필요합니다.</div>;
+  }
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -164,14 +171,13 @@ const Post = () => {
       await runTransaction(dbService, async (transaction) => {
         const sfDocRef = doc(dbService, 'profile', id);
         const sfDoc = await transaction.get(sfDocRef);
-        console.log('sfdoc', sfDoc);
+
         if (!sfDoc.exists()) {
           throw '데이터가 없습니다.';
         }
         const newwLvName = sfDoc.data().lvName;
         const newLv = sfDoc.data().lv + 1;
         transaction.update(sfDocRef, { lv: newLv });
-        console.log('랩', newLv);
         if (newwLvName === '일반인' && newLv > 4) {
           transaction.update(sfDocRef, { lvName: '헬애기' });
           transaction.update(sfDocRef, { lv: 1 });

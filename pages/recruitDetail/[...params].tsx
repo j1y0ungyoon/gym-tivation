@@ -360,6 +360,8 @@ const RecruitDetail = ({ params }: any) => {
           selectedDays: data?.selectedDays,
           participation: data?.participation,
           createdAt: data?.createdAt,
+          lv: data?.lv,
+          lvName: data?.lvName,
         };
 
         setRefetchedPost(newObj);

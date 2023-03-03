@@ -47,9 +47,9 @@ const MyLocationMarker = (props: MyLocationProps) => {
             size: { width: 50, height: 50 },
           }}
         >
-          <div style={{ padding: '5px', color: '#000' }}>
+          {/* <div style={{ padding: '5px', color: '#000' }}>
             {myPosition.errMsg ? myPosition.errMsg : '내 위치'}
-          </div>
+          </div> */}
         </MapMarker>
       )}
     </>

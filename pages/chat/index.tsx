@@ -155,7 +155,7 @@ const Chat = () => {
       <ChatContainer>
         <CategoryContainer>
           <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-          <CategoryBtn
+          {/* <CategoryBtn
             onClick={() => {
               setIsMyDmOn(true);
               if (dmLists.length === 0) {
@@ -171,14 +171,14 @@ const Chat = () => {
             }}
           >
             DM
-          </CategoryBtn>
-          <CategoryBtn
+          </CategoryBtn> */}
+          {/* <CategoryBtn
             onClick={() => {
               onClickDm();
             }}
           >
             DM 로직
-          </CategoryBtn>
+          </CategoryBtn> */}
         </CategoryContainer>
 
         {isMyDmOn ? (

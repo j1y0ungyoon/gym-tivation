@@ -54,6 +54,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         await runTransaction(dbService, async (transaction) => {
           const sfDocRef = doc(dbService, 'recruitments', id);
           const sfDoc = await transaction.get(sfDocRef);
+
           if (!sfDoc.exists()) {
             throw '데이터가 없습니다.';
           }
@@ -109,18 +110,27 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
           })}
       </CommentWrapper>
       <InputWrapper>
-        <CommentInput
-          onChange={onChangeInputComment}
-          onKeyUp={onPressSubmitComment}
-          value={inputComment}
-          type="text"
-          maxLength={90}
-          placeholder="최대 90자까지 입력할 수 있습니다"
-        />
+        {authService.currentUser ? (
+          <CommentInput
+            onChange={onChangeInputComment}
+            onKeyPress={onPressSubmitComment}
+            value={inputComment}
+            type="text"
+            maxLength={90}
+            placeholder="최대 90자까지 입력할 수 있습니다"
+          />
+        ) : (
+          <CommentInput disabled />
+        )}
+
         <ButtonWrapper>
-          <SubmitCommentButton onClick={onSubmitComment}>
-            등록
-          </SubmitCommentButton>
+          {authService.currentUser ? (
+            <SubmitCommentButton onClick={onSubmitComment}>
+              등록
+            </SubmitCommentButton>
+          ) : (
+            <SubmitCommentButton disabled>등록</SubmitCommentButton>
+          )}
         </ButtonWrapper>
       </InputWrapper>
     </CommentListWrapper>

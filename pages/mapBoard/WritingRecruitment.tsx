@@ -70,7 +70,6 @@ const WritingRecruitment = () => {
   ) => {
     setRecruitContent(event.currentTarget.value);
   };
-
   const profileData = async () => {
     if (!authService.currentUser) return;
     const q = query(

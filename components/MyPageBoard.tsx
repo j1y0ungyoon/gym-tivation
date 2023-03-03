@@ -33,17 +33,17 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
               key={item.id}
               onClick={() => goToBoardDetailPost(item.id)}
             >
-              <PhotoBox>
+              {/* <PhotoBox>
                 <ProfilePhoto>
                   <Photo src={item.photo} />
                 </ProfilePhoto>
-              </PhotoBox>
+              </PhotoBox> */}
               <TitleNickNameBox>
                 <TitleBox>
                   <BoardCategory>{item.category}</BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
 
-                  <RecruitComment>[{item.comment}]</RecruitComment>
+                  {/* <RecruitComment>[{item.comment}]</RecruitComment> */}
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
