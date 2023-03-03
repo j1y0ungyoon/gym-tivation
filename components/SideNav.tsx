@@ -42,7 +42,7 @@ const SideNavWrapper = styled.nav`
 `;
 
 const NavBtn = styled.div`
-  width: 160px;
+  width: 180px;
   padding: 10px;
   cursor: pointer;
   :hover {

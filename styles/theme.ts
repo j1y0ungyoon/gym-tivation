@@ -2,7 +2,8 @@ export const theme = {
   color: {
     backgroundColor: '#FFFCF3',
     brandColor100: '#FF3D00',
-    brandColor50: '#afsdaa',
+    brandColor50: '#FFCAB5',
+
     black: '#000000',
   },
   btn: {

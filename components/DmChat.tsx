@@ -29,6 +29,10 @@ type DmChatProps = {
   roomNum?: string;
 };
 
+type DmTextProps = {
+  user?: string;
+};
+
 const DmChat = ({ roomNum }: DmChatProps) => {
   const router = useRouter();
   console.log('roomNum', roomNum);
@@ -186,7 +190,7 @@ const DmChat = ({ roomNum }: DmChatProps) => {
             <UserImg src={`${chatLog.photoURL}`} />
             <div>
               <DmName>{chatLog?.username}</DmName>
-              <DmText>{chatLog?.msg}</DmText>
+              <DmText user={user?.uid}>{chatLog?.msg}</DmText>
               <DmTime>{chatLog.date}</DmTime>
             </div>
           </DmBox>
@@ -207,49 +211,78 @@ const DmChatWrapper = styled.section`
   width: 60%;
   min-width: 400px;
   margin-left: 20px;
-  background-color: #ddd;
-  padding: 30px;
-  border-radius: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   overflow-y: auto;
 `;
 
 const DmLogBox = styled.div<any>`
   max-width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% - 50px);
   overflow-y: auto;
   word-break: break-all;
+  padding-right: 10px;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #000;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
 `;
 const DmBox = styled.div`
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 `;
 const UserImg = styled.img`
-  width: 50px;
-  height: 50px;
-  border: 1px solid black;
+  min-width: 40px;
+  width: 40px;
+  min-height: 40px;
+  height: 40px;
   border-radius: 50px;
   margin-right: 10px;
 `;
 const DmName = styled.div`
   font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
 `;
-const DmText = styled.span`
-  margin: 0;
+const DmText = styled.div<DmTextProps>`
+  border-radius: 0 20px 20px 20px;
+  padding: 10px 20px;
+  border: 1px solid black;
   display: block;
+  margin: 0;
+  font-size: 14px;
+  background-color: ${({ user }) =>
+    user === authService.currentUser?.uid ? '#00A3FF' : '#fff'};
+  color: ${({ user }) =>
+    user === authService.currentUser?.uid ? '#fff' : '#000'};
 `;
 const DmTime = styled.span`
-  font-size: 0.875rem;
+  font-size: 12px;
   color: gray;
   margin: 0;
 `;
 
 const DmInput = styled.input`
   width: 100%;
-  height: 40px;
+  height: 48px;
   outline: none;
-  border: none;
-  border-radius: 20px;
+  border: 1px solid black;
+  border-radius: 50px;
   padding: 5px 20px;
   font-size: 0.875rem;
+  ::placeholder {
+    font-size: 14px;
+  }
 `;
 export default DmChat;
