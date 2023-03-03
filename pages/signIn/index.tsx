@@ -15,12 +15,11 @@ import {
 } from 'react-icons/ai';
 import styled from 'styled-components';
 import SignInModal from '@/components/SignInModal';
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassWord] = useState('');
-  // const [photoURL, setPhotoURL] = useState<string>('');
-  // const [nickName, setNickName] = useState<string>('');
 
   //모달
   const [releaseModal, setReleaseModal] = useState<boolean>(false);
@@ -102,8 +101,7 @@ const SignIn = () => {
     );
 
   //로그인
-  const onClicksignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onClicksignIn = async () => {
     try {
       const { user } = await signInWithEmailAndPassword(
         authService,
@@ -114,11 +112,11 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        alert('로그인 완료');
+        toast.warn('로그인 완료');
         router.push('/');
       } else {
         authService.signOut();
-        alert('이메일 인증을 완료해주세요.');
+        toast.warn('이메일 인증을 완료해주세요');
       }
     } catch (error: any) {
       alert(error.message);
@@ -154,16 +152,17 @@ const SignIn = () => {
           loginState: true,
         });
       }
-      alert('로그인 완료');
+      toast.warn('로그인 완료');
       router.push('/');
     } catch (error: any) {
-      alert(error.message);
+      console.log('구글 로그인 에러', error.message);
     }
   };
 
   return (
     <SignInWrapper>
-      <SignInContainer onSubmit={onClicksignIn}>
+      <SignInContainer>
+        <IconImg src="/assets/icons/myPage/gymtivation_logo_miniicon.svg" />
         <HeaderText>GYMTIVATION</HeaderText>
         <InputBox>
           <InputText>이메일</InputText>
@@ -184,10 +183,10 @@ const SignIn = () => {
             </IconValidation>
           )}
         </InputBox>
-        <InputBox>
+        <PasswordInputBox>
           <InputText>비밀번호</InputText>
           <PasswordShow>
-            <SignInInput
+            <PasswordInput
               type={showPasword ? 'text' : 'password'}
               value={password}
               onChange={onChangePassword}
@@ -219,22 +218,24 @@ const SignIn = () => {
               </TextValidation>
             </IconValidation>
           )}
-        </InputBox>
-
+        </PasswordInputBox>
+        <SignInButton
+          disabled={(isValidEmail && isValidPassword) === false}
+          onClick={onClicksignIn}
+        >
+          로그인하기
+        </SignInButton>
         <GuideBox>
           <GuideText onClick={() => router.push('/signUp')}>
             이메일 가입
           </GuideText>
-          <GuideText onClick={onClickGoogleSignIn}>구글 로그인</GuideText>
-          <GuideText onClick={onClickOpenModal}>비밀번호 찾기</GuideText>
+          <GuideText2 onClick={onClickOpenModal}>비밀번호 찾기</GuideText2>
         </GuideBox>
-        <SignInButton
-          disabled={(isValidEmail && isValidPassword) === false}
-          type="submit"
-        >
-          완료
-        </SignInButton>
+        <GoogleSignInButton onClick={onClickGoogleSignIn}>
+          구글로 간편 로그인하기
+        </GoogleSignInButton>
       </SignInContainer>
+
       {releaseModal && (
         <SignInModal
           onClickCloseModal={onClickCloseModal}
@@ -248,56 +249,93 @@ const SignIn = () => {
 export default SignIn;
 
 const SignInWrapper = styled.div`
-  display: flex;
-  margin: auto;
+  ${({ theme }) => theme.mainLayout.wrapper}
 `;
-const SignInContainer = styled.form``;
-const HeaderText = styled.h2`
-  margin-bottom: 10vh;
-  font-size: 28px;
-  font-weight: bold;
+const SignInContainer = styled.div`
+  ${({ theme }) => theme.mainLayout.container}
   text-align: center;
+`;
+const IconImg = styled.img`
+  width: 5rem;
+  height: 5rem;
+`;
+const HeaderText = styled.h2`
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 1vh;
+  margin-bottom: 80px;
 `;
 
 const InputBox = styled.div`
-  height: 15vh;
+  width: 100%;
+  height: 15%;
+`;
+
+const PasswordInputBox = styled.div`
+  width: 100%;
+  height: 15%;
+  margin-bottom: 20px;
 `;
 const SignInInput = styled.input`
-  width: 24vw;
-  height: 5vh;
-  margin-right: 1vw;
+  width: 40%;
+  height: 48px;
   border-radius: 20px;
-  border: none;
   padding-left: 16px;
-  background-color: #e9ecef;
   font-size: 16px;
 `;
 
 const SignInButton = styled.button`
-  margin-top: 4vh;
-  width: 25vw;
-  height: 8vh;
-  color: black;
-  background-color: #e9ecef;
-  border: none;
+  margin-bottom: 20px;
+  border-radius: 2rem;
+  width: 40%;
+  height: 48px;
+  color: white;
+  background-color: black;
+  border-style: solid;
+  border-width: 0.1rem;
   font-size: 16px;
-  border-radius: 30px;
   :hover {
     cursor: pointer;
-    background-color: #dee2e6;
+    color: black;
+    background-color: white;
+  }
+`;
+
+const GoogleSignInButton = styled.button`
+  margin-top: 60px;
+  border-radius: 2rem;
+  width: 40%;
+  height: 48px;
+  color: black;
+  background-color: white;
+  border-style: solid;
+  border-width: 0.1rem;
+  font-size: 16px;
+  :hover {
+    cursor: pointer;
+    color: white;
+    background-color: black;
   }
 `;
 
 const InputText = styled.p`
   font-weight: bold;
+  width: 40%;
+  margin: auto;
+  text-align: left;
+  margin-bottom: 8px;
 `;
 
 const IconValidation = styled.div`
-  margin-top: 1vh;
+  margin-top: 10px;
+  width: 40%;
+  margin: auto;
+  text-align: left;
 `;
 const TextValidation = styled.span`
   color: red;
-  margin-left: 1vw;
+  margin-top: 6px;
+  margin-left: 8px;
   font-size: 12px;
 `;
 const PasswordShow = styled.div`
@@ -306,16 +344,40 @@ const PasswordShow = styled.div`
   }
 `;
 const GuideText = styled.span`
-  color: #495057;
-  font-size: 12px;
-  margin-right: auto;
+  width: 30%;
+  margin: auto;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: right;
   :hover {
     cursor: pointer;
-    color: black;
+    color: gray;
   }
 `;
+const GuideText2 = styled.span`
+  width: 30%;
+  margin: auto;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  :hover {
+    cursor: pointer;
+    color: gray;
+  }
+`;
+
 const GuideBox = styled.div`
-  padding-left: 2vw;
   display: flex;
-  margin-top: 8vh;
+  width: 40%;
+  height: 4%;
+  margin: auto;
+`;
+const PasswordInput = styled.input`
+  width: 40%;
+  height: 48px;
+  margin-left: 28px;
+  margin-right: 12px;
+  border-radius: 20px;
+  padding-left: 16px;
+  font-size: 16px;
 `;

@@ -35,7 +35,7 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
         onChange={(e) => {
           setCalendarText(e.target.value);
         }}
-        placeholder="입력시 Enter 키를 눌러주세요."
+        placeholder="메모장처럼 일지를 작성하세요!"
         onKeyPress={onClickCalendarAdd}
       />
       {/* <CalendarButton onClick={onClickCalendarAdd}>등록</CalendarButton> */}
@@ -46,15 +46,18 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
 export default CalendarAdd;
 
 const CalendarTextArea = styled.textarea`
-  padding: 12px;
+  padding: 8px;
   width: 100%;
   height: 100%;
   border-radius: 20px;
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
-  overflow: none;
+  overflow: auto;
   resize: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   :focus {
     outline: none;
   }

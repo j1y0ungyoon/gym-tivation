@@ -118,6 +118,7 @@ const MyPageLike = ({
 
 export default MyPageLike;
 const MyPageBoardWrapper = styled.div`
+  margin-top: 1vh;
   margin-left: 40px;
   width: 92%;
   height: 70%;
@@ -175,6 +176,7 @@ const BoardTitleText = styled.span`
   font-size: 1.2rem;
   max-width: 260px;
   text-align: left;
+  margin-top: 4px;
   font-weight: bolder;
   white-space: nowrap;
   overflow: hidden;
@@ -187,7 +189,7 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-  margin-top: 10px;
+  margin-top: 5px;
   margin-bottom: 5px;
   width: 100%;
   height: 50%;
@@ -204,6 +206,7 @@ const TitleNickNameBox = styled.div`
 `;
 const RecruitComment = styled.span`
   font-size: 1.2rem;
+  margin-top: 2px;
   color: gray;
   font-weight: bolder;
   margin-left: 15px;

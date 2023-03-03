@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { authService } from '@/firebase';
+import { toast } from 'react-toastify';
 
 type ModalProps = {
   onClickCloseModal: () => void;
@@ -41,7 +42,7 @@ const SignInModal = ({ onClickCloseModal, email_validation }: ModalProps) => {
     e.preventDefault();
     try {
       await sendPasswordResetEmail(authService, email);
-      alert('이메일이 전송됐습니다.');
+      toast.warn('이메일이 전송됐습니다.');
       onClickCloseModal();
     } catch (error: any) {
       alert(error.message);
@@ -84,14 +85,17 @@ export default SignInModal;
 
 const ModalWrapper = styled.div`
   display: flex;
+  width: 520px;
+  height: 360px;
   z-index: 2000;
-  width: 30%;
-  height: 40vh;
   position: fixed;
   top: 50%;
-  left: 55%;
+  left: 50%;
   border-radius: 15px;
-  background-color: white;
+  background-color: #fffcf3;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: black;
   transform: translate(-50%, -50%) !important;
 `;
 const ModalClose = styled.div`
@@ -105,53 +109,61 @@ const ModalClose = styled.div`
   bottom: 0;
 `;
 const ModalContainer = styled.form`
-  margin-left: 2vw;
-  margin-right: 2vw;
+  width: 80%;
+  height: 100%;
+  margin: auto;
 `;
 const HeaderText = styled.h2`
-  margin-top: 3vh;
-  margin-bottom: 5vh;
+  margin-top: 36px;
+  margin-bottom: 36px;
   font-size: 20px;
   font-weight: bold;
   text-align: center;
 `;
 const InputText = styled.p`
-  font-size: 15px;
   font-weight: bold;
+  width: 100%;
+  margin: auto;
+  text-align: left;
+  margin-bottom: 8px;
 `;
 
 const SignInInput = styled.input`
-  width: 24vw;
-  height: 5vh;
-  margin-right: 1vw;
+  width: 100%;
+  height: 48px;
   border-radius: 20px;
-  border: none;
   padding-left: 16px;
-  background-color: #e9ecef;
   font-size: 16px;
 `;
 const IconValidation = styled.div`
-  margin-top: 1vh;
+  margin-top: 10px;
+  width: 100%;
+  height: 20%;
+  margin: auto;
+  text-align: left;
 `;
 const TextValidation = styled.span`
   color: red;
-  margin-left: 1vw;
+  margin-top: 6px;
+  margin-left: 8px;
   font-size: 12px;
 `;
 const SignInButton = styled.button`
-  margin-top: 4vh;
-  width: 25vw;
-  height: 8vh;
-  color: black;
-  background-color: #e9ecef;
-  border: none;
+  border-radius: 2rem;
+  width: 100%;
+  height: 16%;
+  background-color: white;
+  border-style: solid;
+  border-width: 0.1rem;
   font-size: 16px;
-  border-radius: 30px;
   :hover {
     cursor: pointer;
-    background-color: #dee2e6;
+    background-color: black;
+    color: white;
   }
 `;
 const InputBox = styled.div`
-  height: 15vh;
+  margin: auto;
+  width: 100%;
+  height: 40%;
 `;

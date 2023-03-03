@@ -106,12 +106,14 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
 export default MyPageRecruit;
 
 const PhotoBox = styled.div`
-  width: 17%;
-  height: 100%;
+  width: 80px;
+  height: 80px;
+  margin: auto;
+  margin-right: 0.5vw;
 `;
 const ProfilePhoto = styled.div`
-  width: 6rem;
-  height: 6rem;
+  width: 100%;
+  height: 100%;
   border-radius: 70%;
   overflow: hidden;
 `;
@@ -147,8 +149,8 @@ const DayText = styled.button`
 `;
 const TimeText = styled.button`
   height: 40px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
   font-size: 1rem;
   font-weight: bold;
   background-color: white;
@@ -175,6 +177,7 @@ const MyPageBoardWrapper = styled.div`
 `;
 
 const MyPageBoardContainer = styled.div`
+  margin-top: 1vh;
   display: flex;
   width: 100%;
   height: 40%;

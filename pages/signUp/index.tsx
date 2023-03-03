@@ -18,6 +18,7 @@ import {
 import UploadImage from '@/components/ProfileUpLoad';
 import { useRouter } from 'next/router';
 import { getDocs, collection, query } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
   //회원가입
@@ -179,9 +180,7 @@ const SignUp = () => {
 
   //이용약관 이동 버튼
   const onClicktermsOfUse = () => {
-    if (touCheck && piCheck && lbCheck === true) {
-      setChange(true);
-    }
+    setChange(true);
   };
 
   // 모두 동의
@@ -227,7 +226,7 @@ const SignUp = () => {
         lv: 1,
         lvName: '일반인',
       });
-      alert('인증 메일 확인 후 로그인 해주세요.');
+      toast.warn('인증 메일을 확인해주세요!');
       authService.signOut();
       router.push('/signIn');
     } catch (error: any) {
@@ -295,7 +294,7 @@ const SignUp = () => {
           <InputBox>
             <InputText>비밀번호</InputText>
             <PasswordShow>
-              <SignUpInput
+              <PasswordInput
                 type={showPasword ? 'text' : 'password'}
                 value={password}
                 onChange={onChangePassword}
@@ -332,7 +331,7 @@ const SignUp = () => {
           <InputBox>
             <InputText>비밀번호 확인</InputText>
             <PasswordShow>
-              <SignUpInput
+              <PasswordInput
                 id="passwordCheckInput"
                 type={showPaswordCheck ? 'text' : 'password'}
                 value={passwordCheck}
@@ -371,56 +370,114 @@ const SignUp = () => {
             )}
           </InputBox>
           <SignUpButton disabled={signUpdisabled === false} type="submit">
-            확인
+            가입하기
           </SignUpButton>
         </SignUpContainer>
       ) : (
         <TOUContainer>
+          <IconImg src="/assets/icons/myPage/gymtivation_logo_miniicon.svg" />
           <TOUHeaderText>GYMTIVATION 이용약관</TOUHeaderText>
-          <TouCheckBox>
+
+          <TouAllCheckBox>
             {allCheck === false ? (
-              <AiOutlineCheckCircle onClick={onClickAllCheckBtn} />
+              <>
+                <AiOutlineCheckCircle
+                  onClick={onClickAllCheckBtn}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
+              </>
             ) : (
-              <AiFillCheckCircle onClick={onClickCancelCheckBtn} />
+              <>
+                <AiFillCheckCircle
+                  onClick={onClickCancelCheckBtn}
+                  style={{ color: '#0094FF', marginTop: '3px' }}
+                />
+                <TOUText
+                  onClick={onClickCancelCheckBtn}
+                  style={{ color: '#0094FF' }}
+                >
+                  모두 동의하기
+                </TOUText>
+              </>
             )}
-            <TOUText>모두 동의하기</TOUText>
-          </TouCheckBox>
-          <TouCheckBox>
+          </TouAllCheckBox>
+          <TouAllCheckBox>
             {touCheck === false ? (
-              <AiOutlineCheckCircle
-                onClick={() => {
-                  setTOUCheck(true);
-                }}
-              />
+              <>
+                <AiOutlineCheckCircle
+                  onClick={() => {
+                    setTOUCheck(true);
+                  }}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText
+                  onClick={() => {
+                    setTOUCheck(true);
+                  }}
+                >
+                  이용약관 동의(필수)
+                </TOUText>
+              </>
             ) : (
-              <AiFillCheckCircle
-                onClick={() => {
-                  setTOUCheck(false);
-                }}
-              />
+              <>
+                <AiFillCheckCircle
+                  style={{ color: '#0094FF', marginTop: '3px' }}
+                  onClick={() => {
+                    setTOUCheck(false);
+                  }}
+                />
+                <TOUText
+                  style={{ color: '#0094FF' }}
+                  onClick={() => {
+                    setTOUCheck(false);
+                  }}
+                >
+                  이용약관 동의(필수)
+                </TOUText>
+              </>
             )}
 
-            <TOUText>이용약관 동의(필수)</TOUText>
             {!touCheck && (
               <TextValidation> 이용약관 동의를 해주세요.</TextValidation>
             )}
-          </TouCheckBox>
+          </TouAllCheckBox>
           <TOU>{tou}</TOU>
           <TouCheckBox>
             {piCheck === false ? (
-              <AiOutlineCheckCircle
-                onClick={() => {
-                  setPICheck(true);
-                }}
-              />
+              <>
+                <AiOutlineCheckCircle
+                  onClick={() => {
+                    setPICheck(true);
+                  }}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText
+                  onClick={() => {
+                    setPICheck(true);
+                  }}
+                >
+                  개인정보 동의(필수)
+                </TOUText>
+              </>
             ) : (
-              <AiFillCheckCircle
-                onClick={() => {
-                  setPICheck(false);
-                }}
-              />
+              <>
+                <AiFillCheckCircle
+                  style={{ color: '#0094FF', marginTop: '3px' }}
+                  onClick={() => {
+                    setPICheck(false);
+                  }}
+                />
+                <TOUText
+                  style={{ color: '#0094FF' }}
+                  onClick={() => {
+                    setPICheck(false);
+                  }}
+                >
+                  개인정보 동의(필수)
+                </TOUText>
+              </>
             )}
-            <TOUText>개인정보 동의(필수)</TOUText>
             {!piCheck && (
               <TextValidation> 개인정보 동의를 해주세요.</TextValidation>
             )}
@@ -428,25 +485,44 @@ const SignUp = () => {
           <TOU>{pi}</TOU>
           <TouCheckBox>
             {lbCheck === false ? (
-              <AiOutlineCheckCircle
-                onClick={() => {
-                  setLBCheck(true);
-                }}
-              />
+              <>
+                <AiOutlineCheckCircle
+                  onClick={() => {
+                    setLBCheck(true);
+                  }}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText>위치정보 동의(필수)</TOUText>
+              </>
             ) : (
-              <AiFillCheckCircle
-                onClick={() => {
-                  setLBCheck(false);
-                }}
-              />
+              <>
+                <AiFillCheckCircle
+                  style={{ color: '#0094FF', marginTop: '3px' }}
+                  onClick={() => {
+                    setLBCheck(false);
+                  }}
+                />
+                <TOUText
+                  style={{ color: '#0094FF' }}
+                  onClick={() => {
+                    setLBCheck(false);
+                  }}
+                >
+                  위치정보 동의(필수)
+                </TOUText>
+              </>
             )}
-            <TOUText>위치정보 동의(필수)</TOUText>
             {!lbCheck && (
               <TextValidation> 위치정보 동의를 해주세요.</TextValidation>
             )}
           </TouCheckBox>
-          <TOU>{lb}</TOU>
-          <SignUpButton onClick={onClicktermsOfUse}>
+          <TOU>
+            <span>{lb}</span>
+          </TOU>
+          <SignUpButton
+            onClick={onClicktermsOfUse}
+            disabled={(!touCheck === !piCheck) === !lbCheck}
+          >
             동의하고 가입하기
           </SignUpButton>
         </TOUContainer>
@@ -458,84 +534,130 @@ const SignUp = () => {
 export default SignUp;
 
 const SignUpWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: auto;
+  ${({ theme }) => theme.mainLayout.wrapper}
 `;
-
 const SignUpContainer = styled.form`
-  margin-top: 2vh;
+  ${({ theme }) => theme.mainLayout.container}
+  text-align: center;
 `;
 const PasswordShow = styled.div`
+  width: 100%;
+  margin: auto;
   :hover {
     cursor: pointer;
   }
 `;
 const InputText = styled.p`
   font-weight: bold;
+  width: 40%;
+  margin: auto;
+  text-align: left;
+  margin-bottom: 8px;
 `;
 
 const IconValidation = styled.div`
-  margin-top: 1vh;
+  margin-top: 10px;
+  width: 40%;
+  margin: auto;
+  text-align: left;
 `;
 const TextValidation = styled.span`
   color: red;
-  margin-left: 1vw;
+  margin-top: 6px;
+  margin-left: 8px;
   font-size: 12px;
 `;
 const SignUpButton = styled.button`
   margin-top: 4vh;
-  width: 25vw;
-  height: 8vh;
-  color: black;
-  background-color: #e9ecef;
-  border: none;
+  border-radius: 2rem;
+  width: 40%;
+  height: 48px;
+  background-color: white;
+  border-style: solid;
+  border-width: 0.1rem;
   font-size: 16px;
-  border-radius: 30px;
   :hover {
     cursor: pointer;
-    background-color: #dee2e6;
+    color: white;
+    background-color: black;
   }
 `;
 
-const TOUContainer = styled.div``;
+const TOUContainer = styled.div`
+  ${({ theme }) => theme.mainLayout.container}
+  justify-content: center;
+  text-align: center;
+`;
 const TouCheckBox = styled.div`
   display: flex;
-  margin-top: 4vh;
+  height: 5%;
+  width: 40%;
+  margin: auto;
+  text-align: left;
+  margin-top: 34px;
   font-size: 20px;
   :hover {
     cursor: pointer;
   }
 `;
+const TouAllCheckBox = styled.div`
+  display: flex;
+  height: 5%;
+  width: 40%;
+  margin: auto;
+  text-align: left;
+  font-size: 20px;
+  :hover {
+    cursor: pointer;
+  }
+`;
+
 const TOUHeaderText = styled.div`
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
-  text-align: center;
-  margin-top: 4vh;
-  margin-bottom: 10vh;
+  margin-top: 1vh;
+  margin-bottom: 4vh;
 `;
 const TOU = styled.div`
   margin-top: 2vh;
-  width: 24vw;
-  height: 12vh;
+  height: 13%;
+  width: 40%;
+  margin: auto;
   overflow: auto;
+  background-color: white;
+  /* ::-webkit-scrollbar {
+    display: none;
+  } */
 `;
 const TOUText = styled.div`
-  margin-left: 1vw;
+  margin-left: 12px;
 `;
 const ImageBox = styled.div`
   text-align: center;
+  margin-bottom: 30px;
 `;
 const InputBox = styled.div`
-  height: 15vh;
+  width: 100%;
+  height: 15%;
 `;
 const SignUpInput = styled.input`
-  width: 24vw;
-  height: 5vh;
-  margin-right: 1vw;
+  width: 40%;
+  height: 48px;
   border-radius: 20px;
-  border: none;
   padding-left: 16px;
-  background-color: #e9ecef;
   font-size: 16px;
+`;
+const PasswordInput = styled.input`
+  width: 40%;
+  height: 48px;
+  margin-left: 28px;
+  margin-right: 12px;
+  border-radius: 20px;
+  padding-left: 16px;
+  font-size: 16px;
+`;
+const IconImg = styled.img`
+  width: 5rem;
+  height: 5rem;
+  margin-right: 5px;
 `;

@@ -54,14 +54,17 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
 export default CalendarEdit;
 
 const CalendarTextArea = styled.textarea`
-  padding: 12px;
+  padding: 8px;
   height: 100%;
   width: 100%;
   border-radius: 20px;
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
-  overflow: none;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   resize: none;
   :focus {
     outline: none;

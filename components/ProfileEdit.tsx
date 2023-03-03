@@ -252,8 +252,16 @@ const ProfileEdit = ({
             <EditNickNameBox>
               <NickNameAreaBox>
                 <NameBox>
-                  <NickNameText>{item.displayName}</NickNameText>
-                  <AreaText>{item.area}</AreaText>
+                  {instagram === '' ? null : (
+                    <InstagramText
+                      href={`https://www.instagram.com/${instagram}/`}
+                      target="_blank"
+                    >
+                      {item.instagram}
+                    </InstagramText>
+                  )}
+
+                  <InstagramImage src="/assets/icons/myPage/Ins.svg" />
 
                   {authService.currentUser?.uid === paramsId ? (
                     <EditButton
@@ -264,24 +272,36 @@ const ProfileEdit = ({
                       수정
                     </EditButton>
                   ) : item.follower?.includes(user) ? (
-                    <EditButton
-                      style={{ backgroundColor: 'black', color: 'white' }}
-                      onClick={FollowReMoveOnClick}
-                    >
-                      팔로잉
-                    </EditButton>
+                    <>
+                      <EditButton
+                        style={{ backgroundColor: 'black', color: 'white' }}
+                        onClick={FollowReMoveOnClick}
+                      >
+                        <IconImg src="/assets/icons/myPage/Follow.svg" />
+                        팔로잉
+                      </EditButton>
+                      <EditButton>
+                        <IconImg src="/assets/icons/myPage/DM.svg" />
+                        메시지
+                      </EditButton>
+                    </>
                   ) : (
-                    <EditButton onClick={FollowOnClick}>팔로우</EditButton>
+                    <>
+                      <EditButton onClick={FollowOnClick}>
+                        <IconImg src="/assets/icons/myPage/Follow.svg" />
+                        팔로우
+                      </EditButton>
+                      <EditButton>
+                        <IconImg src="/assets/icons/myPage/DM.svg" />
+                        메시지
+                      </EditButton>
+                    </>
                   )}
                 </NameBox>
                 <InstagramBox>
-                  <a
-                    href={`https://www.instagram.com/${instagram}/`}
-                    target="_blank"
-                  >
-                    {item.instagram}
-                  </a>
-                  <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
+                  <NickNameText>{item.displayName}</NickNameText>
+                  <AreaImage src="/assets/icons/myPage/Area.svg" />
+                  <AreaText>{item.area}</AreaText>
                 </InstagramBox>
               </NickNameAreaBox>
               <FollowBox>
@@ -365,25 +385,16 @@ const ProfileEdit = ({
               <EditNickNameBox>
                 <NickNameAreaBox>
                   <NameBox>
-                    <TextInput
+                    <InstagramInput
                       spellCheck="false"
-                      value={nickName}
-                      onChange={onChangeName}
-                      placeholder="닉네임"
-                      maxLength={8}
-                    />
-                    <Select
+                      value={instagram}
                       onChange={(e) => {
-                        setArea(e.target.value);
+                        setInstagram(e.target.value);
                       }}
-                      defaultValue={area}
-                    >
-                      {OPTIONS.map((option) => (
-                        <option key={option.area} value={option.area}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </Select>
+                      placeholder="인스타그램"
+                      maxLength={20}
+                    />
+                    <InstagramImage src="/assets/icons/myPage/Ins.svg" />
                     <EditButton
                       onClick={() => {
                         setIsProfileEdit(false);
@@ -400,6 +411,28 @@ const ProfileEdit = ({
                     >
                       완료
                     </EditButton>
+                  </NameBox>
+                  <InstagramBox>
+                    <TextInput
+                      spellCheck="false"
+                      value={nickName}
+                      onChange={onChangeName}
+                      placeholder="닉네임"
+                      maxLength={8}
+                    />
+                    <AreaImage src="/assets/icons/myPage/Area.svg" />
+                    <Select
+                      onChange={(e) => {
+                        setArea(e.target.value);
+                      }}
+                      defaultValue={area}
+                    >
+                      {OPTIONS.map((option) => (
+                        <option key={option.area} value={option.area}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </Select>
                     <InputBox>
                       {nickName !== item.displayName && (
                         <>
@@ -415,18 +448,6 @@ const ProfileEdit = ({
                         </>
                       )}
                     </InputBox>
-                  </NameBox>
-                  <InstagramBox>
-                    <InstagramInput
-                      spellCheck="false"
-                      value={instagram}
-                      onChange={(e) => {
-                        setInstagram(e.target.value);
-                      }}
-                      placeholder="인스타그램"
-                      maxLength={20}
-                    />
-                    <InstagramImage src="https://t1.daumcdn.net/cfile/tistory/99B6AB485D09F2132A" />
                   </InstagramBox>
                 </NickNameAreaBox>
                 <FollowBox>
@@ -499,6 +520,20 @@ const EditNickNameBox = styled.div`
 `;
 const NameBox = styled.div`
   height: 40px;
+  font-size: 24px;
+  font-weight: 600;
+
+  a:link {
+    color: black;
+    text-decoration: none;
+  }
+  a:visited {
+    color: black;
+    text-decoration: none;
+  }
+  a:hover {
+    color: lightgray;
+  }
 `;
 const ProfilePhoto = styled.div`
   width: 150px;
@@ -570,17 +605,15 @@ const NickNameAreaBox = styled.div`
   height: 70px;
 `;
 const NickNameText = styled.span`
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-right: 20px;
+  font-size: 18px;
+  font-weight: 600;
 `;
 const AreaText = styled.span`
   font-size: 1rem;
   font-weight: bold;
-  color: black;
 `;
 const IntroductionText = styled.textarea`
-  margin-top: 16px;
+  margin-top: 20px;
   font-size: 16px;
   border: none;
   width: 300px;
@@ -598,7 +631,7 @@ const IntroductionText = styled.textarea`
   }
 `;
 const IntroductionEditText = styled.textarea`
-  margin-top: 16px;
+  margin-top: 20px;
   font-size: 16px;
   border: none;
   width: 300px;
@@ -621,6 +654,10 @@ const IntroductionEditText = styled.textarea`
 const EditButton = styled.button`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
+  background-color: white;
+  border: black;
+  border-style: solid;
+  border-width: 0.1rem;
   :hover {
     cursor: pointer;
     background-color: black;
@@ -632,8 +669,8 @@ const TextInput = styled.input`
   width: 160px;
   height: 26px;
   border: none;
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
   text-align: left;
   background-color: #fffcf3;
   border-bottom-color: black;
@@ -648,7 +685,7 @@ const Select = styled.select`
   width: 60px;
   font-size: 1rem;
   background-color: #fffcf3;
-  margin-left: 10px;
+  margin-left: 2px;
   border: none;
   :focus {
     outline: none;
@@ -658,9 +695,9 @@ const InstagramInput = styled.input`
   width: 160px;
   height: 25px;
   border: none;
-  font-size: 16px;
+  font-size: 24px;
   color: black;
-  font-weight: 700;
+  font-weight: 600;
   text-align: left;
   background-color: #fffcf3;
   border-bottom-color: black;
@@ -670,9 +707,12 @@ const InstagramInput = styled.input`
     outline: none;
   }
 `;
+const InstagramText = styled.a`
+  margin-right: 20px;
+`;
 const InstagramImage = styled.img`
-  width: 1.5rem;
-  margin-left: 8px;
+  width: 30px;
+  height: 30px;
 `;
 const InstagramBox = styled.div`
   margin-top: 10px;
@@ -696,23 +736,21 @@ const FollowBox = styled.div`
 `;
 
 const FollowText = styled.span`
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-right: 8px;
+  font-size: 18px;
+  margin-right: 12px;
   :hover {
     cursor: pointer;
     color: gray;
   }
 `;
 const PostNumberText = styled.span`
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-right: 8px;
+  font-size: 18px;
+  margin-right: 12px;
 `;
 const FollowNumberText = styled.span`
-  font-weight: bolder;
-  font-size: 1.2rem;
-  margin-right: 8px;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 12px;
 `;
 
 const TextValidation = styled.span`
@@ -733,4 +771,16 @@ const LevelIcon = styled.img`
   margin-right: 8px;
   margin-bottom: 6px;
   border-radius: 50%;
+`;
+const IconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5px;
+  margin-bottom: 2px;
+`;
+const AreaImage = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-left: 20px;
+  margin-bottom: 6px;
 `;

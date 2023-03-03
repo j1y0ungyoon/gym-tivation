@@ -336,14 +336,15 @@ const ProfileBox = styled.div`
 `;
 const ScheduleBox = styled.div`
   float: right;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 0.5vh;
+  margin-bottom: 0.5vh;
   width: 25%;
 `;
 const Schedule = styled.div`
   width: 100%;
 `;
 const NavigationBox = styled.div`
+  gap: 16px;
   display: flex;
   float: left;
   width: 63%;
@@ -358,9 +359,11 @@ const NavigationBox = styled.div`
 `;
 
 const GalleyButton = styled.button`
-  margin-right: auto;
-  background-color: white;
   ${({ theme }) => theme.btn.category}
+  background-color: white;
+  border: black;
+  border-style: solid;
+  border-width: 0.1rem;
   :hover {
     cursor: pointer;
     background-color: black;
@@ -371,6 +374,7 @@ const GalleyButton = styled.button`
 const GalleyBox = styled.div`
   width: 98%;
   height: 100%;
+
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -442,9 +446,9 @@ const FollowModal = styled.div`
   top: 50%;
   left: 50%;
   border-radius: 15px;
-  background-color: #fffcf3;
   transform: translate(-50%, -50%) !important;
   padding-top: 1.5rem;
+  background-color: #fffcf3;
   border-style: solid;
   border-width: 0.1rem;
   border-color: black;
