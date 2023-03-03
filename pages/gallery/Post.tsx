@@ -49,7 +49,7 @@ const Post = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.error('로그인을 먼저 해주세요!');
+      toast.info('로그인을 먼저 해주세요!');
       router.push('/gallery');
     }
   }, []);

@@ -123,9 +123,13 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         )}
 
         <ButtonWrapper>
-          <SubmitCommentButton onClick={onSubmitComment}>
-            등록
-          </SubmitCommentButton>
+          {authService.currentUser ? (
+            <SubmitCommentButton onClick={onSubmitComment}>
+              등록
+            </SubmitCommentButton>
+          ) : (
+            <SubmitCommentButton disabled>등록</SubmitCommentButton>
+          )}
         </ButtonWrapper>
       </InputWrapper>
     </CommentListWrapper>

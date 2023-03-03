@@ -261,12 +261,13 @@ const CommentWrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
   width: 60%;
-  margin: 20px auto;
+  height: 100%;
 `;
 const CommentContainer = styled.div`
   padding: 20px auto;
   display: flex;
   width: 90%;
+  height: 100%;
   overflow: auto;
 `;
 const LikeContainer = styled.div`

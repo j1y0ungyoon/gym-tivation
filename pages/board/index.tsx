@@ -115,7 +115,6 @@ const BoardWrapper = styled.div`
 const BoardMain = styled.main`
   ${({ theme }) => theme.mainLayout.container};
   display: flex;
-
   flex-direction: column;
   align-items: center;
   overflow: auto;
