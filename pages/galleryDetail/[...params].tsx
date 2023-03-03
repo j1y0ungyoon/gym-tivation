@@ -149,15 +149,15 @@ const GalleryDetail = ({ params }: any) => {
                 </EditTitleContainer>
 
                 <GalleryContentContainer>
-                  <GalleryImageWarpper>
-                    <GalleryImagePreview src={editGalleryPhoto} />
+                  <GalleryImageLabel>
+                    <GalleryEditPreview src={editGalleryPhoto} />
                     <GalleryImageInput
                       id="input-file"
                       type="file"
                       accept="image/*"
                       onChange={onChangeUpload}
                     />
-                  </GalleryImageWarpper>
+                  </GalleryImageLabel>
                   {/* <GalleryContentInput
             placeholder="글을 입력해주세요"
             onChange={onChangeGalleryContent}
@@ -215,9 +215,9 @@ const GalleryDetail = ({ params }: any) => {
                 </EditWrapper>
               </GalleryTitleContainer>
               <GalleryContentContainer>
-                <GalleryImageWarpper>
+                <GalleryImageWrapper>
                   <GalleryImagePreview src={prevPhoto} />
-                </GalleryImageWarpper>
+                </GalleryImageWrapper>
                 {/* <DetailGalleryContent>
                   {detailGalleryPost?.content}
                 </DetailGalleryContent> */}
@@ -235,7 +235,13 @@ const GalleryDetail = ({ params }: any) => {
     </>
   );
 };
-
+const GalleryImageWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  border-right: 1px solid black;
+`;
 const GalleryPostWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
 
@@ -254,9 +260,11 @@ const CommentWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  width: 35%;
+  width: 60%;
+  margin: 20px auto;
 `;
 const CommentContainer = styled.div`
+  padding: 20px auto;
   display: flex;
   width: 90%;
   overflow: auto;
@@ -264,7 +272,6 @@ const CommentContainer = styled.div`
 const LikeContainer = styled.div`
   border: 1px solid black;
   width: 30%;
-  margin: 10px;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
 `;
 const BottomWrapper = styled.div`
@@ -281,6 +288,7 @@ const InfoWrapper = styled.div`
 const EditWrapper = styled.div`
   display: flex;
   width: 50%;
+  min-height: 100%;
   flex-direction: column;
   align-items: flex-end;
 `;
@@ -307,6 +315,7 @@ const GalleryContent = styled.div`
   border: 1px solid black;
   margin: 20px 20px;
 `;
+
 const DetailGalleryContent = styled.div`
   display: flex;
   padding: 1rem;
@@ -328,7 +337,6 @@ const DetailGalleryTitle = styled.div`
 const GalleryEditWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
 
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
@@ -341,10 +349,10 @@ const GalleryEditContainer = styled.div`
 
 const GalleryPostForm = styled.form`
   flex-direction: column;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   align-items: center;
-  width: 100%;
   height: 90%;
-  border-radius: 2rem;
+  margin: 20px;
 `;
 const EditTitleContainer = styled.div`
   display: flex;
@@ -370,7 +378,8 @@ const GalleryTitleContainer = styled.div`
   padding: 10px;
   flex-direction: row;
   width: 100%;
-  height: 20%;
+  min-height: 17%;
+  height: 17%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 1px solid black;
@@ -388,9 +397,17 @@ const GalleryPostTitle = styled.input`
 `;
 const GalleryContentContainer = styled.div`
   display: flex;
+  justify-content: center;
   flex-direction: row;
   width: 100%;
-  height: 90%;
+  height: 83%;
+`;
+
+const GalleryEditBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 80%;
   padding: 2rem;
 `;
 const GalleryContentInput = styled.textarea`
@@ -408,25 +425,24 @@ const GalleryButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  height: 20%;
+  margin: 10px auto;
 `;
 const GalleryPostButton = styled.button`
   ${({ theme }) => theme.btn.btn30}
   border:1px solid black;
-  margin: 10px;
+  margin-left: 10px;
 `;
 const GalleryImageInput = styled.input`
   display: none;
 `;
 
-const GalleryImageWarpper = styled.label`
+const GalleryImageLabel = styled.label`
   display: flex;
   width: 100%;
-  height: 100%;
   flex-direction: column;
-  margin: 1rem;
 `;
-
-const GalleryImagePreview = styled.img`
+const GalleryEditPreview = styled.img`
   margin-top: 1rem;
   width: 100%;
   height: 100%;
@@ -435,6 +451,21 @@ const GalleryImagePreview = styled.img`
   overflow: hidden;
   object-fit: scale-down;
 `;
+
+const GalleryImagePreview = styled.img`
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  object-fit: scale-down;
+`;
+const EditImagePreview = styled.img`
+  margin-top: 1rem;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  object-fit: scale-down;
+`;
+
 export function getServerSideProps({ params: { params } }: any) {
   return {
     props: {

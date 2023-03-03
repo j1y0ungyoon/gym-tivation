@@ -117,7 +117,6 @@ const BoardMain = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
 `;
 const ContentWrapper = styled.div`
   background-color: white;

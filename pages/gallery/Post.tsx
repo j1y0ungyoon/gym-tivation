@@ -231,12 +231,8 @@ const GalleryButtonWrapper = styled.div`
   padding: 2rem;
 `;
 const GalleryPostButton = styled.button`
-  width: 10rem;
-  height: 2rem;
-  border-radius: 1rem;
-  background-color: #d9d9d9;
-  margin: 1rem;
-  border: none;
+  ${({ theme }) => theme.btn.btn50}
+  border:1px solid black;
 `;
 const GalleryImageInput = styled.input`
   display: none;

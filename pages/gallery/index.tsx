@@ -71,8 +71,8 @@ const GalleryContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   flex-direction: column;
   border: 1px solid black;
-  margin: 20px;
   display: flex;
+  min-height: 90%;
   background-color: white;
 `;
 const GalleryBoardContainer = styled.div`
