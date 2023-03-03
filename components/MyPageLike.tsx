@@ -118,7 +118,7 @@ const MyPageLike = ({
 
 export default MyPageLike;
 const MyPageBoardWrapper = styled.div`
-  margin-top: 1vh;
+  padding-top: 20px;
   margin-left: 40px;
   width: 92%;
   height: 70%;
@@ -129,13 +129,14 @@ const MyPageBoardContainer = styled.div`
   display: flex;
   width: 100%;
   height: 40%;
+  max-height: 105px;
   padding: 10px;
   background-color: white;
   border-color: black;
   border-style: solid;
   border-width: 0.1rem;
   border-radius: 15px;
-  margin-bottom: 2vh;
+  margin-bottom: 16px;
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05);
@@ -189,7 +190,6 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-  margin-top: 5px;
   margin-bottom: 5px;
   width: 100%;
   height: 50%;

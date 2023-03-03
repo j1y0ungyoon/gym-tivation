@@ -1,10 +1,8 @@
 export const theme = {
   color: {
     backgroundColor: '#FFFCF3',
-    brandColor: '#FF4800',
     brandColor100: '#FF3D00',
     brandColor50: '#afsdaa',
-
     black: '#000000',
   },
   btn: {
@@ -75,9 +73,7 @@ export const theme = {
   },
   mainLayout: {
     wrapper: `
-
     display : flex;
-
       justify-content : center;
       min-width : 1000px;
       width : calc(100vw - 180px);
@@ -92,7 +88,6 @@ export const theme = {
       max-width : 1220px;
       margin : 20px auto;
       height:100%;
-
     `,
   },
   font: {
