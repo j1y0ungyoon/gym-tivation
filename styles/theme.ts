@@ -3,7 +3,7 @@ export const theme = {
     backgroundColor: '#FFFCF3',
     brandColor: '#FF4800',
     brandColor100: '#FF3D00',
-    brandColor50: '#afsdaa',
+    brandColor50: '#FFCAB5',
 
     black: '#000000',
   },
@@ -88,7 +88,7 @@ export const theme = {
       margin : 0 auto;
       background-color:#FFFCF3;
   `,
-   
+    container: `
       min-width : 640px;
       width : 100%;
       max-width : 1220px;
