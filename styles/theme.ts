@@ -28,13 +28,11 @@ export const theme = {
     `,
     btn100: `
       min-width: 120px;
-
       height: 50px;
       padding: 0 25px;
       border-radius: 50px;
       border: none;
       font-size: 16px;
-
       background-color: #d9d9d9;
       color: #000;
       :hover {
@@ -88,12 +86,12 @@ export const theme = {
       margin : 0 auto;
       background-color:#FFFCF3;
   `,
-   
+    container: `
       min-width : 640px;
       width : 100%;
       max-width : 1220px;
       margin : 20px auto;
-height:100%;
+      height:100%;
 
     `,
   },

@@ -41,7 +41,10 @@ CustomMenu.displayName = 'CustomMenu';
 export default CustomMenu;
 
 const StyledUl = styled.ul`
-  height: 18rem;
+  height: 14rem;
   overflow: auto;
   overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

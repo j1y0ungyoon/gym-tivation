@@ -7,6 +7,7 @@ import RecruitPost from '@/components/RecruitPost';
 import styled from 'styled-components';
 import { CoordinateType } from '../../type';
 import SearchColleague from '@/components/SearchColleague';
+import { toast } from 'react-toastify';
 
 const initialCoordinate: CoordinateType = {
   lat: 33.5563,
@@ -21,10 +22,19 @@ const MapBoard = () => {
   const [coordinate, setCoordinate] =
     useState<CoordinateType>(initialCoordinate);
 
+  // 마커 선택한 좌표
+  const [markerCoordi, setMarkerCoordi] = useState<CoordinateType>();
+
+  // 마커 선택한 좌표대로 필터된 모집글 배열
+  const [selectedPosts, setSelectedPosts] = useState<RecruitPostType[]>();
+
+  // SearchMyColleague에서 검색할 때 onChange에 쓰이는 state
+  const [region, setRegion] = useState('서울');
+
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
     if (!authService.currentUser) {
-      alert('로그인을 먼저 해주세요!');
+      toast.info('로그인을 먼저 해주세요!');
       return;
     }
 
@@ -32,6 +42,21 @@ const MapBoard = () => {
       router.push('/mapBoard/WritingRecruitment');
     }
   };
+
+  // 마커 클릭한 좌표로 RecruitPosts 필터하기
+  useEffect(() => {
+    const filteredPosts = recruitPosts?.filter(
+      (post) =>
+        post.coordinate?.lat === markerCoordi?.lat &&
+        post.coordinate?.lng === markerCoordi?.lng,
+    );
+    setSelectedPosts(filteredPosts);
+  }, [markerCoordi]);
+
+  // 동료 검색을 하면 selectedPosts를 초기화 해준다
+  useEffect(() => {
+    setSelectedPosts([]);
+  }, [region]);
 
   // 마운트 시 post 실시간으로 불러오기
   useEffect(() => {
@@ -58,98 +83,118 @@ const MapBoard = () => {
 
   return (
     <>
-      <Wrapper>
-        <MapBoardHeadContainer>
-          <MapBoardWritingButton onClick={goToWrite}>
-            모집글 작성하기
-          </MapBoardWritingButton>
-        </MapBoardHeadContainer>
+      <MapBoardWrapper>
+        <MapBoardContainer>
+          <MapBoardHeadContainer>
+            <MapBoardWritingButton onClick={goToWrite}>
+              모집글 작성하기
+            </MapBoardWritingButton>
+          </MapBoardHeadContainer>
 
-        <Wapper2>
-          <MapWrapper>
-            <MapBoardContainer>
+          <MapBoardBodyContainer>
+            <MapBox>
               <SearchColleague
                 setCoordinate={setCoordinate}
                 coordinate={coordinate}
+                setMarkerCoordi={setMarkerCoordi}
+                region={region}
+                setRegion={setRegion}
               />
-            </MapBoardContainer>
-          </MapWrapper>
+            </MapBox>
 
-          <MapBoardWrapper>
-            {recruitPosts?.map((post) => {
-              return <RecruitPost post={post} key={post.id} />;
-            })}
-          </MapBoardWrapper>
-        </Wapper2>
-      </Wrapper>
+            <MapBoardPostsBox>
+              <MapBoardPostHead>{`"${region}"에서 모임`}</MapBoardPostHead>
+              {selectedPosts?.map((post) => {
+                return <RecruitPost post={post} key={post.id} />;
+              })}
+            </MapBoardPostsBox>
+          </MapBoardBodyContainer>
+        </MapBoardContainer>
+      </MapBoardWrapper>
     </>
   );
 };
 
 export default MapBoard;
 
-const Wrapper = styled.main`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+const MapBoardWrapper = styled.main`
+  ${({ theme }) => theme.mainLayout.wrapper}
 `;
 
-const Wapper2 = styled.section`
+const MapBoardContainer = styled.section`
+  ${({ theme }) => theme.mainLayout.container}
+  flex-direction: column;
+`;
+
+const MapBoardBodyContainer = styled.section`
   display: flex;
   flex-direction: row;
-  padding: 20px;
+  height: calc(100% - 70px);
+  margin-top: 20px;
   align-items: center;
   justify-content: center;
   gap: 30px;
-  margin-top: -10px;
+  /* margin-top: -10px; */
 `;
 
-const MapWrapper = styled.main`
+const MapBox = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #d9d9d9;
+  border: 1px solid black;
   border-radius: 2rem;
+  width: 50%;
+  height: 100%;
+  background-color: white;
 `;
 
-const MapBoardWrapper = styled.div`
+const MapBoardPostsBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 2rem;
-  background-color: #d9d9d9;
+  padding: 1rem;
+  border: 1px solid black;
+  background-color: #ffff;
   border-radius: 2rem;
-  width: 40%;
-  height: 60rem;
+  width: 50%;
+  height: 100%;
+
+  overflow: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const MapBoardPostHead = styled.span`
+  font-size: ${({ theme }) => theme.font.font70};
+  margin-bottom: 16px;
 `;
 
 const MapBoardHeadContainer = styled.section`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 10px;
-  margin-top: 10px;
-  margin-right: 2.3rem;
 `;
 
 const MapBoardWritingButton = styled.button`
-  padding: 10px;
-  margin-right: 75px;
-  background-color: #d9d9d9;
-  border: none;
-  border-radius: 1rem;
+  ${({ theme }) => theme.btn.btn100}
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  color: white;
+  border: 1px solid black;
+  /* &:hover {
+    background-color: #ffcab5;
+  } */
 `;
 
-const MapBoardContainer = styled.div`
+const MapdBox2 = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #d9d9d9;
+  background-color: white;
   border-radius: 2rem;
-  width: 35%;
-  height: 60rem;
+  width: 100%;
+  height: 100%;
   gap: 1rem;
 `;
-
-const PostListSection = styled.div``;
