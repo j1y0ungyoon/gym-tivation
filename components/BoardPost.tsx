@@ -1,6 +1,12 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import type { BoardPostType } from '@/type';
+import smallLike from '../public/assets/icons/smallLike.png';
+import Image from 'next/image';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { dbService } from '@/firebase';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const BoardPost = ({
   photo,
@@ -9,9 +15,10 @@ const BoardPost = ({
   id,
   nickName,
   like,
+  createdAt,
 }: BoardPostType) => {
   const router = useRouter();
-
+  const [commentCount, setCommentCount] = useState();
   const goToDetailPost = (id: any) => {
     router.push({
       pathname: `/boardDetail/${id}`,
@@ -20,11 +27,26 @@ const BoardPost = ({
       },
     });
   };
+
+  const getComments = async () => {
+    if (!id) return;
+    const q = query(
+      collection(dbService, 'comments'),
+      where('postId', '==', id),
+    );
+    const docsData = await getDocs(q);
+    const commentList = docsData.docs.length;
+    setCommentCount(commentList);
+  };
+  useEffect(() => {
+    getComments();
+  }, []);
+
   return (
     <BoardPostWrapper key={id} onClick={() => goToDetailPost(id)}>
-      <ItemPhotoContainer>
+      {/* <ItemPhotoContainer>
         <ItemPhoto src={photo}></ItemPhoto>
-      </ItemPhotoContainer>
+      </ItemPhotoContainer> */}
       <BoardPostContainer>
         <ItemContentWrapper>
           <ItemContentContainer>
@@ -33,12 +55,17 @@ const BoardPost = ({
             </CateogryWrapper>
             <ItemTitleWrapper>
               <ItemTitle>{title}</ItemTitle>
+              <CommentCount>[{commentCount}]</CommentCount>
             </ItemTitleWrapper>
           </ItemContentContainer>
         </ItemContentWrapper>
         <InformationWrapper>
           <ItemNickName>{nickName}</ItemNickName>
-          <ItemLike>{like?.length}</ItemLike>
+          <ItemCreatedAt>{createdAt}</ItemCreatedAt>
+          <LikeWrapper>
+            <Image alt="like" src={smallLike} />
+            <ItemLike>{like?.length}</ItemLike>
+          </LikeWrapper>
         </InformationWrapper>
       </BoardPostContainer>
     </BoardPostWrapper>
@@ -51,10 +78,15 @@ const BoardPostWrapper = styled.div`
   border: 1px solid black;
   margin: 1rem;
   background-color: white;
-  border-radius: 1.5rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   height: 9rem;
   padding: 0.5rem;
   cursor: pointer;
+`;
+const CommentCount = styled.div`
+  display: flex;
+  font-size: ${({ theme }) => theme.font.font50};
+  margin: 10px;
 `;
 const BoardPostContainer = styled.div`
   display: flex;
@@ -94,7 +126,7 @@ const ItemCategory = styled.div`
 `;
 const InformationWrapper = styled.div`
   display: flex;
-  /* align-items: center; */
+  align-items: center;
   width: 100%;
   height: 50%;
   flex-direction: row;
@@ -104,8 +136,15 @@ const InformationWrapper = styled.div`
 const ItemNickName = styled.div`
   margin-right: 2rem;
 `;
+const ItemCreatedAt = styled.span``;
 const CateogryWrapper = styled.div`
   display: flex;
+  align-items: center;
+`;
+const LikeWrapper = styled.div`
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
   align-items: center;
 `;
 const ItemTitleWrapper = styled.div`
@@ -115,10 +154,10 @@ const ItemTitleWrapper = styled.div`
 `;
 const ItemTitle = styled.div`
   display: flex;
-  font-size: 1.5rem;
+  font-size: ${({ theme }) => theme.font.font70};
   width: 100%;
 `;
 const ItemLike = styled.div`
-  margin-right: 1rem;
+  margin-left: 5px;
 `;
 export default BoardPost;

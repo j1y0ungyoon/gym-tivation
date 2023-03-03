@@ -45,7 +45,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         createdAt: Date.now(),
       };
 
-      if (category === '동료 모집') {
+      if (category === '동료 모집' || '게시판' || '갤러리') {
         await addDoc(collection(dbService, 'comments'), newComment)
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
@@ -83,7 +83,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
   useEffect(() => {
     const commentsRef = collection(dbService, 'comments');
 
-    const q = query(commentsRef, orderBy('createdAt', 'desc'));
+    const q = query(commentsRef, orderBy('createdAt', 'asc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newComments = snapshot.docs.map((doc) => ({
@@ -97,9 +97,16 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
       unsubscribe();
     };
   }, []);
-
+  //scroll 아래로 내려가기 기능 추가 해야함
   return (
     <CommentListWrapper>
+      <CommentWrapper>
+        {comments
+          .filter((comment) => comment.postId === id)
+          .map((comment) => {
+            return <Comment key={comment.id} comment={comment} />;
+          })}
+      </CommentWrapper>
       <InputWrapper>
         <CommentInput
           onChange={onChangeInputComment}
@@ -112,42 +119,34 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
           </SubmitCommentButton>
         </ButtonWrapper>
       </InputWrapper>
-      <CommentWrapper>
-        {comments
-          .filter((comment) => comment.postId === id)
-          .map((comment) => {
-            return <Comment key={comment.id} comment={comment} />;
-          })}
-      </CommentWrapper>
     </CommentListWrapper>
   );
 };
 
 export default CommentList;
 
-const CommentListWrapper = styled.div``;
+const CommentListWrapper = styled.div`
+  width: 100%;
+`;
 const CommentWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
 const InputWrapper = styled.div`
   display: flex;
+  flex-direction: row;
+  margin-top: 50px;
 `;
 
 const CommentInput = styled.input`
-  width: 40rem;
-  height: 2.5rem;
-  margin-top: 1rem;
-  border-radius: 1rem;
+  width: 100%;
+  ${({ theme }) => theme.inputDiv}
   border: 0.1px solid black;
+  outline: none;
 `;
 const ButtonWrapper = styled.div``;
 const SubmitCommentButton = styled.button`
-  width: 4rem;
-  height: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  border-radius: 1rem;
-  border: 0.1px solid black;
+  ${({ theme }) => theme.btn.btn50}
+  min-width:70px;
+  margin-left: 5px;
 `;

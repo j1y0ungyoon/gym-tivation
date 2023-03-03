@@ -76,10 +76,7 @@ const Comment = ({ comment }: { comment: CommentType }) => {
       (userId) => userId === authService.currentUser?.uid,
     );
 
-    console.log('exist', exist);
-
     if (exist === -1) {
-      console.log('likeCount', comment.likeCount);
       if (comment.likeCount || comment.likeCount === 0) {
         await clickLike({
           commentId: comment.id,
@@ -121,22 +118,29 @@ const Comment = ({ comment }: { comment: CommentType }) => {
   return (
     <>
       <CommentWrapper>
-        <ProfileImage src={comment.userPhoto} />
-        <NickName>{comment.nickName}</NickName>
-        <CommentListWrapper>{comment.comment}</CommentListWrapper>
-        {isClickedLike ? (
-          <LikeImg
-            onClick={onClickLike}
-            src="/assets/icons/mapBoard/like_icon_active.svg"
-          />
-        ) : (
-          <LikeImg
-            onClick={onClickLike}
-            src="/assets/icons/mapBoard/like_icon_inactive.svg"
-          />
-        )}
-        {comment.likeCount !== 0 ? comment.likeCount : null}
-
+        <UserProfile>
+          <ProfileImage src={comment.userPhoto} />
+        </UserProfile>
+        <CommentContent>
+          <NickName>{comment.nickName}</NickName>
+          <CommentListWrapper>{comment.comment}</CommentListWrapper>
+        </CommentContent>
+        <LikeBox>
+          <LikeCount>{comment.likeCount}</LikeCount>
+          <LikeImgBox>
+            {isClickedLike ? (
+              <LikeImg
+                onClick={onClickLike}
+                src="/assets/icons/mapBoard/like_icon_active.svg"
+              />
+            ) : (
+              <LikeImg
+                onClick={onClickLike}
+                src="/assets/icons/mapBoard/like_icon_inactive.svg"
+              />
+            )}
+          </LikeImgBox>
+        </LikeBox>
         {authService.currentUser?.uid === comment.userId ? (
           <DeleteButton onClick={onClickDeleteComment}>삭제</DeleteButton>
         ) : null}
@@ -149,28 +153,35 @@ export default Comment;
 
 const CommentWrapper = styled.div`
   display: flex;
+
   flex-direction: row;
+  align-items: center;
 `;
-const CommentListWrapper = styled.div`
+const CommentListWrapper = styled.span`
   display: flex;
   align-items: center;
-  width: 80%;
-  margin: 1rem;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: ${({ theme }) => theme.font.font50};
+  font-weight: 600;
+  flex-wrap: wrap;
 `;
 const NickName = styled.div`
   display: flex;
-  width: 3rem;
+  width: 100%;
   align-items: center;
-  margin: 1rem;
+  color: gray;
 `;
 const DeleteButton = styled.button`
-  width: 5rem;
-  height: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  border-radius: 1rem;
-  border: 0.1px solid black;
+  ${({ theme }) => theme.btn.btn50}
+  min-width:70px;
+  margin-left: 5px;
+`;
+const UserProfile = styled.div``;
+const CommentContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 const ProfileImage = styled.img`
   display: flex;
@@ -181,9 +192,15 @@ const ProfileImage = styled.img`
   margin-left: 1rem;
   margin-right: 0.6rem;
 `;
-
+const LikeBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const LikeImg = styled.img`
   cursor: pointer;
+  margin: 5px;
 `;
-
-const LikeImgBox = styled.div``;
+const LikeCount = styled.span``;
+const LikeImgBox = styled.div`
+  display: flex;
+`;

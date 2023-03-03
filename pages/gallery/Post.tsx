@@ -2,12 +2,11 @@ import { authService, dbService, storage } from '@/firebase';
 import { addDoc, collection, runTransaction, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
-
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
-
+import mouseClick from '../../public/assets/icons/mouseClick.png';
 const Post = () => {
   const [imageUpload, setImageUpload] = useState<any>('');
   const [galleryTitle, setGalleryTitle] = useState('');
@@ -50,14 +49,14 @@ const Post = () => {
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!galleryContent) {
+    if (!galleryTitle) {
       toast.warn('제목을 입력해주세요');
       return;
     }
-    if (!galleryContent) {
-      toast.warn('내용을 입력해주세요');
-      return;
-    }
+    // if (!galleryContent) {
+    //   toast.warn('내용을 입력해주세요');
+    //   return;
+    // }
     if (!galleryPhoto) {
       toast.warn('사진을 선택해주세요');
       return;
@@ -117,70 +116,94 @@ const Post = () => {
 
   return (
     <GalleryPostWrapper>
-      <GalleryPostContent onSubmit={onSubmitGallery}>
-        <GalleryTitleContainer>
-          제목:
-          <GalleryPostTitle
-            onChange={onChangeGalleryTitle}
-            value={galleryTitle}
-          />
-        </GalleryTitleContainer>
-        <GalleryContentContainer>
-          <GalleryImageWarpper>
-            <GalleryImageInput
-              type="file"
-              accept="image/*"
-              onChange={onChangeUpload}
-            />
+      <GalleryPostContainer>
+        <GalleryContent>
+          <GalleryPostContent onSubmit={onSubmitGallery}>
+            <GalleryTitleContainer>
+              <Title>제목 </Title>
 
-            <GalleryImagePreview src={galleryPhoto} />
-          </GalleryImageWarpper>
-          <GalleryContentInput
+              <InputDiv>
+                <GalleryPostTitle
+                  onChange={onChangeGalleryTitle}
+                  value={galleryTitle}
+                />
+              </InputDiv>
+            </GalleryTitleContainer>
+
+            <GalleryContentContainer>
+              <GalleryImageWarpper htmlFor="input-file">
+                <GalleryImagePreview src={galleryPhoto} />
+                <GalleryImageInput
+                  id="input-file"
+                  type="file"
+                  accept="image/*"
+                  onChange={onChangeUpload}
+                />
+              </GalleryImageWarpper>
+              {/* <GalleryContentInput
             placeholder="글을 입력해주세요"
             onChange={onChangeGalleryContent}
             value={galleryContent}
-          />
-        </GalleryContentContainer>
-        <GalleryButtonWrapper>
-          <GalleryPostButton type="submit">게시하기</GalleryPostButton>
-        </GalleryButtonWrapper>
-      </GalleryPostContent>
+          /> */}
+            </GalleryContentContainer>
+            <GalleryButtonWrapper>
+              <GalleryPostButton type="submit">게시하기</GalleryPostButton>
+            </GalleryButtonWrapper>
+          </GalleryPostContent>
+        </GalleryContent>
+      </GalleryPostContainer>
     </GalleryPostWrapper>
   );
 };
 
 const GalleryPostWrapper = styled.div`
-  display: flex;
+  ${({ theme }) => theme.mainLayout.wrapper};
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  height: 95vh;
-  background-color: white;
-  border-radius: 2rem;
 `;
-const GalleryPostContent = styled.form`
+const GalleryContent = styled.div`
+  background-color: white;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
+  width: 95%;
+  height: 95%;
+  border: 1px solid black;
+  margin: 20px 20px;
+`;
+const GalleryPostContainer = styled.div`
+  ${({ theme }) => theme.mainLayout.container};
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   display: flex;
   flex-direction: column;
+`;
+const GalleryPostContent = styled.form`
+  flex-direction: column;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   align-items: center;
-  width: 97%;
-  height: 95%;
-  background-color: #f2f2f2;
-  border-radius: 2rem;
+  height: 90%;
+  margin: 20px;
+`;
+const Title = styled.span`
+  display: flex;
+  flex-direction: column;
+  font-size: ${({ theme }) => theme.font.font70};
+`;
+const InputDiv = styled.div`
+  ${({ theme }) => theme.inputDiv};
+  background-color: white;
+  margin: 10px 0;
+  margin-left: 62px;
+  width: 85%;
+  border: 1px solid black;
 `;
 const GalleryTitleContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  width: 100%;
-  font-size: 2rem;
+  flex-direction: row;
+  margin-left: 50px;
 `;
 const GalleryPostTitle = styled.input`
-  width: 80%;
-  height: 3rem;
-  border-radius: 1rem;
-  border: none;
-  margin: 1rem;
+  ${({ theme }) => theme.input}
+  background-color:white;
 `;
 const GalleryContentContainer = styled.div`
   display: flex;
@@ -208,30 +231,33 @@ const GalleryButtonWrapper = styled.div`
   padding: 2rem;
 `;
 const GalleryPostButton = styled.button`
-  width: 10rem;
-  height: 2rem;
-  border-radius: 1rem;
-  background-color: #d9d9d9;
-  margin: 1rem;
-  border: none;
+  ${({ theme }) => theme.btn.btn50}
+  border:1px solid black;
 `;
 const GalleryImageInput = styled.input`
-  width: 100%;
-  height: 2rem;
+  display: none;
 `;
-const GalleryImageWarpper = styled.div`
+const GalleryImageWarpper = styled.label`
   display: flex;
-  width: 50%;
+  width: 100%;
   height: 90%;
   flex-direction: column;
   margin: 1rem;
+  &:hover {
+    background-image: url('/assets/icons/mouseClick.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
 `;
 
 const GalleryImagePreview = styled.img`
   margin-top: 1rem;
   width: 100%;
   height: 100%;
-  border-radius: 2rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  border: 1px solid black;
+  overflow: hidden;
+  object-fit: scale-down;
 `;
 
 export default Post;
