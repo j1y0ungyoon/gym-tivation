@@ -1,14 +1,10 @@
-import { authService, dbService, storage } from '@/firebase';
-import { collection, doc, onSnapshot } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { authService, dbService } from '@/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteBoardPost, editBoardPost } from '../api/api';
 import Like from '@/components/Like';
-import BoardCommentList from '@/components/BoardCommentList';
-import { nanoid } from 'nanoid';
-
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
@@ -131,14 +127,6 @@ const Detail = ({ params }: any) => {
   const getPost = () => {
     const getPost = onSnapshot(doc(dbService, 'posts', id), async (doc) => {
       const data = doc.data();
-
-      // const profileData = await getDocs(
-      //   query(
-      //     collection(dbService, 'profile'),
-      //     where('uid', '==', data?.userId),
-      //   ),
-      // );
-
       const getDetailPost: any = {
         id: doc.id,
         title: data?.title,
@@ -233,24 +221,42 @@ const Detail = ({ params }: any) => {
           <PostContainer>
             <DetailContent>
               <DetailTitleContainer>
-                <TitleUpperWrapper>
-                  <CategoryWrapper>
-                    <CategoryText>{detailPost?.category}</CategoryText>
-                  </CategoryWrapper>
-                  <TitleBox>
-                    <DetailPostTitle>{detailPost?.title}</DetailPostTitle>
-                  </TitleBox>
-                </TitleUpperWrapper>
-                <BottomWrapper>
-                  <UserImage src={detailPost?.userPhoto} />
+                <InfoWrapper>
+                  <TitleUpperWrapper>
+                    <CategoryWrapper>
+                      <CategoryText>{detailPost?.category}</CategoryText>
+                    </CategoryWrapper>
+                    <TitleBox>
+                      <DetailPostTitle>{detailPost?.title}</DetailPostTitle>
+                    </TitleBox>
+                  </TitleUpperWrapper>
+                  <TitleBottomWrapper>
+                    <UserImage src={detailPost?.userPhoto} />
 
-                  <LevelWrapper>
-                    <NicknameWrapper>{detailPost?.nickName}</NicknameWrapper>
-                    <LevelContainer>
-                      Lv.{detailPost?.userLv} {detailPost?.userLvName}
-                    </LevelContainer>
-                  </LevelWrapper>
-                </BottomWrapper>
+                    <LevelWrapper>
+                      <NicknameWrapper>{detailPost?.nickName}</NicknameWrapper>
+                      <LevelContainer>
+                        Lv.{detailPost?.userLv} {detailPost?.userLvName}
+                      </LevelContainer>
+                    </LevelWrapper>
+                  </TitleBottomWrapper>
+                </InfoWrapper>
+                <EditWrapper>
+                  <LikeContainer>
+                    <Like detailPost={detailPost} />
+                  </LikeContainer>
+
+                  {user === detailPost?.userId ? (
+                    <DetailButtonWrapper>
+                      <DetailPostButton onClick={onClickChangeDetail}>
+                        수정
+                      </DetailPostButton>
+                      <DetailPostButton onClick={onClickDeleteBoardPost}>
+                        삭제
+                      </DetailPostButton>
+                    </DetailButtonWrapper>
+                  ) : null}
+                </EditWrapper>
               </DetailTitleContainer>
               <ContentContainer>
                 {/* <div>created At{detailPost?.createdAt}</div> */}
@@ -264,23 +270,15 @@ const Detail = ({ params }: any) => {
                     }}
                   />
                 </ContentBox>
-                <Like detailPost={detailPost} />
+
                 <BottomWrapper>
                   <CommentWrapper>
-                    <CommentList category="게시판" id={id} />
+                    <CommentContainer>
+                      <CommentList category="게시판" id={id} />
+                    </CommentContainer>
                   </CommentWrapper>
                 </BottomWrapper>
               </ContentContainer>
-              {user === detailPost?.userId ? (
-                <DetailButtonWrapper>
-                  <DetailPostButton onClick={onClickChangeDetail}>
-                    수정
-                  </DetailPostButton>
-                  <DetailPostButton onClick={onClickDeleteBoardPost}>
-                    삭제
-                  </DetailPostButton>
-                </DetailButtonWrapper>
-              ) : null}
             </DetailContent>
           </PostContainer>
         </PostWrapper>
@@ -295,6 +293,8 @@ const PostWrapper = styled.div`
 `;
 const PostContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container};
+
+  height: 95%;
 `;
 const PostContent = styled.form`
   background-color: white;
@@ -305,22 +305,27 @@ const PostContent = styled.form`
   padding: 20px;
 `;
 const CommentWrapper = styled.div`
+  width: 80%;
+  overflow: auto;
+`;
+const CommentContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  width: 90%;
+  overflow: auto;
 `;
 const BottomWrapper = styled.div`
   display: flex;
+  height: 50%;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin-left: 10px;
+  margin: 20px;
+  overflow: auto;
 `;
 
 const Editor = styled(ReactQuill)`
   width: 100%;
   height: 80%;
-`;
-const BottmWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 const UserWrapper = styled.div`
   display: flex;
@@ -342,6 +347,11 @@ const TitleUpperWrapper = styled.div`
   align-items: center;
   margin: 10px;
 `;
+const TitleBottomWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 const DetailContent = styled.div`
   background-color: white;
   border: 1px solid black;
@@ -358,7 +368,7 @@ const UserImage = styled.img`
 const DetailTitleContainer = styled.div`
   display: flex;
   padding: 10px;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
@@ -393,7 +403,13 @@ const ContentBox = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   border: 1px solid black;
   width: 100%;
-  height: 100%;
+  height: 50%;
+`;
+const LikeContainer = styled.div`
+  border: 1px solid black;
+  width: 30%;
+  margin: 10px;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
 `;
 const HTMLParser = styled.div`
   margin: 20px;
@@ -407,14 +423,13 @@ const ContentContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 80%;
-  padding: 2rem;
+  padding: 32px;
 `;
 
 const DetailPostButton = styled.button`
   ${({ theme }) => theme.btn.btn30}
   border:1px solid black;
-  margin-right: 20px;
-  margin-bottom: 10px;
+  margin: 10px;
 `;
 
 const DetailPostTitle = styled.p`
@@ -426,11 +441,21 @@ const DetailPostTitle = styled.p`
   margin: 0px;
 `;
 
+const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+`;
 const DetailButtonWrapper = styled.div`
   display: flex;
+  height: 100%;
+`;
+
+const EditWrapper = styled.div`
+  display: flex;
+  width: 50%;
+  flex-direction: column;
   align-items: flex-end;
-  justify-content: flex-end;
-  width: 100%;
 `;
 const CategoryWrapper = styled.div`
   display: flex;
@@ -452,53 +477,53 @@ const CategoryText = styled.span`
   border: 1px solid black;
   margin-left: 10px;
 `;
-const ImageInput = styled.input`
-  width: 100%;
-  height: 2rem;
-`;
-const ImagePreview = styled.img`
-  margin-top: 1rem;
-  width: 100%;
-  height: 90%;
-  object-fit: cover;
-  border-radius: 2rem;
-`;
-const DetailPostPhoto = styled.img`
-  margin-top: 1rem;
-  width: 100%;
-  height: 90%;
-  border-radius: 2rem;
-  object-fit: cover;
-`;
-const DetailPostContent = styled.div`
-  display: flex;
-  padding: 1rem;
-  width: 50%;
-  height: 90%;
-  border-radius: 2rem;
-  /* font-size: 1.5rem; */
-  margin: 1rem;
-  border: 1px solid #777;
-  overflow-y: auto;
-`;
-const DetailImageWrapper = styled.div`
-  display: flex;
-  width: 50%;
-  height: 90%;
-  flex-direction: column;
-  margin: 1rem;
-`;
-const ContentInput = styled.textarea`
-  display: flex;
-  padding: 1rem;
-  width: 50%;
-  height: 90%;
-  border-radius: 2rem;
-  font-size: 1.5rem;
-  margin: 1rem;
-  resize: none;
-  border: none;
-`;
+// const ImageInput = styled.input`
+//   width: 100%;
+//   height: 2rem;
+// `;
+// const ImagePreview = styled.img`
+//   margin-top: 1rem;
+//   width: 100%;
+//   height: 90%;
+//   object-fit: cover;
+//   border-radius: 2rem;
+// `;
+// const DetailPostPhoto = styled.img`
+//   margin-top: 1rem;
+//   width: 100%;
+//   height: 90%;
+//   border-radius: 2rem;
+//   object-fit: cover;
+// `;
+// const DetailPostContent = styled.div`
+//   display: flex;
+//   padding: 1rem;
+//   width: 50%;
+//   height: 90%;
+//   border-radius: 2rem;
+//   /* font-size: 1.5rem; */
+//   margin: 1rem;
+//   border: 1px solid #777;
+//   overflow-y: auto;
+// `;
+// const DetailImageWrapper = styled.div`
+//   display: flex;
+//   width: 50%;
+//   height: 90%;
+//   flex-direction: column;
+//   margin: 1rem;
+// `;
+// const ContentInput = styled.textarea`
+//   display: flex;
+//   padding: 1rem;
+//   width: 50%;
+//   height: 90%;
+//   border-radius: 2rem;
+//   font-size: 1.5rem;
+//   margin: 1rem;
+//   resize: none;
+//   border: none;
+// `;
 export function getServerSideProps({ params: { params } }: any) {
   return {
     props: {

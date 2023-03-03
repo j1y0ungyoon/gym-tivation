@@ -100,15 +100,10 @@ const LikeContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 15%;
-  border-radius: ${({ theme }) => theme.borderRadius.radius50};
-  border: 1px solid black;
-  margin: 20px;
   padding: 10px;
 `;
 
 const LikeCount = styled.span`
   display: flex;
-  /* justify-content: center; */
 `;
 export default Like;

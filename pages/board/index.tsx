@@ -2,7 +2,6 @@ import BoardItem from '@/components/BoardItem';
 // import Search from '@/components/Search';
 import { dbService } from '@/firebase';
 import { BoardPostType } from '@/type';
-
 import {
   collection,
   DocumentData,

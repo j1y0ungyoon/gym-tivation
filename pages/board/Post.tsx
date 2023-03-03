@@ -199,14 +199,15 @@ const Post = () => {
       <PostWrapper>
         <PostContainer>
           <PostForm onSubmit={onSubmitBoard}>
-            <TitleContainer>
-              <Title>제목</Title>
-              <InputDiv>
-                <PostTitle onChange={onChangeBoardTitle} value={boardTitle} />
-              </InputDiv>
-            </TitleContainer>
-
-            <BoardCategory setCategory={setCategory} />
+            <PostUpperWrapper>
+              <TitleContainer>
+                <Title>제목</Title>
+                <InputDiv>
+                  <PostTitle onChange={onChangeBoardTitle} value={boardTitle} />
+                </InputDiv>
+              </TitleContainer>
+              <BoardCategory setCategory={setCategory} />
+            </PostUpperWrapper>
             <ContentContainer>
               {/* <PostImageWrapper>
                 <ImageInput
@@ -252,8 +253,11 @@ const PostForm = styled.form`
   flex-direction: column;
   align-items: center;
   height: 90%;
-  border-radius: 2rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   margin: 20px;
+`;
+const PostUpperWrapper = styled.div`
+  margin-left: 50px;
 `;
 const InputDiv = styled.div`
   ${({ theme }) => theme.inputDiv};
@@ -310,8 +314,16 @@ const PostButton = styled.button`
 const Editor = styled(ReactQuill)`
   width: 100%;
   height: 90%;
-
   margin: 1rem;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius10};
+  .ql-toolbar.ql-snow + .ql-container.ql-snow {
+    border: none;
+    border-top: 1px solid black;
+  }
+  .ql-toolbar.ql-snow {
+    border: none;
+  }
 `;
 
 const ImageInput = styled.input`

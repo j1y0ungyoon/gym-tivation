@@ -1,13 +1,10 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 interface BoardCategoryProps {
-  setCategory: React.Dispatch<React.SetStateAction<string>>;
-  setEditDetailCategory: React.Dispatch<React.SetStateAction<string>>;
+  setCategory?: React.Dispatch<React.SetStateAction<string>>;
+  setEditDetailCategory?: React.Dispatch<React.SetStateAction<string>>;
 }
-const BoardCategory = ({
-  setCategory,
-  setEditDetailCategory,
-}: BoardCategoryProps) => {
+const BoardCategory = ({ setCategory, setEditDetailCategory }: any) => {
   const router = useRouter();
 
   const post = router.pathname === `/board/Post`;
