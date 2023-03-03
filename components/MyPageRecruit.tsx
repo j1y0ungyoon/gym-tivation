@@ -171,6 +171,7 @@ const IconImg = styled.img`
 
 const MyPageBoardWrapper = styled.div`
   margin-left: 40px;
+  padding-top: 20px;
   width: 92%;
   height: 70%;
   flex-wrap: wrap;
@@ -188,7 +189,7 @@ const MyPageBoardContainer = styled.div`
   border-style: solid;
   border-width: 0.1rem;
   border-radius: 15px;
-  margin-bottom: 2vh;
+  margin-bottom: 16px;
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05);

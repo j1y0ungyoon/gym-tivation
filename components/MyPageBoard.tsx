@@ -68,7 +68,7 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
 export default MyPageBoard;
 const MyPageBoardWrapper = styled.div`
   margin-left: 40px;
-  margin-top: 1vh;
+  padding-top: 20px;
   width: 92%;
   height: 70%;
   flex-wrap: wrap;
@@ -78,7 +78,6 @@ const MyPageBoardContainer = styled.div`
   display: flex;
   width: 100%;
   height: 40%;
-
   max-height: 105px;
   padding: 10px;
   background-color: white;
@@ -86,7 +85,7 @@ const MyPageBoardContainer = styled.div`
   border-style: solid;
   border-width: 0.1rem;
   border-radius: 15px;
-  margin-bottom: 2vh;
+  margin-bottom: 16px;
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05);

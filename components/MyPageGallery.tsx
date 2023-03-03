@@ -43,10 +43,11 @@ export default MyPageGalley;
 const MyPageGalleyWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  padding-top: 20px;
+  padding-left: 20px;
   gap: 10px;
   width: 96.8%;
   height: 100%;
-  margin-left: 30px;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
