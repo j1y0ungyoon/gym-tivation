@@ -282,6 +282,7 @@ const ProfileEdit = ({
                   <a
                     href={`https://www.instagram.com/${instagram}/`}
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     {item.instagram}
                   </a>
