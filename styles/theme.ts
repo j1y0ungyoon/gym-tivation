@@ -28,13 +28,11 @@ export const theme = {
     `,
     btn100: `
       min-width: 120px;
-
       height: 50px;
       padding: 0 25px;
       border-radius: 50px;
       border: none;
       font-size: 16px;
-
       background-color: #d9d9d9;
       color: #000;
       :hover {
@@ -92,6 +90,7 @@ export const theme = {
       max-width : 1220px;
       margin : 20px auto;
       height:100%;
+
     `,
   },
   font: {

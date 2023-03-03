@@ -2,10 +2,15 @@ import { dbService } from '@/firebase';
 import { MapModalProps, RecruitPostType, CoordinateType } from '@/type';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useRef, useEffect, useState } from 'react';
-import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import {
+  Map,
+  MapInfoWindow,
+  MapMarker,
+  CustomOverlayMap,
+} from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
-import MyLocation from './MyLocationMarker';
-import SearchIcon from '@/public/assets/icons/searchIcon.png';
+import MyLocationMarker from './MyLocationMarker';
+import RecruitPostsWindow from './RecruitPostsWindow';
 
 const initialPosition = {
   lat: 33.5563,
@@ -13,11 +18,11 @@ const initialPosition = {
 };
 
 const SearchColleague = (props: MapModalProps) => {
-  const { setCoordinate, coordinate } = props;
+  const { setCoordinate, coordinate, setMarkerCoordi, region, setRegion } =
+    props;
 
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
-  const [region, setRegion] = useState('서울');
 
   // 서버로부터 fetch된 운동 동료 모집글 배열을 저장하는 state
   const [recruitPosts, setRecruitPosts] = useState<RecruitPostType[]>([]);
@@ -57,6 +62,14 @@ const SearchColleague = (props: MapModalProps) => {
     }
   };
 
+  // 마커의 좌표 가져오기
+  const getCoordinate = (post: RecruitPostType) => {
+    setMarkerCoordi({
+      lat: Number(post.coordinate?.lat),
+      lng: Number(post.coordinate?.lng),
+    });
+  };
+
   // 검색 위치로 지도 재설정
   useEffect(() => {
     if (!map) return;
@@ -75,13 +88,13 @@ const SearchColleague = (props: MapModalProps) => {
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
         //   @ts-ignore
         map.setBounds(bounds);
+        console.log('bounds', bounds);
+        console.log('map', map);
       }
     });
   }, [map, region]);
 
-  //
   useEffect(() => {
-    // useQuery로 리펙토링 하기
     const fetchRecruitPosts = async () => {
       const querySnapshot = await getDocs(
         collection(dbService, 'recruitments'),
@@ -102,7 +115,7 @@ const SearchColleague = (props: MapModalProps) => {
       <>
         <Map
           center={{ lat: 33.5563, lng: 126.79581 }}
-          style={{ width: '100%', height: '90vh', borderRadius: '2rem' }}
+          style={{ width: '90%', height: '90%', borderRadius: '2rem' }}
         >
           <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
             <div style={{ color: '#000' }}>설정된 좌표가 없습니다!</div>
@@ -127,42 +140,53 @@ const SearchColleague = (props: MapModalProps) => {
             placeholder="원하는 지역을 검색하세요!"
           />
         </SearchBar>
-        <Map
+        <StyledMap
           key={`map-${myPosition.center.lat}-${myPosition.center.lng}`}
           center={myPosition.center}
-          style={{ width: '40vw', height: '85vh', borderRadius: '2rem' }}
           //@ts-ignore
           onCreate={setMap}
-          // onTileLoaded={(map) =>
-          //   setPosition({
-          //     lat: map.getCenter().getLat(),
-          //     lng: map.getCenter().getLng(),
-          //   })
-          // }
           level={8}
         >
-          {/* 맵 중심 위치 표시 */}
-          {/* <MapMarker position={position}>
-            <div style={{ color: '#000' }}>중심 위치</div>
-          </MapMarker> */}
           {recruitPosts.map((post) => {
             if (post.coordinate) {
               return (
-                <MapMarker
-                  key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
-                  position={{
-                    lat: post.coordinate?.lat,
-                    lng: post?.coordinate?.lng,
-                  }}
-                >
-                  <div>{post.title}</div>
-                </MapMarker>
+                <>
+                  <MapMarker
+                    key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
+                    position={{
+                      lat: post.coordinate?.lat,
+                      lng: post?.coordinate?.lng,
+                    }}
+                    image={{
+                      src: '/assets/icons/mapBoard/mappin_hand_icon.svg',
+                      size: { width: 50, height: 53 },
+                    }}
+                    onClick={() => getCoordinate(post)}
+                  />
+                  <CustomOverlayMap
+                    position={{
+                      lat: post.coordinate?.lat,
+                      lng: post?.coordinate?.lng,
+                    }}
+                    xAnchor={0.5}
+                    yAnchor={3}
+                  >
+                    <RecruitPostsWindow
+                      post={post}
+                      recruitPosts={recruitPosts}
+                      setMarkerCoordi={setMarkerCoordi}
+                    />
+                  </CustomOverlayMap>
+                </>
               );
             }
           })}
           {/* 나의 위치 표시 */}
-          <MyLocation myPosition={myPosition} setMyPosition={setMyPosition} />
-        </Map>
+          <MyLocationMarker
+            myPosition={myPosition}
+            setMyPosition={setMyPosition}
+          />
+        </StyledMap>
       </MapModalMain>
     </>
   );
@@ -176,36 +200,45 @@ export default SearchColleague;
 
 // firebase에서 좌표 정보를 불러온다.
 
+const StyledMap = styled(Map)`
+  width: 100%;
+  height: 100%;
+  border-top: 1px solid black;
+  border-bottom-left-radius: 5%;
+  border-bottom-right-radius: 5%;
+`;
+
 const MapModalMain = styled.section`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  width: 100%;
+  height: 100%;
+`;
+
+const SearchContianer = styled.div`
+  width: 100%;
+  border-bottom: 1px solid black;
 `;
 
 const SearchBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50rem;
+  ${({ theme }) => theme.inputDiv}
   background-color: white;
-  border-radius: 24px;
-  margin-bottom: 10px;
+  border: 1px solid black;
+  width: 80%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const SerachImg = styled.img`
   width: 20px;
   margin-right: 20px;
-  margin-left: 5px;
+
   cursor: pointer;
 `;
 
 const SerachInput = styled.input`
-  width: 90%;
-  height: 40px;
-  margin-left: 2px;
-  border: none;
-  outline: none;
-  background-color: #fff;
+  ${({ theme }) => theme.input}
+  background-color: white;
 `;

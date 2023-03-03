@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { deleteComment, editCommentLike } from '@/pages/api/api';
 import { authService, dbService } from '@/firebase';
 import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const Comment = ({ comment }: { comment: CommentType }) => {
   // 좋아요 눌렀는지 표시
@@ -68,7 +69,7 @@ const Comment = ({ comment }: { comment: CommentType }) => {
 
   const onClickLike = async () => {
     if (!authService.currentUser) {
-      alert('로그인 후 이용해주세요!');
+      toast.info('로그인 후 이용해주세요!');
       return;
     }
 
@@ -120,27 +121,30 @@ const Comment = ({ comment }: { comment: CommentType }) => {
       <CommentWrapper>
         <UserProfile>
           <ProfileImage src={comment.userPhoto} />
+          <ContentLikeBox>
+            <CommentContent>
+              <NickName>{comment.nickName}</NickName>
+              <CommentListWrapper>{comment.comment}</CommentListWrapper>
+            </CommentContent>
+
+            <LikeBox>
+              <LikeImgBox>
+                {isClickedLike ? (
+                  <LikeImg
+                    onClick={onClickLike}
+                    src="/assets/icons/mapBoard/like_icon_active.svg"
+                  />
+                ) : (
+                  <LikeImg
+                    onClick={onClickLike}
+                    src="/assets/icons/mapBoard/like_icon_inactive.svg"
+                  />
+                )}
+              </LikeImgBox>
+              <LikeCount>{comment.likeCount}</LikeCount>
+            </LikeBox>
+          </ContentLikeBox>
         </UserProfile>
-        <CommentContent>
-          <NickName>{comment.nickName}</NickName>
-          <CommentListWrapper>{comment.comment}</CommentListWrapper>
-        </CommentContent>
-        <LikeBox>
-          <LikeCount>{comment.likeCount}</LikeCount>
-          <LikeImgBox>
-            {isClickedLike ? (
-              <LikeImg
-                onClick={onClickLike}
-                src="/assets/icons/mapBoard/like_icon_active.svg"
-              />
-            ) : (
-              <LikeImg
-                onClick={onClickLike}
-                src="/assets/icons/mapBoard/like_icon_inactive.svg"
-              />
-            )}
-          </LikeImgBox>
-        </LikeBox>
         {authService.currentUser?.uid === comment.userId ? (
           <DeleteButton onClick={onClickDeleteComment}>삭제</DeleteButton>
         ) : null}
@@ -153,9 +157,10 @@ export default Comment;
 
 const CommentWrapper = styled.div`
   display: flex;
-
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
 `;
 const CommentListWrapper = styled.span`
   display: flex;
@@ -171,36 +176,49 @@ const NickName = styled.div`
   width: 100%;
   align-items: center;
   color: gray;
+  font-size: ${({ theme }) => theme.font.font10};
 `;
 const DeleteButton = styled.button`
   ${({ theme }) => theme.btn.btn50}
-  min-width:70px;
+  min-width:80px;
   margin-left: 5px;
+  border: 1px solid black;
+  background-color: white;
 `;
-const UserProfile = styled.div``;
+
+const UserProfile = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+`;
+
 const CommentContent = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  align-items: center;
 `;
 const ProfileImage = styled.img`
-  display: flex;
-  align-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  margin-left: 1rem;
-  margin-right: 0.6rem;
+  ${({ theme }) => theme.profileDiv};
+  margin-right: 8px;
 `;
+
+const ContentLikeBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+`;
+
 const LikeBox = styled.div`
   display: flex;
+  justify-content: center;
   align-items: center;
+  margin-top: 12px;
 `;
 const LikeImg = styled.img`
   cursor: pointer;
   margin: 5px;
 `;
 const LikeCount = styled.span``;
-const LikeImgBox = styled.div`
-  display: flex;
-`;
+const LikeImgBox = styled.div``;
