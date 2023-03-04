@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { deleteGalleryPost, editGalleryBoard } from '../api/api';
+import imageCompression from 'browser-image-compression';
 
 const GalleryDetail = ({ params }: any) => {
   const [detailGalleryPost, setDetailGalleryPost] =
@@ -103,10 +104,36 @@ const GalleryDetail = ({ params }: any) => {
     setEditGalleryPhoto('');
     toGallery();
   };
+
+  //image 압축
+  const imageCompress: any = async (image: File) => {
+    const options = {
+      maxSizeMB: 1,
+      maxwidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(image, options);
+      console.log(
+        'compressedFile instanceof Blob',
+        compressedFile instanceof Blob,
+      ); // true
+      console.log(
+        `compressedFile size ${compressedFile.size / 1024 / 1024} MB`,
+      ); // smaller than maxSizeMB
+
+      return compressedFile;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //image onchange
-  //
-  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEditImageUpload(event.target.files?.[0]);
+
+  const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const originalImage = event.target.files?.[0];
+    console.log('original size', originalImage?.size);
+    const compressedImage = await imageCompress(originalImage);
+    setEditImageUpload(compressedImage);
   };
 
   // image upload 불러오기
@@ -443,14 +470,14 @@ const GalleryEditPreview = styled.img`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   border: 1px solid black;
   overflow: hidden;
-  object-fit: scale-down;
+  object-fit: cover;
 `;
 
 const GalleryImagePreview = styled.img`
   width: 100%;
   height: 100%;
   padding: 10px;
-  object-fit: scale-down;
+  object-fit: cover;
 `;
 const EditImagePreview = styled.img`
   margin-top: 1rem;
