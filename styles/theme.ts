@@ -1,7 +1,6 @@
 export const theme = {
   color: {
     backgroundColor: '#FFFCF3',
-    brandColor: '#FF4800',
     brandColor100: '#FF3D00',
     brandColor50: '#FFCAB5',
 
@@ -18,23 +17,21 @@ export const theme = {
       background-color: #d9d9d9;
       color: #000;
       :hover {
-        background-color: #000;
+        background-color: #FF3D00;
         color: #fff;
       }
       :focus {
-        background-color:#ff0000;
-        color:#00ff00;
+        background-color:#FF3D00;
+        color:white;
       }
     `,
     btn100: `
       min-width: 120px;
-
       height: 50px;
       padding: 0 25px;
       border-radius: 50px;
       border: none;
       font-size: 16px;
-
       background-color: #d9d9d9;
       color: #000;
       :hover {
@@ -77,9 +74,7 @@ export const theme = {
   },
   mainLayout: {
     wrapper: `
-
-    display : flex;
-
+      display : flex;
       justify-content : center;
       min-width : 1000px;
       width : calc(100vw - 180px);
@@ -93,8 +88,7 @@ export const theme = {
       width : 100%;
       max-width : 1220px;
       margin : 20px auto;
-height:100%;
-
+      height:100%;
     `,
   },
   font: {

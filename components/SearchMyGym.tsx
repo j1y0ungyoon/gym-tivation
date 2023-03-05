@@ -1,6 +1,6 @@
 import { SearchMyGymProps } from '@/type';
 import React, { useState, useEffect, useRef } from 'react';
-import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import { CustomOverlayMap, Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 
 interface MarkersType {
@@ -25,6 +25,9 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
   const [region, setRegion] = useState('서울');
+
+  // Info window 열고 닫기
+  const [openInfo, setOpenInfo] = useState(false);
 
   // 모달 창 닫기 currentTarget 저장용
   const modalRef = useRef<HTMLDivElement>(null);
@@ -121,7 +124,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
         <SerachBar>
           <SerachInput
             onChange={onChangeInputRegion}
-            onKeyUp={onPressSetRegion}
+            onKeyPress={onPressSetRegion}
             value={inputRegion}
             placeholder="예시) 서울 종로구"
           />
@@ -148,6 +151,10 @@ const SearchMyGym = (props: SearchMyGymProps) => {
               key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
               // @ts-ignore
               position={marker.position}
+              image={{
+                src: '/assets/icons/mapBoard/mappin_hand_icon.svg',
+                size: { width: 50, height: 53 },
+              }}
               onClick={() => {
                 setInfo(marker);
                 setCoordinate({
@@ -156,9 +163,18 @@ const SearchMyGym = (props: SearchMyGymProps) => {
                 });
               }}
             >
+              {/* <CustomOverlayMap
+                position={{
+                  lat: Number(marker.position?.lat),
+                  lng: Number(marker.position?.lng),
+                }}
+                xAnchor={0.5}
+                yAnchor={0.5}
+              > */}
               {info && info.content === marker.content && (
-                <div style={{ color: '#000' }}>{marker.content}</div>
+                <InfoBox>{marker.content}</InfoBox>
               )}
+              {/* </CustomOverlayMap> */}
             </MapMarker>
           ))}
         </Map>
@@ -170,6 +186,17 @@ const SearchMyGym = (props: SearchMyGymProps) => {
 
 export default SearchMyGym;
 
+const InfoBox = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 30px;
+  width: 210px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 8px;
+`;
+
 const BackgroundContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -179,7 +206,9 @@ const BackgroundContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+  min-width: 75%;
   height: 100%;
+  min-height: 75%;
   z-index: 999;
   background-color: rgba(0, 0, 0, 0.7);
 `;
@@ -191,20 +220,20 @@ const ModalContainer = styled.div`
   border-radius: 2rem;
   align-items: center;
   justify-content: center;
-  width: 1000px;
-  height: 1000px;
+  width: 40%;
+  min-width: 30%;
+  height: 85%;
+  min-height: 75%;
   background-color: white;
   z-index: 1000;
 `;
 
 const SerachBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52rem;
+  ${({ theme }) => theme.inputDiv}
   background-color: white;
-  border-radius: 24px;
-  margin-bottom: 10px;
+  border: 2px solid black;
+  width: 85%;
+  margin-bottom: 0.7rem;
 `;
 
 const SerachImg = styled.img`
@@ -214,13 +243,8 @@ const SerachImg = styled.img`
 `;
 
 const SerachInput = styled.input`
-  width: 90%;
-  height: 40px;
-  margin-left: 2px;
-  border: none;
-  /* outline: none; */
-  border-radius: 1.5rem;
-  padding: 1rem;
+  ${({ theme }) => theme.input}
+  background-color: white;
 `;
 
 const ConfirmButton = styled.button`

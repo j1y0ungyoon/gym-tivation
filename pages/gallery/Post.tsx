@@ -46,6 +46,17 @@ const Post = () => {
       });
     });
   }, [imageUpload]);
+
+  useEffect(() => {
+    if (!authService.currentUser) {
+      toast.info('로그인을 먼저 해주세요!');
+      router.push('/gallery');
+    }
+  }, []);
+  if (!authService.currentUser) {
+    return <div>로그인이 필요합니다.</div>;
+  }
+
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

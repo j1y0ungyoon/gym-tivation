@@ -244,7 +244,7 @@ const GalleryImageWrapper = styled.div`
 `;
 const GalleryPostWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
-
+  min-height: 980px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -254,19 +254,22 @@ const GalleryPostContainer = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   display: flex;
   flex-direction: column;
+  min-height: 900px;
 `;
 const CommentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  padding-bottom: 20px;
   width: 60%;
-  margin: 20px auto;
+  height: 100%;
 `;
 const CommentContainer = styled.div`
   padding: 20px auto;
   display: flex;
   width: 90%;
+  height: 100%;
   overflow: auto;
 `;
 const LikeContainer = styled.div`
@@ -316,17 +319,6 @@ const GalleryContent = styled.div`
   margin: 20px 20px;
 `;
 
-const DetailGalleryContent = styled.div`
-  display: flex;
-  padding: 1rem;
-  width: 50%;
-  height: 90%;
-  border-radius: 2rem;
-  font-size: 1.5rem;
-  margin: 1rem;
-  resize: none;
-  border: none;
-`;
 const DetailGalleryTitle = styled.div`
   display: flex;
   align-items: center;
@@ -378,8 +370,9 @@ const GalleryTitleContainer = styled.div`
   padding: 10px;
   flex-direction: row;
   width: 100%;
-  min-height: 17%;
-  height: 17%;
+  height: 20%;
+  min-height: 180px;
+
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 1px solid black;
@@ -400,7 +393,8 @@ const GalleryContentContainer = styled.div`
   justify-content: center;
   flex-direction: row;
   width: 100%;
-  height: 83%;
+  height: 80%;
+  /* min-height: 720px; */
 `;
 
 const GalleryEditBox = styled.div`

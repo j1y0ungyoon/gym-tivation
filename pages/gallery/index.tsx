@@ -42,22 +42,22 @@ const Gallery = () => {
 
   return (
     <GalleryBoardWrapper>
-      <GalleryBoardContainer>
-        <GalleryBoardMain>
-          <ButtonWrapper>
-            <ButtonContainer>
-              <PostButton onClick={onClickGalleryPostButton}>
-                오운완 업로드
-              </PostButton>
-            </ButtonContainer>
-          </ButtonWrapper>
-          <GalleryContentWrapper>
-            <GalleryBoardContent>
-              <GalleryItem galleryPhotos={galleryPhotos} />
-            </GalleryBoardContent>
-          </GalleryContentWrapper>
-        </GalleryBoardMain>
-      </GalleryBoardContainer>
+      {/* <GalleryBoardContainer> */}
+      <GalleryBoardMain>
+        <ButtonWrapper>
+          <ButtonContainer>
+            <PostButton onClick={onClickGalleryPostButton}>
+              오운완 업로드
+            </PostButton>
+          </ButtonContainer>
+        </ButtonWrapper>
+        <GalleryContentWrapper>
+          <GalleryBoardContent>
+            <GalleryItem galleryPhotos={galleryPhotos} />
+          </GalleryBoardContent>
+        </GalleryContentWrapper>
+      </GalleryBoardMain>
+      {/* </GalleryBoardContainer> */}
     </GalleryBoardWrapper>
   );
 };
@@ -67,21 +67,25 @@ const GalleryBoardWrapper = styled.div`
   align-items: center;
   justify-content: center;
 `;
+const GalleryBoardMain = styled.main`
+  ${({ theme }) => theme.mainLayout.container}
+  display:flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+`;
 const GalleryContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   flex-direction: column;
   border: 1px solid black;
   display: flex;
-  min-height: 90%;
+  height: 100%;
+  width: 100%;
   background-color: white;
 `;
-const GalleryBoardContainer = styled.div`
-  ${({ theme }) => theme.mainLayout.container};
-  overflow: auto;
-`;
-const GalleryBoardMain = styled.main`
-  width: 95%;
-`;
+const GalleryBoardContainer = styled.div``;
+
 const GalleryBoardContent = styled.div`
   display: flex;
   align-items: center;

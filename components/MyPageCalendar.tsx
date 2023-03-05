@@ -172,6 +172,7 @@ const CalendarBox = styled.div`
 `;
 const CalendarAddBox = styled.div`
   height: 45vh;
+  min-height: 300px;
 `;
 
 const CalendarCSS = styled.div`

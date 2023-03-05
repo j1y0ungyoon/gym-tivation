@@ -112,14 +112,14 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        toast.warn('로그인 완료');
+        toast.success('로그인 완료');
         router.push('/');
       } else {
         authService.signOut();
         toast.warn('이메일 인증을 완료해주세요');
       }
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -152,7 +152,7 @@ const SignIn = () => {
           loginState: true,
         });
       }
-      toast.warn('로그인 완료');
+      toast.success('로그인 완료');
       router.push('/');
     } catch (error: any) {
       console.log('구글 로그인 에러', error.message);
@@ -162,78 +162,80 @@ const SignIn = () => {
   return (
     <SignInWrapper>
       <SignInContainer>
-        <IconImg src="/assets/icons/myPage/gymtivation_logo_miniicon.svg" />
-        <HeaderText>GYMTIVATION</HeaderText>
-        <InputBox>
-          <InputText>이메일</InputText>
-          <SignInInput
-            type="email"
-            value={email}
-            onChange={onChangeEmail}
-            placeholder="이메일"
-          />
-          {email.length > 0 && (
-            <IconValidation>
-              {emailIcon}
-              <TextValidation
-                className={`message ${isValidEmail ? 'success' : 'error'}`}
-              >
-                {emailMessage}
-              </TextValidation>
-            </IconValidation>
-          )}
-        </InputBox>
-        <PasswordInputBox>
-          <InputText>비밀번호</InputText>
-          <PasswordShow>
-            <PasswordInput
-              type={showPasword ? 'text' : 'password'}
-              value={password}
-              onChange={onChangePassword}
-              placeholder="비밀번호"
+        <SignInBox>
+          <IconImg src="/assets/icons/myPage/gymtivation_logo_miniicon.svg" />
+          <HeaderText>GYMTIVATION</HeaderText>
+          <InputBox>
+            <InputText>이메일</InputText>
+            <SignInInput
+              type="email"
+              value={email}
+              onChange={onChangeEmail}
+              placeholder="이메일"
             />
-            {showPasword === false ? (
-              <AiFillEyeInvisible
-                fontSize={'20px'}
-                onClick={() => {
-                  setShowPassword(true);
-                }}
-              />
-            ) : (
-              <AiFillEye
-                fontSize={'20px'}
-                onClick={() => {
-                  setShowPassword(false);
-                }}
-              />
+            {email.length > 0 && (
+              <IconValidation>
+                {emailIcon}
+                <TextValidation
+                  className={`message ${isValidEmail ? 'success' : 'error'}`}
+                >
+                  {emailMessage}
+                </TextValidation>
+              </IconValidation>
             )}
-          </PasswordShow>
-          {password.length > 0 && (
-            <IconValidation>
-              {passwordIcon}
-              <TextValidation
-                className={`message ${isValidPassword ? 'success' : 'error'}`}
-              >
-                {passwordMessage}
-              </TextValidation>
-            </IconValidation>
-          )}
-        </PasswordInputBox>
-        <SignInButton
-          disabled={(isValidEmail && isValidPassword) === false}
-          onClick={onClicksignIn}
-        >
-          로그인하기
-        </SignInButton>
-        <GuideBox>
-          <GuideText onClick={() => router.push('/signUp')}>
-            이메일 가입
-          </GuideText>
-          <GuideText2 onClick={onClickOpenModal}>비밀번호 찾기</GuideText2>
-        </GuideBox>
-        <GoogleSignInButton onClick={onClickGoogleSignIn}>
-          구글로 간편 로그인하기
-        </GoogleSignInButton>
+          </InputBox>
+          <PasswordInputBox>
+            <InputText>비밀번호</InputText>
+            <PasswordShow>
+              <PasswordInput
+                type={showPasword ? 'text' : 'password'}
+                value={password}
+                onChange={onChangePassword}
+                placeholder="비밀번호"
+              />
+              {showPasword === false ? (
+                <AiFillEyeInvisible
+                  fontSize={'20px'}
+                  onClick={() => {
+                    setShowPassword(true);
+                  }}
+                />
+              ) : (
+                <AiFillEye
+                  fontSize={'20px'}
+                  onClick={() => {
+                    setShowPassword(false);
+                  }}
+                />
+              )}
+            </PasswordShow>
+            {password.length > 0 && (
+              <IconValidation>
+                {passwordIcon}
+                <TextValidation
+                  className={`message ${isValidPassword ? 'success' : 'error'}`}
+                >
+                  {passwordMessage}
+                </TextValidation>
+              </IconValidation>
+            )}
+          </PasswordInputBox>
+          <SignInButton
+            disabled={(isValidEmail && isValidPassword) === false}
+            onClick={onClicksignIn}
+          >
+            로그인하기
+          </SignInButton>
+          <GuideBox>
+            <GuideText onClick={() => router.push('/signUp')}>
+              이메일 가입
+            </GuideText>
+            <GuideText2 onClick={onClickOpenModal}>비밀번호 찾기</GuideText2>
+          </GuideBox>
+          <GoogleSignInButton onClick={onClickGoogleSignIn}>
+            구글로 간편 로그인하기
+          </GoogleSignInButton>
+        </SignInBox>
       </SignInContainer>
 
       {releaseModal && (
@@ -253,7 +255,14 @@ const SignInWrapper = styled.div`
 `;
 const SignInContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
+  display:flex;
+  align-items: center;
+  height: calc(100% - 40px);
   text-align: center;
+`;
+const SignInBox = styled.div`
+  width: 100%;
+  /* height: 100%; */
 `;
 const IconImg = styled.img`
   width: 5rem;

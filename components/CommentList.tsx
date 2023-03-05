@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 
 // props로 받은 id는 해당 recruitPost의 id임
 const CommentList = ({ id, category }: { id: string; category: string }) => {
@@ -28,7 +29,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
   // 댓글 작성 완료
   const onSubmitComment = async () => {
     if (!inputComment) {
-      alert('댓글 내용을 작성해주세요!');
+      toast.info('댓글 내용을 작성해주세요!');
       return;
     }
 
@@ -53,6 +54,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         await runTransaction(dbService, async (transaction) => {
           const sfDocRef = doc(dbService, 'recruitments', id);
           const sfDoc = await transaction.get(sfDocRef);
+
           if (!sfDoc.exists()) {
             throw '데이터가 없습니다.';
           }
@@ -64,7 +66,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
     }
 
     if (!authService.currentUser) {
-      alert('로그인을 먼저 해주세요!');
+      toast.info('로그인을 먼저 해주세요!');
       setInputComment('');
       return;
     }
@@ -108,15 +110,27 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
           })}
       </CommentWrapper>
       <InputWrapper>
-        <CommentInput
-          onChange={onChangeInputComment}
-          onKeyUp={onPressSubmitComment}
-          value={inputComment}
-        />
+        {authService.currentUser ? (
+          <CommentInput
+            onChange={onChangeInputComment}
+            onKeyPress={onPressSubmitComment}
+            value={inputComment}
+            type="text"
+            maxLength={90}
+            placeholder="최대 90자까지 입력할 수 있습니다"
+          />
+        ) : (
+          <CommentInput disabled />
+        )}
+
         <ButtonWrapper>
-          <SubmitCommentButton onClick={onSubmitComment}>
-            등록
-          </SubmitCommentButton>
+          {authService.currentUser ? (
+            <SubmitCommentButton onClick={onSubmitComment}>
+              등록
+            </SubmitCommentButton>
+          ) : (
+            <SubmitCommentButton disabled>등록</SubmitCommentButton>
+          )}
         </ButtonWrapper>
       </InputWrapper>
     </CommentListWrapper>
@@ -126,16 +140,30 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
 export default CommentList;
 
 const CommentListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+  height: 100%;
 `;
 const CommentWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 const InputWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 50px;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
 const CommentInput = styled.input`
@@ -143,10 +171,13 @@ const CommentInput = styled.input`
   ${({ theme }) => theme.inputDiv}
   border: 0.1px solid black;
   outline: none;
+  background-color: white;
 `;
 const ButtonWrapper = styled.div``;
 const SubmitCommentButton = styled.button`
   ${({ theme }) => theme.btn.btn50}
-  min-width:70px;
+  min-width:80px;
   margin-left: 5px;
+  background-color: white;
+  border: 1px solid black;
 `;

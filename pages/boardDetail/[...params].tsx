@@ -306,12 +306,13 @@ const PostContent = styled.form`
 `;
 const CommentWrapper = styled.div`
   width: 80%;
-  overflow: auto;
+  height: 100%;
+  /* overflow: auto; */
 `;
 const CommentContainer = styled.div`
   display: flex;
   width: 90%;
-  overflow: auto;
+  height: 100%;
 `;
 const BottomWrapper = styled.div`
   display: flex;
@@ -320,7 +321,6 @@ const BottomWrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin: 20px;
-  overflow: auto;
 `;
 
 const Editor = styled(ReactQuill)`

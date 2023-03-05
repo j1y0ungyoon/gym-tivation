@@ -160,7 +160,7 @@ const Chat = () => {
       <ChatContainer>
         <CategoryContainer>
           <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-          <CategoryBtn
+          {/* <CategoryBtn
             onClick={() => {
               setIsMyDmOn(true);
               if (dmLists.length === 0) {
