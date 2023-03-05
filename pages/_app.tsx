@@ -12,6 +12,8 @@ import { theme } from '@/styles/theme';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GlobalStyle from '@/styles/GlobalStyle';
+import { RecoilRoot } from 'recoil';
+import GlobalModal from '@/components/common/globalModal/GlobalModal';
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
@@ -27,29 +29,32 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <Header isLoggedIn={isLoggedIn} />
-        <Layout>
-          <SideNav isLoggedIn={isLoggedIn} />
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
-      <ToastContainer
-        position="top-center"
-        autoClose={1000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Slide}
-      />
-    </QueryClientProvider>
+    <RecoilRoot>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <Header isLoggedIn={isLoggedIn} />
+          <Layout>
+            <SideNav isLoggedIn={isLoggedIn} />
+            <Component {...pageProps} />
+            <GlobalModal />
+          </Layout>
+        </ThemeProvider>
+        <ToastContainer
+          position="top-center"
+          autoClose={1000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Slide}
+        />
+      </QueryClientProvider>
+    </RecoilRoot>
   );
 }
 

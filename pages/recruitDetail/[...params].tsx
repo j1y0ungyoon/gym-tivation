@@ -38,6 +38,8 @@ import {
   UpperBox,
 } from '../mapBoard/WritingRecruitment';
 import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -95,6 +97,8 @@ const RecruitDetail = ({ params }: any) => {
   const [currentUserProfile, setCurrentUserProfile] =
     useState<UserProfileType>();
 
+  const { showModal } = useModal();
+
   // 유저 프로필 수정 useMutation (운동 참여 버튼 클릭 시 필요)
   const { mutate: reviseUserProfile } = useMutation(
     ['editUserProfile', currentUserProfile?.uid],
@@ -139,18 +143,24 @@ const RecruitDetail = ({ params }: any) => {
 
   // 게시글 삭제 클릭 이벤트
   const onClickDeletePost = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-
-    if (answer) {
-      try {
-        await removeRecruitPost(id);
-        router.push('/mapBoard');
-      } catch (error) {
-        console.log('에러입니다', error);
-      }
-    } else {
-      return;
+    try {
+      await removeRecruitPost(id);
+      router.push('/mapBoard');
+      ``;
+    } catch (error) {
+      console.log('에러입니다', error);
     }
+  };
+
+  // confrim 모달로 게시글 삭제하기
+  const openConfirmModal = () => {
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onClickDeletePost,
+      },
+    });
   };
 
   // 게시글 수정을 위한 input open
@@ -181,34 +191,52 @@ const RecruitDetail = ({ params }: any) => {
   // 게시글 수정
   const onSubmitEdittedPost = async () => {
     if (!editTitle) {
-      toast.info('제목을 작성해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '제목을 작성해 주세요!' },
+      });
       editTitleRef.current?.focus();
       return;
     }
 
     if (!editContent) {
-      toast.info('내용을 작성해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 작성해 주세요!' },
+      });
       editContentRef.current?.focus();
       return;
     }
 
     if (!detailAddress) {
-      toast.info('운동 장소를 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '운동 장소를 입력해 주세요!' },
+      });
       return;
     }
 
     if (start === '') {
-      toast.info('운동 시간을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '시작 시간을 입력해 주세요!' },
+      });
       return;
     }
 
     if (end === '') {
-      toast.info('운동 시간을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '종료 시간을 입력해 주세요!' },
+      });
       return;
     }
 
     if (selectedDays.length === 0) {
-      toast.info('운동 요일을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '요일을 입력해 주세요!' },
+      });
       return;
     }
 
@@ -244,7 +272,10 @@ const RecruitDetail = ({ params }: any) => {
   const onClcikParticipate = async () => {
     // 비로그인 사용자가 참여 버튼을 눌렀을 때
     if (!authService.currentUser) {
-      toast.info('로그인 후 이용해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인 후 이용해 주세요!' },
+      });
       return;
     }
     // 로그인 사용자가 참여 버튼을 눌렀을 때
@@ -528,7 +559,7 @@ const RecruitDetail = ({ params }: any) => {
                         <StyledButton onClick={onClickChangeForm}>
                           수정
                         </StyledButton>
-                        <StyledButton onClick={onClickDeletePost}>
+                        <StyledButton onClick={openConfirmModal}>
                           삭제
                         </StyledButton>
                       </EditAndDeleteButtonBox>
