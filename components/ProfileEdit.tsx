@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
+import DmButton from './DmButton';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -280,10 +281,7 @@ const ProfileEdit = ({
                         <IconImg src="/assets/icons/myPage/Follow.svg" />
                         팔로잉
                       </EditButton>
-                      {/* <EditButton>
-                        <IconImg src="/assets/icons/myPage/DM.svg" />
-                        메시지
-                      </EditButton> */}
+                      <DmButton id={paramsId} />
                     </>
                   ) : (
                     <>
@@ -291,10 +289,7 @@ const ProfileEdit = ({
                         <IconImg src="/assets/icons/myPage/Follow.svg" />
                         팔로우
                       </EditButton>
-                      {/* <EditButton>
-                        <IconImg src="/assets/icons/myPage/DM.svg" />
-                        메시지
-                      </EditButton> */}
+                      <DmButton id={paramsId} />
                     </>
                   )}
                 </NameBox>
