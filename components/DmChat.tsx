@@ -26,7 +26,7 @@ type ChatLog = {
 };
 
 type DmChatProps = {
-  roomNum?: string;
+  roomNum?: string | null | undefined;
 };
 
 type DmTextProps = {
@@ -35,7 +35,6 @@ type DmTextProps = {
 
 const DmChat = ({ roomNum }: DmChatProps) => {
   const router = useRouter();
-  console.log('roomNum', roomNum);
 
   const [dmInputValue, setDmInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
@@ -59,7 +58,6 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       );
       data.docs.map((doc) => {
         if (doc.data().id == roomNum) {
-          console.log(doc.id);
           return setChatId(doc.id);
         }
       });
@@ -72,7 +70,6 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       );
 
       const prevChatLog = chatDoc?.docs[0]?.data().chatLog;
-      console.log(prevChatLog);
       setChatLogs(prevChatLog);
     };
 
@@ -98,7 +95,6 @@ const DmChat = ({ roomNum }: DmChatProps) => {
         console.log('연결성공!');
 
         socket.emit('roomEnter', roomNum);
-        console.log(roomNum);
       });
 
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
