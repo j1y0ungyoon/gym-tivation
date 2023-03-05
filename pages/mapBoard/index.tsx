@@ -7,7 +7,8 @@ import RecruitPost from '@/components/RecruitPost';
 import styled from 'styled-components';
 import { CoordinateType } from '../../type';
 import SearchColleague from '@/components/SearchColleague';
-import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const initialCoordinate: CoordinateType = {
   lat: 33.5563,
@@ -31,10 +32,20 @@ const MapBoard = () => {
   // SearchMyColleague에서 검색할 때 onChange에 쓰이는 state
   const [region, setRegion] = useState('서울');
 
+  const { showModal } = useModal();
+
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      console.log(GLOBAL_MODAL_TYPES.AlertModal);
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: {
+          contentText: '로그인 후 이용 해주세요!',
+        },
+      });
+      router.push('/signIn');
+
       return;
     }
 

@@ -142,7 +142,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
             width: '100%',
             height: '80%',
           }}
-          level={3}
+          level={2}
           // @ts-ignore
           onCreate={setMap}
         >
@@ -151,6 +151,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
               key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
               // @ts-ignore
               position={marker.position}
+              infoWindowOptions={{ zIndex: -100 }}
               image={{
                 src: '/assets/icons/mapBoard/mappin_hand_icon.svg',
                 size: { width: 50, height: 53 },
@@ -163,18 +164,18 @@ const SearchMyGym = (props: SearchMyGymProps) => {
                 });
               }}
             >
-              {/* <CustomOverlayMap
-                position={{
-                  lat: Number(marker.position?.lat),
-                  lng: Number(marker.position?.lng),
-                }}
-                xAnchor={0.5}
-                yAnchor={0.5}
-              > */}
               {info && info.content === marker.content && (
-                <InfoBox>{marker.content}</InfoBox>
+                <CustomOverlayMap
+                  position={{
+                    lat: Number(marker.position?.lat),
+                    lng: Number(marker.position?.lng),
+                  }}
+                  xAnchor={0.5}
+                  yAnchor={2.5}
+                >
+                  <InfoBox>{marker.content}</InfoBox>
+                </CustomOverlayMap>
               )}
-              {/* </CustomOverlayMap> */}
             </MapMarker>
           ))}
         </Map>
@@ -188,13 +189,19 @@ export default SearchMyGym;
 
 const InfoBox = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  height: 30px;
-  width: 210px;
+  height: 40px;
+  width: 250px;
+  padding: 10px;
   background-color: white;
   border: 2px solid black;
   border-radius: 8px;
+  overflow: hidden; // 을 사용해 영역을 감출 것
+  text-overflow: ellipsis; // 로 ... 을 만들기
+  white-space: nowrap; // 아래줄로 내려가는 것을 막기위해
+  word-break: break-all;
+  font-size: ${({ theme }) => theme.font.font50};
 `;
 
 const BackgroundContainer = styled.div`

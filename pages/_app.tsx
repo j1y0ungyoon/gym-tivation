@@ -13,6 +13,7 @@ import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GlobalStyle from '@/styles/GlobalStyle';
 import { RecoilRoot } from 'recoil';
+import GlobalModal from '@/components/common/globalModal/GlobalModal';
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Layout>
             <SideNav isLoggedIn={isLoggedIn} />
             <Component {...pageProps} />
+            <GlobalModal />
           </Layout>
         </ThemeProvider>
         <ToastContainer
