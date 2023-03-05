@@ -1,97 +1,129 @@
-import { authService, dbService } from '@/firebase';
-import { BoardCommentType } from '@/type';
-import {
-  query,
-  addDoc,
-  collection,
-  onSnapshot,
-  orderBy,
-  doc,
-  runTransaction,
-} from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import { authService } from '@/firebase';
+import { addMainComment, getMainComments } from '@/pages/api/api';
+import { MainCommentType } from '@/type';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import BoardComment from './BoardComment';
 
-const BoardCommentList = ({ id }: { id: string }) => {
-  const [inputBoardComment, setInputBoardComment] = useState('');
-  const [boardComments, setBoardComments] = useState<BoardCommentType[]>([]);
+const BoardCommentList = ({ id }: MainCommentType) => {
+  const queryClient = useQueryClient();
+  const [inputComment, setInputComment] = useState('');
+  const [mainComments, setMainComments] = useState<MainCommentType[]>([]);
+  const [userLv, setUserLv] = useState('');
+  const [userLvName, setUserLvName] = useState('');
+  const [postCount, setPostCount] = useState<any>();
   const user = authService.currentUser?.uid;
   const nickName = authService.currentUser?.displayName;
   const userPhoto = authService.currentUser?.photoURL;
-  const onChangeInputBoardComment = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setInputBoardComment(event.target.value);
+
+  const { data, isLoading } = useQuery(['getCommentData', id], getMainComments);
+
+  const { mutate: addMutate } = useMutation(addMainComment);
+
+  const onChangeInputComment = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputComment(event.target.value);
   };
+
   const onPressSubmitComment = (
     event: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (event.key === 'Enter') {
-      onSubmitBoardCommemt();
+      onSubmitCommemt();
     }
   };
-  const onSubmitBoardCommemt = async () => {
-    if (!inputBoardComment) {
+
+  // const getCommentNumber = async () => {
+  //   const q = query(
+  //     collection(dbService, 'gallery'),
+  //     where('userId', '==', authService.currentUser?.uid),
+  //   );
+  //   const docsData = await getDocs(q);
+  //   const galleryPostCount = docsData.docs.length;
+  //   setPostCount(galleryPostCount);
+  // };
+  // const profileData = async () => {
+  //   if (!authService.currentUser) return;
+  //   const q = query(
+  //     collection(dbService, 'profile'),
+  //     where('uid', '==', authService.currentUser?.uid),
+  //   );
+  //   const docsData = await getDocs(q);
+  //   const getLvName = docsData.docs[0].data().lvName;
+  //   const getLv = docsData.docs[0].data().lv;
+  //   setUserLvName(getLvName);
+  //   setUserLv(getLv);
+  // };
+
+  const onSubmitCommemt = async () => {
+    if (!inputComment) {
       alert('댓글 내용을 입력해주세요!');
       return;
     }
+
     const newComment = {
-      postId: id,
       user: user,
       nickName: nickName,
       photo: userPhoto,
-      boardComment: inputBoardComment,
+      comment: inputComment,
       createdAt: Date.now(),
+      // userLv: userLv,
+      // userLvName: userLvName,
+      // number: mainComments.length + 1,
+      // postCount: postCount,
     };
-    await addDoc(collection(dbService, 'boardComment'), newComment);
-    setInputBoardComment('');
-    await runTransaction(dbService, async (transaction) => {
-      const sfDocRef = doc(dbService, 'posts', id);
-      const sfDoc = await transaction.get(sfDocRef);
-      if (!sfDoc.exists()) {
-        throw '데이터가 없습니다.';
-      }
-      const commentNumber = sfDoc.data().comment + 1;
-      transaction.update(sfDocRef, { comment: commentNumber });
+
+    addMutate(newComment, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('getCommentData', {
+          refetchActive: true,
+        });
+      },
     });
+
+    if (isLoading) {
+      return <div>로딩중입니다</div>;
+    }
+    setInputComment('');
   };
 
   useEffect(() => {
-    const commentsRef = collection(dbService, 'boardComment');
-    const q = query(commentsRef, orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newComments = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setBoardComments(newComments);
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    // const commentsRef = collection(dbService, 'mainComment');
+    // const q = query(commentsRef, orderBy('createdAt', 'desc'));
+    // const unsubscribe = onSnapshot(q, (snapshot) => {
+    //   const newComments = snapshot.docs.map((doc) => ({
+    //     id: doc.id,
+    //     ...doc.data(),
+    //   }));
+    //   setMainComments(newComments);
+    // });
+    // profileData();
+    // getCommentNumber();
+    // return () => {
+    //   unsubscribe();
+    // };
+  }, [postCount]);
 
   return (
     <CommentListWrapper>
       <InputWrapper>
         <CommentInput
-          onChange={onChangeInputBoardComment}
-          onKeyUp={onPressSubmitComment}
-          value={inputBoardComment}
+          onChange={onChangeInputComment}
+          onKeyPress={onPressSubmitComment}
+          value={inputComment}
         />
 
         <ButtonWrapper>
-          <SubmitCommentButton onClick={onSubmitBoardCommemt}>
+          <SubmitCommentButton onClick={onSubmitCommemt}>
             등록
           </SubmitCommentButton>
         </ButtonWrapper>
       </InputWrapper>
-      {boardComments
-        .filter((item) => item.postId === id)
-        .map((item) => {
-          return <BoardComment key={item.id} item={item} />;
-        })}
+      {data?.map((item) => {
+        return <BoardComment key={item.id} item={item} />;
+      })}
     </CommentListWrapper>
   );
 };
