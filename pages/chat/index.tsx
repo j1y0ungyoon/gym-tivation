@@ -4,12 +4,14 @@ import io from 'socket.io-client';
 
 import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { useRecoilState } from 'recoil';
 
 import { authService, dbService } from '@/firebase';
 import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 
 import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
+import { apponentState, dmListsState, roomState } from '@/recoil/dmData';
 
 type ChatLog = {
   id: string | undefined;
@@ -29,15 +31,17 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
-  const [dmLists, setDmLists] = useState<any>();
-  const [roomNum, setRoomNum] = useState<string | undefined>();
+  const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
+  const [roomNum, setRoomNum] = useRecoilState(roomState);
 
-  const [isMyDmOn, setIsMyDmOn] = useState(false);
+  const [isMyDmOn, setIsMyDmOn] = useState(true);
 
   const user = authService.currentUser;
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
   const chatLogBoxRef = useRef<HTMLDivElement>();
+
+  const [apponentId, setApponentId] = useRecoilState(apponentState);
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
@@ -121,34 +125,35 @@ const Chat = () => {
       }));
       const myDms = dms.filter((dm: any) => {
         if (dm.enterUser) {
-          if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
+          if (dm.enterUser[0] || dm.enterUser[1] === user?.uid) {
             return dm;
           }
         }
       });
-      setDmLists([...myDms]);
+      setDmLists(myDms);
     });
   }, [user]);
 
-  const onClickDm = async () => {
-    dmLists.filter((dmList: DmList) => {
-      if (
-        dmList.id ===
-        (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
-      ) {
-        setRoomNum(dmList.id);
-        return;
-      } else {
-        addDoc(collection(dbService, 'dms'), {
-          id: user?.uid + 'DM보낼 상대 id',
-          enterUser: [user?.uid, 'DM보낼 상대 id'],
-          chatLog: [],
-        });
-        setRoomNum(user?.uid + 'DM보낼 상대 id');
-        return;
-      }
-    });
-  };
+  // const onClickDm = async () => {
+  //   for (let i = 0; i < dmLists.length; i++) {
+  //     const dmList = dmLists[i];
+  //     const regex = new RegExp(
+  //       `^(${user?.uid}|${apponentId})(${apponentId}|${user?.uid})$`,
+  //     );
+  //     if (regex.test(dmList.id)) {
+  //       setRoomNum(dmList.id);
+  //       break;
+  //     } else {
+  //       addDoc(collection(dbService, 'dms'), {
+  //         id: user?.uid + apponentId,
+  //         enterUser: [user?.uid, apponentId],
+  //         chatLog: [],
+  //       });
+  //       setRoomNum(user?.uid + apponentId);
+  //       break;
+  //     }
+  //   }
+  // };
 
   return (
     <ChatWrapper>
@@ -172,13 +177,13 @@ const Chat = () => {
           >
             DM
           </CategoryBtn>
-          <CategoryBtn
+          {/* <CategoryBtn
             onClick={() => {
               onClickDm();
             }}
           >
             DM 로직
-          </CategoryBtn>
+          </CategoryBtn> */}
         </CategoryContainer>
 
         {isMyDmOn ? (

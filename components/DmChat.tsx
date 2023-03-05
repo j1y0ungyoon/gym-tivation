@@ -26,7 +26,7 @@ type ChatLog = {
 };
 
 type DmChatProps = {
-  roomNum?: string;
+  roomNum?: string | null;
 };
 
 type DmTextProps = {

@@ -15,6 +15,9 @@ import {
 } from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
+import { useRecoilState } from 'recoil';
+import DmButton from './DmButton';
+import { apponentState } from '@/recoil/dmData';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -62,6 +65,8 @@ const ProfileEdit = ({
 
   const nickNameCheck = nickNameInformation.includes(nickName);
   const user = String(authService.currentUser?.uid);
+
+  const [apponentId, setApponentId] = useRecoilState(apponentState);
 
   //닉네임 중복 검사
   const EmailNickNameGetDoc = async () => {
@@ -280,10 +285,7 @@ const ProfileEdit = ({
                         <IconImg src="/assets/icons/myPage/Follow.svg" />
                         팔로잉
                       </EditButton>
-                      <EditButton>
-                        <IconImg src="/assets/icons/myPage/DM.svg" />
-                        메시지
-                      </EditButton>
+                      <DmButton id={paramsId} />
                     </>
                   ) : (
                     <>
@@ -291,19 +293,14 @@ const ProfileEdit = ({
                         <IconImg src="/assets/icons/myPage/Follow.svg" />
                         팔로우
                       </EditButton>
-                      <EditButton>
-                        <IconImg src="/assets/icons/myPage/DM.svg" />
-                        메시지
-                      </EditButton>
+                      <DmButton id={paramsId} />
                     </>
                   )}
                 </NameBox>
                 <InstagramBox>
-
                   <NickNameText>{item.displayName}</NickNameText>
                   <AreaImage src="/assets/icons/myPage/Area.svg" />
                   <AreaText>{item.area}</AreaText>
-
                 </InstagramBox>
               </NickNameAreaBox>
               <FollowBox>
