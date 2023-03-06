@@ -1,29 +1,9 @@
-import { useState, useEffect } from 'react';
-import {
-  query,
-  collection,
-  getDocs,
-  where,
-  onSnapshot,
-  updateDoc,
-} from 'firebase/firestore';
+import { useState } from 'react';
+import { query, collection, getDocs, where } from 'firebase/firestore';
 import { dbService, authService } from '@/firebase';
 import Follow from '@/components/Follow';
 import styled from 'styled-components';
-
-export type Follows = {
-  id: string;
-  area?: string;
-  introduction?: string;
-  instagram?: string;
-  displayName?: string;
-  email?: string;
-  photoURL?: string;
-  loginState?: boolean;
-  follower?: string;
-  following?: string;
-  uid?: string;
-};
+import { useQuery } from 'react-query';
 
 const SearchUser = ({
   setSearchOpen,
@@ -32,45 +12,29 @@ const SearchUser = ({
   setSearchOpen: (p: boolean) => void;
   searchName: string;
 }) => {
-  const [followInformation, setFollowInformation] = useState<Follows[]>([]);
-  const [following, setFollowing] = useState([] as any);
-
   const userUid: any = String(authService.currentUser?.uid);
-  const follwoingInformation = String(following);
 
-  const followGetDoc = () => {
+  const followGet = async () => {
     const q = query(
       collection(dbService, 'profile'),
       where('uid', '==', userUid),
     );
-    onSnapshot(q, (snapshot) => {
-      snapshot.docs.map((doc) => {
-        setFollowing((prev: any) => [...prev, doc.data().following]);
-      });
-    });
+    const data = await getDocs(q);
+    return data.docs.map((doc) => doc.data().following);
   };
+  const { isLoading: likeLoading, data: follow } = useQuery(
+    'follow',
+    followGet,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+  const follwoingInformation = String(follow);
 
-  const users = () => {
-    const q = query(collection(dbService, 'profile'));
-    onSnapshot(q, (snapshot) => {
-      const newfollows = snapshot.docs.map((doc) => {
-        const newfollow = {
-          id: doc.id,
-          ...doc.data(),
-        };
-        return newfollow;
-      });
-      setFollowInformation(newfollows);
-    });
-  };
-  useEffect(() => {
-    users();
-    followGetDoc();
-    return () => {
-      users();
-      followGetDoc();
-    };
-  }, [authService.currentUser]);
+  const { isLoading: profileLoading, data: profile } = useQuery('profile');
 
   return (
     <>
@@ -85,39 +49,23 @@ const SearchUser = ({
             setSearchOpen(false);
           }}
         ></UserClose2>
-        {searchName.length > 0
-          ? followInformation
-              .filter(
-                (item) =>
-                  item.displayName?.match(searchName) &&
-                  authService.currentUser?.uid !== item.id,
-              )
-              .map((item) => {
-                return (
-                  <Follow
-                    setFollowing={setFollowing}
-                    following={following}
-                    key={item.id}
-                    item={item}
-                    userUid={userUid}
-                    follwoingInformation={follwoingInformation}
-                  />
-                );
-              })
-          : followInformation
-              .filter((item) => item.id !== userUid)
-              .map((item) => {
-                return (
-                  <Follow
-                    setFollowing={setFollowing}
-                    following={following}
-                    key={item.id}
-                    item={item}
-                    userUid={userUid}
-                    follwoingInformation={follwoingInformation}
-                  />
-                );
-              })}
+        {searchName.length > 0 &&
+          (profile as ProfileItem[])
+            .filter(
+              (item) =>
+                item.displayName?.match(searchName) &&
+                authService.currentUser?.uid !== item.id,
+            )
+            .map((item) => {
+              return (
+                <Follow
+                  key={item.id}
+                  item={item}
+                  userUid={userUid}
+                  follwoingInformation={follwoingInformation}
+                />
+              );
+            })}
       </UserWrapper>
     </>
   );
@@ -130,7 +78,7 @@ const UserWrapper = styled.div`
   position: absolute;
   overflow: auto;
   width: 600px;
-  height: 400px;
+  height: 300px;
   top: 80px;
   right: 2%;
   background-color: white;

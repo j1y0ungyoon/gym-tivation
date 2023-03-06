@@ -5,14 +5,13 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import checkedLike from '../public/assets/images/checkedLike.png';
 import Image from 'next/image';
-import { Board } from '@/pages/myPage/[...params]';
 
 type BoardGet = {
-  boardInformation: Board[];
   paramsId: string;
+  board: Board[];
 };
 
-const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
+const MyPageBoard = ({ paramsId, board }: BoardGet) => {
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -25,9 +24,10 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
 
   return (
     <MyPageBoardWrapper>
-      {boardInformation
+      {board
         .filter((item) => item.userId === paramsId)
         .map((item) => {
+          console.log('좋아요', item.like);
           return (
             <MyPageBoardContainer
               key={item.id}
@@ -55,7 +55,9 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
                     height={20}
                     style={{ marginRight: '4px', marginTop: '3px' }}
                   />
-                  <NickNameText> {item.like.length}</NickNameText>
+                  <NickNameText>
+                    {item.like ? item.like.length : 0}
+                  </NickNameText>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
@@ -139,8 +141,8 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-
-  margin-bottom: 5px;
+  padding-top: 6px;
+  margin-bottom: 14px;
   width: 100%;
   height: 50%;
 `;
