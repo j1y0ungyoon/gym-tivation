@@ -1,5 +1,4 @@
-import { authService, dbService } from '@/firebase';
-import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore';
+import { authService } from '@/firebase';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';

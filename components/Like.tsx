@@ -17,7 +17,6 @@ import {
   updateProfileGalleryUnLike,
   updateProfilePostUnLike,
 } from '@/pages/api/api';
-import { query } from 'firebase/database';
 const Like = ({ detailPost, detailGalleryPost, id }: any) => {
   const router = useRouter();
   const boardLikeCount = detailPost?.like?.length;
@@ -54,7 +53,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             { id, user, detailPost },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('like', {
+                queryClient.invalidateQueries('post', {
                   refetchActive: true,
                 });
               },
@@ -64,7 +63,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             { id, user },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('profilelike', {
+                queryClient.invalidateQueries('post', {
                   refetchActive: true,
                 });
               },
@@ -79,7 +78,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('unLike', {
+                queryClient.invalidateQueries('post', {
                   refetchActive: true,
                 });
               },
@@ -89,7 +88,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             { id, user },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('profileUnLike', {
+                queryClient.invalidateQueries('post', {
                   refetchActive: true,
                 });
               },
@@ -119,7 +118,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('like', {
+                queryClient.invalidateQueries('gallery', {
                   refetchActive: true,
                 });
               },
@@ -129,7 +128,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             { id, user, detailGalleryPost },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('profileLike', {
+                queryClient.invalidateQueries('gallery', {
                   refetchActive: true,
                 });
               },
@@ -140,10 +139,11 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             {
               id,
               user,
+              detailGalleryPost,
             },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('unLike', {
+                queryClient.invalidateQueries('gallery', {
                   refetchActive: true,
                 });
               },
@@ -153,7 +153,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             { id, user },
             {
               onSuccess: () => {
-                queryClient.invalidateQueries('profileUnLike', {
+                queryClient.invalidateQueries('gallery', {
                   refetchActive: true,
                 });
               },
