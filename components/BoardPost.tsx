@@ -17,7 +17,7 @@ const BoardPost = ({
   createdAt,
 }: BoardPostType) => {
   const router = useRouter();
-  const [commentCount, setCommentCount] = useState();
+  const [commentCount, setCommentCount] = useState<number>();
   const goToDetailPost = (id: any) => {
     router.push({
       pathname: `/boardDetail/${id}`,

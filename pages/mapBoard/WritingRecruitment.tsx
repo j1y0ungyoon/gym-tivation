@@ -9,7 +9,8 @@ import UseDropDown from '@/components/UseDropDown';
 import SelectDay from '@/components/SelectDay';
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
-import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -59,6 +60,8 @@ const WritingRecruitment = () => {
   const [userLvName, setUserLvName] = useState<string>('');
   const [userLv, setUserLv] = useState<number>();
 
+  const { showModal } = useModal();
+
   const router = useRouter();
 
   const onChangeRecruitTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,32 +88,50 @@ const WritingRecruitment = () => {
 
   const onSubmitRecruitPost = async () => {
     if (!recruitTitle) {
-      toast.info('제목을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '제목을 입력해 주세요!' },
+      });
       return;
     }
 
     if (!recruitContent) {
-      toast.info('내용을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 입력해 주세요!' },
+      });
       return;
     }
 
     if (!detailAddress) {
-      toast.info('운동 장소를 입력해 주세요!');
-      return;
-    }
-
-    if (start === '') {
-      toast.info('운동 시간을 입력해 주세요!');
-      return;
-    }
-
-    if (end === '') {
-      toast.info('운동 시간을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '운동 장소를 입력해 주세요!' },
+      });
       return;
     }
 
     if (selectedDays.length === 0) {
-      toast.info('운동 요일을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '요일을 입력해 주세요!' },
+      });
+      return;
+    }
+
+    if (start === '') {
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '시작 시간을 입력해 주세요!' },
+      });
+      return;
+    }
+
+    if (end === '') {
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '종료 시간을 입력해 주세요!' },
+      });
       return;
     }
 
@@ -150,7 +171,10 @@ const WritingRecruitment = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인을 해주세요!' },
+      });
       router.push('/mapBoard');
     }
   }, []);

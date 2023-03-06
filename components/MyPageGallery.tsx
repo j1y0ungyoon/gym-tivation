@@ -1,14 +1,14 @@
 import { Gallery } from '@/pages/myPage/[...params]';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 type GalleryGet = {
   paramsId: string;
-  galleryInformation: Gallery[];
+  gallery: Gallery[];
 };
 
-const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
+const MyPageGalley = ({ paramsId, gallery }: GalleryGet) => {
   // const [galleryInformation, setGalleryInFormation] = useState<Gallery[]>([]);
   const router = useRouter();
   const goToGalleryDetailPost = (id: any) => {
@@ -22,7 +22,7 @@ const MyPageGalley = ({ paramsId, galleryInformation }: GalleryGet) => {
 
   return (
     <MyPageGalleyWrapper>
-      {galleryInformation
+      {gallery
         .filter((item) => item.userId === paramsId)
         .map((item) => {
           return (
@@ -44,7 +44,7 @@ const MyPageGalleyWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding-top: 20px;
-  padding-left: 20px;
+  padding-left: 40px;
   gap: 10px;
   width: 96.8%;
   height: 100%;

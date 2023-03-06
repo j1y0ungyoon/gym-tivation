@@ -1,12 +1,12 @@
-import { authService, dbService } from '@/firebase';
+import { dbService } from '@/firebase';
 import checkedLike from '../public/assets/images/checkedLike.png';
 import Image from 'next/image';
-import { collection, orderBy, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import GalleryComment from './GalleryComment';
-import { Board, Gallery } from '@/pages/myPage/[...params]';
+
+import { useQuery } from 'react-query';
 
 type Like = {
   id: string;
@@ -20,15 +20,11 @@ type Like = {
 };
 type LikeGet = {
   paramsId: string;
-  galleryInformation: Gallery[];
-  boardInformation: Board[];
+
+  combineData: Board[];
 };
 
-const MyPageLike = ({
-  paramsId,
-  galleryInformation,
-  boardInformation,
-}: LikeGet) => {
+const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
   const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
 
   const router = useRouter();
@@ -48,8 +44,6 @@ const MyPageLike = ({
       },
     });
   };
-  //배열 합치기
-  const combineData = boardInformation.concat(galleryInformation);
 
   const getPostLike = async () => {
     const q = query(
@@ -57,21 +51,22 @@ const MyPageLike = ({
       where('uid', '==', paramsId),
     );
     const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setLikeInFormation(doc.data().postLike);
-    });
+    return data.docs.map((doc) => doc.data().postLike);
   };
 
-  useEffect(() => {
-    getPostLike();
+  const { isLoading: likeLoading, data: like } = useQuery('like', getPostLike, {
+    onSuccess: () => {},
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
 
-    return () => {};
-  }, [paramsId]);
+  console.log('라이크', like);
 
   return (
     <MyPageBoardWrapper>
       {combineData
-        .filter((item) => String(likeInformation).includes(item.id))
+        .filter((item) => String(like).includes(item.id))
         .map((item) => {
           return (
             <MyPageBoardContainer
@@ -108,7 +103,9 @@ const MyPageLike = ({
                     height={20}
                     style={{ marginRight: '4px', marginTop: '3px' }}
                   />
-                  <NickNameText> {item.like.length}</NickNameText>
+                  <NickNameText>
+                    {item.like ? item.like.length : 0}
+                  </NickNameText>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
@@ -192,7 +189,8 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-  margin-bottom: 5px;
+  padding-top: 6px;
+  margin-bottom: 14px;
   width: 100%;
   height: 50%;
 `;

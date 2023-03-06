@@ -5,11 +5,14 @@ import { useMutation } from 'react-query';
 import { deleteComment, editCommentLike } from '@/pages/api/api';
 import { authService, dbService } from '@/firebase';
 import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
-import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const Comment = ({ comment }: { comment: CommentType }) => {
   // 좋아요 눌렀는지 표시
   const [isClickedLike, setIsClickedLike] = useState(false);
+
+  const { showModal } = useModal();
 
   // 좋아요 클릭 시 댓글 수정 useMutation
   const { mutate: clickLike } = useMutation(
@@ -40,36 +43,68 @@ const Comment = ({ comment }: { comment: CommentType }) => {
   );
 
   // 게시글 삭제 클릭 이벤트
-  const onClickDeleteComment = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
+  // const onClickDeleteComment = async () => {
+  //   const answer = confirm('정말 삭제하시겠습니까?');
 
-    if (answer) {
-      try {
-        await removeComment(comment.id);
-        await runTransaction(dbService, async (transaction) => {
-          const sfDocRef = doc(
-            dbService,
-            'recruitments',
-            String(comment.postId),
-          );
-          const sfDoc = await transaction.get(sfDocRef);
-          if (!sfDoc.exists()) {
-            throw '데이터가 없습니다.';
-          }
-          const commentNumber = sfDoc.data().comment - 1;
-          transaction.update(sfDocRef, { comment: commentNumber });
-        });
-      } catch (error) {
-        console.log('에러입니다', error);
-      }
-    } else {
-      return;
+  //   if (answer) {
+  //     try {
+  //       await removeComment(comment.id);
+  //       await runTransaction(dbService, async (transaction) => {
+  //         const sfDocRef = doc(
+  //           dbService,
+  //           'recruitments',
+  //           String(comment.postId),
+  //         );
+  //         const sfDoc = await transaction.get(sfDocRef);
+  //         if (!sfDoc.exists()) {
+  //           throw '데이터가 없습니다.';
+  //         }
+  //         const commentNumber = sfDoc.data().comment - 1;
+  //         transaction.update(sfDocRef, { comment: commentNumber });
+  //       });
+  //     } catch (error) {
+  //       console.log('에러입니다', error);
+  //     }
+  //   } else {
+  //     return;
+  //   }
+  // };
+
+  // 게시글 삭제 함수
+  const deletePostComment = async () => {
+    try {
+      await removeComment(comment.id);
+      await runTransaction(dbService, async (transaction) => {
+        const sfDocRef = doc(dbService, 'recruitments', String(comment.postId));
+        const sfDoc = await transaction.get(sfDocRef);
+        if (!sfDoc.exists()) {
+          throw '데이터가 없습니다.';
+        }
+        const commentNumber = sfDoc.data().comment - 1;
+        transaction.update(sfDocRef, { comment: commentNumber });
+      });
+    } catch (error) {
+      console.log('에러입니다', error);
     }
+  };
+
+  // confirm 모달을 통해 코멘트 삭제하기
+  const openConfrimModal = () => {
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: deletePostComment,
+      },
+    });
   };
 
   const onClickLike = async () => {
     if (!authService.currentUser) {
-      toast.info('로그인 후 이용해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
       return;
     }
 
@@ -146,7 +181,7 @@ const Comment = ({ comment }: { comment: CommentType }) => {
           </ContentLikeBox>
         </UserProfile>
         {authService.currentUser?.uid === comment.userId ? (
-          <DeleteButton onClick={onClickDeleteComment}>삭제</DeleteButton>
+          <DeleteButton onClick={openConfrimModal}>삭제</DeleteButton>
         ) : null}
       </CommentWrapper>
     </>

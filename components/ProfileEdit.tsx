@@ -15,6 +15,9 @@ import {
 } from 'firebase/firestore';
 import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
+import DmButton from './DmButton';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import FollowButton from './FollowButton';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -48,7 +51,7 @@ const ProfileEdit = ({
 }: ProfileEditProps) => {
   const [isProfileEdit, setIsProfileEdit] = useState(false);
   //닉네임, 사진 불러오기
-  const [photoURL, setPhotoURL] = useState(DEFAULT_PHOTO_URL);
+  const [photoURL, setPhotoURL] = useState(item.photoURL);
 
   //프로필 변경
   const [nickName, setNickName] = useState(item.displayName);
@@ -57,20 +60,27 @@ const ProfileEdit = ({
   const [instagram, setInstagram] = useState(item.instagram);
   const [nickNameMessage, setNickNameMessage] = useState<string>('');
   const [isValidNickName, setIsValidNickName] = useState(true);
-  const [nickNameInformation, setNickNameInformation] = useState([] as any);
-  const [PostNumber, setPostNumber] = useState([] as any);
 
-  const nickNameCheck = nickNameInformation.includes(nickName);
   const user = String(authService.currentUser?.uid);
-
+  const queryClient = useQueryClient();
   //닉네임 중복 검사
   const EmailNickNameGetDoc = async () => {
     const q = query(collection(dbService, 'profile'), where('uid', '!=', user));
     const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setNickNameInformation((prev: any) => [...prev, doc.data().displayName]);
-    });
+    return data.docs.map((doc) => doc.data().displayName);
   };
+
+  const { isLoading: nickNameLoading, data: nickNameGetCheck } = useQuery(
+    'nickNameGetCheck',
+    EmailNickNameGetDoc,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+  const nickNameCheck = nickNameGetCheck?.includes(nickName);
   const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const nickName_validation = new RegExp(
       /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
@@ -109,8 +119,8 @@ const ProfileEdit = ({
     }
   };
 
-  //프로필 수정
-  const onClickProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // 프로필 수정
+  const ProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const user = authService.currentUser;
@@ -134,74 +144,60 @@ const ProfileEdit = ({
       alert(error.message);
     }
   };
-  //팔로우, 팔로잉
-  const FollowOnClick = async () => {
-    if (user !== null) {
-      await updateDoc(doc(dbService, 'profile', user), {
-        following: arrayUnion(paramsId),
-      });
-      await updateDoc(doc(dbService, 'profile', item.id), {
-        follower: arrayUnion(user),
-      });
-    }
-  };
 
-  const FollowReMoveOnClick = async () => {
-    if (user !== null) {
-      await updateDoc(doc(dbService, 'profile', user), {
-        following: arrayRemove(paramsId),
-      });
-      await updateDoc(doc(dbService, 'profile', item.id), {
-        follower: arrayRemove(user),
-      });
-    }
-  };
+  const { mutate: onProfileEdit } = useMutation(['profileEdit'], ProfileEdit, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('profile');
+    },
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
+
+  //게시판 + 갤러리
   const getBoardNumber = async () => {
     const q = query(
       collection(dbService, 'posts'),
       where('userId', '==', paramsId),
     );
     const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setPostNumber((prev: any) => [...prev, doc.data().title]);
-    });
+
+    return data.docs.map((doc) => doc.data().title);
   };
-  const getGallery = async () => {
+
+  const { isLoading: BoardNumberLoading, data: BoardNumber } = useQuery(
+    'BoardNumber',
+    getBoardNumber,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+
+  const getGalleryNumber = async () => {
     const q = query(
       collection(dbService, 'gallery'),
       where('userId', '==', paramsId),
     );
     const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setPostNumber((prev: any) => [...prev, doc.data().title]);
-    });
+    return data.docs.map((doc) => doc.data().title);
   };
-
+  const { isLoading: galleryNumberLoading, data: galleryNumber } = useQuery(
+    'galleryNumber',
+    getGalleryNumber,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
   //사진 주소, 닉네임 불러오기
   useEffect(() => {
-    EmailNickNameGetDoc();
     helpLevel();
-    getBoardNumber();
-    getGallery();
-    authService.onAuthStateChanged((user) => {
-      if (user !== null) {
-        if (user.displayName !== null) {
-          const authDisplayName = user.displayName;
-          setNickName(authDisplayName);
-        }
-        if (user.photoURL !== null) {
-          const authPhotoURL = user.photoURL;
-          setPhotoURL(authPhotoURL);
-        }
-      }
-    });
-    return () => {
-      getBoardNumber();
-      getGallery();
-      EmailNickNameGetDoc();
-      helpLevel();
-    };
-  }, [paramsId]);
+  }, [item.lv]);
 
   return (
     <>
@@ -271,30 +267,10 @@ const ProfileEdit = ({
                     >
                       수정
                     </EditButton>
-                  ) : item.follower?.includes(user) ? (
-                    <>
-                      <EditButton
-                        style={{ backgroundColor: 'black', color: 'white' }}
-                        onClick={FollowReMoveOnClick}
-                      >
-                        <IconImg src="/assets/icons/myPage/Follow.svg" />
-                        팔로잉
-                      </EditButton>
-                      {/* <EditButton>
-                        <IconImg src="/assets/icons/myPage/DM.svg" />
-                        메시지
-                      </EditButton> */}
-                    </>
                   ) : (
                     <>
-                      <EditButton onClick={FollowOnClick}>
-                        <IconImg src="/assets/icons/myPage/Follow.svg" />
-                        팔로우
-                      </EditButton>
-                      {/* <EditButton>
-                        <IconImg src="/assets/icons/myPage/DM.svg" />
-                        메시지
-                      </EditButton> */}
+                      <FollowButton item={item} Id={paramsId} />
+                      <DmButton id={paramsId} />
                     </>
                   )}
                 </NameBox>
@@ -307,7 +283,9 @@ const ProfileEdit = ({
               <FollowBox>
                 <PostNumberText>게시글</PostNumberText>
                 <FollowNumberText>
-                  {PostNumber === undefined ? '0' : PostNumber.length}
+                  {galleryNumber && BoardNumber
+                    ? galleryNumber?.length + BoardNumber?.length
+                    : 0}
                 </FollowNumberText>
                 <FollowText
                   onClick={() => {
@@ -344,11 +322,16 @@ const ProfileEdit = ({
         </>
       ) : (
         <>
-          <form onSubmit={onClickProfileEdit}>
+          <form onSubmit={onProfileEdit}>
             <InformationBox>
               <EditPhotoBox>
                 <ProfilePhoto>
-                  <UploadImage imageURL={photoURL} setImageURL={setPhotoURL} />
+                  {photoURL && (
+                    <UploadImage
+                      imageURL={photoURL}
+                      setImageURL={setPhotoURL}
+                    />
+                  )}
                 </ProfilePhoto>
                 <LevelBox>
                   {item.lvName === '일반인' && (
@@ -391,7 +374,7 @@ const ProfileEdit = ({
                       onChange={(e) => {
                         setInstagram(e.target.value);
                       }}
-                      placeholder="인스타그램"
+                      placeholder="instagram"
                       maxLength={20}
                     />
                     <InstagramImage src="/assets/icons/myPage/Ins.svg" />
@@ -453,7 +436,9 @@ const ProfileEdit = ({
                 <FollowBox>
                   <PostNumberText>게시글</PostNumberText>
                   <FollowNumberText>
-                    {PostNumber === undefined ? '0' : PostNumber.length}
+                    {galleryNumber && BoardNumber
+                      ? galleryNumber?.length + BoardNumber?.length
+                      : 0}
                   </FollowNumberText>
                   <FollowText
                     onClick={() => {
@@ -755,7 +740,7 @@ const FollowNumberText = styled.span`
 
 const TextValidation = styled.span`
   color: red;
-  margin-left: 1vw;
+  margin-left: 8px;
   font-size: 12px;
 `;
 const InputBox = styled.div``;
@@ -772,15 +757,9 @@ const LevelIcon = styled.img`
   margin-bottom: 6px;
   border-radius: 50%;
 `;
-const IconImg = styled.img`
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 5px;
-  margin-bottom: 2px;
-`;
+
 const AreaImage = styled.img`
   width: 30px;
   height: 30px;
   margin-left: 20px;
-  margin-bottom: 6px;
 `;

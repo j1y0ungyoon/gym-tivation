@@ -4,12 +4,15 @@ import io from 'socket.io-client';
 
 import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { dmListsState, roomState } from '@/recoil/dmData';
+import { useRecoilState } from 'recoil';
 
 import { authService, dbService } from '@/firebase';
 import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 
 import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
+import DmButton from '@/components/DmButton';
 
 type ChatLog = {
   id: string | undefined;
@@ -29,10 +32,13 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
-  const [dmLists, setDmLists] = useState<any>();
-  const [roomNum, setRoomNum] = useState<string | undefined>();
 
-  const [isMyDmOn, setIsMyDmOn] = useState(false);
+  const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
+  const [roomNum, setRoomNum] = useRecoilState(roomState);
+
+  const [isMyDmOn, setIsMyDmOn] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
+  const [users, setUsers] = useState<any>();
 
   const user = authService.currentUser;
   const username = user?.displayName;
@@ -130,83 +136,98 @@ const Chat = () => {
     });
   }, [user]);
 
-  const onClickDm = async () => {
-    dmLists.filter((dmList: DmList) => {
-      if (
-        dmList.id ===
-        (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
-      ) {
-        setRoomNum(dmList.id);
-        return;
-      } else {
-        addDoc(collection(dbService, 'dms'), {
-          id: user?.uid + 'DM보낼 상대 id',
-          enterUser: [user?.uid, 'DM보낼 상대 id'],
-          chatLog: [],
+  useEffect(() => {
+    const getUsers = () => {
+      const q = query(collection(dbService, 'profile'));
+      onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          const data = {
+            id: doc.id,
+            ...doc.data(),
+          };
+          return data;
         });
-        setRoomNum(user?.uid + 'DM보낼 상대 id');
-        return;
-      }
-    });
-  };
+        setUsers(data);
+      });
+    };
+    getUsers();
+  }, []);
 
   return (
     <ChatWrapper>
       <ChatContainer>
         <CategoryContainer>
           <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-          {/* <CategoryBtn
+          <CategoryBtn
             onClick={() => {
               setIsMyDmOn(true);
-              if (dmLists.length === 0) {
-                addDoc(collection(dbService, 'dms'), {
-                  id: user?.uid,
-                  enterUser: [user?.uid, '나와의채팅'],
-                  chatLog: [],
-                });
-                setRoomNum(user?.uid);
-                return;
-              }
-              setRoomNum(user?.uid);
             }}
           >
             DM
-          </CategoryBtn> */}
-          {/* <CategoryBtn
-            onClick={() => {
-              onClickDm();
-            }}
-          >
-            DM 로직
-          </CategoryBtn> */}
+          </CategoryBtn>
         </CategoryContainer>
 
         {isMyDmOn ? (
           <DmContainer>
-            <MyDmListBox>
-              <SearchBar>
-                <SearchInput />
-                <SearchIcon src="/assets/icons/searchIcon.png" />
-              </SearchBar>
+            <MyDmListContainer>
+              <SearchWrapper>
+                <SearchBar>
+                  <SearchInput
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    value={searchValue}
+                    placeholder={'메세지를 보낼 사람을 검색하세요.'}
+                  />
+                  {searchValue.length > 0 ? (
+                    <SearchCancel
+                      src={'/assets/icons/closeBtn.svg'}
+                      onClick={() => {
+                        setSearchValue('');
+                      }}
+                    />
+                  ) : null}
+                  <SearchIcon src="/assets/icons/searchIcon.png" />
+                </SearchBar>
+                {searchValue.length > 0 ? (
+                  <SearchResultWrapper>
+                    {users
+                      .filter(
+                        (item: any) =>
+                          item.displayName?.match(searchValue) &&
+                          authService.currentUser?.uid !== item.id,
+                      )
+                      .map((item: any) => {
+                        console.log(item);
+                        console.log('아이디 잘 내려줌??', item.id);
+                        return (
+                          <SearchResult key={item.id}>
+                            <UserInfo>
+                              <UserImg src={`${item.photoURL}`} />
+                              <UserName>{item.displayName}</UserName>
+                            </UserInfo>
+                            <DmButton id={item.id} />
+                          </SearchResult>
+                        );
+                      })}
+                  </SearchResultWrapper>
+                ) : null}
+              </SearchWrapper>
+
               {dmLists?.map((dmList: DmList) => {
                 return (
-                  <div key={dmList.id}>
+                  <MyDmListBox key={dmList.id}>
                     {dmList.enterUser?.includes(`${user?.uid}`) ? (
-                      <>
-                        <MyDmList onClick={() => setRoomNum(dmList.id)}>
-                          {dmList.enterUser.map((enterUser) => {
-                            if (enterUser !== user?.uid) {
-                              return enterUser;
-                            }
-                          })}
-                        </MyDmList>
-                        <hr />
-                      </>
+                      <MyDmList onClick={() => setRoomNum(dmList.id)}>
+                        {dmList.enterUser.map((enterUser) => {
+                          if (enterUser !== user?.uid) {
+                            return enterUser;
+                          }
+                        })}
+                      </MyDmList>
                     ) : null}
-                  </div>
+                  </MyDmListBox>
                 );
               })}
-            </MyDmListBox>
+            </MyDmListContainer>
             <DmChat roomNum={roomNum} />
           </DmContainer>
         ) : (
@@ -260,7 +281,7 @@ const DmContainer = styled.div`
   height: calc(100vh - 200px);
 `;
 
-const MyDmListBox = styled.section`
+const MyDmListContainer = styled.section`
   width: 40%;
   min-width: 240px;
   background-color: #fff;
@@ -268,6 +289,10 @@ const MyDmListBox = styled.section`
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   overflow-y: auto;
+`;
+
+const SearchWrapper = styled.div`
+  position: relative;
 `;
 
 const SearchBar = styled.div`
@@ -290,13 +315,47 @@ const SearchInput = styled.input`
   outline: none;
   background-color: #fff;
 `;
-
+const SearchCancel = styled.img`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+`;
 const SearchIcon = styled.img`
   width: 20px;
   margin-right: 20px;
   margin-left: 5px;
 `;
 
+const SearchResultWrapper = styled.div`
+  width: 100%;
+  margin-top: -20px;
+  background-color: #fffcf3;
+  position: absolute;
+  z-index: 2;
+  border: 1px solid #999;
+  border-radius: 16px;
+  padding: 0 24px;
+`;
+const SearchResult = styled.div`
+  padding: 20px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #999;
+
+  :last-child {
+    border-bottom: none;
+  }
+`;
+const MyDmListBox = styled.div`
+  border-bottom: 1px solid #999;
+  :last-child {
+    border-bottom: none;
+  }
+`;
 const MyDmList = styled.div`
   background-color: #fff;
   padding: 10px;
@@ -342,7 +401,10 @@ const ChatBox = styled.div`
   display: flex;
   margin-bottom: 20px;
 `;
-
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const UserImg = styled.img`
   min-width: 40px;
   width: 40px;
@@ -350,6 +412,9 @@ const UserImg = styled.img`
   height: 40px;
   border-radius: 50px;
   margin-right: 10px;
+`;
+const UserName = styled.span`
+  font-size: 16px;
 `;
 
 const ChatName = styled.div`

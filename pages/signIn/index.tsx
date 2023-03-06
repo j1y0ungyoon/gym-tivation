@@ -6,7 +6,14 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
-import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+} from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import {
   AiFillCheckCircle,
@@ -119,7 +126,18 @@ const SignIn = () => {
         toast.warn('이메일 인증을 완료해주세요');
       }
     } catch (error: any) {
-      toast.error(error.message);
+      if (error.code == 'auth/invalid-email') {
+        toast.error('이메일 형식이 틀렸습니다');
+      }
+      if (error.code == 'auth/user-not-found') {
+        toast.error('이메일이 없습니다');
+      }
+      if (error.code == 'auth/wrong-password') {
+        toast.error('비밀번호를 다시 확인해주세요');
+      }
+      if (error.code == 'auth/too-many-requests') {
+        toast.error('잠시후 다시 시도해 주세요');
+      }
     }
   };
 
@@ -151,11 +169,16 @@ const SignIn = () => {
           lvName: '일반인',
           loginState: true,
         });
+        await addDoc(collection(dbService, 'dms'), {
+          id: user?.uid,
+          enterUser: [user?.uid, '나와의채팅'],
+          chatLog: [],
+        });
       }
       toast.success('로그인 완료');
       router.push('/');
     } catch (error: any) {
-      console.log('구글 로그인 에러', error.message);
+      toast.error(error.message);
     }
   };
 
@@ -262,7 +285,7 @@ const SignInContainer = styled.div`
 `;
 const SignInBox = styled.div`
   width: 100%;
-  /* height: 100%; */
+  height: 80%;
 `;
 const IconImg = styled.img`
   width: 5rem;
@@ -277,13 +300,13 @@ const HeaderText = styled.h2`
 
 const InputBox = styled.div`
   width: 100%;
-  height: 15%;
+  height: 17%;
 `;
 
 const PasswordInputBox = styled.div`
   width: 100%;
-  height: 15%;
-  margin-bottom: 20px;
+  height: 17%;
+  margin-bottom: 40px;
 `;
 const SignInInput = styled.input`
   width: 40%;
@@ -311,7 +334,7 @@ const SignInButton = styled.button`
 `;
 
 const GoogleSignInButton = styled.button`
-  margin-top: 60px;
+  margin-top: 70px;
   border-radius: 2rem;
   width: 40%;
   height: 48px;

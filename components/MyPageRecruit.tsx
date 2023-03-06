@@ -1,8 +1,8 @@
 import { dbService } from '@/firebase';
-import { collection, orderBy, getDocs, query, where } from 'firebase/firestore';
-
+import { collection, orderBy, getDocs, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 
 type Board = {
@@ -30,39 +30,39 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
     });
   };
 
-  //테스트
   const getRecruitments = async () => {
     const q = query(
       collection(dbService, 'recruitments'),
       orderBy('createdAt', 'desc'),
     );
     const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
+    return data.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    setGetRecruit(getBoardData);
   };
-
-  useEffect(() => {
-    getRecruitments();
-    return () => {
-      getRecruitments();
-    };
-  }, [paramsId]);
+  const { isLoading: RecruitmentsLoading, data: Recruitments } = useQuery(
+    'Recruitments',
+    getRecruitments,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   return (
     <MyPageBoardWrapper>
-      {getRecruit
-        .filter(
+      {Recruitments &&
+        Recruitments.filter(
           (item) =>
             item.participation
               .map((items: any) => {
                 return items.userId;
               })
               .includes(paramsId) || item.userId === paramsId,
-        )
-        .map((item) => {
+        ).map((item) => {
           return (
             <MyPageBoardContainer
               onClick={() => {
@@ -178,7 +178,6 @@ const MyPageBoardWrapper = styled.div`
 `;
 
 const MyPageBoardContainer = styled.div`
-  margin-top: 1vh;
   display: flex;
   width: 100%;
   height: 40%;
