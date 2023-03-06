@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -12,9 +12,9 @@ import { theme } from '@/styles/theme';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GlobalStyle from '@/styles/GlobalStyle';
+const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {

@@ -7,11 +7,19 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import BoardComment from './BoardComment';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
+interface MainCommentListProps {
+  data:
+    | {
+        id: string;
+      }[]
+    | undefined;
+}
 const BoardCommentList = ({ id }: MainCommentType) => {
   const queryClient = useQueryClient();
   const [inputComment, setInputComment] = useState('');
-  const [mainComments, setMainComments] = useState<MainCommentType[]>([]);
+  // const [mainComments, setMainComments] = useState<MainCommentType[]>([]);
   const [userLv, setUserLv] = useState('');
   const [userLvName, setUserLvName] = useState('');
   const [postCount, setPostCount] = useState<any>();
@@ -62,8 +70,8 @@ const BoardCommentList = ({ id }: MainCommentType) => {
       alert('댓글 내용을 입력해주세요!');
       return;
     }
-
-    const newComment = {
+    const getNumber: any = data?.length;
+    const newComment: any = {
       user: user,
       nickName: nickName,
       photo: userPhoto,
@@ -71,7 +79,7 @@ const BoardCommentList = ({ id }: MainCommentType) => {
       createdAt: Date.now(),
       // userLv: userLv,
       // userLvName: userLvName,
-      // number: mainComments.length + 1,
+      number: getNumber + 1,
       // postCount: postCount,
     };
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CommentType, EditCommentLikeParameterType } from '@/type';
 import styled from 'styled-components';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from 'react-query';
 import { deleteComment, editCommentLike } from '@/pages/api/api';
 import { authService, dbService } from '@/firebase';
 import { arrayUnion, runTransaction, doc } from 'firebase/firestore';

@@ -8,17 +8,17 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import mouseClick from '../../public/assets/icons/mouseClick.png';
-
+import imageCompression from 'browser-image-compression';
+import { useMutation, useQueryClient } from 'react-query';
+import { addGalleryPost } from '../api/api';
 const Post = () => {
-  const [imageUpload, setImageUpload] = useState<any>('');
+  const queryClient = useQueryClient();
+  const [imageUpload, setImageUpload] = useState<File | undefined>();
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
-  const [selectedImages, setSelectedImages] = useState<
-    Blob | Uint8Array | ArrayBuffer
-  >();
   const router = useRouter();
-
+  const { mutate, isLoading } = useMutation(addGalleryPost);
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
@@ -37,7 +37,7 @@ const Post = () => {
       pathname: `/gallery`,
     });
   };
-  const imageCompress: any = async (image: File) => {
+  const imageCompress = async (image: File) => {
     const options = {
       maxSizeMB: 1,
       maxwidthOrHeight: 1920,
@@ -62,8 +62,8 @@ const Post = () => {
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const originalImage = event.target.files?.[0];
     console.log('original size', originalImage?.size);
+    if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
-
     setImageUpload(compressedImage);
   };
 
@@ -114,12 +114,20 @@ const Post = () => {
       userPhoto: authService.currentUser?.photoURL,
       comment: 0,
     };
+    mutate(newGalleryPost, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('addGallery', { refetchActive: true });
+      },
+    });
+    if (isLoading) {
+      return <div>로딩중입니다</div>;
+    }
 
-    await addDoc(collection(dbService, 'gallery'), newGalleryPost)
-      .then(() => console.log('post'))
-      .catch((error) => {
-        console.log('에러 발생!', error);
-      });
+    // await addDoc(collection(dbService, 'gallery'), newGalleryPost)
+    //   .then(() => console.log('post'))
+    //   .catch((error) => {
+    //     console.log('에러 발생!', error);
+    //   });
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
     try {

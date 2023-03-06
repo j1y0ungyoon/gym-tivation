@@ -1,6 +1,5 @@
-import { MainCommentType } from '@/type';
 import styled from 'styled-components';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { deleteMainComment } from '@/pages/api/api';
 import { authService } from '@/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
@@ -9,18 +8,9 @@ import { dbService } from '@/firebase';
 const BoardComment = ({ item }: any) => {
   const user = authService.currentUser?.uid;
   //   댓글 삭제 useMutation
-  const { isLoading: isDeleting, mutate: removeBoardComment } = useMutation(
-    ['deleteBoardComment', item],
-    (body: string) => deleteMainComment(body),
-    {
-      onSuccess: () => {
-        console.log('수정 성공');
-      },
-      onError: (err) => {
-        console.log('수정 실패:', err);
-      },
-    },
-  );
+  const queryClient = useQueryClient();
+  const { mutate: removeBoardComment, isLoading: isDeleting } =
+    useMutation(deleteMainComment);
 
   // 게시글 삭제 클릭 이벤트
   const onClickDeleteComment = async () => {
@@ -28,7 +18,14 @@ const BoardComment = ({ item }: any) => {
 
     if (answer) {
       try {
-        await removeBoardComment(item.id);
+        await removeBoardComment(item.id, {
+          onSuccess: () => {
+            queryClient.invalidateQueries('comment', {
+              refetchActive: true,
+            });
+          },
+        });
+
         await runTransaction(dbService, async (transaction) => {
           const sfDocRef = doc(dbService, 'posts', String(item.id));
           const sfDoc = await transaction.get(sfDocRef);

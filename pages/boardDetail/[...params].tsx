@@ -1,15 +1,20 @@
 import { authService, dbService } from '@/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { deleteBoardPost, editBoardPost } from '../api/api';
+import {
+  deleteBoardPost,
+  editBoardPost,
+  getFetchedBoardDetail,
+} from '../api/api';
 import Like from '@/components/Like';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
 import BoardCategory from '@/components/BoardCategory';
 import CommentList from '@/components/CommentList';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -51,31 +56,63 @@ const formats = [
   'indent',
   'link',
 ];
+interface DetailProps {
+  id?: string;
+  title?: string;
+  content?: string;
+  createdAt?: number;
+  category?: string;
+  photo?: string;
+  like?: string[];
+  userId: string;
+  nickName: string;
+  userPhoto: string;
+  userLv: number;
+  userLvName: string;
+}
 const Detail = ({ params }: any) => {
-  const [detailPost, setDetailPost] = useState<any>();
+  const queryClient = useQueryClient();
+  // const [detailPost, setDetailPost] = useState<any>();
   const [changeDetailPost, setChangeDetailPost] = useState(false);
   const [editDetailTitle, setEditDetailTitle] = useState<string | undefined>(
     '',
   );
-  const [editDetailCategory, setEditDetailCategory] = useState(
-    detailPost?.category,
-  );
+  const [editDetailCategory, setEditDetailCategory] = useState('운동정보');
   // const [editDetailPhoto, setEditDetailPhoto] = useState<string>('');
   // const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
   const [editDetailContent, setEditDetailContent] = useState<string | any>('');
   // const [editImageUpload, setEditImageUpload] = useState<any>('');
-  const [profile, setProfile] = useState<any>('');
+
   const [id] = params;
+  const [profile, setProfile] = useState<any>('');
+  const { data: detailPost, isLoading } = useQuery(
+    ['post', id],
+    getFetchedBoardDetail,
+  );
+  const { mutate } = useMutation(editBoardPost);
+
+  const { mutate: removeBoardPost, isLoading: isDeleting } =
+    useMutation(deleteBoardPost);
+
   const router = useRouter();
   const user = authService.currentUser?.uid;
   // 게시글, 저장된 이미지 파일 delete
   const onClickDeleteBoardPost = async () => {
-    console.log('photo', detailPost?.photo);
-    try {
-      deleteBoardPost({ id: id, photo: detailPost?.photo });
-      router.push('/board');
-    } catch (error) {
-      console.log('다시 확인해주세요', error);
+    const answer = confirm('정말 삭제하시겠습니까?');
+    if (answer) {
+      try {
+        removeBoardPost(
+          { id: id, photo: detailPost?.data()?.photo },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries('post', { refetchActive: true });
+            },
+          },
+        );
+        router.push('/board');
+      } catch (error) {
+        console.log('다시 확인해주세요', error);
+      }
     }
   };
 
@@ -90,7 +127,6 @@ const Detail = ({ params }: any) => {
   //게시글 수정 업데이트
   const onSubmitEditDetail = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const editDetailPost = {
       title: editDetailTitle,
       content: editDetailContent,
@@ -98,7 +134,17 @@ const Detail = ({ params }: any) => {
       category: editDetailCategory,
     };
 
-    editBoardPost({ id, editDetailPost });
+    mutate(
+      { id, editDetailPost },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('getDetailData', {
+            refetchActive: true,
+          });
+        },
+      },
+    );
+    // editBoardPost({ id, editDetailPost });
     // deleteObject(ref(storage, prevPhotoUrl));
 
     setChangeDetailPost(false);
@@ -124,49 +170,43 @@ const Detail = ({ params }: any) => {
     });
   };
 
-  const getPost = () => {
-    const getPost = onSnapshot(doc(dbService, 'posts', id), async (doc) => {
-      const data = doc.data();
-      const getDetailPost: any = {
-        id: doc.id,
-        title: data?.title,
-        content: data?.content,
-        createdAt: data?.createdAt,
-        category: data?.category,
-        photo: data?.photo,
-        like: data?.like,
-        userId: data?.userId,
-        nickName: data?.nickName,
-        userPhoto: data?.userPhoto,
-        userLv: data?.userLv,
-        userLvName: data?.userLvName,
-      };
+  // const getDetailPost: DetailProps = {
+  //   // id: doc?.id,
+  //   title: data?.title,
+  //   content: data?.content,
+  //   createdAt: data?.createdAt,
+  //   category: data?.category,
+  //   photo: data?.photo,
+  //   like: data?.like,
+  //   userId: data?.userId,
+  //   nickName: data?.nickName,
+  //   userPhoto: data?.userPhoto,
+  //   userLv: data?.userLv,
+  //   userLvName: data?.userLvName,
+  // };
 
-      setDetailPost(getDetailPost);
+  // setDetailPost(getDetailPost);
 
-      // setPrevPhotoUrl(data?.photo);
-    });
+  // setPrevPhotoUrl(data?.photo);
 
-    return () => {
-      getPost();
-    };
-  };
+  // return () => {
+  //   getPost();
+  // };
 
   useEffect(() => {
-    const unsubscribe = getPost();
-
-    return () => {
-      unsubscribe();
-    };
+    // const unsubscribe = getPost();
+    // return () => {
+    //   unsubscribe();
+    // };
   }, []);
-  //image upload
+  // image upload
 
   //게시글 수정 토글 버튼
   const onClickChangeDetail = () => {
     setChangeDetailPost(!changeDetailPost);
-    setEditDetailTitle(detailPost?.title);
-    setEditDetailCategory(detailPost?.category);
-    setEditDetailContent(detailPost?.content);
+    setEditDetailTitle(detailPost?.data()?.title);
+    setEditDetailCategory(detailPost?.data()?.category);
+    setEditDetailContent(detailPost?.data()?.content);
     // setEditDetailPhoto(detailPost?.photo);
   };
   //기존 게시글 read
@@ -182,7 +222,7 @@ const Detail = ({ params }: any) => {
                 <InputDiv>
                   <PostTitle
                     onChange={onChangeEditTitle}
-                    defaultValue={detailPost?.title}
+                    defaultValue={detailPost?.data()?.title}
                   />
                 </InputDiv>
               </TitleContainer>
@@ -201,7 +241,7 @@ const Detail = ({ params }: any) => {
 
                 <Editor
                   onChange={onChangeEditContent}
-                  defaultValue={detailPost?.content}
+                  defaultValue={detailPost?.data()?.content}
                   modules={modules}
                   formats={formats}
                 />
@@ -224,29 +264,36 @@ const Detail = ({ params }: any) => {
                 <InfoWrapper>
                   <TitleUpperWrapper>
                     <CategoryWrapper>
-                      <CategoryText>{detailPost?.category}</CategoryText>
+                      <CategoryText>
+                        {detailPost?.data()?.category}
+                      </CategoryText>
                     </CategoryWrapper>
                     <TitleBox>
-                      <DetailPostTitle>{detailPost?.title}</DetailPostTitle>
+                      <DetailPostTitle>
+                        {detailPost?.data()?.title}
+                      </DetailPostTitle>
                     </TitleBox>
                   </TitleUpperWrapper>
                   <TitleBottomWrapper>
-                    <UserImage src={detailPost?.userPhoto} />
+                    <UserImage src={detailPost?.data()?.userPhoto} />
 
                     <LevelWrapper>
-                      <NicknameWrapper>{detailPost?.nickName}</NicknameWrapper>
+                      <NicknameWrapper>
+                        {detailPost?.data()?.nickName}
+                      </NicknameWrapper>
                       <LevelContainer>
-                        Lv.{detailPost?.userLv} {detailPost?.userLvName}
+                        Lv.{detailPost?.data()?.userLv}{' '}
+                        {detailPost?.data()?.userLvName}
                       </LevelContainer>
                     </LevelWrapper>
                   </TitleBottomWrapper>
                 </InfoWrapper>
                 <EditWrapper>
                   <LikeContainer>
-                    <Like detailPost={detailPost} />
+                    <Like detailPost={detailPost?.data()} id={id} />
                   </LikeContainer>
 
-                  {user === detailPost?.userId ? (
+                  {user === detailPost?.data()?.userId ? (
                     <DetailButtonWrapper>
                       <DetailPostButton onClick={onClickChangeDetail}>
                         수정
@@ -266,7 +313,7 @@ const Detail = ({ params }: any) => {
                   </DetailImageWrapper> */}
                   <HTMLParser
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(detailPost?.content),
+                      __html: DOMPurify.sanitize(detailPost?.data()?.content),
                     }}
                   />
                 </ContentBox>

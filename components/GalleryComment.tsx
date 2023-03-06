@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from 'react-query';
 import { authService } from '@/firebase';
-import { GalleryCommentType } from '@/type';
+// import { GalleryCommentType } from '@/type';
 import { deleteGalleryComment } from '@/pages/api/api';
 import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';

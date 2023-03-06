@@ -1,75 +1,76 @@
 import CommentList from '@/components/CommentList';
 import Like from '@/components/Like';
 import { authService, dbService, storage } from '@/firebase';
-import { GalleryBoardPostType } from '@/type';
+import { GalleryBoardPostType, GalleryParameterType } from '@/type';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { deleteGalleryPost, editGalleryBoard } from '../api/api';
+import {
+  deleteGalleryPost,
+  editGalleryBoard,
+  getFetchedGalleryDetail,
+} from '../api/api';
 import imageCompression from 'browser-image-compression';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const GalleryDetail = ({ params }: any) => {
-  const [detailGalleryPost, setDetailGalleryPost] =
-    useState<GalleryBoardPostType>();
+  const queryClient = useQueryClient();
+  // const [detailGalleryPost, setDetailGalleryPost] = useState<
+  //   GalleryBoardPostType | undefined
+  // >();
   const [changeGalleryPost, setChangeGalleryPost] = useState(false);
-  const [editGalleryTitle, setEditGalleryTitle] = useState<string | undefined>(
-    '',
-  );
+  const [editGalleryTitle, setEditGalleryTitle] = useState<string>('');
   const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
   const [prevPhoto, setPrevPhoto] = useState('');
-  const [editGalleryContent, setEditGalleryContent] = useState<string | any>(
-    '',
-  );
-  const [editImageUpload, setEditImageUpload] = useState<any>('');
+  const [editGalleryContent, setEditGalleryContent] = useState<string>('');
+  const [editImageUpload, setEditImageUpload] = useState<File | undefined>();
 
   const [id] = params;
   const router = useRouter();
+  const { data: detailGalleryPost, isLoading } = useQuery(
+    ['gallery', id],
+    getFetchedGalleryDetail,
+  );
+  const { mutate: editGallery } = useMutation(editGalleryBoard);
+  const { mutate: removeGalleryPost } = useMutation(deleteGalleryPost);
   const user = authService.currentUser?.uid;
 
-  const onClickDeleteGalleryPost = async () => {
-    try {
-      deleteGalleryPost({ id: id, photo: detailGalleryPost?.photo });
-      router.push('/gallery');
-    } catch (error) {
-      console.log('다시 확인해주세요', error);
-    }
-  };
-  const getEditPost = () => {
-    const unsubscribe = onSnapshot(doc(dbService, 'gallery', id), (doc) => {
-      const data = doc.data();
+  // const getEditPost = () => {
+  //   const unsubscribe = onSnapshot(doc(dbService, 'gallery', id), (doc) => {
+  //     const data = doc.data();
 
-      const getGalleryPost: any = {
-        id: doc.id,
-        title: data?.title,
-        userId: data?.userId,
-        nickName: data?.nickName,
-        userPhoto: data?.userPhoto,
-        content: data?.content,
-        createdAt: data?.createdAt,
-        photo: data?.photo,
-        like: data?.like,
-        userPohto: data?.userPhoto,
-        userLv: data?.userLv,
-        userLvName: data?.userLvName,
-      };
+  //     const getGalleryPost = {
+  //       id: doc.id,
+  //       title: data?.title,
+  //       userId: data?.userId,
+  //       nickName: data?.nickName,
+  //       userPhoto: data?.userPhoto,
+  //       content: data?.content,
+  //       createdAt: data?.createdAt,
+  //       photo: data?.photo,
+  //       like: data?.like,
+  //       userPohto: data?.userPhoto,
+  //       userLv: data?.userLv,
+  //       userLvName: data?.userLvName,
+  //     };
 
-      setDetailGalleryPost(getGalleryPost);
-      setPrevPhoto(data?.photo);
-    });
-    return () => {
-      unsubscribe();
-    };
-  };
-  useEffect(() => {
-    const unsubscribe = getEditPost();
+  //     setDetailGalleryPost(getGalleryPost);
+  //     setPrevPhoto(data?.photo);
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // };
+  // useEffect(() => {
+  //   const unsubscribe = getEditPost();
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
   const onChangeEditGalleryTitle = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -77,18 +78,54 @@ const GalleryDetail = ({ params }: any) => {
     setEditGalleryTitle(event.target.value);
   };
 
-  const onChangeEditGalleryContent = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    setEditGalleryContent(event.target.value);
-  };
+  // const onChangeEditGalleryContent = (
+  //   event: React.ChangeEvent<HTMLTextAreaElement>,
+  // ) => {
+  //   setEditGalleryContent(event.target.value);
+  // };
 
   const toGallery = () => {
     router.push({
       pathname: `/gallery`,
     });
   };
+  // 수정 useMutation
+  // const { isLoading: isEditting, mutate: editGalleryBoardPost } = useMutation(
+  //   ['editGalleryBoard', id],
+  //   (body: GalleryParameterType) => editGalleryBoard(body),
+  //   {
+  //     onSuccess: () => {
+  //       console.log('수정성공');
+  //     },
+  //     onError: (error) => {
+  //       console.log('수정 실패:', error);
+  //     },
+  //   },
+  // );
 
+  //삭제 useMutation
+
+  // const { isLoading: isDeleting, mutate: removeGalleryPost } = useMutation(
+  //   [deleteGalleryPost, id],
+  //   (body: any) => deleteGalleryPost(body),
+  //   {
+  //     onSuccess: () => {
+  //       console.log('삭제성공');
+  //     },
+  //     onError: (err) => {
+  //       console.log('삭제 실패:', err);
+  //     },
+  //   },
+  // );
+
+  const onClickDeleteGalleryPost = async () => {
+    // try {
+    //   removeGalleryPost({ id: id, photo: detailGalleryPost?.photo });
+    //   router.push('/gallery');
+    // } catch (error) {
+    //   console.log('다시 확인해주세요', error);
+    // }
+  };
   //갤러리 수정 업데이트
   const onSubmitEditGallery = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -98,15 +135,22 @@ const GalleryDetail = ({ params }: any) => {
       content: editGalleryContent,
       photo: editGalleryPhoto,
     };
-
-    editGalleryBoard({ id, editGalleryPost });
+    editGallery(
+      { id, editGalleryPost },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('getGalleryData');
+        },
+      },
+    );
+    // editGalleryBoardPost({ id, editGalleryPost });
     setChangeGalleryPost(false);
     setEditGalleryPhoto('');
     toGallery();
   };
 
   //image 압축
-  const imageCompress: any = async (image: File) => {
+  const imageCompress = async (image: File) => {
     const options = {
       maxSizeMB: 1,
       maxwidthOrHeight: 1920,
@@ -132,6 +176,7 @@ const GalleryDetail = ({ params }: any) => {
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const originalImage = event.target.files?.[0];
     console.log('original size', originalImage?.size);
+    if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
     setEditImageUpload(compressedImage);
   };
@@ -148,13 +193,9 @@ const GalleryDetail = ({ params }: any) => {
   }, [editImageUpload]);
   const onClickChangeGalleryDetail = () => {
     setChangeGalleryPost(!changeGalleryPost);
-    //@ts-ignore
-    setEditGalleryTitle(detailGalleryPost?.title);
-    //@ts-ignore
-
-    setEditGalleryContent(detailGalleryPost?.content);
-    //@ts-ignore
-    setEditGalleryPhoto(detailGalleryPost?.photo);
+    setEditGalleryTitle(detailGalleryPost?.data()?.title);
+    setEditGalleryContent(detailGalleryPost?.data()?.content);
+    setEditGalleryPhoto(detailGalleryPost?.data()?.photo);
   };
 
   return (
@@ -170,7 +211,7 @@ const GalleryDetail = ({ params }: any) => {
                   <InputDiv>
                     <GalleryPostTitle
                       onChange={onChangeEditGalleryTitle}
-                      defaultValue={detailGalleryPost?.title}
+                      defaultValue={detailGalleryPost?.data()?.title}
                     />
                   </InputDiv>
                 </EditTitleContainer>
@@ -209,27 +250,30 @@ const GalleryDetail = ({ params }: any) => {
                 <InfoWrapper>
                   <TitleUpperWrapper>
                     <DetailGalleryTitle>
-                      {detailGalleryPost?.title}
+                      {detailGalleryPost?.data()?.title}
                     </DetailGalleryTitle>
                   </TitleUpperWrapper>
                   <BottomWrapper>
-                    <UserImage src={detailGalleryPost?.userPhoto} />
+                    <UserImage src={detailGalleryPost?.data()?.userPhoto} />
                     <LevelWrapper>
                       <NicknameWrapper>
-                        {detailGalleryPost?.nickName}
+                        {detailGalleryPost?.data()?.nickName}
                       </NicknameWrapper>
                       <LevelContainer>
-                        Lv{detailGalleryPost?.userLv}
-                        {detailGalleryPost?.userLvName}
+                        Lv{detailGalleryPost?.data()?.userLv}
+                        {detailGalleryPost?.data()?.userLvName}
                       </LevelContainer>
                     </LevelWrapper>
                   </BottomWrapper>
                 </InfoWrapper>
                 <EditWrapper>
                   <LikeContainer>
-                    <Like detailGalleryPost={detailGalleryPost} />
+                    <Like
+                      detailGalleryPost={detailGalleryPost?.data()}
+                      id={id}
+                    />
                   </LikeContainer>
-                  {user === detailGalleryPost?.userId ? (
+                  {user === detailGalleryPost?.data()?.userId ? (
                     <GalleryButtonWrapper>
                       <GalleryPostButton onClick={onClickChangeGalleryDetail}>
                         수정
@@ -243,7 +287,7 @@ const GalleryDetail = ({ params }: any) => {
               </GalleryTitleContainer>
               <GalleryContentContainer>
                 <GalleryImageWrapper>
-                  <GalleryImagePreview src={prevPhoto} />
+                  <GalleryImagePreview src={detailGalleryPost?.data()?.photo} />
                 </GalleryImageWrapper>
                 {/* <DetailGalleryContent>
                   {detailGalleryPost?.content}

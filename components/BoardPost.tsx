@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 const BoardPost = ({
-  photo,
   category,
   title,
   id,

@@ -6,6 +6,7 @@ import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import BoardCommentList from '@/components/BoardCommentList';
 
 type ImgBoxProps = {
   mainImg: string;
@@ -58,6 +59,7 @@ const Home = () => {
             return <Img key={mainImg} mainImg={mainImg} />;
           })}
         </SliderContainer>
+        <BoardCommentList />
       </HomeContainer>
     </HomeWrapper>
   );

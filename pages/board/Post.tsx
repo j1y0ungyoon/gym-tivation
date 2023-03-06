@@ -18,12 +18,16 @@ import { toast } from 'react-toastify';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
+import { useMutation, useQueryClient } from 'react-query';
+import { addBoardPost } from '../api/api';
+
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 });
 
 const Post = () => {
+  const queryClient = useQueryClient();
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
   const [category, setCategory] = useState('');
@@ -32,8 +36,8 @@ const Post = () => {
   // const [imageUpload, setImageUpload] = useState<any>('');
   // const [boardPhoto, setBoardPhoto] = useState('');
   const router = useRouter();
-  const today = new Date().toLocaleString().slice(0, -3);
-
+  const today = new Date().toLocaleString();
+  const { mutate, isLoading } = useMutation(addBoardPost);
   const modules = {
     toolbar: [
       [{ font: [] }],
@@ -116,6 +120,7 @@ const Post = () => {
     setUserLvName(getLvName);
     setUserLv(getLv);
   };
+
   useEffect(() => {
     if (!authService.currentUser) {
       toast.info('로그인을 먼저 해주세요!');
@@ -158,12 +163,14 @@ const Post = () => {
       userLv: userLv,
       userLvName: userLvName,
     };
-
-    await addDoc(collection(dbService, 'posts'), newPost)
-      .then(() => console.log('post'))
-      .catch((error) => {
-        console.log('에러 발생!', error);
-      });
+    mutate(newPost, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('addPost', { refetchActive: true });
+      },
+    });
+    if (isLoading) {
+      return <div>로딩중입니다</div>;
+    }
 
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
