@@ -38,40 +38,6 @@ const GalleryDetail = ({ params }: any) => {
   const { mutate: removeGalleryPost } = useMutation(deleteGalleryPost);
   const user = authService.currentUser?.uid;
 
-  // const getEditPost = () => {
-  //   const unsubscribe = onSnapshot(doc(dbService, 'gallery', id), (doc) => {
-  //     const data = doc.data();
-
-  //     const getGalleryPost = {
-  //       id: doc.id,
-  //       title: data?.title,
-  //       userId: data?.userId,
-  //       nickName: data?.nickName,
-  //       userPhoto: data?.userPhoto,
-  //       content: data?.content,
-  //       createdAt: data?.createdAt,
-  //       photo: data?.photo,
-  //       like: data?.like,
-  //       userPohto: data?.userPhoto,
-  //       userLv: data?.userLv,
-  //       userLvName: data?.userLvName,
-  //     };
-
-  //     setDetailGalleryPost(getGalleryPost);
-  //     setPrevPhoto(data?.photo);
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // };
-  // useEffect(() => {
-  //   const unsubscribe = getEditPost();
-
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, []);
-
   const onChangeEditGalleryTitle = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -119,13 +85,26 @@ const GalleryDetail = ({ params }: any) => {
   // );
 
   const onClickDeleteGalleryPost = async () => {
-    // try {
-    //   removeGalleryPost({ id: id, photo: detailGalleryPost?.photo });
-    //   router.push('/gallery');
-    // } catch (error) {
-    //   console.log('다시 확인해주세요', error);
-    // }
+    const answer = confirm('정말 삭제하시겠습니까?');
+    if (answer) {
+      try {
+        removeGalleryPost(
+          { id: id, photo: detailGalleryPost?.data()?.photo },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries('getGalleryData', {
+                refetchActive: true,
+              });
+            },
+          },
+        );
+        router.push('/gallery');
+      } catch (error) {
+        console.log('다시 확인해주세요', error);
+      }
+    }
   };
+
   //갤러리 수정 업데이트
   const onSubmitEditGallery = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

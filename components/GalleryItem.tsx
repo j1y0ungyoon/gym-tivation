@@ -6,7 +6,7 @@ interface GalleryItemProps {
   galleryPhotos: GalleryBoardPostType[];
   data?: any;
 }
-const GalleryItem = ({ data }: GalleryItemProps) => {
+const GalleryItem = ({ data }: any) => {
   return (
     <GalleryList>
       {data?.map((galleryPhotos: any) => {

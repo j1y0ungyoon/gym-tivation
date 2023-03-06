@@ -116,7 +116,9 @@ const Post = () => {
     };
     mutate(newGalleryPost, {
       onSuccess: () => {
-        queryClient.invalidateQueries('addGallery', { refetchActive: true });
+        queryClient.invalidateQueries('getGalleryData', {
+          refetchActive: true,
+        });
       },
     });
     if (isLoading) {
