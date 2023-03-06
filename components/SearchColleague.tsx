@@ -176,10 +176,10 @@ const SearchColleague = (props: MapModalProps) => {
             }
           })}
           {/* 나의 위치 표시 */}
-          <MyLocationMarker
+          {/* <MyLocationMarker
             myPosition={myPosition}
             setMyPosition={setMyPosition}
-          />
+          /> */}
         </StyledMap>
       </MapModalMain>
     </>

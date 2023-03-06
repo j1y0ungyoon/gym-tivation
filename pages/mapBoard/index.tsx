@@ -37,7 +37,6 @@ const MapBoard = () => {
   // 글쓰기 페이지로 이동
   const goToWrite = () => {
     if (!authService.currentUser) {
-      console.log(GLOBAL_MODAL_TYPES.AlertModal);
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: {

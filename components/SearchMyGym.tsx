@@ -192,8 +192,9 @@ const InfoBox = styled.div`
   justify-content: center;
   align-items: center;
   height: 40px;
-  width: 250px;
-  padding: 10px;
+  min-width: 200px;
+  padding: 10px 20px;
+
   background-color: white;
   border: 2px solid black;
   border-radius: 8px;
@@ -227,10 +228,11 @@ const ModalContainer = styled.div`
   border-radius: 2rem;
   align-items: center;
   justify-content: center;
+  padding: 20px 0;
   width: 40%;
-  min-width: 30%;
+  min-width: 500px;
   height: 85%;
-  min-height: 75%;
+  min-height: 600px;
   background-color: white;
   z-index: 1000;
 `;
