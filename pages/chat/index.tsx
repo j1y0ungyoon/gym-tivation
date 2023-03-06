@@ -4,6 +4,8 @@ import io from 'socket.io-client';
 
 import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { apponentState, dmListsState, roomState } from '@/recoil/dmData';
+import { useRecoilState } from 'recoil';
 
 import { authService, dbService } from '@/firebase';
 import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
@@ -29,10 +31,11 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
-  const [dmLists, setDmLists] = useState<any>();
-  const [roomNum, setRoomNum] = useState<string | undefined>();
 
-  const [isMyDmOn, setIsMyDmOn] = useState(false);
+  const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
+  const [roomNum, setRoomNum] = useRecoilState(roomState);
+
+  const [isMyDmOn, setIsMyDmOn] = useState(true);
 
   const user = authService.currentUser;
   const username = user?.displayName;
@@ -130,32 +133,12 @@ const Chat = () => {
     });
   }, [user]);
 
-  const onClickDm = async () => {
-    dmLists.filter((dmList: DmList) => {
-      if (
-        dmList.id ===
-        (user?.uid + 'DM보낼 상대 id' || 'DM보낼 상대 id' + user?.uid)
-      ) {
-        setRoomNum(dmList.id);
-        return;
-      } else {
-        addDoc(collection(dbService, 'dms'), {
-          id: user?.uid + 'DM보낼 상대 id',
-          enterUser: [user?.uid, 'DM보낼 상대 id'],
-          chatLog: [],
-        });
-        setRoomNum(user?.uid + 'DM보낼 상대 id');
-        return;
-      }
-    });
-  };
-
   return (
     <ChatWrapper>
       <ChatContainer>
         <CategoryContainer>
           <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-          {/* <CategoryBtn
+          <CategoryBtn
             onClick={() => {
               setIsMyDmOn(true);
               if (dmLists.length === 0) {
@@ -171,14 +154,7 @@ const Chat = () => {
             }}
           >
             DM
-          </CategoryBtn> */}
-          {/* <CategoryBtn
-            onClick={() => {
-              onClickDm();
-            }}
-          >
-            DM 로직
-          </CategoryBtn> */}
+          </CategoryBtn>
         </CategoryContainer>
 
         {isMyDmOn ? (
