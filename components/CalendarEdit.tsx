@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { CalendarItem } from './MyPageCalendar';
 import { useState } from 'react';
 import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { dbService, authService } from '@/firebase';
+import { dbService } from '@/firebase';
+import { useMutation, useQueryClient } from 'react-query';
 
 type CalendarProps = {
   item: CalendarItem;
@@ -13,9 +14,10 @@ type CalendarProps = {
 
 const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
   const [textAreaContent, setTextAreaContent] = useState(item.content);
+  const queryClient = useQueryClient();
 
-  const onClickEditCalendar = async (e: any, id: string) => {
-    if (e.key === 'Enter') {
+  const editCalendar = async (id: string) => {
+    if ((e: KeyboardEvent) => e.key === 'Enter') {
       if (textAreaContent?.length === 0) {
         let filtered = mark.filter((element) => element !== item.date);
         setMark(filtered);
@@ -35,6 +37,18 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
       }
     }
   };
+  const { mutate: onClickCalendarEdit } = useMutation(
+    'onClickCalendarEdit',
+    editCalendar,
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('calendar');
+      },
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   return (
     <>
@@ -45,7 +59,7 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
           setTextAreaContent(e.target.value);
         }}
         placeholder="입력시 Enter 키를 눌러주세요."
-        onKeyPress={(e) => onClickEditCalendar(e, item.id)}
+        onKeyPress={() => onClickCalendarEdit(item.id)}
       />
     </>
   );

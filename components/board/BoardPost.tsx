@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import type { BoardPostType } from '@/type';
-import smallLike from '../public/assets/icons/smallLike.png';
+import smallLike from '../../public/assets/icons/smallLike.png';
 import Image from 'next/image';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { dbService } from '@/firebase';
@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 const BoardPost = ({
-  photo,
   category,
   title,
   id,

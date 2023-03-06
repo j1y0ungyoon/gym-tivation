@@ -1,4 +1,3 @@
-import { ProfileItem } from '@/pages/myPage/[...params]';
 import { useRouter } from 'next/router';
 import { dbService } from '@/firebase';
 import { getDocs } from 'firebase/firestore';
@@ -47,9 +46,7 @@ const LoginState = ({
 
   useEffect(() => {
     followGetDoc();
-    return () => {
-      // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
-    };
+    return () => {};
   }, [followModal]);
 
   return (

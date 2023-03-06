@@ -1,0 +1,13 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="100" height="100" rx="20" fill="#FFF2E7"/>
+<path d="M39.0469 59.6875V71H41.0156V63.1875H41.1094L44.25 70.9688H45.7031L48.8438 63.2188H48.9531V71H50.9062V59.6875H48.4062L45.0469 67.9062H44.9062L41.5469 59.6875H39.0469ZM52.2188 59.6875L56.3438 66.7656V71H58.375V66.7656L62.4844 59.6875H60.1875L57.4062 64.6875H57.2969L54.5156 59.6875H52.2188Z" fill="#FF4800"/>
+<circle cx="50" cy="36" r="13" fill="#FF4800" stroke="#FF4800" stroke-width="2"/>
+<mask id="mask0_1660_10688" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="37" y="23" width="26" height="26">
+<circle cx="50" cy="36" r="12" fill="#D9D9D9" stroke="black" stroke-width="2"/>
+</mask>
+<g mask="url(#mask0_1660_10688)">
+<circle cx="50" cy="33" r="3" fill="#FFFCF3" stroke="#FFFCF3" stroke-width="2"/>
+<path d="M43 44C43 41.2386 45.2386 39 48 39H52C54.7614 39 57 41.2386 57 44C57 46.7614 54.7614 49 52 49H48C45.2386 49 43 46.7614 43 44Z" fill="#FFFCF3" stroke="#FFFCF3" stroke-width="2"/>
+<circle cx="50" cy="36" r="13" stroke="#FF4800" stroke-width="2"/>
+</g>
+</svg>

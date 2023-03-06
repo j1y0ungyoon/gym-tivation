@@ -19,13 +19,31 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   return (
     <SideNavWrapper>
-      <NavBtn onClick={() => router.push('/')}>Home</NavBtn>
-      <NavBtn onClick={() => router.push('/chat')}>채팅</NavBtn>
-      <NavBtn onClick={() => router.push('/board')}>게시판</NavBtn>
-      <NavBtn onClick={() => router.push('/mapBoard')}>주변 동료 모집</NavBtn>
-      <NavBtn onClick={() => router.push('/gallery')}>오운완 갤러리</NavBtn>
+      <NavBtn
+        onClick={() => router.push('/')}
+        src={'/assets/icons/nav/nav_home.svg'}
+      />
+      <NavBtn
+        onClick={() => router.push('/chat')}
+        src={'/assets/icons/nav/nav_chat.svg'}
+      />
+      <NavBtn
+        onClick={() => router.push('/board')}
+        src={'/assets/icons/nav/nav_board.svg'}
+      />
+      <NavBtn
+        onClick={() => router.push('/mapBoard')}
+        src={'/assets/icons/nav/nav_recruit.svg'}
+      />
+      <NavBtn
+        onClick={() => router.push('/gallery')}
+        src={'/assets/icons/nav/nav_gallery.svg'}
+      />
       {isLoggedIn && (
-        <NavBtn onClick={() => goToDetailMyPage(id)}>마이페이지</NavBtn>
+        <NavBtn
+          onClick={() => goToDetailMyPage(id)}
+          src={'/assets/icons/nav/nav_my.svg'}
+        />
       )}
     </SideNavWrapper>
   );
@@ -34,20 +52,21 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 const SideNavWrapper = styled.nav`
   width: 180px;
   height: calc(100vh - 80px);
-  border-right: 1px solid #ddd;
+  background-color: #fffcf3;
+  border-right: 1px solid #f0dcca;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
 
-const NavBtn = styled.div`
-  width: 180px;
-  padding: 10px;
+const NavBtn = styled.img`
+  width: 100px;
+  height: 100px;
   cursor: pointer;
-  :hover {
-    background-color: #ddd;
-  }
+  /* :hover {
+    background-color: #fff2e7;
+  } */
 `;
 
 export default SideNav;

@@ -3,18 +3,18 @@ import BoardPost from './BoardPost';
 import type { BoardPostType } from '@/type';
 
 interface BoardItemProps {
-  boardPosts: BoardPostType[];
   category?: string;
   nickName?: string;
+  data?: any;
 }
 
-const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
-  const filteredCategory = boardPosts?.filter(
-    (item) => item.category === category,
+const BoardItem = ({ data, category }: BoardItemProps) => {
+  const filteredCategory = data?.filter(
+    (item: any) => item.category === category,
   );
   return (
     <BoardList>
-      {filteredCategory.map((boardPost) => {
+      {filteredCategory?.map((boardPost: any) => {
         return (
           <BoardPost
             key={boardPost.id}
@@ -26,7 +26,7 @@ const BoardItem = ({ boardPosts, category }: BoardItemProps) => {
             category={boardPost.category}
             // photo={boardPost.photo}
             like={boardPost.like}
-            createdAt={boardPost.createdAt}
+            createdAt={boardPost.createdAt.slice(0, -3)}
           />
         );
       })}

@@ -1,28 +1,14 @@
 import { authService } from '@/firebase';
 import { updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { dbService } from '@/firebase';
-import { useState } from 'react';
 import styled from 'styled-components';
-import { Follows } from './SearchUser';
 import { useRouter } from 'next/router';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
-type FollowInformation = {
-  item: Follows;
-  userUid: string;
-  follwoingInformation: string;
-  setFollowing: (p: string) => void;
-  following: string;
-};
-
-const Follow = ({
-  item,
-  userUid,
-  follwoingInformation,
-  setFollowing,
-  following,
-}: FollowInformation) => {
+const Follow = ({ item, userUid, follwoingInformation }: FollowInformation) => {
   const user = authService.currentUser;
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const goToMyPage = (id: any) => {
     router.push({
@@ -31,7 +17,7 @@ const Follow = ({
     });
   };
 
-  const FollowOnClick = async () => {
+  const FollowOn = async () => {
     if (user !== null) {
       await updateDoc(doc(dbService, 'profile', userUid), {
         following: arrayUnion(item.id),
@@ -39,12 +25,10 @@ const Follow = ({
       await updateDoc(doc(dbService, 'profile', item.id), {
         follower: arrayUnion(user.uid),
       });
-
-      alert('팔로우 완료');
     }
   };
 
-  const FollowReMoveOnClick = async () => {
+  const FollowReMove = async () => {
     if (user !== null) {
       await updateDoc(doc(dbService, 'profile', userUid), {
         following: arrayRemove(item.id),
@@ -52,11 +36,31 @@ const Follow = ({
       await updateDoc(doc(dbService, 'profile', item.id), {
         follower: arrayRemove(user.uid),
       });
-      const reMoveId = follwoingInformation.replace(item.id, '');
-      setFollowing(reMoveId);
-      alert('언팔로우 완료');
+      follwoingInformation.replace(item.id, '');
     }
   };
+  const { mutate: FollowOnClick } = useMutation(['FollowOnClick'], FollowOn, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('follow');
+      await queryClient.invalidateQueries('profile');
+    },
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
+  const { mutate: FollowReMoveOnClick } = useMutation(
+    ['FollowReMoveOnClick'],
+    FollowReMove,
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('follow');
+        await queryClient.invalidateQueries('profile');
+      },
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   return (
     <FollowWrapper>
@@ -81,12 +85,12 @@ const Follow = ({
           {follwoingInformation.includes(item.id) ? (
             <ClickFollowButton
               style={{ backgroundColor: 'gray', color: 'white' }}
-              onClick={FollowReMoveOnClick}
+              onClick={() => FollowReMoveOnClick()}
             >
               팔로잉
             </ClickFollowButton>
           ) : (
-            <ClickFollowButton onClick={FollowOnClick}>
+            <ClickFollowButton onClick={() => FollowOnClick()}>
               팔로우
             </ClickFollowButton>
           )}
