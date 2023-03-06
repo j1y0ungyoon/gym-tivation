@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { dbService, authService } from '@/firebase';
 import { doc, updateDoc, arrayRemove, arrayUnion } from 'firebase/firestore';
-import { ProfileItem } from '@/pages/myPage/[...params]';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 type FollowButtonType = {

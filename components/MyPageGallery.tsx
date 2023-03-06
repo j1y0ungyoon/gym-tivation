@@ -1,4 +1,4 @@
-import { Gallery } from '@/pages/myPage/[...params]';
+// import { Gallery } from '@/pages/myPage/[...params]';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
