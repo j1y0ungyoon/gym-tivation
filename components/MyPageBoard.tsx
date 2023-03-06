@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import checkedLike from '../public/assets/images/checkedLike.png';
 import Image from 'next/image';
-import { Board } from '@/pages/myPage/[...params]';
 
 type BoardGet = {
   paramsId: string;
@@ -28,6 +27,7 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
       {board
         .filter((item) => item.userId === paramsId)
         .map((item) => {
+          console.log('좋아요', item.like);
           return (
             <MyPageBoardContainer
               key={item.id}
@@ -55,7 +55,9 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
                     height={20}
                     style={{ marginRight: '4px', marginTop: '3px' }}
                   />
-                  <NickNameText> {item.like.length}</NickNameText>
+                  <NickNameText>
+                    {item.like ? item.like.length : 0}
+                  </NickNameText>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
@@ -139,8 +141,8 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-
-  margin-bottom: 5px;
+  padding-top: 6px;
+  margin-bottom: 14px;
   width: 100%;
   height: 50%;
 `;

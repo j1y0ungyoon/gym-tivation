@@ -1,15 +1,7 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
-import {
-  collection,
-  query,
-  onSnapshot,
-  getDocs,
-  orderBy,
-  getDoc,
-  doc,
-} from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import ProfileEdit from '@/components/ProfileEdit';
 import MyPageCalendar from '@/components/MyPageCalendar';
 import LoginState from '@/components/LoginState';
@@ -17,48 +9,7 @@ import MyPageGalley from '@/components/MyPageGallery';
 import MyPageLike from '@/components/MyPageLike';
 import MyPageBoard from '@/components/MyPageBoard';
 import MyPageRecruit from '@/components/MyPageRecruit';
-import { theme } from '@/styles/theme';
-import { useQuery, useMutation } from 'react-query';
-
-export type ProfileItem = {
-  id: string;
-  area?: string;
-  introduction?: string;
-  instagram?: string;
-  displayName?: string;
-  email?: string;
-  photoURL?: string;
-  loginState?: boolean;
-  following?: string;
-  follower?: string;
-  uid?: string;
-  lv?: number;
-  lvName?: string;
-};
-export type Board = {
-  id: string;
-  photo: string;
-  userId: string;
-  nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  createdAt: number;
-  comment: number;
-  like: [];
-};
-export type Gallery = {
-  id: string;
-  photo: string;
-  userId: string;
-  nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  createdAt: number;
-  comment: number;
-  like: [];
-};
+import { useQuery } from 'react-query';
 
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
 const MyPage = ({ params }: any) => {
@@ -152,6 +103,7 @@ const MyPage = ({ params }: any) => {
   );
 
   // 프로필 불러오기
+  //함수에
   const getProfile = async () => {
     const q = query(collection(dbService, 'profile'));
     const data = await getDocs(q);
@@ -218,18 +170,6 @@ const MyPage = ({ params }: any) => {
     },
   );
   const combineData = board?.concat(gallery);
-
-  useEffect(() => {
-    // profileOnSnapShot();
-    // getBoardPost();
-    getGalleryPost();
-    return () => {
-      // profileOnSnapShot();
-      // getBoardPost();
-      getGalleryPost();
-      // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
-    };
-  }, [paramsId, authService.currentUser]);
 
   return (
     <MyPageWrapper>
@@ -398,7 +338,7 @@ const GalleyButton = styled.button`
 
 const GalleyBox = styled.div`
   width: 98%;
-  height: 100%;
+  height: 98%;
 
   overflow: auto;
   ::-webkit-scrollbar {

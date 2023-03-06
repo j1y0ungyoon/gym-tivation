@@ -1,19 +1,13 @@
 import Calendar from 'react-calendar';
 // import 'react-calendar/dist/Calendar.css';
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
-import {
-  collection,
-  query,
-  onSnapshot,
-  where,
-  getDocs,
-} from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { dbService, authService } from '@/firebase';
 import CalendarEdit from './CalendarEdit';
 import CalendarAdd from './CalendarAdd';
-import { useQuery, useMutation } from 'react-query';
+import { useQuery } from 'react-query';
 
 export type CalendarItem = {
   id: string;

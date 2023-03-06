@@ -39,7 +39,12 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           <SearchInput
             value={searchName}
             onChange={(e) => {
-              setSearchName(e.target.value);
+              setSearchName(
+                e.target.value.replace(
+                  /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi,
+                  '',
+                ),
+              );
             }}
             onFocus={() => {
               setSearchOpen(true);

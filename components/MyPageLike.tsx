@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { Board } from '@/pages/myPage/[...params]';
 import { useQuery } from 'react-query';
 
 type Like = {
@@ -26,6 +25,8 @@ type LikeGet = {
 };
 
 const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
+  const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
+
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -102,7 +103,9 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                     height={20}
                     style={{ marginRight: '4px', marginTop: '3px' }}
                   />
-                  <NickNameText> {item.like.length}</NickNameText>
+                  <NickNameText>
+                    {item.like ? item.like.length : 0}
+                  </NickNameText>
                 </NickNameBox>
               </TitleNickNameBox>
             </MyPageBoardContainer>
@@ -186,7 +189,8 @@ const NickNameText = styled.span`
 
 const TitleBox = styled.div`
   display: flex;
-  margin-bottom: 5px;
+  padding-top: 6px;
+  margin-bottom: 14px;
   width: 100%;
   height: 50%;
 `;

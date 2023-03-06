@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { CalendarItem } from './MyPageCalendar';
 import { useState } from 'react';
 import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { dbService, authService } from '@/firebase';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { dbService } from '@/firebase';
+import { useMutation, useQueryClient } from 'react-query';
 
 type CalendarProps = {
   item: CalendarItem;

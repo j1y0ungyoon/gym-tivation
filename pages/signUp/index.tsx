@@ -230,7 +230,7 @@ const SignUp = () => {
       authService.signOut();
       router.push('/signIn');
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

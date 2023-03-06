@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { dbService } from '@/firebase';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 type CalendarAddInformation = {
   markDate: string;
   userUid: string;
