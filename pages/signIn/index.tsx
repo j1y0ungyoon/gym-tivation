@@ -6,7 +6,14 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
-import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+} from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import {
   AiFillCheckCircle,
@@ -150,6 +157,11 @@ const SignIn = () => {
           lv: 1,
           lvName: '일반인',
           loginState: true,
+        });
+        await addDoc(collection(dbService, 'dms'), {
+          id: user?.uid,
+          enterUser: [user?.uid, '나와의채팅'],
+          chatLog: [],
         });
       }
       toast.success('로그인 완료');

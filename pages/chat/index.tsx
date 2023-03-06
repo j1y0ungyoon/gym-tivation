@@ -161,16 +161,6 @@ const Chat = () => {
           <CategoryBtn
             onClick={() => {
               setIsMyDmOn(true);
-              if (dmLists.length === 0) {
-                addDoc(collection(dbService, 'dms'), {
-                  id: user?.uid,
-                  enterUser: [user?.uid, '나와의채팅'],
-                  chatLog: [],
-                });
-                setRoomNum(user?.uid);
-                return;
-              }
-              setRoomNum(user?.uid);
             }}
           >
             DM
