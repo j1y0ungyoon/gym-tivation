@@ -8,11 +8,11 @@ import Image from 'next/image';
 import { Board } from '@/pages/myPage/[...params]';
 
 type BoardGet = {
-  boardInformation: Board[];
   paramsId: string;
+  board: Board[];
 };
 
-const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
+const MyPageBoard = ({ paramsId, board }: BoardGet) => {
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -25,7 +25,7 @@ const MyPageBoard = ({ paramsId, boardInformation }: BoardGet) => {
 
   return (
     <MyPageBoardWrapper>
-      {boardInformation
+      {board
         .filter((item) => item.userId === paramsId)
         .map((item) => {
           return (

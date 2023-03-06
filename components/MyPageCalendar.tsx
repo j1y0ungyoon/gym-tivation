@@ -3,10 +3,17 @@ import Calendar from 'react-calendar';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  onSnapshot,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 import { dbService, authService } from '@/firebase';
 import CalendarEdit from './CalendarEdit';
 import CalendarAdd from './CalendarAdd';
+import { useQuery, useMutation } from 'react-query';
 
 export type CalendarItem = {
   id: string;
@@ -45,40 +52,32 @@ const MyPageCalendar = () => {
 
   const userUid: any = String(authService.currentUser?.uid);
 
-  useEffect(() => {
-    // const test = async () => {
-    //   const q = query(collection(dbService, 'calendar'));
-    //   const data = await getDocs(q);
-    //   const newData = data.docs.map((doc) => {
-    //     setMark((prev: any) => [...prev, doc.data().date]);
-    //     const newDatas = {
-    //       id: doc.id,
-    //       ...doc.data(),
-    //     };
-    //     return newDatas;
-    //   });
-    //   setCalendarInformation(newData);
-    // };
-
+  const getCalendar = async () => {
     const q = query(
       collection(dbService, 'calendar'),
       where('uid', '==', userUid),
     );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newcalendars = snapshot.docs.map((doc) => {
-        setMark((prev: any) => [...prev, doc.data().date]);
-        const newcalendar = {
-          id: doc.id,
-          ...doc.data(),
-        };
-        return newcalendar;
-      });
-      setCalendarInformation(newcalendars);
+    const data = await getDocs(q);
+    return data.docs.map((doc) => {
+      setMark((prev: any) => [...prev, doc.data().date]);
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
     });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  };
+
+  const { isLoading: calendarLoading, data: calendar } = useQuery(
+    'calendar',
+    getCalendar,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+  console.log('캘린더', mark);
   return (
     <CalendarWrapper>
       <CalendarBox>
@@ -120,20 +119,24 @@ const MyPageCalendar = () => {
           <CalendarAdd markDate={markDate} userUid={userUid} />
         </CalendarAddBox>
       ) : (
-        <CalendarAddBox>
-          {calendarInformation
-            .filter((item) => item.date === markDate)
-            .map((item) => {
-              return (
-                <CalendarEdit
-                  key={item.id}
-                  item={item}
-                  mark={mark}
-                  setMark={setMark}
-                />
-              );
-            })}
-        </CalendarAddBox>
+        <>
+          {calendar && (
+            <CalendarAddBox>
+              {calendar
+                .filter((item: CalendarItem) => item.date === markDate)
+                .map((item: CalendarItem) => {
+                  return (
+                    <CalendarEdit
+                      key={item.id}
+                      item={item}
+                      mark={mark}
+                      setMark={setMark}
+                    />
+                  );
+                })}
+            </CalendarAddBox>
+          )}
+        </>
       )}
     </CalendarWrapper>
   );

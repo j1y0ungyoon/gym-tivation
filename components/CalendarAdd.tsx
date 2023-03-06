@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { dbService } from '@/firebase';
-
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 type CalendarAddInformation = {
   markDate: string;
   userUid: string;
@@ -10,8 +10,9 @@ type CalendarAddInformation = {
 
 const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
   const [calendarText, setCalendarText] = useState<string>('');
+  const queryClient = useQueryClient();
 
-  const onClickCalendarAdd = async (e: any) => {
+  const calendarAdd = async (e: any) => {
     if (e.key === 'Enter') {
       try {
         await addDoc(collection(dbService, 'calendar'), {
@@ -19,13 +20,24 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
           content: calendarText,
           uid: userUid,
         });
-        // setIsLoadCalendar(false);
         setCalendarText('');
       } catch (error: any) {
         alert(error.message);
       }
     }
   };
+  const { mutate: onClickCalendarAdd } = useMutation(
+    'onClickCalendarAdd',
+    calendarAdd,
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('calendar');
+      },
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   return (
     <>

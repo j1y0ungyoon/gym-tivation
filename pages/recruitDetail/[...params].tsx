@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, useRef, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from 'react-query';
 import {
   editRecruitPost,
   deleteRecruitPost,

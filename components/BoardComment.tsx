@@ -1,6 +1,6 @@
 import { BoardCommentType } from '@/type';
 import styled from 'styled-components';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from 'react-query';
 import { deleteBoardComment } from '@/pages/api/api';
 import { authService } from '@/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
