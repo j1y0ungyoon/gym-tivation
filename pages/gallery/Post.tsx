@@ -1,6 +1,5 @@
-import Dropzone from '@/components/Dropzone';
 import { authService, dbService, storage } from '@/firebase';
-import { addDoc, collection, runTransaction, doc } from 'firebase/firestore';
+import { runTransaction, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
@@ -125,11 +124,6 @@ const Post = () => {
       return <div>로딩중입니다</div>;
     }
 
-    // await addDoc(collection(dbService, 'gallery'), newGalleryPost)
-    //   .then(() => console.log('post'))
-    //   .catch((error) => {
-    //     console.log('에러 발생!', error);
-    //   });
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
     try {

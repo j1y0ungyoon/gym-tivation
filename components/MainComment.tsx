@@ -5,10 +5,10 @@ import { authService } from '@/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 
-const BoardComment = ({ item }: any) => {
+const MainComment = ({ item }: any) => {
+  const queryClient = useQueryClient();
   const user = authService.currentUser?.uid;
   //   댓글 삭제 useMutation
-  const queryClient = useQueryClient();
   const { mutate: removeBoardComment, isLoading: isDeleting } =
     useMutation(deleteMainComment);
 
@@ -20,7 +20,7 @@ const BoardComment = ({ item }: any) => {
       try {
         await removeBoardComment(item.id, {
           onSuccess: () => {
-            queryClient.invalidateQueries('comment', {
+            queryClient.invalidateQueries('getCommentData', {
               refetchActive: true,
             });
           },
@@ -100,4 +100,4 @@ const ProfileImage = styled.img`
   margin-right: 0.6rem;
 `;
 
-export default BoardComment;
+export default MainComment;

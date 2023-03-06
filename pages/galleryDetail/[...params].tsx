@@ -1,8 +1,6 @@
 import CommentList from '@/components/CommentList';
 import Like from '@/components/Like';
-import { authService, dbService, storage } from '@/firebase';
-import { GalleryBoardPostType, GalleryParameterType } from '@/type';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { authService, storage } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';

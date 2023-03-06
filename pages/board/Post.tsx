@@ -1,17 +1,10 @@
-import { authService, dbService, storage } from '@/firebase';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
-import React, { useEffect, useRef, useState } from 'react';
+import { authService, dbService } from '@/firebase';
+import { collection, doc, getDocs, query, where } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 // import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
-import BoardCategory from '@/components/BoardCategory';
+import BoardCategory from '@/components/board/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 // import { nanoid } from 'nanoid';
@@ -55,12 +48,8 @@ const Post = () => {
     ],
 
     clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
       matchVisual: false,
     },
-    // handler: {
-    //   image: imageHandler,
-    // },
   };
 
   const formats = [
@@ -87,20 +76,6 @@ const Post = () => {
   const onChangeBoardContent = (value: any) => {
     setBoardContent(value);
   };
-
-  // const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setImageUpload(event.target.files?.[0]);
-  // };
-
-  // useEffect(() => {
-  //   const imageRef = ref(storage, `images/${nanoid()}`);
-  //   if (!imageUpload) return;
-  //   uploadBytes(imageRef, imageUpload).then((snapshot) => {
-  //     getDownloadURL(snapshot.ref).then((url) => {
-  //       setBoardPhoto(url);
-  //     });
-  //   });
-  // }, [imageUpload]);
 
   //Board로 이동
   const goToBoard = () => {
@@ -204,7 +179,6 @@ const Post = () => {
     }
 
     goToBoard();
-    // setBoardPhoto('');
   };
 
   return (
@@ -296,17 +270,6 @@ const ContentContainer = styled.div`
   height: 80%;
   padding: 2rem;
 `;
-// const ContentInput = styled.textarea`
-//   display: flex;
-//   padding: 1rem;
-//   width: 50%;
-//   height: 90%;
-//   border-radius: 2rem;
-//   font-size: 1.5rem;
-//   margin: 1rem;
-//   resize: none;
-//   border: none;
-// `;
 const Title = styled.span`
   display: flex;
   flex-direction: column;

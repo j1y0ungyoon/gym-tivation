@@ -1,6 +1,4 @@
-import { Like } from '@/components/Like';
-import { BoardPostType } from '@/type';
-import { authService, dbService, storage } from '../../firebase';
+import { dbService, storage } from '../../firebase';
 import {
   deleteDoc,
   doc,
@@ -18,11 +16,8 @@ import {
   EditCommentLikeParameterType,
   EditRecruitPostParameterType,
   editUserParticipationParameterType,
-  MainCommentType,
 } from '../../type';
 import { deleteObject, ref } from 'firebase/storage';
-import { async } from '@firebase/util';
-import DmChat from '@/components/DmChat';
 
 // 동료 모집글 삭제하기
 export const deleteRecruitPost = async (postId: string) => {

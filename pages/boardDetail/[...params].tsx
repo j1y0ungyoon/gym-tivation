@@ -11,7 +11,7 @@ import Like from '@/components/Like';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
-import BoardCategory from '@/components/BoardCategory';
+import BoardCategory from '@/components/board/BoardCategory';
 import CommentList from '@/components/CommentList';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 

@@ -13,7 +13,8 @@ import {
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import BoardCommentList from '@/components/BoardCommentList';
+import BoardCommentList from '@/components/MainCommentList';
+import MainCommentList from '@/components/MainCommentList';
 
 type ImgBoxProps = {
   mainImg: string;
@@ -91,8 +92,10 @@ const Home = () => {
               return <Img key={mainImg} mainImg={mainImg} />;
             })}
           </SliderContainer>
+
           <TitleSvg src={'/assets/icons/title.svg'} />
         </DIV>
+        <MainCommentList />
       </HomeContainer>
     </HomeWrapper>
   );

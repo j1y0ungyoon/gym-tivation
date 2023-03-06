@@ -1,15 +1,10 @@
-import GalleryItem from '@/components/GalleryItem';
-import { dbService } from '@/firebase';
-import { query } from 'firebase/database';
-import { collection, onSnapshot, orderBy } from 'firebase/firestore';
+import GalleryItem from '@/components/gallery/GalleryItem';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { getGalleryPosts } from '../api/api';
 
 const Gallery = () => {
-  const [galleryPhotos, setGalleryPhotos] = useState([]);
   const router = useRouter();
   const { data, isLoading } = useQuery(['getGalleryData'], getGalleryPosts);
 

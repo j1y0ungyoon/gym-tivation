@@ -1,10 +1,8 @@
-import BoardItem from '@/components/BoardItem';
-// import Search from '@/components/Search';
-import { dbService } from '@/firebase';
+import BoardItem from '@/components/board/BoardItem';
 import { BoardPostType } from '@/type';
 import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { getBoardPosts } from '../api/api';
@@ -20,7 +18,6 @@ interface boardCategoryProps {
 }
 const Board = () => {
   const [category, setCategory] = useState('운동정보');
-
   const router = useRouter();
   const { data, isLoading } = useQuery(['getPostsData'], getBoardPosts);
 
@@ -35,30 +32,6 @@ const Board = () => {
       pathname: `/board/Post`,
     });
   };
-
-  // const getPost = () => {
-  //   const q = query(
-  //     collection(dbService, 'posts'),
-  //     orderBy('createdAt', 'desc'),
-  //   );
-
-  //   const unsubscribe = onSnapshot(q, (snapshot: any) => {
-  //     const newPosts = snapshot.docs.map((doc: any) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-  //     setBoardPosts(newPosts);
-  //   });
-  //   return unsubscribe;
-  // };
-
-  // useEffect(() => {
-  //   const unsubscribe = getPost();
-
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, []);
 
   return (
     <>

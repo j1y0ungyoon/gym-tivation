@@ -1,4 +1,4 @@
-import { authService } from '@/firebase';
+import { authService, dbService } from '@/firebase';
 import { addMainComment, getMainComments } from '@/pages/api/api';
 import { MainCommentType } from '@/type';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -6,8 +6,15 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import BoardComment from './BoardComment';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import MainComment from './MainComment';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 
 interface MainCommentListProps {
   data:
@@ -16,10 +23,9 @@ interface MainCommentListProps {
       }[]
     | undefined;
 }
-const BoardCommentList = ({ id }: MainCommentType) => {
+const MainCommentList = ({ id }: MainCommentType) => {
   const queryClient = useQueryClient();
   const [inputComment, setInputComment] = useState('');
-  // const [mainComments, setMainComments] = useState<MainCommentType[]>([]);
   const [userLv, setUserLv] = useState('');
   const [userLvName, setUserLvName] = useState('');
   const [postCount, setPostCount] = useState<any>();
@@ -43,27 +49,27 @@ const BoardCommentList = ({ id }: MainCommentType) => {
     }
   };
 
-  // const getCommentNumber = async () => {
-  //   const q = query(
-  //     collection(dbService, 'gallery'),
-  //     where('userId', '==', authService.currentUser?.uid),
-  //   );
-  //   const docsData = await getDocs(q);
-  //   const galleryPostCount = docsData.docs.length;
-  //   setPostCount(galleryPostCount);
-  // };
-  // const profileData = async () => {
-  //   if (!authService.currentUser) return;
-  //   const q = query(
-  //     collection(dbService, 'profile'),
-  //     where('uid', '==', authService.currentUser?.uid),
-  //   );
-  //   const docsData = await getDocs(q);
-  //   const getLvName = docsData.docs[0].data().lvName;
-  //   const getLv = docsData.docs[0].data().lv;
-  //   setUserLvName(getLvName);
-  //   setUserLv(getLv);
-  // };
+  const getCommentNumber = async () => {
+    const q = query(
+      collection(dbService, 'gallery'),
+      where('userId', '==', authService.currentUser?.uid),
+    );
+    const docsData = await getDocs(q);
+    const galleryPostCount = docsData.docs.length;
+    setPostCount(galleryPostCount);
+  };
+
+  const profileData = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', authService.currentUser?.uid),
+    );
+    const docsData = await getDocs(q);
+    const getLvName = docsData.docs[0].data()?.lvName;
+    const getLv = docsData.docs[0].data()?.lv;
+    setUserLvName(getLvName);
+    setUserLv(getLv);
+  };
 
   const onSubmitCommemt = async () => {
     if (!inputComment) {
@@ -77,10 +83,10 @@ const BoardCommentList = ({ id }: MainCommentType) => {
       photo: userPhoto,
       comment: inputComment,
       createdAt: Date.now(),
-      // userLv: userLv,
-      // userLvName: userLvName,
+      userLv: userLv,
+      userLvName: userLvName,
       number: getNumber + 1,
-      // postCount: postCount,
+      postCount: postCount,
     };
 
     addMutate(newComment, {
@@ -98,21 +104,10 @@ const BoardCommentList = ({ id }: MainCommentType) => {
   };
 
   useEffect(() => {
-    // const commentsRef = collection(dbService, 'mainComment');
-    // const q = query(commentsRef, orderBy('createdAt', 'desc'));
-    // const unsubscribe = onSnapshot(q, (snapshot) => {
-    //   const newComments = snapshot.docs.map((doc) => ({
-    //     id: doc.id,
-    //     ...doc.data(),
-    //   }));
-    //   setMainComments(newComments);
-    // });
-    // profileData();
-    // getCommentNumber();
-    // return () => {
-    //   unsubscribe();
-    // };
-  }, [postCount]);
+    if (!authService.currentUser?.uid) return;
+    profileData();
+    getCommentNumber();
+  }, [postCount, user]);
 
   return (
     <CommentListWrapper>
@@ -130,7 +125,7 @@ const BoardCommentList = ({ id }: MainCommentType) => {
         </ButtonWrapper>
       </InputWrapper>
       {data?.map((item) => {
-        return <BoardComment key={item.id} item={item} />;
+        return <MainComment key={item.id} item={item} />;
       })}
     </CommentListWrapper>
   );
@@ -161,4 +156,4 @@ const SubmitCommentButton = styled.button`
   border-radius: 1rem;
   border: 0.1px solid black;
 `;
-export default BoardCommentList;
+export default MainCommentList;
