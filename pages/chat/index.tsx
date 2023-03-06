@@ -157,7 +157,6 @@ const Chat = () => {
     <ChatWrapper>
       <ChatContainer>
         <CategoryContainer>
-          <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
           <CategoryBtn
             onClick={() => {
               setIsMyDmOn(true);
@@ -165,6 +164,7 @@ const Chat = () => {
           >
             DM
           </CategoryBtn>
+          <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
         </CategoryContainer>
 
         {isMyDmOn ? (
@@ -196,8 +196,6 @@ const Chat = () => {
                           authService.currentUser?.uid !== item.id,
                       )
                       .map((item: any) => {
-                        console.log(item);
-                        console.log('아이디 잘 내려줌??', item.id);
                         return (
                           <SearchResult key={item.id}>
                             <UserInfo>
@@ -214,7 +212,7 @@ const Chat = () => {
 
               {dmLists?.map((dmList: DmList) => {
                 return (
-                  <MyDmListBox key={dmList.id}>
+                  <MyDmListBox key={nanoid()}>
                     {dmList.enterUser?.includes(`${user?.uid}`) ? (
                       <MyDmList onClick={() => setRoomNum(dmList.id)}>
                         {dmList.enterUser.map((enterUser) => {
