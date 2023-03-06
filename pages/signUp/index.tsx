@@ -4,7 +4,7 @@ import {
   sendEmailVerification,
   updateProfile,
 } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, addDoc } from 'firebase/firestore';
 
 import { useState, useCallback, useEffect } from 'react';
 import { tou, pi, lb } from '@/components/TermsOfUse';
@@ -226,6 +226,13 @@ const SignUp = () => {
         lv: 1,
         lvName: '일반인',
       });
+
+      await addDoc(collection(dbService, 'dms'), {
+        id: user?.uid,
+        enterUser: [user?.uid, '나와의채팅'],
+        chatLog: [],
+      });
+
       toast.warn('인증 메일을 확인해주세요!');
       authService.signOut();
       router.push('/signIn');
