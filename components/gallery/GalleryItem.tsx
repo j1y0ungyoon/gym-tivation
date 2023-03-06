@@ -4,11 +4,12 @@ import GalleryPost from './GalleryPost';
 import { GalleryBoardPostType } from '@/type';
 interface GalleryItemProps {
   galleryPhotos: GalleryBoardPostType[];
+  data?: any;
 }
-const GalleryItem = ({ galleryPhotos }: GalleryItemProps) => {
+const GalleryItem = ({ data }: any) => {
   return (
     <GalleryList>
-      {galleryPhotos.map((galleryPhotos) => {
+      {data?.map((galleryPhotos: any) => {
         return (
           <GalleryPost
             key={galleryPhotos.id}

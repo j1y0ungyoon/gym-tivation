@@ -1,44 +1,18 @@
-import GalleryItem from '@/components/GalleryItem';
-import { dbService } from '@/firebase';
-import { query } from 'firebase/database';
-import { collection, onSnapshot, orderBy } from 'firebase/firestore';
+import GalleryItem from '@/components/gallery/GalleryItem';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import { getGalleryPosts } from '../api/api';
 
 const Gallery = () => {
-  const [galleryPhotos, setGalleryPhotos] = useState([]);
   const router = useRouter();
+  const { data, isLoading } = useQuery(['getGalleryData'], getGalleryPosts);
 
   const onClickGalleryPostButton = () => {
     router.push({
       pathname: `/gallery/Post`,
     });
   };
-  const getGalleryPost = () => {
-    const q = query(
-      //@ts-ignore
-      collection(dbService, 'gallery'),
-      orderBy('createdAt', 'desc'),
-    );
-    //@ts-ignore
-    const unsubscribe = onSnapshot(q, (snapshot: any) => {
-      const newGalleryPosts = snapshot.docs.map((doc: any) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setGalleryPhotos(newGalleryPosts);
-    });
-    return unsubscribe;
-  };
-
-  useEffect(() => {
-    const unsubscribe = getGalleryPost();
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   return (
     <GalleryBoardWrapper>
@@ -53,7 +27,7 @@ const Gallery = () => {
         </ButtonWrapper>
         <GalleryContentWrapper>
           <GalleryBoardContent>
-            <GalleryItem galleryPhotos={galleryPhotos} />
+            <GalleryItem data={data} />
           </GalleryBoardContent>
         </GalleryContentWrapper>
       </GalleryBoardMain>

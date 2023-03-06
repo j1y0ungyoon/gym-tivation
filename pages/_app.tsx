@@ -14,8 +14,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import GlobalStyle from '@/styles/GlobalStyle';
 import { RecoilRoot } from 'recoil';
 import GlobalModal from '@/components/common/globalModal/GlobalModal';
+
 //queryClient 캐시관리 app 컴포넌트 안에 있으면 계속 갱신 (이전값을 캐싱)
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 export default function App({ Component, pageProps }: AppProps) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   useEffect(() => {

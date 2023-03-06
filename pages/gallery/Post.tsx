@@ -1,5 +1,5 @@
 import { authService, dbService, storage } from '@/firebase';
-import { addDoc, collection, runTransaction, doc } from 'firebase/firestore';
+import { runTransaction, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
@@ -7,14 +7,17 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import mouseClick from '../../public/assets/icons/mouseClick.png';
+import imageCompression from 'browser-image-compression';
+import { useMutation, useQueryClient } from 'react-query';
+import { addGalleryPost } from '../api/api';
 const Post = () => {
-  const [imageUpload, setImageUpload] = useState<any>('');
+  const queryClient = useQueryClient();
+  const [imageUpload, setImageUpload] = useState<File | undefined>();
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
-
   const router = useRouter();
-
+  const { mutate, isLoading } = useMutation(addGalleryPost);
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
@@ -33,8 +36,34 @@ const Post = () => {
       pathname: `/gallery`,
     });
   };
-  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUpload(event.target.files?.[0]);
+  const imageCompress = async (image: File) => {
+    const options = {
+      maxSizeMB: 1,
+      maxwidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(image, options);
+      console.log(
+        'compressedFile instanceof Blob',
+        compressedFile instanceof Blob,
+      ); // true
+      console.log(
+        `compressedFile size ${compressedFile.size / 1024 / 1024} MB`,
+      ); // smaller than maxSizeMB
+
+      return compressedFile;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const originalImage = event.target.files?.[0];
+    console.log('original size', originalImage?.size);
+    if (!originalImage) return;
+    const compressedImage = await imageCompress(originalImage);
+    setImageUpload(compressedImage);
   };
 
   useEffect(() => {
@@ -84,12 +113,17 @@ const Post = () => {
       userPhoto: authService.currentUser?.photoURL,
       comment: 0,
     };
+    mutate(newGalleryPost, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('getGalleryData', {
+          refetchActive: true,
+        });
+      },
+    });
+    if (isLoading) {
+      return <div>로딩중입니다</div>;
+    }
 
-    await addDoc(collection(dbService, 'gallery'), newGalleryPost)
-      .then(() => console.log('post'))
-      .catch((error) => {
-        console.log('에러 발생!', error);
-      });
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
     try {
@@ -150,6 +184,10 @@ const Post = () => {
                   accept="image/*"
                   onChange={onChangeUpload}
                 />
+                {/* <Dropzone
+                  selectedImages={selectedImages}
+                  setSelectedImages={setSelectedImages}
+                /> */}
               </GalleryImageWarpper>
               {/* <GalleryContentInput
             placeholder="글을 입력해주세요"

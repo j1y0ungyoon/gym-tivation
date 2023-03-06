@@ -1,26 +1,16 @@
-import { BoardCommentType } from '@/type';
 import styled from 'styled-components';
-import { useMutation } from 'react-query';
-import { deleteBoardComment } from '@/pages/api/api';
+import { useMutation, useQueryClient } from 'react-query';
+import { deleteMainComment } from '@/pages/api/api';
 import { authService } from '@/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 
-const BoardComment = ({ item }: { item: BoardCommentType }) => {
+const MainComment = ({ item }: any) => {
+  const queryClient = useQueryClient();
   const user = authService.currentUser?.uid;
   //   댓글 삭제 useMutation
-  const { isLoading: isDeleting, mutate: removeBoardComment } = useMutation(
-    ['deleteBoardComment', item.id],
-    (body: string) => deleteBoardComment(body),
-    {
-      onSuccess: () => {
-        console.log('수정 성공');
-      },
-      onError: (err) => {
-        console.log('수정 실패:', err);
-      },
-    },
-  );
+  const { mutate: removeBoardComment, isLoading: isDeleting } =
+    useMutation(deleteMainComment);
 
   // 게시글 삭제 클릭 이벤트
   const onClickDeleteComment = async () => {
@@ -28,9 +18,16 @@ const BoardComment = ({ item }: { item: BoardCommentType }) => {
 
     if (answer) {
       try {
-        await removeBoardComment(item.id);
+        await removeBoardComment(item.id, {
+          onSuccess: () => {
+            queryClient.invalidateQueries('getCommentData', {
+              refetchActive: true,
+            });
+          },
+        });
+
         await runTransaction(dbService, async (transaction) => {
-          const sfDocRef = doc(dbService, 'posts', String(item.postId));
+          const sfDocRef = doc(dbService, 'posts', String(item.id));
           const sfDoc = await transaction.get(sfDocRef);
           if (!sfDoc.exists()) {
             throw '데이터가 없습니다.';
@@ -53,10 +50,13 @@ const BoardComment = ({ item }: { item: BoardCommentType }) => {
   return (
     <>
       <CommentWrapper>
+        <div>{item.number}등</div>
         <ProfileImage src={item?.photo} />
         <NickName>{item?.nickName}</NickName>
-
-        <CommentListWrapper>{item?.boardComment}</CommentListWrapper>
+        <div>{item.userLv}</div>
+        <div>{item.userLvName}</div>
+        <div>{item.postCount}일째 운동 중</div>
+        <CommentListWrapper>{item.comment}</CommentListWrapper>
         {user === item?.user ? (
           <DeleteButton onClick={onClickDeleteComment}>삭제</DeleteButton>
         ) : null}
@@ -100,4 +100,4 @@ const ProfileImage = styled.img`
   margin-right: 0.6rem;
 `;
 
-export default BoardComment;
+export default MainComment;
