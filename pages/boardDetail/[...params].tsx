@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
 import BoardCategory from '@/components/board/BoardCategory';
-import CommentList from '@/components/CommentList';
+import CommentList from '@/components/comment/CommentList';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
