@@ -54,7 +54,9 @@ const BoardItem = ({
   }, [searchText, searchCategory]);
 
   useEffect(() => {
+    getSearchedPosts();
     setSearchedPosts(filteredCategory);
+    console.log(searchedPosts);
   }, []);
 
   return (
