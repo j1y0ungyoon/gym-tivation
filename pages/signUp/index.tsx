@@ -208,10 +208,12 @@ const SignUp = () => {
         email,
         password,
       );
+      await authService.signOut();
       await updateProfile(user, {
         displayName: nickName,
         photoURL: imageURL,
       });
+
       await sendEmailVerification(user);
       await setDoc(doc(dbService, 'profile', user.uid), {
         introduction: '',
@@ -228,19 +230,16 @@ const SignUp = () => {
         lv: 1,
         lvName: 'Yellow',
       });
-
       await addDoc(collection(dbService, 'dms'), {
         id: user?.uid,
         enterUser: [user?.uid, '나와의채팅'],
         chatLog: [],
       });
-
       // toast.warn('인증 메일을 확인해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '인증 메일을 확인해주세요!' },
       });
-      authService.signOut();
       router.push('/signIn');
     } catch (error: any) {
       toast.error(error.message);
