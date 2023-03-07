@@ -12,12 +12,14 @@ import {
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 // props로 받은 id는 해당 recruitPost의 id임
 const CommentList = ({ id, category }: { id: string; category: string }) => {
   const [inputComment, setInputComment] = useState('');
   const [comments, setComments] = useState<CommentType[]>([]);
+  const { showModal } = useModal();
 
   const onChangeInputComment = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -29,7 +31,10 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
   // 댓글 작성 완료
   const onSubmitComment = async () => {
     if (!inputComment) {
-      toast.info('댓글 내용을 작성해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '댓글 내용을 작성해주세요!' },
+      });
       return;
     }
 
@@ -101,7 +106,10 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
     }
 
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
       setInputComment('');
       return;
     }
@@ -157,16 +165,17 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
             placeholder="최대 90자까지 입력할 수 있습니다"
           />
         ) : (
-          <CommentInput disabled />
+          <CommentInput placeholder="로그인 후 이용 가능합니다" disabled />
         )}
-
         <ButtonWrapper>
           {authService.currentUser ? (
             <SubmitCommentButton onClick={onSubmitComment}>
               등록
             </SubmitCommentButton>
           ) : (
-            <SubmitCommentButton disabled>등록</SubmitCommentButton>
+            <SubmitCommentButton style={{ display: 'none' }}>
+              등록
+            </SubmitCommentButton>
           )}
         </ButtonWrapper>
       </InputWrapper>

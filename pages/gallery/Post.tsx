@@ -10,6 +10,9 @@ import mouseClick from '../../public/assets/icons/mouseClick.png';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQueryClient } from 'react-query';
 import { addGalleryPost } from '../api/api';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+
 const Post = () => {
   const queryClient = useQueryClient();
   const [imageUpload, setImageUpload] = useState<File | undefined>();
@@ -21,7 +24,7 @@ const Post = () => {
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
-
+  const { showModal } = useModal();
   const onChangeGalleryTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGalleryTitle(event.target.value);
   };
@@ -59,7 +62,8 @@ const Post = () => {
   };
 
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const originalImage = event.target.files?.[0];
+    const originalImage: any = event.target.files?.[0];
+    setGalleryPhoto(URL.createObjectURL(originalImage));
     console.log('original size', originalImage?.size);
     if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
@@ -69,16 +73,21 @@ const Post = () => {
   useEffect(() => {
     const imageRef = ref(storage, `gallery/${nanoid()}}`);
     if (!imageUpload) return;
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        setGalleryPhoto(url);
-      });
-    });
+    uploadBytes(imageRef, imageUpload);
+    // .then((snapshot) => {
+    //   getDownloadURL(snapshot.ref).then((url) => {
+    //     setGalleryPhoto(url);
+    //   });
+    // });
   }, [imageUpload]);
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      // toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인을 먼저 해주세요!' },
+      });
       router.push('/gallery');
     }
   }, []);
@@ -131,14 +140,21 @@ const Post = () => {
         if (!sfDoc.exists()) {
           throw '데이터가 없습니다.';
         }
+        const newwLvName = sfDoc.data().lvName;
         const newLv = sfDoc.data().lv + 1;
         transaction.update(sfDocRef, { lv: newLv });
-        if (60 > newLv && newLv > 29) {
-          transaction.update(sfDocRef, { lvName: 'green' });
-        } else if (90 > newLv && newLv > 59) {
-          transaction.update(sfDocRef, { lvName: 'blue' });
-        } else if (newLv > 89) {
-          transaction.update(sfDocRef, { lvName: 'red' });
+        if (newwLvName === '일반인' && newLv > 4) {
+          transaction.update(sfDocRef, { lvName: '헬애기' });
+          transaction.update(sfDocRef, { lv: 1 });
+        } else if (newwLvName === '헬애기' && newLv > 14) {
+          transaction.update(sfDocRef, { lvName: '헬린이' });
+          transaction.update(sfDocRef, { lv: 1 });
+        } else if (newwLvName === '헬린이' && newLv > 29) {
+          transaction.update(sfDocRef, { lvName: '헬른이' });
+          transaction.update(sfDocRef, { lv: 1 });
+        } else if (newwLvName === '헬른이' && newLv > 59) {
+          transaction.update(sfDocRef, { lvName: '헬애비' });
+          transaction.update(sfDocRef, { lv: 1 });
         }
       });
     } catch (error: any) {

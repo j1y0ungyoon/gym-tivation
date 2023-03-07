@@ -4,6 +4,8 @@ import { deleteMainComment } from '@/pages/api/api';
 import { authService } from '@/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const MainComment = ({ item }: any) => {
   const queryClient = useQueryClient();
@@ -12,11 +14,11 @@ const MainComment = ({ item }: any) => {
   const { mutate: removeBoardComment, isLoading: isDeleting } =
     useMutation(deleteMainComment);
 
-  // 게시글 삭제 클릭 이벤트
-  const onClickDeleteComment = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
+  const { showModal } = useModal();
 
-    if (answer) {
+  // 게시글 삭제 클릭 이벤트
+  const onClickDeleteComment = () => {
+    const onDeleteFunction = async () => {
       try {
         await removeBoardComment(item.id, {
           onSuccess: () => {
@@ -38,14 +40,16 @@ const MainComment = ({ item }: any) => {
       } catch (error) {
         console.log('에러입니다', error);
       }
-    } else {
-      return;
-    }
-  };
+    };
 
-  if (isDeleting) {
-    return <div>삭제중입니다</div>;
-  }
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onDeleteFunction,
+      },
+    });
+  };
 
   return (
     <>
@@ -120,6 +124,7 @@ const CommentWrapper = styled.div`
   width: 1200px;
   box-shadow: -2px 2px 0px 0px #000000;
   border-radius: 19px;
+  background-color: white;
 `;
 const CommentContainer = styled.div`
   display: flex;
@@ -133,6 +138,7 @@ export const CommentListWrapper = styled.span`
   align-items: center;
   width: 80%;
   margin: 10px;
+  word-break: break-all;
 `;
 export const NickName = styled.div`
   display: flex;
@@ -140,13 +146,9 @@ export const NickName = styled.div`
   align-items: center;
 `;
 const DeleteButton = styled.button`
-  width: 7%;
-  height: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  border-radius: 1rem;
-  border: 0.1px solid black;
+  ${({ theme }) => theme.btn.btn50}
+  min-width:70px;
+  margin: 10px;
 `;
 const ProfileImage = styled.img`
   display: flex;

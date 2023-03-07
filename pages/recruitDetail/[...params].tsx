@@ -333,7 +333,11 @@ const RecruitDetail = ({ params }: any) => {
               userId: authService.currentUser.uid,
               edittedProfile,
             });
-            toast.success('참여가 완료 되었습니다!');
+            // toast.success('참여가 완료 되었습니다!');
+            showModal({
+              modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+              modalProps: { contentText: '참여가 완료 되었습니다!' },
+            });
             return;
           }
         }
@@ -364,7 +368,11 @@ const RecruitDetail = ({ params }: any) => {
             { userParticipation: [...edittedProfilesArr] },
           );
         }
-        toast.info('참여를 취소했습니다!');
+        // toast.info('참여를 취소했습니다!');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+          modalProps: { contentText: '참여를 취소했습니다!' },
+        });
         return;
       }
     }

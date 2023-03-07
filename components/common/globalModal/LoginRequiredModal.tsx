@@ -1,9 +1,11 @@
+import React from 'react';
+
 import useModal from '@/hooks/useModal';
 import { ModalPropsType } from '@/recoil/modalState';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
-const AlertModal = (props: ModalPropsType) => {
+const LoginRequiredModal = (props: ModalPropsType) => {
   const { hiddenModal } = useModal();
   const { contentText, handleConfirm } = props;
 
@@ -27,7 +29,9 @@ const AlertModal = (props: ModalPropsType) => {
   return (
     <BackgroundContainer>
       <ModalContainer>
-        <AlertImg src="/assets/icons/mapBoard/!.svg" />
+        <LoginRequiredImg src="/assets/icons/mapBoard/Rectangle 1797.svg" />
+        <EllipseImg src="/assets/icons/mapBoard/Ellipse 162.svg" />
+        <SmileImg src="/assets/icons/mapBoard/Group 815.svg" />
         <h5>{contentText}</h5>
         <AlertButton onClick={closeModal}>확인</AlertButton>
       </ModalContainer>
@@ -35,7 +39,7 @@ const AlertModal = (props: ModalPropsType) => {
   );
 };
 
-export default AlertModal;
+export default LoginRequiredModal;
 
 const BackgroundContainer = styled.div`
   position: fixed;
@@ -86,8 +90,18 @@ const AlertButton = styled.button`
   filter: drop-shadow(-2px 2px 0px #000000);
 `;
 
-const AlertImg = styled.img`
-  width: 60px;
-  height: 60px;
+const SmileImg = styled.img`
+  width: 80px;
+  height: 80px;
   margin-bottom: 12px;
+`;
+const EllipseImg = styled.img`
+  width: 14px;
+  height: 14px;
+  /* margin-bottom: 10px; */
+`;
+const LoginRequiredImg = styled.img`
+  width: 30px;
+  height: 30px;
+  /* margin-bottom: 10px; */
 `;

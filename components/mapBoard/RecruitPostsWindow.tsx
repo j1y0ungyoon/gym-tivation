@@ -1,5 +1,5 @@
 import { CoordinateType, RecruitPostType } from '@/type';
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 interface RecruitPostsWindowPropsType {
@@ -29,9 +29,14 @@ const RecruitPostsWindow = (props: RecruitPostsWindowPropsType) => {
 
   return (
     <>
-      <InfoBox onClick={getCoordinate}>
-        <ParticipationImage src="/assets/icons/mapBoard/like_icon_inactive.svg" />
-        <ParticipationNumText>{`${filteredPosts.length}개의 모집글이 있습니다!`}</ParticipationNumText>
+      <InfoBox key={`info-box-${post.id}`} onClick={getCoordinate}>
+        <ParticipationImage
+          key={`info-image-${post.id}`}
+          src="/assets/icons/mapBoard/like_icon_inactive.svg"
+        />
+        <ParticipationNumText
+          key={`info-text-${post.id}`}
+        >{`${filteredPosts.length}개의 모집글이 있습니다!`}</ParticipationNumText>
       </InfoBox>
     </>
   );

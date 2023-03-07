@@ -119,18 +119,28 @@ const MainCommentList = ({ id }: MainCommentType) => {
         </TextContainer>
 
         <InputContainer>
-          <CommentInput
-            placeholder="동기부여 입력하기"
-            onChange={onChangeInputComment}
-            onKeyPress={onPressSubmitComment}
-            value={inputComment}
-            maxLength={92}
-          />
+          {authService.currentUser ? (
+            <CommentInput
+              placeholder="동기부여 입력하기"
+              onChange={onChangeInputComment}
+              onKeyPress={onPressSubmitComment}
+              value={inputComment}
+              maxLength={90}
+            />
+          ) : (
+            <CommentInput placeholder="로그인 후 이용 가능합니다" disabled />
+          )}
 
           <ButtonWrapper>
-            <SubmitCommentButton onClick={onSubmitCommemt}>
-              등록
-            </SubmitCommentButton>
+            {authService.currentUser ? (
+              <SubmitCommentButton onClick={onSubmitCommemt}>
+                등록
+              </SubmitCommentButton>
+            ) : (
+              <SubmitCommentButton style={{ display: 'none' }}>
+                등록
+              </SubmitCommentButton>
+            )}
           </ButtonWrapper>
         </InputContainer>
       </InputWrapper>
@@ -142,16 +152,26 @@ const MainCommentList = ({ id }: MainCommentType) => {
           <CountWrapper>오운완 인증일</CountWrapper>
           <LvWrapper>레벨</LvWrapper>
         </ContentWrapper>
-        {data?.map((item) => {
-          return <MainComment key={item.id} item={item} />;
-        })}
+        <CommentContainer>
+          {data?.map((item) => {
+            return <MainComment key={item.id} item={item} />;
+          })}
+        </CommentContainer>
       </MainCommentWrapper>
     </CommentListWrapper>
   );
 };
 
+const CommentContainer = styled.div`
+  height: 500px;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
 const LvWrapper = styled.span`
   display: flex;
+
   flex-direction: column;
   /* align-items: center; */
   flex-direction: center;
