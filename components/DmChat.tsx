@@ -192,13 +192,17 @@ const DmChat = () => {
           </DmBox>
         ))}
       </DmLogBox>
-      <DmInput
-        placeholder="채팅을 입력하세요."
-        type="text"
-        onKeyPress={postChat}
-        value={dmInputValue}
-        onChange={onChangeInputValue}
-      />
+      {user ? (
+        <DmInput
+          placeholder="채팅을 입력하세요."
+          type="text"
+          onKeyPress={postChat}
+          value={dmInputValue}
+          onChange={onChangeInputValue}
+        />
+      ) : (
+        <DmInput placeholder="로그인 후 이용 가능합니다." disabled />
+      )}
     </DmChatWrapper>
   );
 };

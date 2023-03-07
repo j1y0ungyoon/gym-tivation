@@ -173,11 +173,18 @@ const Chat = () => {
             <MyDmListContainer>
               <SearchWrapper>
                 <SearchBar>
-                  <SearchInput
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    value={searchValue}
-                    placeholder={'메세지를 보낼 사람을 검색하세요.'}
-                  />
+                  {user ? (
+                    <SearchInput
+                      onChange={(e) => setSearchValue(e.target.value)}
+                      value={searchValue}
+                      placeholder={'메세지를 보낼 사람을 검색하세요.'}
+                    />
+                  ) : (
+                    <SearchInput
+                      placeholder="로그인 후 이용 가능합니다."
+                      disabled
+                    />
+                  )}
                   {searchValue.length > 0 ? (
                     <SearchCancel
                       src={'/assets/icons/closeBtn.svg'}
@@ -250,14 +257,20 @@ const Chat = () => {
             </ChatLogBox>
 
             <ChatInputBox>
-              <UserImg src={`${user?.photoURL}`} />
-              <ChatInput
-                placeholder="채팅을 입력하세요."
-                type="text"
-                onKeyPress={postChat}
-                value={inputValue}
-                onChange={onChangeInputValue}
-              />
+              {user ? (
+                <>
+                  <UserImg src={`${user?.photoURL}`} />
+                  <ChatInput
+                    placeholder="채팅을 입력하세요."
+                    type="text"
+                    onKeyPress={postChat}
+                    value={inputValue}
+                    onChange={onChangeInputValue}
+                  />
+                </>
+              ) : (
+                <ChatInput placeholder="로그인 후 이용 가능합니다." disabled />
+              )}
             </ChatInputBox>
           </ChattingContainer>
         )}

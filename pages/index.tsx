@@ -73,7 +73,6 @@ const Home = () => {
       setMainComments(comment);
     };
     getComment();
-    console.log('메코', mainComments);
   }, []);
 
   const imgSettings = {
