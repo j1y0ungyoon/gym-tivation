@@ -128,14 +128,11 @@ export default DmButton;
 const DmButtonWrapper = styled.button`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
-  background-color: white;
-  border: black;
-  border-style: solid;
-  border-width: 0.1rem;
+  background-color: #fff;
+  color: #000;
   :hover {
-    cursor: pointer;
-    background-color: #ffcab5;
-    color: black;
+    background-color: ${({ theme }) => theme.color.brandColor100};
+    color: #fff;
   }
 `;
 
