@@ -10,6 +10,7 @@ import mouseClick from '../../public/assets/icons/mouseClick.png';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQueryClient } from 'react-query';
 import { addGalleryPost } from '../api/api';
+import { url } from 'inspector';
 const Post = () => {
   const queryClient = useQueryClient();
   const [imageUpload, setImageUpload] = useState<File | undefined>();
@@ -59,7 +60,8 @@ const Post = () => {
   };
 
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const originalImage = event.target.files?.[0];
+    const originalImage: any = event.target.files?.[0];
+    setGalleryPhoto(URL.createObjectURL(originalImage));
     console.log('original size', originalImage?.size);
     if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
@@ -69,11 +71,12 @@ const Post = () => {
   useEffect(() => {
     const imageRef = ref(storage, `gallery/${nanoid()}}`);
     if (!imageUpload) return;
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        setGalleryPhoto(url);
-      });
-    });
+    uploadBytes(imageRef, imageUpload);
+    // .then((snapshot) => {
+    //   getDownloadURL(snapshot.ref).then((url) => {
+    //     setGalleryPhoto(url);
+    //   });
+    // });
   }, [imageUpload]);
 
   useEffect(() => {
