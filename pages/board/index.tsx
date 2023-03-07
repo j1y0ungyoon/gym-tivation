@@ -1,8 +1,9 @@
 import BoardItem from '@/components/board/BoardItem';
+import SearchDropDown from '@/components/common/globalModal/SearchDropDown';
 import { BoardPostType } from '@/type';
 import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { getBoardPosts } from '../api/api';
@@ -21,6 +22,10 @@ const Board = () => {
   const router = useRouter();
   const { data, isLoading } = useQuery(['getPostsData'], getBoardPosts);
 
+  const [searchCategory, setSearchCategory] = useState('전체');
+  const [searchInput, setSearchInput] = useState('');
+  const [searchText, setSearchText] = useState('');
+
   const onClickCategoryButton = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
@@ -31,6 +36,12 @@ const Board = () => {
     router.push({
       pathname: `/board/Post`,
     });
+  };
+
+  const onKeyPressSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setSearchText(searchInput);
+    }
   };
 
   return (
@@ -67,8 +78,30 @@ const Board = () => {
           </ButtonWrapper>
 
           <ContentWrapper>
+            <SearchBox>
+              <input
+                placeholder={
+                  searchText
+                    ? `'${searchText}'의 검색 결과`
+                    : '검색어를 입력하세요!'
+                }
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setSearchInput(e.target.value)
+                }
+                onKeyPress={onKeyPressSearch}
+                value={searchInput}
+              />
+              <SearchDropDown setSearchCategory={setSearchCategory}>
+                {searchCategory}
+              </SearchDropDown>
+            </SearchBox>
             <BoardContent>
-              <BoardItem category={category} data={data} />
+              <BoardItem
+                category={category}
+                data={data}
+                searchText={searchText}
+                searchCategory={searchCategory}
+              />
             </BoardContent>
           </ContentWrapper>
         </BoardMain>
@@ -126,5 +159,12 @@ const CategoryButton = styled.button<boardCategoryProps>`
   ${({ theme }) => theme.btn.category}
   width:140px;
   margin: 10px;
+`;
+
+const SearchBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 `;
 export default Board;
