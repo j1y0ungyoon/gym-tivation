@@ -19,50 +19,43 @@ const BoardItem = ({
 }: BoardItemProps) => {
   const [searchedPosts, setSearchedPosts] = useState<BoardPostType[]>([]);
 
+  const filteredCategory = data?.filter(
+    (item: any) => item.category === category,
+  );
+
   const getSearchedPosts = () => {
     if (searchCategory === '전체' || searchText === '') {
-      const filteredCategory = data?.filter(
-        (item: any) => item.category === category,
-      );
       setSearchedPosts(filteredCategory);
+      return;
     }
 
-    if (searchCategory === '내용') {
-      const filteredCategory = data?.filter(
-        (item: any) => item.category === category,
-      );
+    if (!searchText) return;
 
+    if (searchCategory === '내용') {
       const result = filteredCategory.filter((item: BoardPostType) => {
-        if (searchText)
+        return (
           item.content?.toLowerCase().includes(searchText?.toLowerCase()) ||
-            item.title?.toLowerCase().includes(searchText?.toLowerCase());
+          item.title?.toLowerCase().includes(searchText?.toLowerCase())
+        );
       });
 
       setSearchedPosts(result);
+      return;
     }
 
     if (searchCategory === '닉네임') {
-      const filteredCategory = data?.filter(
-        (item: any) => item.category === category,
-      );
-
       const result = filteredCategory.filter((item: BoardPostType) => {
-        if (searchText) {
-          item.nickName?.toLowerCase().includes(searchText?.toLowerCase());
-        }
+        return item.nickName?.toLowerCase().includes(searchText?.toLowerCase());
       });
 
       setSearchedPosts(result);
+      return;
     }
   };
 
   useEffect(() => {
     getSearchedPosts();
-  }, [searchText, searchCategory]);
-
-  useEffect(() => {
-    getSearchedPosts();
-  }, [category]);
+  }, [searchText, searchCategory, category]);
 
   return (
     <>
