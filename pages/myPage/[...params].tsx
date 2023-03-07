@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
-import ProfileEdit from '@/components/ProfileEdit';
-import MyPageCalendar from '@/components/MyPageCalendar';
-import LoginState from '@/components/LoginState';
-import MyPageGalley from '@/components/MyPageGallery';
-import MyPageLike from '@/components/MyPageLike';
-import MyPageBoard from '@/components/MyPageBoard';
-import MyPageRecruit from '@/components/MyPageRecruit';
+import ProfileEdit from '@/components/mypage/ProfileEdit';
+import MyPageCalendar from '@/components/mypage/MyPageCalendar';
+import LoginState from '@/components/mypage/LoginState';
+import MyPageGalley from '@/components/mypage/MyPageGallery';
+import MyPageLike from '@/components/mypage/MyPageLike';
+import MyPageBoard from '@/components/mypage/MyPageBoard';
+import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
 
 // next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저

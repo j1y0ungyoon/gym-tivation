@@ -1,9 +1,7 @@
-import { authService, dbService } from '@/firebase';
-import { collection, orderBy, getDocs, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import checkedLike from '../public/assets/images/checkedLike.png';
+// import checkedLike from '../public/assets/images/checkedLike.png';
 import Image from 'next/image';
 
 type BoardGet = {
@@ -49,13 +47,7 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
                   <NickNameText>
                     {String(item.createdAt).slice(0, -3)}
                   </NickNameText>
-                  <Image
-                    src={checkedLike}
-                    alt="좋아요"
-                    width={20}
-                    height={20}
-                    style={{ marginRight: '4px', marginTop: '3px' }}
-                  />
+                  <IconImg src="/assets/icons/myPage/Likes.svg" />
                   <NickNameText>
                     {item.like ? item.like.length : 0}
                   </NickNameText>
@@ -163,4 +155,10 @@ const RecruitComment = styled.span`
   color: gray;
   font-weight: bolder;
   margin-left: 15px;
+`;
+const IconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5px;
+  margin-bottom: 2px;
 `;

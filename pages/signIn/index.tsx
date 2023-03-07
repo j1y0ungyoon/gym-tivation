@@ -21,7 +21,7 @@ import {
   AiFillEyeInvisible,
 } from 'react-icons/ai';
 import styled from 'styled-components';
-import SignInModal from '@/components/SignInModal';
+import SignInModal from '@/components/mypage/SignInModal';
 import { toast } from 'react-toastify';
 
 const SignIn = () => {

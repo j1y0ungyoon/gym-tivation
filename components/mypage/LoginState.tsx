@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { dbService, authService } from '@/firebase';
-import { getDocs, updateDoc } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
+import { getDocs } from 'firebase/firestore';
+import { useState } from 'react';
 import styled from 'styled-components';
 import {
   collection,
@@ -12,7 +12,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import FollowButton from './FollowButton';
+import FollowButton from '../FollowButton';
 
 type ProfileEditProps = {
   item: ProfileItem;

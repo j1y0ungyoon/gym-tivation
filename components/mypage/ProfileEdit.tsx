@@ -15,9 +15,9 @@ import {
 } from 'firebase/firestore';
 // import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
-import DmButton from './DmButton';
+import DmButton from '../DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import FollowButton from './FollowButton';
+import FollowButton from '../FollowButton';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -227,7 +227,7 @@ const ProfileEdit = ({
                 {item.lvName === 'red' && (
                   <LevelIcon src="/assets/icons/myPage/Red.svg" />
                 )}
-                <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
+                <LevelTextNumber>LV{Math.floor(Level)}</LevelTextNumber>
                 <LevelHelpBox className="levelHelpBox">
                   <LevelHelpTextBox>
                     <IconBox>
@@ -396,7 +396,7 @@ const ProfileEdit = ({
                   {item.lvName === 'red' && (
                     <LevelIcon src="/assets/icons/myPage/Red.svg" />
                   )}
-                  <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
+                  <LevelTextNumber>LV{Math.floor(Level)}</LevelTextNumber>
                   <LevelHelpBox className="levelHelpBox">
                     <LevelHelpTextBox>
                       <IconBox>
