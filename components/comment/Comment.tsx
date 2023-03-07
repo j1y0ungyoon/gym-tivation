@@ -42,34 +42,6 @@ const Comment = ({ comment }: { comment: CommentType }) => {
     },
   );
 
-  // 게시글 삭제 클릭 이벤트
-  // const onClickDeleteComment = async () => {
-  //   const answer = confirm('정말 삭제하시겠습니까?');
-
-  //   if (answer) {
-  //     try {
-  //       await removeComment(comment.id);
-  //       await runTransaction(dbService, async (transaction) => {
-  //         const sfDocRef = doc(
-  //           dbService,
-  //           'recruitments',
-  //           String(comment.postId),
-  //         );
-  //         const sfDoc = await transaction.get(sfDocRef);
-  //         if (!sfDoc.exists()) {
-  //           throw '데이터가 없습니다.';
-  //         }
-  //         const commentNumber = sfDoc.data().comment - 1;
-  //         transaction.update(sfDocRef, { comment: commentNumber });
-  //       });
-  //     } catch (error) {
-  //       console.log('에러입니다', error);
-  //     }
-  //   } else {
-  //     return;
-  //   }
-  // };
-
   // 게시글 삭제 함수
   const deletePostComment = async () => {
     try {

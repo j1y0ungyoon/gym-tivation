@@ -6,9 +6,12 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
+  const { showModal } = useModal();
 
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
@@ -21,7 +24,11 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         });
         router.push('/');
         authService.signOut();
-        toast.info('로그아웃');
+        // toast.info('로그아웃');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+          modalProps: { contentText: '로그아웃 되었습니다!' },
+        });
       }
     } catch {
       (error: any) => {

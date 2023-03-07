@@ -114,9 +114,24 @@ const MapBoard = () => {
 
             <MapBoardPostsBox>
               <MapBoardPostHead>{`"${region}"에서 모임`}</MapBoardPostHead>
-              {selectedPosts?.map((post) => {
-                return <RecruitPost post={post} key={post.id} />;
-              })}
+              {selectedPosts?.length !== 0 ? (
+                selectedPosts?.map((post) => {
+                  return <RecruitPost post={post} key={post.id} />;
+                })
+              ) : (
+                <>
+                  <EmptyPostImageBox>
+                    <img src="/assets/icons/mapBoard/empty_pictogram.svg" />
+                    <EmptyPostTextBox>
+                      <EmptyImageText>지도의&nbsp;</EmptyImageText>
+                      <FingerImage src="/assets/icons/mapBoard/mappin_hand_icon.svg" />
+                      <EmptyImageText>
+                        을 클릭하고 게시물을 확인하세요!
+                      </EmptyImageText>
+                    </EmptyPostTextBox>
+                  </EmptyPostImageBox>
+                </>
+              )}
             </MapBoardPostsBox>
           </MapBoardBodyContainer>
         </MapBoardContainer>
@@ -207,4 +222,30 @@ const MapdBox2 = styled.div`
   width: 100%;
   height: 100%;
   gap: 1rem;
+`;
+
+const EmptyPostImageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`;
+
+const EmptyPostTextBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+const FingerImage = styled.img`
+  width: 24px;
+  height: 24px;
+`;
+
+const EmptyImageText = styled.span`
+  font-size: ${({ theme }) => theme.font.font50};
 `;

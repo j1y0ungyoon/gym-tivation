@@ -13,6 +13,8 @@ import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import { useMutation, useQueryClient } from 'react-query';
 import { addBoardPost } from '../api/api';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -31,6 +33,7 @@ const Post = () => {
   const router = useRouter();
   const today = new Date().toLocaleString();
   const { mutate, isLoading } = useMutation(addBoardPost);
+  const { showModal } = useModal();
   const modules = {
     toolbar: [
       [{ font: [] }],
@@ -98,7 +101,11 @@ const Post = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      // toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
       router.push('/board');
     }
     profileData();
@@ -112,15 +119,27 @@ const Post = () => {
     event.preventDefault();
 
     if (!boardTitle) {
-      toast.warn('제목을 입력해주세요!');
+      // toast.warn('제목을 입력해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '제목을 입력해주세요!' },
+      });
       return;
     }
     if (!boardContent) {
-      toast.warn('내용을 입력해주세요!');
+      // toast.warn('내용을 입력해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 입력해주세요!' },
+      });
       return;
     }
     if (!category) {
-      toast.warn('카테고리를 선택해주세요!');
+      // toast.warn('카테고리를 선택해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '카테고리를 선택해주세요!' },
+      });
       return;
     }
     profileData();
