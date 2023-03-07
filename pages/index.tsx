@@ -13,7 +13,6 @@ import {
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import BoardCommentList from '@/components/MainCommentList';
 import MainCommentList from '@/components/MainCommentList';
 
 type ImgBoxProps = {
@@ -46,7 +45,6 @@ const Home = () => {
       const profileCollection = collection(dbService, 'profile');
       const snapshot = await getCountFromServer(profileCollection);
       const profileCount = snapshot.data().count;
-      console.log('count', profileCount);
       setUserCount(profileCount);
     };
 
