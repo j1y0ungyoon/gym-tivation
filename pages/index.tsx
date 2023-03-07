@@ -49,7 +49,6 @@ const Home = () => {
       const profileCollection = collection(dbService, 'profile');
       const snapshot = await getCountFromServer(profileCollection);
       const profileCount = snapshot.data().count;
-      console.log('count', profileCount);
       setUserCount(profileCount);
     };
 

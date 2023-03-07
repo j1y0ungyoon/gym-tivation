@@ -89,14 +89,11 @@ const Post = () => {
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!galleryTitle) {
-      toast.warn('제목을 입력해주세요');
+
+    if (!galleryContent) {
+      toast.warn('내용을 입력해주세요');
       return;
     }
-    // if (!galleryContent) {
-    //   toast.warn('내용을 입력해주세요');
-    //   return;
-    // }
     if (!galleryPhoto) {
       toast.warn('사진을 선택해주세요');
       return;
@@ -164,7 +161,7 @@ const Post = () => {
       <GalleryPostContainer>
         <GalleryContent>
           <GalleryPostContent onSubmit={onSubmitGallery}>
-            <GalleryTitleContainer>
+            {/* <GalleryTitleContainer>
               <Title>제목 </Title>
 
               <InputDiv>
@@ -173,7 +170,7 @@ const Post = () => {
                   value={galleryTitle}
                 />
               </InputDiv>
-            </GalleryTitleContainer>
+            </GalleryTitleContainer> */}
 
             <GalleryContentContainer>
               <GalleryImageWarpper htmlFor="input-file">
@@ -184,16 +181,12 @@ const Post = () => {
                   accept="image/*"
                   onChange={onChangeUpload}
                 />
-                {/* <Dropzone
-                  selectedImages={selectedImages}
-                  setSelectedImages={setSelectedImages}
-                /> */}
               </GalleryImageWarpper>
-              {/* <GalleryContentInput
-            placeholder="글을 입력해주세요"
-            onChange={onChangeGalleryContent}
-            value={galleryContent}
-          /> */}
+              <GalleryContentInput
+                placeholder="글을 입력해주세요"
+                onChange={onChangeGalleryContent}
+                value={galleryContent}
+              />
             </GalleryContentContainer>
             <GalleryButtonWrapper>
               <GalleryPostButton type="submit">게시하기</GalleryPostButton>
