@@ -46,13 +46,48 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         createdAt: Date.now(),
       };
 
-      if (category === '동료 모집' || '게시판' || '갤러리') {
+      if (category === '동료 모집') {
+        //댓글로 인한 수정
         await addDoc(collection(dbService, 'comments'), newComment)
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
         setInputComment('');
         await runTransaction(dbService, async (transaction) => {
           const sfDocRef = doc(dbService, 'recruitments', id);
+          const sfDoc = await transaction.get(sfDocRef);
+
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment + 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+        return;
+      }
+      if (category === '게시판') {
+        await addDoc(collection(dbService, 'comments'), newComment)
+          .then(() => console.log('데이터 전송 성공'))
+          .catch((error) => console.log('에러 발생', error));
+        setInputComment('');
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'posts', id);
+          const sfDoc = await transaction.get(sfDocRef);
+
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment + 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+        return;
+      }
+      if (category === '갤러리') {
+        await addDoc(collection(dbService, 'comments'), newComment)
+          .then(() => console.log('데이터 전송 성공'))
+          .catch((error) => console.log('에러 발생', error));
+        setInputComment('');
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'gallery', id);
           const sfDoc = await transaction.get(sfDocRef);
 
           if (!sfDoc.exists()) {
@@ -106,7 +141,9 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         {comments
           .filter((comment) => comment.postId === id)
           .map((comment) => {
-            return <Comment key={comment.id} comment={comment} />;
+            return (
+              <Comment key={comment.id} comment={comment} category={category} />
+            );
           })}
       </CommentWrapper>
       <InputWrapper>

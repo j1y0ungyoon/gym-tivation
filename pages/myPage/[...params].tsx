@@ -2,25 +2,18 @@ import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect } from 'react';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
-import ProfileEdit from '@/components/ProfileEdit';
-import MyPageCalendar from '@/components/MyPageCalendar';
-import LoginState from '@/components/LoginState';
-import MyPageGalley from '@/components/MyPageGallery';
-import MyPageLike from '@/components/MyPageLike';
-import MyPageBoard from '@/components/MyPageBoard';
-import MyPageRecruit from '@/components/MyPageRecruit';
+import ProfileEdit from '@/components/mypage/ProfileEdit';
+import MyPageCalendar from '@/components/mypage/MyPageCalendar';
+import LoginState from '@/components/mypage/LoginState';
+import MyPageGalley from '@/components/mypage/MyPageGallery';
+import MyPageLike from '@/components/mypage/MyPageLike';
+import MyPageBoard from '@/components/mypage/MyPageBoard';
+import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
-
-// next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
+//mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id
   const paramsId = String(params);
-
-  //MyPageBoard 불러오기
-  const [boardInformation, setBoardInFormation] = useState([] as any);
-
-  //MyPageGallery 불러오기
-  const [galleryInformation, setGalleryInFormation] = useState([] as any);
 
   //토글
   const [toggle, setToggle] = useState(false);
@@ -103,7 +96,7 @@ const MyPage = ({ params }: any) => {
   );
 
   // 프로필 불러오기
-  //함수에
+
   const getProfile = async () => {
     const q = query(collection(dbService, 'profile'));
     const data = await getDocs(q);
@@ -313,7 +306,7 @@ const NavigationBox = styled.div`
   gap: 16px;
   display: flex;
   float: left;
-  width: 63%;
+  width: 65%;
   height: 70px;
   text-align: left;
   margin-top: 2vh;
@@ -339,7 +332,6 @@ const GalleyButton = styled.button`
 const GalleyBox = styled.div`
   width: 98%;
   height: 98%;
-
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -348,7 +340,7 @@ const GalleyBox = styled.div`
 
 const MypageBox = styled.div`
   float: left;
-  width: 70%;
+  width: 72%;
   height: 51%;
   margin-left: 10px;
 `;
@@ -371,6 +363,7 @@ const ToggleButton = styled.button`
     cursor: pointer;
     background-color: black;
     color: white;
+    transition: 0.7s;
   }
   :focus {
     background-color: black;

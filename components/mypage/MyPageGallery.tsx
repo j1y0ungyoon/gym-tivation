@@ -31,7 +31,8 @@ const MyPageGalley = ({ paramsId, gallery }: GalleryGet) => {
               onClick={() => goToGalleryDetailPost(item.id)}
             >
               <GalleryPhoto src={item.photo} />
-              <PhotoDate>{item.createdAt}</PhotoDate>
+
+              <PhotoDate>{String(item.createdAt).slice(0, -10)}</PhotoDate>
             </GalleryContainer>
           );
         })}
@@ -46,7 +47,7 @@ const MyPageGalleyWrapper = styled.div`
   padding-top: 20px;
   padding-left: 40px;
   gap: 10px;
-  width: 96.8%;
+  width: 100%;
   height: 100%;
   overflow: auto;
   ::-webkit-scrollbar {
@@ -59,8 +60,8 @@ const GalleryContainer = styled.div`
   height: 100%;
   min-width: 150px;
   min-height: 150px;
-  max-width: 180px;
-  max-height: 180px;
+  max-width: 190px;
+  max-height: 190px;
   position: relative;
 `;
 
@@ -75,11 +76,13 @@ const GalleryPhoto = styled.img`
     transition: 0.3s;
   }
 `;
-const PhotoDate = styled.p`
+const PhotoDate = styled.button`
   position: absolute;
-  top: 2%;
-  left: 6%;
+  bottom: 2%;
+  right: 2%;
   color: white;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
+  background-color: black;
+  border-radius: 12px;
 `;

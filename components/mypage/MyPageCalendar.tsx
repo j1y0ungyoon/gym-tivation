@@ -71,7 +71,7 @@ const MyPageCalendar = () => {
       },
     },
   );
-  console.log('캘린더', mark);
+
   return (
     <CalendarWrapper>
       <CalendarBox>

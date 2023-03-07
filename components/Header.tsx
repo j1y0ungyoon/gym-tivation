@@ -1,11 +1,12 @@
 import { authService, dbService } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, query, collection, getDocs } from 'firebase/firestore';
 import { useState } from 'react';
 import SearchUser from './SearchUser';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
+import { useQuery } from 'react-query';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
@@ -29,6 +30,25 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       };
     }
   };
+  const getProfile = async () => {
+    const q = query(collection(dbService, 'profile'));
+    const data = await getDocs(q);
+    return data.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  };
+
+  const { isLoading: profileLoading, data: profile } = useQuery(
+    'profile',
+    getProfile,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   return (
     <HeaderWrapper>
@@ -88,7 +108,7 @@ const Logo = styled.img`
 `;
 
 const SearchBar = styled.div`
-  width: 320px;
+  width: 400px;
   height: 40px;
   background-color: #ddd;
   border-radius: 25px;
@@ -100,7 +120,7 @@ const SearchBar = styled.div`
 `;
 
 const SearchInput = styled.input`
-  width: 265px;
+  width: 400px;
   height: 40px;
   margin-left: 20px;
   border: none;
