@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 import { RecruitPostType } from '../../type';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
-import RecruitPost from '@/components/RecruitPost';
+import RecruitPost from '@/components/mapBoard/RecruitPost';
 import styled from 'styled-components';
 import { CoordinateType } from '../../type';
-import SearchColleague from '@/components/SearchColleague';
+import SearchColleague from '@/components/mapBoard/SearchColleague';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 

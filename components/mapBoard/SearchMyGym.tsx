@@ -129,7 +129,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
             placeholder="예시) 서울 종로구"
           />
           <SerachImg
-            src="/assets/icons/searchIcon.png"
+            src="/assets/icons/searchIcon.svg"
             onClick={onClickSetRegion}
           />
         </SerachBar>

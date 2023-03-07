@@ -41,7 +41,8 @@ CustomMenu.displayName = 'CustomMenu';
 export default CustomMenu;
 
 const StyledUl = styled.ul`
-  height: 14rem;
+  min-height: 4rem;
+  max-height: 14rem;
   overflow: auto;
   overflow-x: hidden;
   &::-webkit-scrollbar {

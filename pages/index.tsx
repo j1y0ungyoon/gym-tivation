@@ -13,11 +13,12 @@ import {
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import BoardCommentList from '@/components/MainCommentList';
 import MainCommentList from '@/components/MainCommentList';
+import { nanoid } from 'nanoid';
+import HomeComment from '@/components/HomeComment';
 
 type ImgBoxProps = {
-  mainImg: string;
+  img: string;
 };
 
 const Home = () => {
@@ -25,6 +26,7 @@ const Home = () => {
 
   const [mainImgs, setMainImgs] = useState<any>([]);
   const [userCount, setUserCount] = useState<number>();
+  const [mainComments, setMainComments] = useState<any>([]);
 
   useEffect(() => {
     const getGallery = async () => {
@@ -42,11 +44,11 @@ const Home = () => {
 
       setMainImgs(gallery);
     };
+
     const getProfile = async () => {
       const profileCollection = collection(dbService, 'profile');
       const snapshot = await getCountFromServer(profileCollection);
       const profileCount = snapshot.data().count;
-      console.log('count', profileCount);
       setUserCount(profileCount);
     };
 
@@ -54,7 +56,27 @@ const Home = () => {
     getGallery();
   }, []);
 
-  const settings = {
+  useEffect(() => {
+    const getComment = async () => {
+      const q = await getDocs(
+        query(
+          collection(dbService, 'mainComment'),
+          orderBy('createdAt', 'desc'),
+          limit(10),
+        ),
+      );
+
+      const comment = q.docs.map((doc) => {
+        return doc.data();
+      });
+
+      setMainComments(comment);
+    };
+    getComment();
+    console.log('메코', mainComments);
+  }, []);
+
+  const imgSettings = {
     className: 'center',
     dots: false,
     centerMode: true,
@@ -77,6 +99,17 @@ const Home = () => {
     ),
   };
 
+  const commentSettings = {
+    infinite: true,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 1800,
+    autoplaySpeed: 1800,
+    cssEase: 'linear',
+    pauseOnHover: false,
+  };
+
   return (
     <HomeWrapper>
       <HomeContainer>
@@ -86,15 +119,24 @@ const Home = () => {
         <TitleText>
           {userCount}명의 동료들이 짐티베이션에 참여하고 있습니다!
         </TitleText>
-        <DIV>
-          <SliderContainer {...settings}>
+        <SliderWrapper>
+          <ImgSliderContainer {...imgSettings}>
             {mainImgs?.map((mainImg: string) => {
-              return <Img key={mainImg} mainImg={mainImg} />;
+              return <Img key={mainImg} img={mainImg} />;
             })}
-          </SliderContainer>
+          </ImgSliderContainer>
 
           <TitleSvg src={'/assets/icons/title.svg'} />
-        </DIV>
+        </SliderWrapper>
+
+        <SliderWrapper>
+          <MainCommentSliderContainer {...commentSettings}>
+            {mainComments?.map((mainComment: any) => {
+              return <HomeComment key={nanoid()} mainComment={mainComment} />;
+            })}
+          </MainCommentSliderContainer>
+        </SliderWrapper>
+
         <MainCommentList />
       </HomeContainer>
     </HomeWrapper>
@@ -103,11 +145,12 @@ const Home = () => {
 
 const HomeWrapper = styled.main`
   ${({ theme }) => theme.mainLayout.wrapper}
+  height: 100%;
 `;
 
 const HomeContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
-  height: calc(100vh - 100px);
+  height: 100%;
 `;
 
 const SubTitleText = styled.h1`
@@ -123,25 +166,100 @@ const TitleText = styled.h1`
   font-weight: bold;
   text-align: center;
 `;
-const DIV = styled.div`
+const SliderWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 const Img = styled.div<ImgBoxProps>`
-  background-image: ${(props) => `url(${props.mainImg})`};
+  background-image: ${(props) => `url(${props.img})`};
   background-size: cover;
   background-position: center center;
 `;
 
-const SliderContainer = styled(Slider)`
+const ImgSliderContainer = styled(Slider)`
   width: 100%;
   height: calc(100% - 320px);
   min-height: 620px;
+  max-height: 720px;
 
   position: relative;
 
+  .slick-prev::before,
+  .slick-next::before {
+    opacity: 0;
+    display: none;
+  }
+
+  .slick-list {
+    width: 100%;
+    min-height: 600px;
+    height: 100%;
+  }
+
+  .silck-track {
+  }
+
+  .slick-slide {
+    min-height: 600px;
+    height: calc(100vh - 440px);
+    display: flex;
+    align-items: center;
+  }
+  .slick-slide div {
+    width: 380px;
+    height: 380px;
+  }
+  .slick-slide div div {
+    width: 100%;
+    height: 100%;
+    border-radius: 500px;
+    border: 1px solid black;
+    box-shadow: -2px 2px 0px 1px #000000;
+    object-fit: cover;
+  }
+  .slick-center div div {
+    width: 100%;
+    height: 100%;
+    border-radius: 500px;
+    border: 1px solid black;
+    box-shadow: -2px 2px 0px 1px #000000;
+    transition: all 300ms ease;
+    transform: scale(1.4);
+  }
+`;
+
+const TitleSvg = styled.img`
+  position: absolute;
+  bottom: 40px;
+`;
+
+const ArrowR = styled.div`
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: 48px;
+  z-index: 99;
+`;
+const ArrowL = styled.div`
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 48px;
+  z-index: 99;
+`;
+const SVG = styled.img`
+  width: 40px;
+  height: 40px;
+`;
+
+const MainCommentSliderContainer = styled(Slider)`
+  width: 100%;
+  height: 100px;
+  margin: 105px 0;
+  position: relative;
+  /* 
   .slick-prev::before,
   .slick-next::before {
     opacity: 0;
@@ -179,29 +297,9 @@ const SliderContainer = styled(Slider)`
     border-radius: 500px;
     transition: all 300ms ease;
     transform: scale(1.4);
-  }
-`;
-const TitleSvg = styled.img`
-  position: absolute;
-  bottom: 40px;
+  } */
 `;
 
-const ArrowR = styled.div`
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  right: 48px;
-  z-index: 99;
-`;
-const ArrowL = styled.div`
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  left: 48px;
-  z-index: 99;
-`;
-const SVG = styled.img`
-  width: 40px;
-  height: 40px;
-`;
+const MainCommentWrapper = styled.div``;
+
 export default Home;

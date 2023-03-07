@@ -1,5 +1,5 @@
 import { authService, dbService } from '@/firebase';
-import Comment from '@/components/Comment';
+import Comment from '@/components/comment/Comment';
 import { CommentType } from '@/type';
 import {
   addDoc,

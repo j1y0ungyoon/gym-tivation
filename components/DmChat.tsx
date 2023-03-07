@@ -15,6 +15,8 @@ import {
   updateDoc,
   arrayUnion,
 } from 'firebase/firestore';
+import { useRecoilState } from 'recoil';
+import { roomState } from '@/recoil/dmData';
 
 type ChatLog = {
   id?: number;
@@ -25,23 +27,19 @@ type ChatLog = {
   roomNum?: string;
 };
 
-type DmChatProps = {
-  roomNum?: string | null | undefined;
-};
-
 type DmTextProps = {
   user?: string;
 };
 
-const DmChat = ({ roomNum }: DmChatProps) => {
+const DmChat = () => {
   const router = useRouter();
 
   const [dmInputValue, setDmInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
+  const [roomNum, setRoomNum] = useRecoilState(roomState);
 
   const user = authService.currentUser;
   const username = user?.displayName;
-  const anonymousname = 'user-' + nanoid();
 
   const dmLogBoxRef = useRef<HTMLDivElement>();
 
@@ -75,8 +73,10 @@ const DmChat = ({ roomNum }: DmChatProps) => {
 
     // roomNum 바뀔때마다 챗로그 비우고, DB에서 채팅로그 받아옴
     setChatLogs([]);
-    getDocId();
-    chatLogsGetDoc();
+    if (roomNum) {
+      getDocId();
+      chatLogsGetDoc();
+    }
     router.isReady;
   }, [roomNum]);
 
@@ -145,8 +145,8 @@ const DmChat = ({ roomNum }: DmChatProps) => {
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
-      username: username ? username : anonymousname,
-      photoURL: user ? user.photoURL : null,
+      username: username,
+      photoURL: user?.photoURL,
       date: time,
       roomNum,
     };
@@ -174,15 +174,15 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   return (
     <DmChatWrapper>
       <DmLogBox ref={dmLogBoxRef}>
-        <DmBox>
+        {/* <DmBox>
           <UserImg src={`${authService.currentUser?.photoURL}`} />
           <div>
             <DmName>{username}</DmName>
             <DmText>{roomNum}방에 입장하셨습니다.</DmText>
           </div>
-        </DmBox>
+        </DmBox> */}
         {chatLogs?.map((chatLog) => (
-          <DmBox key={chatLog?.id}>
+          <DmBox key={nanoid()}>
             <UserImg src={`${chatLog.photoURL}`} />
             <div>
               <DmName>{chatLog?.username}</DmName>

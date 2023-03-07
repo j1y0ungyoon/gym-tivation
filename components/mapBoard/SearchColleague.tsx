@@ -124,7 +124,7 @@ const SearchColleague = (props: MapModalProps) => {
       <MapModalMain>
         <SearchBar>
           <SerachImg
-            src="/assets/icons/searchIcon.png"
+            src="/assets/icons/searchIcon.svg"
             onClick={onClickSetRegion}
           />
           <SerachInput

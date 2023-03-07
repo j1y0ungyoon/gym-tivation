@@ -23,10 +23,10 @@ import {
 } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
-import UseDropDown from '@/components/UseDropDown';
-import SearchMyGym from '@/components/SearchMyGym';
-import CommentList from '@/components/CommentList';
-import SelectDay from '@/components/SelectDay';
+import UseDropDown from '@/components/common/dropDown/UseDropDown';
+import SearchMyGym from '@/components/mapBoard/SearchMyGym';
+import CommentList from '@/components/comment/CommentList';
+import SelectDay from '@/components/mapBoard/SelectDay';
 import { nanoid } from 'nanoid';
 import {
   AllDaysBox,

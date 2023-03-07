@@ -70,7 +70,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
               setSearchOpen(true);
             }}
           />
-          <SearchIcon src="/assets/icons/searchIcon.png" />
+          <SearchIcon src="/assets/icons/searchIcon.svg" />
         </SearchBar>
         {searchOpen && (
           <SearchUser setSearchOpen={setSearchOpen} searchName={searchName} />
