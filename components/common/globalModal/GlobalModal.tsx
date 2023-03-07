@@ -3,6 +3,7 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import AlertModal from './AlertModal';
 import ConfirmModal from './ConfirmModal';
+import LoginRequiredModal from './LoginRequiredModal';
 
 const GlobalModal = () => {
   // globalModalState로부터 modalType과 modalProps 꺼내줌
@@ -20,6 +21,10 @@ const GlobalModal = () => {
 
     if (modalType === GLOBAL_MODAL_TYPES.AlertModal) {
       return <AlertModal {...modalProps} />;
+    }
+
+    if (modalType === GLOBAL_MODAL_TYPES.LoginRequiredModal) {
+      return <LoginRequiredModal {...modalProps} />;
     }
   };
 

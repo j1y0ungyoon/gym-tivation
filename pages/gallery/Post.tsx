@@ -10,6 +10,8 @@ import mouseClick from '../../public/assets/icons/mouseClick.png';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQueryClient } from 'react-query';
 import { addGalleryPost } from '../api/api';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 const Post = () => {
   const queryClient = useQueryClient();
   const [imageUpload, setImageUpload] = useState<File | undefined>();
@@ -19,6 +21,8 @@ const Post = () => {
   const router = useRouter();
   const { mutate, isLoading } = useMutation(addGalleryPost);
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
+
+  const { showModal } = useModal();
   // const displayName = authService.currentUser?.displayName;
   //image upload
 
@@ -78,7 +82,11 @@ const Post = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      // toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인을 먼저 해주세요!' },
+      });
       router.push('/gallery');
     }
   }, []);
@@ -89,13 +97,20 @@ const Post = () => {
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!galleryContent) {
-      toast.warn('내용을 입력해주세요');
+      // toast.warn('제목을 입력해주세요');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 입력해주세요!' },
+      });
       return;
     }
     if (!galleryPhoto) {
-      toast.warn('사진을 선택해주세요');
+      // toast.warn('사진을 선택해주세요');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '사진을 선택해주세요!' },
+      });
       return;
     }
 

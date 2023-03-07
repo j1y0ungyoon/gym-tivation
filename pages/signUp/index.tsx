@@ -19,6 +19,8 @@ import UploadImage from '@/components/ProfileUpLoad';
 import { useRouter } from 'next/router';
 import { getDocs, collection, query } from 'firebase/firestore';
 import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const SignUp = () => {
   //회원가입
@@ -59,8 +61,8 @@ const SignUp = () => {
   const [isValidPasswordCheck, setIsValidPasswordCheck] = useState(false);
   const [passwordConfirmMessage, setPasswordConfirmMessage] =
     useState<string>('');
-
   const router = useRouter();
+  const { showModal } = useModal();
 
   //이메일, 닉네임 중복 체크
   const emailCheck = emailInformation.includes(email);
@@ -233,7 +235,11 @@ const SignUp = () => {
         chatLog: [],
       });
 
-      toast.warn('인증 메일을 확인해주세요!');
+      // toast.warn('인증 메일을 확인해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '인증 메일을 확인해주세요!' },
+      });
       authService.signOut();
       router.push('/signIn');
     } catch (error: any) {

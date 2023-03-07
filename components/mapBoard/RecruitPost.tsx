@@ -1,4 +1,4 @@
-import { CoordinateType, RecruitPostType } from '@/type';
+import { RecruitPostType } from '@/type';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
