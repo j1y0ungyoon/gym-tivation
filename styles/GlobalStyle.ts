@@ -10,5 +10,7 @@ const GlobalStyle = createGlobalStyle`
 .ql-size-huge {
   font-size: 2.5rem;
 }
+body {background-color: #FFFCF3}
+
 `;
 export default GlobalStyle;

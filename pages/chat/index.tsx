@@ -186,7 +186,7 @@ const Chat = () => {
                       }}
                     />
                   ) : null}
-                  <SearchIcon src="/assets/icons/searchIcon.png" />
+                  <SearchIcon src="/assets/icons/searchIcon.svg" />
                 </SearchBar>
                 {searchValue.length > 0 ? (
                   <SearchResultWrapper>

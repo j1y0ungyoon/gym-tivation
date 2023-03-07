@@ -50,14 +50,15 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 };
 
 const SideNavWrapper = styled.nav`
+  position: fixed;
   width: 180px;
   height: calc(100vh - 80px);
   background-color: #fffcf3;
-  border-right: 1px solid #f0dcca;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 `;
 
 const NavBtn = styled.img`
