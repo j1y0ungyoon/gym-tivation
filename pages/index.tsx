@@ -214,8 +214,8 @@ const ImgSliderContainer = styled(Slider)`
     width: 100%;
     height: 100%;
     border-radius: 500px;
-    border: 1px solid black;
-    box-shadow: -2px 2px 0px 1px #000000;
+    border: 2px solid black;
+    /* box-shadow: -2px 2px 0px 1px #000000; */
     object-fit: cover;
   }
   .slick-center div div {
