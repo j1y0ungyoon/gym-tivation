@@ -472,8 +472,8 @@ const CategoryBtn = styled.button`
   border: 1px solid black;
 
   border-radius: 50px;
-  background-color: #d9d9d9;
-  color: #797979;
+  background-color: #fff;
+  color: #000;
   :hover {
     background-color: #000;
     color: #fff;
