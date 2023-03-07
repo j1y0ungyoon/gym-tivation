@@ -61,3 +61,10 @@ type FollowInformation = {
   userUid: string;
   follwoingInformation: string;
 };
+type CalendarItem = {
+  id: string;
+  uid?: string;
+  mark?: boolean;
+  date?: string;
+  content?: string;
+};

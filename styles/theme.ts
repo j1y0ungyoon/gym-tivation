@@ -32,7 +32,7 @@ export const theme = {
       border-radius: 50px;
       border: none;
       font-size: 16px;
-      background-color: #d9d9d9;
+      background-color: #fff;
       color: #000;
       :hover {
         background-color: #000;
@@ -45,14 +45,14 @@ export const theme = {
       height : 40px;
       padding : 0 20px;
       border-radius : 40px;
-      border: none;
+      border: 1px solid black;
       font-size : 16px;
 
-      background-color: #d9d9d9;
-      color: #000;
+      background-color: #000;
+      color: #fff;
       :hover {
-        background-color: #000;
-        color: #fff;
+        background-color: #fff;
+        color: #000;
       }
     `,
 
@@ -61,14 +61,14 @@ export const theme = {
       height : 30px;
       padding : 0 15px;
       border-radius : 30px;
-      border: none;
+      border: 1px solid black;
       font-size : 14px;
 
-      background-color: #d9d9d9;
-      color: #000;
+      background-color: #000;
+      color: #fff;
       :hover {
-        background-color: #000;
-        color: #fff;
+        background-color: #fff;
+        color: #000;
       }
     `,
   },
@@ -81,7 +81,9 @@ export const theme = {
       min-height : 740px;
       height : calc(100vh - 80px);
       margin : 0 auto;
+      margin-left : 180px;
       background-color:#FFFCF3;
+      border-left : 1px solid #f0dcca;
   `,
     container: `
       min-width : 640px;

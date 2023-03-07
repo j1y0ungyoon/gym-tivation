@@ -11,7 +11,7 @@ export const apponentState = atom<string>({
 
 export const roomState = atom<string | null | undefined>({
   key: 'roomState',
-  default: null,
+  default: '',
 });
 
 export const dmListsState = atom({

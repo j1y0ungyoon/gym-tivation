@@ -178,7 +178,7 @@ export const updatePostUnLike = async ({ id, user, detailPost }: any) => {
 
 export const updatePorfilePostLike = async ({ id, user }: any) => {
   await updateDoc(doc(dbService, 'profile', user), {
-    postlike: arrayUnion(id),
+    postLike: arrayUnion(id),
   });
 };
 export const updateProfilePostUnLike = async ({ id, user }: any) => {

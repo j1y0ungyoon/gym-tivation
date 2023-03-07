@@ -105,10 +105,6 @@ const Post = () => {
       });
       return;
     }
-    // if (!galleryContent) {
-    //   toast.warn('내용을 입력해주세요');
-    //   return;
-    // }
     if (!galleryPhoto) {
       // toast.warn('사진을 선택해주세요');
       showModal({
@@ -150,21 +146,14 @@ const Post = () => {
         if (!sfDoc.exists()) {
           throw '데이터가 없습니다.';
         }
-        const newwLvName = sfDoc.data().lvName;
         const newLv = sfDoc.data().lv + 1;
         transaction.update(sfDocRef, { lv: newLv });
-        if (newwLvName === '일반인' && newLv > 4) {
-          transaction.update(sfDocRef, { lvName: '헬애기' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬애기' && newLv > 14) {
-          transaction.update(sfDocRef, { lvName: '헬린이' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬린이' && newLv > 29) {
-          transaction.update(sfDocRef, { lvName: '헬른이' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬른이' && newLv > 59) {
-          transaction.update(sfDocRef, { lvName: '헬애비' });
-          transaction.update(sfDocRef, { lv: 1 });
+        if (60 > newLv && newLv > 29) {
+          transaction.update(sfDocRef, { lvName: 'green' });
+        } else if (90 > newLv && newLv > 59) {
+          transaction.update(sfDocRef, { lvName: 'blue' });
+        } else if (newLv > 89) {
+          transaction.update(sfDocRef, { lvName: 'red' });
         }
       });
     } catch (error: any) {
@@ -180,7 +169,7 @@ const Post = () => {
       <GalleryPostContainer>
         <GalleryContent>
           <GalleryPostContent onSubmit={onSubmitGallery}>
-            <GalleryTitleContainer>
+            {/* <GalleryTitleContainer>
               <Title>제목 </Title>
 
               <InputDiv>
@@ -189,7 +178,7 @@ const Post = () => {
                   value={galleryTitle}
                 />
               </InputDiv>
-            </GalleryTitleContainer>
+            </GalleryTitleContainer> */}
 
             <GalleryContentContainer>
               <GalleryImageWarpper htmlFor="input-file">
@@ -200,16 +189,12 @@ const Post = () => {
                   accept="image/*"
                   onChange={onChangeUpload}
                 />
-                {/* <Dropzone
-                  selectedImages={selectedImages}
-                  setSelectedImages={setSelectedImages}
-                /> */}
               </GalleryImageWarpper>
-              {/* <GalleryContentInput
-            placeholder="글을 입력해주세요"
-            onChange={onChangeGalleryContent}
-            value={galleryContent}
-          /> */}
+              <GalleryContentInput
+                placeholder="글을 입력해주세요"
+                onChange={onChangeGalleryContent}
+                value={galleryContent}
+              />
             </GalleryContentContainer>
             <GalleryButtonWrapper>
               <GalleryPostButton type="submit">게시하기</GalleryPostButton>
