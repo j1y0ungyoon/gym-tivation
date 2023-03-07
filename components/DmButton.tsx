@@ -56,6 +56,9 @@ const DmButton = ({ id }: DmButtonProps) => {
 
   const onClickDm = async () => {
     setApponentId(id);
+    if (!id) {
+      return;
+    }
 
     // if (!user?.uid || !id) {
     //   return console.log('뭔가 못받음');

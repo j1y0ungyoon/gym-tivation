@@ -8,11 +8,12 @@ import { dmListsState, roomState } from '@/recoil/dmData';
 import { useRecoilState } from 'recoil';
 
 import { authService, dbService } from '@/firebase';
-import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 
 import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
 import DmButton from '@/components/DmButton';
+import DmListUserName from '@/components/DmListUserName';
 
 type ChatLog = {
   id: string | undefined;
@@ -216,8 +217,13 @@ const Chat = () => {
                     {dmList.enterUser?.includes(`${user?.uid}`) ? (
                       <MyDmList onClick={() => setRoomNum(dmList.id)}>
                         {dmList.enterUser.map((enterUser) => {
-                          if (enterUser !== user?.uid) {
-                            return enterUser;
+                          if (enterUser !== authService.currentUser?.uid) {
+                            return (
+                              <DmListUserName
+                                enterUser={enterUser}
+                                key={nanoid()}
+                              />
+                            );
                           }
                         })}
                       </MyDmList>
@@ -226,7 +232,7 @@ const Chat = () => {
                 );
               })}
             </MyDmListContainer>
-            <DmChat roomNum={roomNum} />
+            <DmChat />
           </DmContainer>
         ) : (
           <ChattingContainer>
@@ -466,8 +472,8 @@ const CategoryBtn = styled.button`
   border: 1px solid black;
 
   border-radius: 50px;
-  background-color: #d9d9d9;
-  color: #797979;
+  background-color: #fff;
+  color: #000;
   :hover {
     background-color: #000;
     color: #fff;
