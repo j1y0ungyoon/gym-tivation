@@ -11,7 +11,6 @@ import MyPageBoard from '@/components/mypage/MyPageBoard';
 import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
 
-// next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
 const MyPage = ({ params }: any) => {
   //전달받은 id
   const paramsId = String(params);
