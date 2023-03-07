@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
-import CustomMenu from '@/components/CustomMenu';
-import CustomToggle from '@/components/CustomToggle';
+import CustomMenu from '@/components/common/dropDown/CustomMenu';
+import CustomToggle from '@/components/common/dropDown/CustomToggle';
 import { PropsWithChildren } from 'react';
 import { DropDownProps } from '@/type';
 import { nanoid } from 'nanoid';

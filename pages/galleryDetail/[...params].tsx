@@ -1,4 +1,4 @@
-import CommentList from '@/components/CommentList';
+import CommentList from '@/components/comment/CommentList';
 import Like from '@/components/Like';
 import { authService, storage } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';

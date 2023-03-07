@@ -24,40 +24,38 @@ const BoardItem = ({
   );
 
   const getSearchedPosts = () => {
-    if (!searchText) return;
-
-    if (searchCategory === '전체') {
+    if (searchCategory === '전체' || searchText === '') {
       setSearchedPosts(filteredCategory);
+      return;
     }
 
+    if (!searchText) return;
+
     if (searchCategory === '내용') {
-      const result = filteredCategory.filter(
-        (item: BoardPostType) =>
+      const result = filteredCategory.filter((item: BoardPostType) => {
+        return (
           item.content?.toLowerCase().includes(searchText?.toLowerCase()) ||
-          item.title?.toLowerCase().includes(searchText?.toLowerCase()),
-      );
+          item.title?.toLowerCase().includes(searchText?.toLowerCase())
+        );
+      });
 
       setSearchedPosts(result);
+      return;
     }
 
     if (searchCategory === '닉네임') {
-      const result = filteredCategory.filter((item: BoardPostType) =>
-        item.nickName?.toLowerCase().includes(searchText?.toLowerCase()),
-      );
+      const result = filteredCategory.filter((item: BoardPostType) => {
+        return item.nickName?.toLowerCase().includes(searchText?.toLowerCase());
+      });
 
       setSearchedPosts(result);
+      return;
     }
   };
 
   useEffect(() => {
     getSearchedPosts();
-  }, [searchText, searchCategory]);
-
-  useEffect(() => {
-    getSearchedPosts();
-    setSearchedPosts(filteredCategory);
-    console.log(searchedPosts);
-  }, []);
+  }, [searchText, searchCategory, category]);
 
   return (
     <>
