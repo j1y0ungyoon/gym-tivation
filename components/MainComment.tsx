@@ -43,10 +43,6 @@ const MainComment = ({ item }: any) => {
     }
   };
 
-  if (isDeleting) {
-    return <div>삭제중입니다</div>;
-  }
-
   return (
     <>
       <CommentWrapper>
@@ -120,6 +116,7 @@ const CommentWrapper = styled.div`
   width: 1200px;
   box-shadow: -2px 2px 0px 0px #000000;
   border-radius: 19px;
+  background-color: white;
 `;
 const CommentContainer = styled.div`
   display: flex;
@@ -133,6 +130,7 @@ export const CommentListWrapper = styled.span`
   align-items: center;
   width: 80%;
   margin: 10px;
+  word-break: break-all;
 `;
 export const NickName = styled.div`
   display: flex;
@@ -140,13 +138,9 @@ export const NickName = styled.div`
   align-items: center;
 `;
 const DeleteButton = styled.button`
-  width: 7%;
-  height: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  border-radius: 1rem;
-  border: 0.1px solid black;
+  ${({ theme }) => theme.btn.btn50}
+  min-width:70px;
+  margin: 10px;
 `;
 const ProfileImage = styled.img`
   display: flex;
