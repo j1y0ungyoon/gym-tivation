@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { authService, dbService } from '@/firebase';
+import { dbService } from '@/firebase';
 import {
   collection,
   getCountFromServer,
@@ -16,17 +16,17 @@ import 'slick-carousel/slick/slick-theme.css';
 import MainCommentList from '@/components/MainCommentList';
 import { nanoid } from 'nanoid';
 import HomeComment from '@/components/HomeComment';
+import Loading from '@/components/common/globalModal/Loading';
 
 type ImgBoxProps = {
   img: string;
 };
 
 const Home = () => {
-  const user = authService.currentUser;
-
   const [mainImgs, setMainImgs] = useState<any>([]);
   const [userCount, setUserCount] = useState<number>();
   const [mainComments, setMainComments] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getGallery = async () => {
@@ -41,7 +41,6 @@ const Home = () => {
       const gallery = q.docs.map((doc) => {
         return doc.data().photo;
       });
-
       setMainImgs(gallery);
     };
 
@@ -49,9 +48,9 @@ const Home = () => {
       const profileCollection = collection(dbService, 'profile');
       const snapshot = await getCountFromServer(profileCollection);
       const profileCount = snapshot.data().count;
+
       setUserCount(profileCount);
     };
-
     getProfile();
     getGallery();
   }, []);
@@ -69,8 +68,8 @@ const Home = () => {
       const comment = q.docs.map((doc) => {
         return doc.data();
       });
-
       setMainComments(comment);
+      setIsLoading(false);
     };
     getComment();
   }, []);
@@ -108,6 +107,10 @@ const Home = () => {
     cssEase: 'linear',
     pauseOnHover: false,
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <HomeWrapper>

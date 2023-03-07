@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import ProfileEdit from '@/components/mypage/ProfileEdit';
 import MyPageCalendar from '@/components/mypage/MyPageCalendar';
@@ -10,6 +10,7 @@ import MyPageLike from '@/components/mypage/MyPageLike';
 import MyPageBoard from '@/components/mypage/MyPageBoard';
 import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
+import Loading from '@/components/common/globalModal/Loading';
 //mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id
@@ -164,6 +165,16 @@ const MyPage = ({ params }: any) => {
   );
   const combineData = board?.concat(gallery);
 
+  if (galleryLoading) {
+    return <Loading />;
+  }
+  if (profileLoading) {
+    return <Loading />;
+  }
+  if (boardLoading) {
+    return <Loading />;
+  }
+
   return (
     <MyPageWrapper>
       {profile && (
@@ -286,7 +297,7 @@ const MyPageWrapper = styled.div`
 `;
 const MyPageContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
-  height : calc(100%-40px);
+  height : calc(100% - 40px);
 `;
 const ProfileBox = styled.div`
   float: left;

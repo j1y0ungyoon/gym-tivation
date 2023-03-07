@@ -4,11 +4,15 @@ import logo from '../../../public/assets/animation/loading.json';
 const Loading = () => {
   return (
     <LottieWrapper>
-      <Lottie loop animationData={logo} play />
+      <StyledLottie loop animationData={logo} play />
     </LottieWrapper>
   );
 };
 const LottieWrapper = styled.div`
+  ${({ theme }) => theme.mainLayout.wrapper}
+`;
+
+const StyledLottie = styled(Lottie)`
   width: 400px;
 `;
 export default Loading;

@@ -235,7 +235,6 @@ const DeleteButton = styled.button`
   min-width:80px;
   margin-left: 5px;
   border: 1px solid black;
-  background-color: white;
 `;
 
 const UserProfile = styled.div`

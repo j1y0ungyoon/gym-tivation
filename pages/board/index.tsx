@@ -1,4 +1,5 @@
 import BoardItem from '@/components/board/BoardItem';
+import Loading from '@/components/common/globalModal/Loading';
 import SearchDropDown from '@/components/common/globalModal/SearchDropDown';
 import { BoardPostType } from '@/type';
 import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
@@ -45,7 +46,7 @@ const Board = () => {
   };
 
   if (isLoading) {
-    return <div>로딩중입니다</div>;
+    return <Loading />;
   }
 
   return (
@@ -83,18 +84,20 @@ const Board = () => {
 
           <ContentWrapper>
             <SearchBox>
-              <input
-                placeholder={
-                  searchText
-                    ? `'${searchText}'의 검색 결과`
-                    : '검색어를 입력하세요!'
-                }
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSearchInput(e.target.value)
-                }
-                onKeyPress={onKeyPressSearch}
-                value={searchInput}
-              />
+              <SearchInputBox>
+                <SearchInput
+                  placeholder={
+                    searchText
+                      ? `'${searchText}'의 검색 결과`
+                      : '검색어를 입력하세요!'
+                  }
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setSearchInput(e.target.value)
+                  }
+                  onKeyPress={onKeyPressSearch}
+                  value={searchInput}
+                />
+              </SearchInputBox>
               <SearchDropDown setSearchCategory={setSearchCategory}>
                 {searchCategory}
               </SearchDropDown>
@@ -123,7 +126,6 @@ const BoardMain = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
 `;
 const ContentWrapper = styled.div`
   background-color: white;
@@ -131,6 +133,19 @@ const ContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   width: 100%;
   height: 100%;
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #000;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+    margin: 40px 0;
+  }
 `;
 const BoardContent = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
@@ -161,14 +176,24 @@ const CategoryContainter = styled.div`
 
 const CategoryButton = styled.button<boardCategoryProps>`
   ${({ theme }) => theme.btn.category}
-  width:140px;
+  width:150px;
   margin: 10px;
 `;
 
 const SearchBox = styled.div`
+  margin-top: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
+`;
+const SearchInputBox = styled.div`
+  ${({ theme }) => theme.inputDiv}
+  width: 320px;
+  border: 1px solid black;
+  margin-right: 10px;
+`;
+const SearchInput = styled.input`
+  ${({ theme }) => theme.input}
 `;
 export default Board;

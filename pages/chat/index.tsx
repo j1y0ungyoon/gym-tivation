@@ -477,24 +477,10 @@ const CategoryContainer = styled.div`
 `;
 
 const CategoryBtn = styled.button`
-  width: 120px;
-  height: 40px;
-  padding: 0;
+  ${({ theme }) => theme.btn.category}
+
   margin-bottom: 20px;
   margin-right: 10px;
-  border: 1px solid black;
-
-  border-radius: 50px;
-  background-color: #fff;
-  color: #000;
-  :hover {
-    background-color: #000;
-    color: #fff;
-  }
-  :focus:focus {
-    background-color: #000;
-    color: #fff;
-  }
 `;
 
 export default Chat;

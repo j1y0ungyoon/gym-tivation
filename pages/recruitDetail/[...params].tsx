@@ -40,6 +40,7 @@ import {
 import { toast } from 'react-toastify';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -440,15 +441,15 @@ const RecruitDetail = ({ params }: any) => {
   }, [refetchedPost]);
 
   if (!refetchedPost) {
-    return <div>데이터를 불러오고 있습니다.</div>;
+    return <Loading />;
   }
 
   return (
     <>
       {isEditting ? (
-        <div>게시물을 수정중입니다</div>
+        <Loading />
       ) : isDeleting ? (
-        <div>게시물을 삭제중입니다</div>
+        <Loading />
       ) : (
         <>
           {changeForm ? (

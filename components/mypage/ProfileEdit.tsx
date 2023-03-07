@@ -732,14 +732,8 @@ const IntroductionEditText = styled.textarea`
 const EditButton = styled.button`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
-  background-color: white;
-  border: black;
-  border-style: solid;
-  border-width: 0.1rem;
   :hover {
     cursor: pointer;
-    background-color: black;
-    color: white;
   }
 `;
 
