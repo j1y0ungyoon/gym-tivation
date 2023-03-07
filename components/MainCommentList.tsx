@@ -61,8 +61,8 @@ const MainCommentList = ({ id }: MainCommentType) => {
       where('uid', '==', authService.currentUser?.uid),
     );
     const docsData = await getDocs(q);
-    const getLvName = docsData.docs[0].data()?.lvName;
-    const getLv = docsData.docs[0].data()?.lv;
+    const getLvName = docsData.docs[0]?.data()?.lvName;
+    const getLv = docsData.docs[0]?.data()?.lv;
     setUserLvName(getLvName);
     setUserLv(getLv);
   };

@@ -13,6 +13,7 @@ import {
 } from '../api/api';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import Loading from '@/components/common/globalModal/Loading';
 
 const GalleryDetail = ({ params }: any) => {
   const queryClient = useQueryClient();
@@ -32,8 +33,10 @@ const GalleryDetail = ({ params }: any) => {
     ['gallery', id],
     getFetchedGalleryDetail,
   );
-  const { mutate: editGallery } = useMutation(editGalleryBoard);
-  const { mutate: removeGalleryPost } = useMutation(deleteGalleryPost);
+  const { mutate: editGallery, isLoading: isEditing } =
+    useMutation(editGalleryBoard);
+  const { mutate: removeGalleryPost, isLoading: isDeleting } =
+    useMutation(deleteGalleryPost);
   const user = authService.currentUser?.uid;
 
   const onChangeEditGalleryTitle = (
@@ -174,6 +177,16 @@ const GalleryDetail = ({ params }: any) => {
     setEditGalleryContent(detailGalleryPost?.data()?.content);
     setEditGalleryPhoto(detailGalleryPost?.data()?.photo);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (isDeleting) {
+    return <Loading />;
+  }
+  if (isEditing) {
+    return <Loading />;
+  }
 
   return (
     <>

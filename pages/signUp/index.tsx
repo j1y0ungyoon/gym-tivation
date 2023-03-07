@@ -550,7 +550,7 @@ const SignUpWrapper = styled.div`
 `;
 const SignUpContainer = styled.form`
   ${({ theme }) => theme.mainLayout.container}
-  height : calc(100%-40px);
+  height : calc(100% - 40px);
   text-align: center;
 `;
 const PasswordShow = styled.div`
@@ -600,6 +600,7 @@ const TOUContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
   justify-content: center;
   text-align: center;
+  height: calc(100% - 40px);
 `;
 const TouCheckBox = styled.div`
   display: flex;

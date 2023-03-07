@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { addGalleryPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
 
 const Post = () => {
   const queryClient = useQueryClient();
@@ -63,7 +64,7 @@ const Post = () => {
 
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const originalImage: any = event.target.files?.[0];
-    setGalleryPhoto(URL.createObjectURL(originalImage));
+    // setGalleryPhoto(URL.createObjectURL(originalImage));
     console.log('original size', originalImage?.size);
     if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
@@ -73,12 +74,11 @@ const Post = () => {
   useEffect(() => {
     const imageRef = ref(storage, `gallery/${nanoid()}}`);
     if (!imageUpload) return;
-    uploadBytes(imageRef, imageUpload);
-    // .then((snapshot) => {
-    //   getDownloadURL(snapshot.ref).then((url) => {
-    //     setGalleryPhoto(url);
-    //   });
-    // });
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setGalleryPhoto(url);
+      });
+    });
   }, [imageUpload]);
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const Post = () => {
       // toast.info('로그인을 먼저 해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-        modalProps: { contentText: '로그인을 먼저 해주세요!' },
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
       });
       router.push('/gallery');
     }
@@ -127,7 +127,7 @@ const Post = () => {
       },
     });
     if (isLoading) {
-      return <div>로딩중입니다</div>;
+      return <Loading />;
     }
 
     //lv 추가 및 lvName 추가

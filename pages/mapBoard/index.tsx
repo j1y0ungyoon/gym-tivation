@@ -9,6 +9,7 @@ import { CoordinateType } from '../../type';
 import SearchColleague from '@/components/mapBoard/SearchColleague';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
 
 const initialCoordinate: CoordinateType = {
   lat: 33.5563,
@@ -88,7 +89,7 @@ const MapBoard = () => {
 
   // 교정이 필요하다. 이건 클라이언트 state다. server state로 바꿀 필요가 있다.
   if (!recruitPosts) {
-    return <div>게시글을 불러오고 있습니다.</div>;
+    return <Loading />;
   }
 
   return (
@@ -149,6 +150,7 @@ const MapBoardWrapper = styled.main`
 const MapBoardContainer = styled.section`
   ${({ theme }) => theme.mainLayout.container}
   flex-direction: column;
+  height: calc(100% - 40px);
 `;
 
 const MapBoardBodyContainer = styled.section`

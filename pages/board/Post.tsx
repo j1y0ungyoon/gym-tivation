@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { addBoardPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -164,7 +165,7 @@ const Post = () => {
       },
     });
     if (isLoading) {
-      return <div>로딩중입니다</div>;
+      return <Loading />;
     }
 
     //lv 추가 및 lvName 추가

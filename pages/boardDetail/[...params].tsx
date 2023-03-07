@@ -16,6 +16,7 @@ import CommentList from '@/components/comment/CommentList';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -93,7 +94,7 @@ const Detail = ({ params }: any) => {
     ['post', id],
     getFetchedBoardDetail,
   );
-  const { mutate } = useMutation(editBoardPost);
+  const { mutate, isLoading: isEditing } = useMutation(editBoardPost);
 
   const { mutate: removeBoardPost, isLoading: isDeleting } =
     useMutation(deleteBoardPost);
@@ -221,6 +222,18 @@ const Detail = ({ params }: any) => {
     // setEditDetailPhoto(detailPost?.photo);
   };
   //기존 게시글 read
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isDeleting) {
+    return <Loading />;
+  }
+
+  if (isEditing) {
+    return <Loading />;
+  }
 
   return (
     <>

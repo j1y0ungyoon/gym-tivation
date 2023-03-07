@@ -1,3 +1,4 @@
+import Loading from '@/components/common/globalModal/Loading';
 import GalleryItem from '@/components/gallery/GalleryItem';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
@@ -13,6 +14,10 @@ const Gallery = () => {
       pathname: `/gallery/Post`,
     });
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <GalleryBoardWrapper>
@@ -47,14 +52,13 @@ const GalleryBoardMain = styled.main`
   align-items: center;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
 `;
 const GalleryContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   flex-direction: column;
   border: 1px solid black;
   display: flex;
-  height: 100%;
+  height: calc(100% - 120px);
   width: 100%;
   background-color: white;
 `;

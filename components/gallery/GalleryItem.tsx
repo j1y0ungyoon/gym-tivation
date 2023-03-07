@@ -31,6 +31,18 @@ const GalleryList = styled.div`
   overflow-y: auto;
   justify-content: center;
   align-content: flex-start;
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #000;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+    margin: 30px 0;
+  }
 `;
 
 export default GalleryItem;

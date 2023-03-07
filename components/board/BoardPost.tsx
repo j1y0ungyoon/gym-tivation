@@ -81,6 +81,9 @@ const BoardPostWrapper = styled.div`
   height: 9rem;
   padding: 0.5rem;
   cursor: pointer;
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+  }
 `;
 const CommentCount = styled.div`
   display: flex;
@@ -119,9 +122,11 @@ const ItemCategory = styled.div`
   width: 6rem;
   height: 2rem;
   border-radius: 1rem;
-  background-color: #d9d9d9;
+  background-color: #000;
+  color: #fff;
+  font-size: 14px;
   margin: 1rem;
-  border: none;
+  border: 1px solid black;
 `;
 const InformationWrapper = styled.div`
   display: flex;

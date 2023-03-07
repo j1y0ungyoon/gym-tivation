@@ -224,6 +224,5 @@ const SubmitCommentButton = styled.button`
   ${({ theme }) => theme.btn.btn50}
   min-width:80px;
   margin-left: 5px;
-  background-color: white;
   border: 1px solid black;
 `;

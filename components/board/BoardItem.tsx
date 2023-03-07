@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import BoardPost from './BoardPost';
 import type { BoardPostType } from '@/type';
 import { useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
 
 interface BoardItemProps {
   category?: string;
@@ -61,7 +62,7 @@ const BoardItem = ({
     <>
       {searchedPosts?.map((boardPost: any) => {
         return (
-          <BoardList>
+          <BoardList key={nanoid()}>
             <BoardPost
               key={boardPost.id}
               item={boardPost.item}
