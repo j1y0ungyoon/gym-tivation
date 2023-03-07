@@ -16,12 +16,6 @@ const MyPage = ({ params }: any) => {
   //전달받은 id
   const paramsId = String(params);
 
-  //MyPageBoard 불러오기
-  const [boardInformation, setBoardInFormation] = useState([] as any);
-
-  //MyPageGallery 불러오기
-  const [galleryInformation, setGalleryInFormation] = useState([] as any);
-
   //토글
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {
@@ -103,7 +97,7 @@ const MyPage = ({ params }: any) => {
   );
 
   // 프로필 불러오기
-  //함수에
+
   const getProfile = async () => {
     const q = query(collection(dbService, 'profile'));
     const data = await getDocs(q);
@@ -313,7 +307,7 @@ const NavigationBox = styled.div`
   gap: 16px;
   display: flex;
   float: left;
-  width: 63%;
+  width: 65%;
   height: 70px;
   text-align: left;
   margin-top: 2vh;
@@ -339,7 +333,6 @@ const GalleyButton = styled.button`
 const GalleyBox = styled.div`
   width: 98%;
   height: 98%;
-
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -348,7 +341,7 @@ const GalleyBox = styled.div`
 
 const MypageBox = styled.div`
   float: left;
-  width: 70%;
+  width: 72%;
   height: 51%;
   margin-left: 10px;
 `;

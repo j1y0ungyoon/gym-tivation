@@ -27,7 +27,6 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
       {board
         .filter((item) => item.userId === paramsId)
         .map((item) => {
-          console.log('좋아요', item.like);
           return (
             <MyPageBoardContainer
               key={item.id}
@@ -43,11 +42,13 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
                   <BoardCategory>{item.category}</BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
 
-                  {/* <RecruitComment>[{item.comment}]</RecruitComment> */}
+                  <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>{item.createdAt}</NickNameText>
+                  <NickNameText>
+                    {String(item.createdAt).slice(0, -3)}
+                  </NickNameText>
                   <Image
                     src={checkedLike}
                     alt="좋아요"

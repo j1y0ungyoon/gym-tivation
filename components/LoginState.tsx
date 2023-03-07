@@ -1,9 +1,18 @@
 import { useRouter } from 'next/router';
-import { dbService } from '@/firebase';
-import { getDocs } from 'firebase/firestore';
+import { dbService, authService } from '@/firebase';
+import { getDocs, updateDoc } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { collection, doc, query, where } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  query,
+  where,
+  arrayRemove,
+  arrayUnion,
+} from 'firebase/firestore';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import FollowButton from './FollowButton';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -18,10 +27,11 @@ const LoginState = ({
   paramsId,
   followModal,
 }: ProfileEditProps) => {
-  const [following, setFollowing] = useState([] as any);
-  const [follower, setFollower] = useState([] as any);
+  // const [following, setFollowing] = useState([] as any);
+  // const [follower, setFollower] = useState([] as any);
   const router = useRouter();
-
+  const queryClient = useQueryClient();
+  const user = authService.currentUser;
   const goToMyPage = (id: any) => {
     router.push({
       pathname: `/myPage/${item.id}`,
@@ -31,23 +41,46 @@ const LoginState = ({
     });
   };
 
+  const [followingClick, setFollowingClick] = useState(false);
+
   // 팔로워, 팔로잉 불러오기
-  const followGetDoc = async () => {
+  const followerGet = async () => {
     const q = query(
       collection(dbService, 'profile'),
       where('uid', '==', paramsId),
     );
     const data = await getDocs(q);
-    data.docs.map((doc) => {
-      setFollowing(doc.data().following);
-      setFollower(doc.data().follower);
-    });
+    return data.docs.map((doc) => doc.data().follower);
   };
+  const { isLoading: followerLoading, data: follower } = useQuery(
+    'follower',
+    followerGet,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
-  useEffect(() => {
-    followGetDoc();
-    return () => {};
-  }, [followModal]);
+  const followingGet = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', paramsId),
+    );
+    const data = await getDocs(q);
+    return data.docs.map((doc) => doc.data().following);
+  };
+  const { isLoading: followingLoading, data: following } = useQuery(
+    'following',
+    followingGet,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   return (
     <>
@@ -55,26 +88,29 @@ const LoginState = ({
         {toggle ? (
           <>
             {String(follower).includes(item.id) && (
-              <OnOffBox
-                onClick={() => {
-                  goToMyPage(item.id);
-                }}
-              >
-                <PhotoBox>
+              <OnOffBox>
+                <PhotoBox
+                  onClick={() => {
+                    goToMyPage(item.id);
+                  }}
+                >
                   <ProfilePhoto>
                     <Photo src={item.photoURL} />
                   </ProfilePhoto>
                 </PhotoBox>
                 <TextBox>
-                  <FollowText> {item.displayName}</FollowText>
+                  <FollowText>
+                    {item.displayName}
+                    {item.loginState && true ? (
+                      <OnLineState />
+                    ) : (
+                      <OFFLineState />
+                    )}
+                  </FollowText>
                   <div>{item.email}</div>
                 </TextBox>
                 <StateBox>
-                  {item.loginState && true ? (
-                    <OnLineState>ONLINE</OnLineState>
-                  ) : (
-                    <OFFLineState>OFFLINE</OFFLineState>
-                  )}
+                  <FollowButton item={item} Id={item.id} />
                 </StateBox>
               </OnOffBox>
             )}
@@ -82,26 +118,29 @@ const LoginState = ({
         ) : (
           <>
             {String(following).includes(item.id) && (
-              <OnOffBox
-                onClick={() => {
-                  goToMyPage(item.id);
-                }}
-              >
-                <PhotoBox>
+              <OnOffBox>
+                <PhotoBox
+                  onClick={() => {
+                    goToMyPage(item.id);
+                  }}
+                >
                   <ProfilePhoto>
                     <Photo src={item.photoURL} />
                   </ProfilePhoto>
                 </PhotoBox>
                 <TextBox>
-                  <FollowText> {item.displayName}</FollowText>
+                  <FollowText>
+                    {item.displayName}
+                    {item.loginState && true ? (
+                      <OnLineState />
+                    ) : (
+                      <OFFLineState />
+                    )}
+                  </FollowText>
                   <div>{item.email}</div>
                 </TextBox>
                 <StateBox>
-                  {item.loginState && true ? (
-                    <OnLineState>ONLINE</OnLineState>
-                  ) : (
-                    <OFFLineState>OFFLINE</OFFLineState>
-                  )}
+                  <FollowButton item={item} Id={item.id} />
                 </StateBox>
               </OnOffBox>
             )}
@@ -126,7 +165,7 @@ const OnOffBox = styled.div`
   }
 `;
 const PhotoBox = styled.div`
-  width: 25%;
+  width: 15%;
   height: 100%;
 `;
 const ProfilePhoto = styled.div`
@@ -142,30 +181,48 @@ const Photo = styled.img`
   height: 100%;
   object-fit: cover;
 `;
-const FollowText = styled.span`
+const FollowText = styled.div`
   font-size: 1rem;
-  text-align: center;
+  text-align: left;
   font-weight: bolder;
+  display: flex;
+  width: 200px;
+  height: 30px;
 `;
-const OnLineState = styled.li`
-  font-size: 0.8rem;
-  ::marker {
-    color: green;
-    font-size: 16px;
-  }
+const OnLineState = styled.button`
+  margin-top: 6px;
+  margin-left: 6px;
+  border-radius: 100%;
+  width: 12px;
+  height: 12px;
+  background-color: green;
+  border: none;
 `;
-const OFFLineState = styled.li`
-  font-size: 0.8rem;
-  ::marker {
-    font-size: 16px;
-  }
+const OFFLineState = styled.button`
+  margin-top: 6px;
+  margin-left: 6px;
+  border-radius: 100%;
+  width: 12px;
+  height: 12px;
+  border: none;
 `;
 const TextBox = styled.div`
   margin-top: 20px;
   text-align: left;
 `;
 const StateBox = styled.div`
-  margin-top: 30px;
+  margin-top: 20px;
   text-align: right;
   width: 360px;
+`;
+const ClickFollowButton = styled.button`
+  background-color: white;
+  box-shadow: -2px 2px 0px 1px #000000;
+  border-radius: 15px;
+  font-size: 16px;
+  :hover {
+    cursor: pointer;
+    background-color: #ffcab5;
+    color: black;
+  }
 `;

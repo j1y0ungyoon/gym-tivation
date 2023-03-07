@@ -8,7 +8,13 @@ import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
-const Comment = ({ comment }: { comment: CommentType }) => {
+const Comment = ({
+  comment,
+  category,
+}: {
+  comment: CommentType;
+  category: string;
+}) => {
   // 좋아요 눌렀는지 표시
   const [isClickedLike, setIsClickedLike] = useState(false);
 
@@ -72,19 +78,57 @@ const Comment = ({ comment }: { comment: CommentType }) => {
 
   // 게시글 삭제 함수
   const deletePostComment = async () => {
-    try {
-      await removeComment(comment.id);
-      await runTransaction(dbService, async (transaction) => {
-        const sfDocRef = doc(dbService, 'recruitments', String(comment.postId));
-        const sfDoc = await transaction.get(sfDocRef);
-        if (!sfDoc.exists()) {
-          throw '데이터가 없습니다.';
-        }
-        const commentNumber = sfDoc.data().comment - 1;
-        transaction.update(sfDocRef, { comment: commentNumber });
-      });
-    } catch (error) {
-      console.log('에러입니다', error);
+    if (category === '동료 모집') {
+      try {
+        await removeComment(comment.id);
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(
+            dbService,
+            'recruitments',
+            String(comment.postId),
+          );
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment - 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+      } catch (error) {
+        console.log('에러입니다', error);
+      }
+    }
+    if (category === '게시판') {
+      try {
+        await removeComment(comment.id);
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'posts', String(comment.postId));
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment - 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+      } catch (error) {
+        console.log('에러입니다', error);
+      }
+    }
+    if (category === '갤러리') {
+      try {
+        await removeComment(comment.id);
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'gallery', String(comment.postId));
+          const sfDoc = await transaction.get(sfDocRef);
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment - 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+      } catch (error) {
+        console.log('에러입니다', error);
+      }
     }
   };
 

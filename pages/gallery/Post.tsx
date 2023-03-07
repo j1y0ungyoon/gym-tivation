@@ -134,21 +134,14 @@ const Post = () => {
         if (!sfDoc.exists()) {
           throw '데이터가 없습니다.';
         }
-        const newwLvName = sfDoc.data().lvName;
         const newLv = sfDoc.data().lv + 1;
         transaction.update(sfDocRef, { lv: newLv });
-        if (newwLvName === '일반인' && newLv > 4) {
-          transaction.update(sfDocRef, { lvName: '헬애기' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬애기' && newLv > 14) {
-          transaction.update(sfDocRef, { lvName: '헬린이' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬린이' && newLv > 29) {
-          transaction.update(sfDocRef, { lvName: '헬른이' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬른이' && newLv > 59) {
-          transaction.update(sfDocRef, { lvName: '헬애비' });
-          transaction.update(sfDocRef, { lv: 1 });
+        if (60 > newLv && newLv > 29) {
+          transaction.update(sfDocRef, { lvName: 'green' });
+        } else if (90 > newLv && newLv > 59) {
+          transaction.update(sfDocRef, { lvName: 'blue' });
+        } else if (newLv > 89) {
+          transaction.update(sfDocRef, { lvName: 'red' });
         }
       });
     } catch (error: any) {

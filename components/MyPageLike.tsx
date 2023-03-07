@@ -25,8 +25,6 @@ type LikeGet = {
 };
 
 const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
-  const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
-
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -61,8 +59,6 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
     },
   });
 
-  console.log('라이크', like);
-
   return (
     <MyPageBoardWrapper>
       {combineData
@@ -90,12 +86,20 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                     {item.category === undefined ? '오운완 갤러리' : '게시판'}
                   </BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
-
-                  {/* <RecruitComment>[{item.comment}]</RecruitComment> */}
+                  <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>{item.createdAt}</NickNameText>
+                  {item.category === undefined ? (
+                    <NickNameText>
+                      {String(item.createdAt).slice(0, -1)}
+                    </NickNameText>
+                  ) : (
+                    <NickNameText>
+                      {String(item.createdAt).slice(0, -3)}
+                    </NickNameText>
+                  )}
+
                   <Image
                     src={checkedLike}
                     alt="좋아요"

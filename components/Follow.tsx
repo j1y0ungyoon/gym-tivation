@@ -84,7 +84,7 @@ const Follow = ({ item, userUid, follwoingInformation }: FollowInformation) => {
         <StateBox>
           {follwoingInformation.includes(item.id) ? (
             <ClickFollowButton
-              style={{ backgroundColor: 'gray', color: 'white' }}
+              style={{ backgroundColor: ' #FF4800', color: 'white' }}
               onClick={() => FollowReMoveOnClick()}
             >
               팔로잉
@@ -106,14 +106,12 @@ const FollowWrapper = styled.div``;
 const OnOffBox = styled.div`
   display: flex;
   margin: auto;
-  margin-bottom: 20px;
-  width: 540px;
+  margin-bottom: 30px;
+  width: 430px;
   height: 60px;
   border-radius: 15px;
   :hover {
     cursor: pointer;
-    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
-    transition: 0.3s;
   }
 `;
 
@@ -125,6 +123,7 @@ const ProfilePhoto = styled.div`
   margin-right: 20px;
   border-radius: 70%;
   overflow: hidden;
+  background-color: black;
 `;
 const Photo = styled.img`
   width: 100%;
@@ -140,21 +139,22 @@ const FollowText = styled.span`
 const TextBox = styled.div`
   margin-top: 20px;
   text-align: left;
-  width: 400px;
+  width: 100px;
 `;
 const StateBox = styled.div`
   margin-top: 3vh;
   text-align: right;
-  width: 400px; ;
+  width: 500px;
 `;
 const ClickFollowButton = styled.button`
-  background-color: #eeeeee;
-  border: none;
+  background-color: white;
+  margin-right: 50px;
+  box-shadow: -2px 2px 0px 1px #000000;
   border-radius: 15px;
   font-size: 16px;
   :hover {
     cursor: pointer;
-    background-color: gray;
-    color: white;
+    background-color: #ffcab5;
+    color: black;
   }
 `;
