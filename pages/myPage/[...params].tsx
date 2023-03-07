@@ -364,6 +364,7 @@ const ToggleButton = styled.button`
     cursor: pointer;
     background-color: black;
     color: white;
+    transition: 0.7s;
   }
   :focus {
     background-color: black;
