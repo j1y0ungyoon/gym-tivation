@@ -97,11 +97,11 @@ const Post = () => {
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!galleryTitle) {
+    if (!galleryContent) {
       // toast.warn('제목을 입력해주세요');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
-        modalProps: { contentText: '제목을 입력해주세요!' },
+        modalProps: { contentText: '내용을 입력해주세요!' },
       });
       return;
     }
