@@ -57,18 +57,26 @@ const FollowButton = ({ item, Id }: FollowButtonType) => {
   return (
     <>
       {item.follower?.includes(user) ? (
-        <EditButton
-          style={{ backgroundColor: 'black', color: 'white' }}
-          onClick={() => FollowReMoveOnClick()}
-        >
-          <IconImg src="/assets/icons/myPage/Follow.svg" />
-          팔로잉
-        </EditButton>
+        <>
+          {item.id === authService.currentUser?.uid ? null : (
+            <EditButton
+              style={{ backgroundColor: '#FF4800', color: 'white' }}
+              onClick={() => FollowReMoveOnClick()}
+            >
+              <IconImg src="/assets/icons/myPage/followingcheck.svg" />
+              팔로잉
+            </EditButton>
+          )}
+        </>
       ) : (
-        <EditButton onClick={() => FollowOnClick()}>
-          <IconImg src="/assets/icons/myPage/Follow.svg" />
-          팔로우
-        </EditButton>
+        <>
+          {item.id === authService.currentUser?.uid ? null : (
+            <EditButton onClick={() => FollowOnClick()}>
+              <IconImg src="/assets/icons/myPage/Follow.svg" />
+              팔로우
+            </EditButton>
+          )}
+        </>
       )}
     </>
   );
@@ -84,8 +92,8 @@ const EditButton = styled.button`
   border-width: 0.1rem;
   :hover {
     cursor: pointer;
-    background-color: black;
-    color: white;
+    background-color: #ffcab5;
+    color: black;
   }
 `;
 const IconImg = styled.img`

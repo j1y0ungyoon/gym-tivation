@@ -1,16 +1,12 @@
 import { dbService } from '@/firebase';
 import { MapModalProps, RecruitPostType } from '@/type';
 import { collection, getDocs } from 'firebase/firestore';
+import { nanoid } from 'nanoid';
 import React, { useRef, useEffect, useState } from 'react';
 import { Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 import MyLocationMarker from './MyLocationMarker';
 import RecruitPostsWindow from './RecruitPostsWindow';
-
-// const initialPosition = {
-//   lat: 33.5563,
-//   lng: 126.79581,
-// };
 
 const SearchColleague = (props: MapModalProps) => {
   const { coordinate, setMarkerCoordi, region, setRegion } = props;
@@ -32,9 +28,6 @@ const SearchColleague = (props: MapModalProps) => {
   });
 
   // onTileLoad(중심 위치)를 위한 위치 좌표 state
-  // const [position, setPosition] = useState(initialPosition);
-
-  const mapRef = useRef();
 
   const onChangeInputRegion = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -82,8 +75,6 @@ const SearchColleague = (props: MapModalProps) => {
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
         //   @ts-ignore
         map.setBounds(bounds);
-        console.log('bounds', bounds);
-        console.log('map', map);
       }
     });
   }, [map, region]);
@@ -111,7 +102,10 @@ const SearchColleague = (props: MapModalProps) => {
           center={{ lat: 33.5563, lng: 126.79581 }}
           style={{ width: '90%', height: '90%', borderRadius: '2rem' }}
         >
-          <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
+          <MapMarker
+            key={`${nanoid()}`}
+            position={{ lat: 33.55635, lng: 126.795841 }}
+          >
             <div style={{ color: '#000' }}>설정된 좌표가 없습니다!</div>
           </MapMarker>
         </Map>
@@ -166,6 +160,7 @@ const SearchColleague = (props: MapModalProps) => {
                     yAnchor={3}
                   >
                     <RecruitPostsWindow
+                      key={`recruit-post-window-${nanoid()}`}
                       post={post}
                       recruitPosts={recruitPosts}
                       setMarkerCoordi={setMarkerCoordi}

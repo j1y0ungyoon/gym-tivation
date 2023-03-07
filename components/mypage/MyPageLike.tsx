@@ -1,5 +1,5 @@
 import { dbService } from '@/firebase';
-import checkedLike from '../public/assets/images/checkedLike.png';
+// import checkedLike from '../public/assets/images/checkedLike.png';
 import Image from 'next/image';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
@@ -25,8 +25,6 @@ type LikeGet = {
 };
 
 const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
-  const [likeInformation, setLikeInFormation] = useState<Like[]>([]);
-
   const router = useRouter();
   const goToBoardDetailPost = (id: any) => {
     router.push({
@@ -61,8 +59,6 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
     },
   });
 
-  console.log('라이크', like);
-
   return (
     <MyPageBoardWrapper>
       {combineData
@@ -90,19 +86,21 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                     {item.category === undefined ? '오운완 갤러리' : '게시판'}
                   </BoardCategory>
                   <BoardTitleText>{item.title}</BoardTitleText>
-
-                  {/* <RecruitComment>[{item.comment}]</RecruitComment> */}
+                  <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>{item.createdAt}</NickNameText>
-                  <Image
-                    src={checkedLike}
-                    alt="좋아요"
-                    width={20}
-                    height={20}
-                    style={{ marginRight: '4px', marginTop: '3px' }}
-                  />
+                  {item.category === undefined ? (
+                    <NickNameText>
+                      {String(item.createdAt).slice(0, -1)}
+                    </NickNameText>
+                  ) : (
+                    <NickNameText>
+                      {String(item.createdAt).slice(0, -3)}
+                    </NickNameText>
+                  )}
+
+                  <IconImg src="/assets/icons/myPage/Likes.svg" />
                   <NickNameText>
                     {item.like ? item.like.length : 0}
                   </NickNameText>
@@ -210,4 +208,10 @@ const RecruitComment = styled.span`
   color: gray;
   font-weight: bolder;
   margin-left: 15px;
+`;
+const IconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5px;
+  margin-bottom: 2px;
 `;

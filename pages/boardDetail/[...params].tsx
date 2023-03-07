@@ -14,6 +14,8 @@ import DOMPurify from 'dompurify';
 import BoardCategory from '@/components/board/BoardCategory';
 import CommentList from '@/components/comment/CommentList';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -82,8 +84,11 @@ const Detail = ({ params }: any) => {
   const [editDetailContent, setEditDetailContent] = useState<string | any>('');
   // const [editImageUpload, setEditImageUpload] = useState<any>('');
 
+  const { showModal } = useModal();
+
   const [id] = params;
   const [profile, setProfile] = useState<any>('');
+
   const { data: detailPost, isLoading } = useQuery(
     ['post', id],
     getFetchedBoardDetail,
@@ -96,9 +101,8 @@ const Detail = ({ params }: any) => {
   const router = useRouter();
   const user = authService.currentUser?.uid;
   // 게시글, 저장된 이미지 파일 delete
-  const onClickDeleteBoardPost = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-    if (answer) {
+  const onClickDeleteBoardPost = () => {
+    const onDeleteFunction = () => {
       try {
         removeBoardPost(
           { id: id, photo: detailPost?.data()?.photo },
@@ -112,7 +116,15 @@ const Detail = ({ params }: any) => {
       } catch (error) {
         console.log('다시 확인해주세요', error);
       }
-    }
+    };
+
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onDeleteFunction,
+      },
+    });
   };
 
   const onChangeEditTitle = (event: React.ChangeEvent<HTMLInputElement>) => {

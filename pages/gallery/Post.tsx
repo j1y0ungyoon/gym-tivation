@@ -10,7 +10,9 @@ import mouseClick from '../../public/assets/icons/mouseClick.png';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQueryClient } from 'react-query';
 import { addGalleryPost } from '../api/api';
-import { url } from 'inspector';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+
 const Post = () => {
   const queryClient = useQueryClient();
   const [imageUpload, setImageUpload] = useState<File | undefined>();
@@ -22,7 +24,7 @@ const Post = () => {
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
-
+  const { showModal } = useModal();
   const onChangeGalleryTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGalleryTitle(event.target.value);
   };
@@ -81,7 +83,11 @@ const Post = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      // toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인을 먼저 해주세요!' },
+      });
       router.push('/gallery');
     }
   }, []);

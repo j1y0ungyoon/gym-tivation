@@ -4,6 +4,8 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { authService } from '@/firebase';
 import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 type ModalProps = {
   onClickCloseModal: () => void;
@@ -14,6 +16,7 @@ const SignInModal = ({ onClickCloseModal, email_validation }: ModalProps) => {
   const [email, setEmail] = useState('');
   const [isValidEmail, setIsValiEmail] = useState(false);
   const [emailMessage, setEmailMessage] = useState<string>('');
+  const { showModal } = useModal();
   const onChangeEmail = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const emailRegex =
@@ -42,7 +45,11 @@ const SignInModal = ({ onClickCloseModal, email_validation }: ModalProps) => {
     e.preventDefault();
     try {
       await sendPasswordResetEmail(authService, email);
-      toast.warn('이메일이 전송됐습니다.');
+      // toast.warn('이메일이 전송됐습니다.');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '이메일이 전송되었습니다!' },
+      });
       onClickCloseModal();
     } catch (error: any) {
       alert(error.message);

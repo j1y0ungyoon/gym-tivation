@@ -134,8 +134,8 @@ const DmButtonWrapper = styled.button`
   border-width: 0.1rem;
   :hover {
     cursor: pointer;
-    background-color: black;
-    color: white;
+    background-color: #ffcab5;
+    color: black;
   }
 `;
 

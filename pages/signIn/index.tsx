@@ -21,8 +21,10 @@ import {
   AiFillEyeInvisible,
 } from 'react-icons/ai';
 import styled from 'styled-components';
-import SignInModal from '@/components/SignInModal';
+import SignInModal from '@/components/mypage/SignInModal';
 import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -56,6 +58,7 @@ const SignIn = () => {
   const [passwordMessage, setPasswordMessage] = useState<string>('');
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [showPasword, setShowPassword] = useState(false);
+  const { showModal } = useModal();
 
   const onChangeEmail = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,24 +122,48 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        toast.success('로그인 완료');
+        // toast.success('로그인 완료');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+          modalProps: { contentText: '로그인이 완료되었습니다!' },
+        });
         router.push('/');
       } else {
         authService.signOut();
-        toast.warn('이메일 인증을 완료해주세요');
+        // toast.warn('이메일 인증을 완료해주세요');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+          modalProps: { contentText: '이메일 인증을 완료해주세요!' },
+        });
       }
     } catch (error: any) {
       if (error.code == 'auth/invalid-email') {
-        toast.error('이메일 형식이 틀렸습니다');
+        // toast.error('이메일 형식이 틀렸습니다');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+          modalProps: { contentText: '이메일 형식이 아닙니다!' },
+        });
       }
       if (error.code == 'auth/user-not-found') {
-        toast.error('이메일이 없습니다');
+        // toast.error('이메일이 없습니다');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+          modalProps: { contentText: '이메일이 없습니다!' },
+        });
       }
       if (error.code == 'auth/wrong-password') {
-        toast.error('비밀번호를 다시 확인해주세요');
+        // toast.error('비밀번호를 다시 확인해주세요');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+          modalProps: { contentText: '비밀번호를 다시 확인해주세요!' },
+        });
       }
       if (error.code == 'auth/too-many-requests') {
-        toast.error('잠시후 다시 시도해 주세요');
+        // toast.error('잠시후 다시 시도해 주세요');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+          modalProps: { contentText: '잠시 후 시도해주세요!' },
+        });
       }
     }
   };
@@ -166,7 +193,7 @@ const SignIn = () => {
           // 운동 참여 버튼 테스트를 위해 가입시 필드 추가
           userParticipation: [],
           lv: 1,
-          lvName: '일반인',
+          lvName: 'Yellow',
           loginState: true,
         });
         await addDoc(collection(dbService, 'dms'), {
@@ -175,7 +202,11 @@ const SignIn = () => {
           chatLog: [],
         });
       }
-      toast.success('로그인 완료');
+      // toast.success('로그인 완료');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인이 완료되었습니다!' },
+      });
       router.push('/');
     } catch (error: any) {
       toast.error(error.message);

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { CalendarItem } from './MyPageCalendar';
 import { useState } from 'react';
 import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { dbService } from '@/firebase';

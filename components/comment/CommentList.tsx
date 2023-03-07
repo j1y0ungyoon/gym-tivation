@@ -12,12 +12,14 @@ import {
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 // props로 받은 id는 해당 recruitPost의 id임
 const CommentList = ({ id, category }: { id: string; category: string }) => {
   const [inputComment, setInputComment] = useState('');
   const [comments, setComments] = useState<CommentType[]>([]);
+  const { showModal } = useModal();
 
   const onChangeInputComment = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -29,7 +31,10 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
   // 댓글 작성 완료
   const onSubmitComment = async () => {
     if (!inputComment) {
-      toast.info('댓글 내용을 작성해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '댓글 내용을 작성해주세요!' },
+      });
       return;
     }
 
@@ -46,7 +51,8 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         createdAt: Date.now(),
       };
 
-      if (category === '동료 모집' || '게시판' || '갤러리') {
+      if (category === '동료 모집') {
+        //댓글로 인한 수정
         await addDoc(collection(dbService, 'comments'), newComment)
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
@@ -63,10 +69,47 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         });
         return;
       }
+      if (category === '게시판') {
+        await addDoc(collection(dbService, 'comments'), newComment)
+          .then(() => console.log('데이터 전송 성공'))
+          .catch((error) => console.log('에러 발생', error));
+        setInputComment('');
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'posts', id);
+          const sfDoc = await transaction.get(sfDocRef);
+
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment + 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+        return;
+      }
+      if (category === '갤러리') {
+        await addDoc(collection(dbService, 'comments'), newComment)
+          .then(() => console.log('데이터 전송 성공'))
+          .catch((error) => console.log('에러 발생', error));
+        setInputComment('');
+        await runTransaction(dbService, async (transaction) => {
+          const sfDocRef = doc(dbService, 'gallery', id);
+          const sfDoc = await transaction.get(sfDocRef);
+
+          if (!sfDoc.exists()) {
+            throw '데이터가 없습니다.';
+          }
+          const commentNumber = sfDoc.data().comment + 1;
+          transaction.update(sfDocRef, { comment: commentNumber });
+        });
+        return;
+      }
     }
 
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
       setInputComment('');
       return;
     }
@@ -106,7 +149,9 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
         {comments
           .filter((comment) => comment.postId === id)
           .map((comment) => {
-            return <Comment key={comment.id} comment={comment} />;
+            return (
+              <Comment key={comment.id} comment={comment} category={category} />
+            );
           })}
       </CommentWrapper>
       <InputWrapper>

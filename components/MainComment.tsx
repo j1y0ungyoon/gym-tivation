@@ -4,6 +4,8 @@ import { deleteMainComment } from '@/pages/api/api';
 import { authService } from '@/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 const MainComment = ({ item }: any) => {
   const queryClient = useQueryClient();
@@ -12,11 +14,11 @@ const MainComment = ({ item }: any) => {
   const { mutate: removeBoardComment, isLoading: isDeleting } =
     useMutation(deleteMainComment);
 
-  // 게시글 삭제 클릭 이벤트
-  const onClickDeleteComment = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
+  const { showModal } = useModal();
 
-    if (answer) {
+  // 게시글 삭제 클릭 이벤트
+  const onClickDeleteComment = () => {
+    const onDeleteFunction = async () => {
       try {
         await removeBoardComment(item.id, {
           onSuccess: () => {
@@ -38,9 +40,15 @@ const MainComment = ({ item }: any) => {
       } catch (error) {
         console.log('에러입니다', error);
       }
-    } else {
-      return;
-    }
+    };
+
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onDeleteFunction,
+      },
+    });
   };
 
   return (

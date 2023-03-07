@@ -15,9 +15,9 @@ import {
 } from 'firebase/firestore';
 // import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
-import DmButton from './DmButton';
+import DmButton from '../DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import FollowButton from './FollowButton';
+import FollowButton from '../FollowButton';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -106,19 +106,21 @@ const ProfileEdit = ({
   //Level 메시지
   const Level = Number(item.lv);
   const helpLevel = () => {
-    if (item.lvName === '일반인' && Level < 5) {
-      setMessage(`헬애기까지 Lv${5 - Level} 남았습니다. `);
-    } else if (item.lvName === '헬애기' && Level < 15) {
-      setMessage(`헬린이까지 Lv${15 - Level} 남았습니다.`);
-    } else if (item.lvName === '헬린이' && Level < 30) {
-      setMessage(`헬른이까지 Lv${30 - Level} 남았습니다.`);
-    } else if (item.lvName === '헬른이' && Level < 60) {
-      setMessage(`헬애비까지 Lv${60 - Level} 남았습니다.`);
-    } else if (item.lvName === '헬애비') {
-      setMessage(`최고 타이틀까지 도달하셨습니다!`);
+    if (Level < 30) {
+      setMessage(`까지 Lv${30 - Level} 남았습니다. `);
+    } else if (29 < Level && Level < 60) {
+      setMessage(`까지 Lv${60 - Level} 남았습니다.`);
+    } else if (59 < Level && Level < 90) {
+      setMessage(`까지 Lv${90 - Level} 남았습니다.`);
     }
   };
-
+  const helpLevelText = (
+    <LevelHelpText>
+      게시판 및 오운완 갤러리에 사진을 올릴시에 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+      &nbsp;레벨이 오르고, 일정 레벨 달성시에 &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+      타이틀을 획득할 수 있습니다
+    </LevelHelpText>
+  );
   // 프로필 수정
   const ProfileEdit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -213,34 +215,82 @@ const ProfileEdit = ({
                 )}
               </ProfilePhoto>
               <LevelBox>
-                {item.lvName === '일반인' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/8712/8712070.png" />
+                {item.lvName === 'Yellow' && (
+                  <LevelIcon src="/assets/icons/myPage/Yellow.svg" />
                 )}
-                {item.lvName === '헬애기' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/4700/4700514.png" />
+                {item.lvName === 'green' && (
+                  <LevelIcon src="/assets/icons/myPage/Green.svg" />
                 )}
-                {item.lvName === '헬린이' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/1845/1845861.png" />
+                {item.lvName === 'blue' && (
+                  <LevelIcon src="/assets/icons/myPage/Blue.svg" />
                 )}
-                {item.lvName === '헬른이' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/128/2548/2548532.png" />
+                {item.lvName === 'red' && (
+                  <LevelIcon src="/assets/icons/myPage/Red.svg" />
                 )}
-                {item.lvName === '헬애비' && (
-                  <LevelIcon src="https://cdn-icons-png.flaticon.com/512/2376/2376399.png" />
-                )}
-                <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
-                <LevelText>{item.lvName}</LevelText>
-
+                <LevelTextNumber>LV{Math.floor(Level)}</LevelTextNumber>
                 <LevelHelpBox className="levelHelpBox">
                   <LevelHelpTextBox>
-                    <HelpLvText>Lv이란?</HelpLvText>
-                    <LevelHelpText>
-                      게시판 및 오운완 갤러리 글 작성시 Lv이 증가하며, 일정 Lv
-                      달성시 타이틀을 획득할 수 있습니다.
-                    </LevelHelpText>
-                    <LevelHelpTextBox>
-                      <LevelMessage>{message}</LevelMessage>
-                    </LevelHelpTextBox>
+                    <IconBox>
+                      {item.lvName === 'Yellow' && (
+                        <>
+                          <LevelIcons src="/assets/icons/myPage/Yellow.svg" />
+                          <LevelText>
+                            현재 나의 레벨은
+                            <span style={{ color: 'yellow' }}> Yellow </span>
+                            입니다!
+                          </LevelText>
+                          {helpLevelText}
+                          <LevelMessage>
+                            <span style={{ color: '#219C04' }}>Green</span>
+                            {message}
+                          </LevelMessage>
+                        </>
+                      )}
+                      {item.lvName === 'green' && (
+                        <>
+                          <LevelIcons src="/assets/icons/myPage/Green.svg" />
+                          <LevelText>
+                            현재 나의 레벨은
+                            <span style={{ color: 'green' }}> Green </span>
+                            입니다!
+                          </LevelText>
+                          {helpLevelText}
+                          <LevelMessage>
+                            <span style={{ color: '#0400DB' }}>Blue</span>
+                            {message}
+                          </LevelMessage>
+                        </>
+                      )}
+                      {item.lvName === 'blue' && (
+                        <>
+                          <LevelIcons src="/assets/icons/myPage/Blue.svg" />
+                          <LevelText>
+                            현재 나의 레벨은
+                            <span style={{ color: 'blue' }}> Blue </span>
+                            입니다!
+                          </LevelText>
+                          {helpLevelText}
+                          <LevelMessage>
+                            <span style={{ color: '#CB0000' }}>Red</span>
+                            {message}
+                          </LevelMessage>
+                        </>
+                      )}
+                      {item.lvName === 'red' && (
+                        <>
+                          <LevelIcons src="/assets/icons/myPage/Red.svg" />
+                          <LevelText>
+                            현재 나의 레벨은
+                            <span style={{ color: 'red' }}> Red </span>
+                            입니다!
+                          </LevelText>
+                          <LevelHelpText>
+                            축하드립니다! 짐티베이션 최고 레벨을 달성하셨습니다!
+                            앞으로도 꾸준한 활동을 해주세요!
+                          </LevelHelpText>
+                        </>
+                      )}
+                    </IconBox>
                   </LevelHelpTextBox>
                 </LevelHelpBox>
               </LevelBox>
@@ -265,7 +315,7 @@ const ProfileEdit = ({
                         setIsProfileEdit(true);
                       }}
                     >
-                      수정
+                      프로필 수정
                     </EditButton>
                   ) : (
                     <>
@@ -334,33 +384,82 @@ const ProfileEdit = ({
                   )}
                 </ProfilePhoto>
                 <LevelBox>
-                  {item.lvName === '일반인' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/8712/8712070.png" />
+                  {item.lvName === 'Yellow' && (
+                    <LevelIcon src="/assets/icons/myPage/Yellow.svg" />
                   )}
-                  {item.lvName === '헬애기' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/4700/4700514.png" />
+                  {item.lvName === 'green' && (
+                    <LevelIcon src="/assets/icons/myPage/Green.svg" />
                   )}
-                  {item.lvName === '헬린이' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/1845/1845861.png" />
+                  {item.lvName === 'blue' && (
+                    <LevelIcon src="/assets/icons/myPage/Blue.svg" />
                   )}
-                  {item.lvName === '헬른이' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/128/2548/2548532.png" />
+                  {item.lvName === 'red' && (
+                    <LevelIcon src="/assets/icons/myPage/Red.svg" />
                   )}
-                  {item.lvName === '헬애비' && (
-                    <LevelIcon src="https://cdn-icons-png.flaticon.com/512/2376/2376399.png" />
-                  )}
-                  <LevelTextNumber>Lv{Math.floor(Level)}</LevelTextNumber>
-                  <LevelText>{item.lvName}</LevelText>
+                  <LevelTextNumber>LV{Math.floor(Level)}</LevelTextNumber>
                   <LevelHelpBox className="levelHelpBox">
                     <LevelHelpTextBox>
-                      <HelpLvText>Lv이란?</HelpLvText>
-                      <LevelHelpText>
-                        게시판 및 오운완 갤러리 글 작성시 Lv이 증가하며, 일정 Lv
-                        달성시 타이틀을 획득할 수 있습니다.
-                      </LevelHelpText>
-                      <LevelHelpTextBox>
-                        <LevelMessage>{message}</LevelMessage>
-                      </LevelHelpTextBox>
+                      <IconBox>
+                        {item.lvName === 'Yellow' && (
+                          <>
+                            <LevelIcons src="/assets/icons/myPage/Yellow.svg" />
+                            <LevelText>
+                              현재 나의 레벨은
+                              <span style={{ color: 'yellow' }}> Yellow </span>
+                              입니다!
+                            </LevelText>
+                            {helpLevelText}
+                            <LevelMessage>
+                              <span style={{ color: '#219C04' }}>Green</span>
+                              {message}
+                            </LevelMessage>
+                          </>
+                        )}
+                        {item.lvName === 'green' && (
+                          <>
+                            <LevelIcons src="/assets/icons/myPage/Green.svg" />
+                            <LevelText>
+                              현재 나의 레벨은
+                              <span style={{ color: 'green' }}> Green </span>
+                              입니다!
+                            </LevelText>
+                            {helpLevelText}
+                            <LevelMessage>
+                              <span style={{ color: '#0400DB' }}>Blue</span>
+                              {message}
+                            </LevelMessage>
+                          </>
+                        )}
+                        {item.lvName === 'blue' && (
+                          <>
+                            <LevelIcons src="/assets/icons/myPage/Blue.svg" />
+                            <LevelText>
+                              현재 나의 레벨은
+                              <span style={{ color: 'blue' }}> Blue </span>
+                              입니다!
+                            </LevelText>
+                            {helpLevelText}
+                            <LevelMessage>
+                              <span style={{ color: '#CB0000' }}>Red</span>
+                              {message}
+                            </LevelMessage>
+                          </>
+                        )}
+                        {item.lvName === 'red' && (
+                          <>
+                            <LevelIcons src="/assets/icons/myPage/Red.svg" />
+                            <LevelText>
+                              현재 나의 레벨은
+                              <span style={{ color: 'red' }}> Red </span>
+                              입니다!
+                            </LevelText>
+                            <LevelHelpText>
+                              축하드립니다! 짐티베이션 최고 레벨을
+                              달성하셨습니다!! 앞으로도 꾸준한 활동을 해주세요
+                            </LevelHelpText>
+                          </>
+                        )}
+                      </IconBox>
                     </LevelHelpTextBox>
                   </LevelHelpBox>
                 </LevelBox>
@@ -534,7 +633,7 @@ const Photo = styled.img`
 `;
 const LevelBox = styled.div`
   position: relative;
-  margin-top: 8px;
+  margin-top: 14px;
   :hover {
     cursor: help;
     .levelHelpBox {
@@ -546,7 +645,8 @@ const LevelHelpBox = styled.div`
   display: none;
   z-index: 2000;
   width: 340px;
-  height: 160px;
+  height: 260px;
+  margin-top: 110px;
   margin-left: 120px;
   position: fixed;
   border-radius: 15px;
@@ -556,34 +656,27 @@ const LevelHelpBox = styled.div`
   border-style: solid;
   border-width: 1px;
   border-color: black;
+  box-shadow: -2px 2px 0px #000000;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
   }
 `;
 const LevelMessage = styled.div`
-  margin-top: 1.5rem;
-  font-size: 1.2rem;
-  color: green;
+  margin-top: 8px;
+  font-size: 18px;
   font-weight: bolder;
 `;
 const LevelHelpTextBox = styled.div`
-  text-align: left;
+  text-align: center;
 `;
 const LevelHelpText = styled.span`
-  margin-left: 0.5rem;
   font-size: 0.9rem;
-`;
-const LevelText = styled.div`
-  font-weight: bolder;
-  font-size: 1.2rem;
-  color: green;
 `;
 const LevelTextNumber = styled.span`
   margin-left: 0.2vw;
-  font-size: 1.2rem;
+  font-size: 20px;
   font-weight: bolder;
-  color: red;
 `;
 const NickNameAreaBox = styled.div`
   margin-top: 10px;
@@ -678,7 +771,7 @@ const Select = styled.select`
 `;
 const InstagramInput = styled.input`
   width: 160px;
-  height: 25px;
+  height: 33px;
   border: none;
   font-size: 24px;
   color: black;
@@ -751,15 +844,30 @@ const HelpLvText = styled.span`
   color: red;
 `;
 const LevelIcon = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 30px;
+  height: 30px;
   margin-right: 8px;
   margin-bottom: 6px;
   border-radius: 50%;
+`;
+const LevelIcons = styled.img`
+  padding-top: 8px;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
 `;
 
 const AreaImage = styled.img`
   width: 30px;
   height: 30px;
   margin-left: 20px;
+`;
+const IconBox = styled.div`
+  text-align: center;
+  margin-bottom: 8px;
+`;
+const LevelText = styled.div`
+  font-weight: bolder;
+  font-size: 20px;
+  margin-bottom: 8px;
 `;
