@@ -10,7 +10,7 @@ import MyPageLike from '@/components/mypage/MyPageLike';
 import MyPageBoard from '@/components/mypage/MyPageBoard';
 import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
-
+//mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id
   const paramsId = String(params);
