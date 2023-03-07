@@ -78,6 +78,7 @@ const Comment = ({
 
   // 게시글 삭제 함수
   const deletePostComment = async () => {
+    //댓글로 인한 수정
     if (category === '동료 모집') {
       try {
         await removeComment(comment.id);

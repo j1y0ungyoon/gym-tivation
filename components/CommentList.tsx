@@ -47,6 +47,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
       };
 
       if (category === '동료 모집') {
+        //댓글로 인한 수정
         await addDoc(collection(dbService, 'comments'), newComment)
           .then(() => console.log('데이터 전송 성공'))
           .catch((error) => console.log('에러 발생', error));
