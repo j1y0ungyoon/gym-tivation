@@ -26,6 +26,7 @@ const ConfirmModal = (props: ModalPropsType) => {
   return (
     <BackgroundContainer>
       <ModalContainer>
+        <AlertImg src="/assets/icons/mapBoard/!.svg" />
         <h3>{contentText}</h3>
         <ConfirmButtonBox>
           <ConfirmYesButton onClick={onClcikYes}>확인</ConfirmYesButton>
@@ -107,4 +108,10 @@ const CofirmNoButton = styled.button`
   border-radius: 8px;
   border: 1px solid black;
   filter: drop-shadow(-2px 2px 0px #000000);
+`;
+
+const AlertImg = styled.img`
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
 `;

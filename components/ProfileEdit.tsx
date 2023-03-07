@@ -13,7 +13,7 @@ import {
   arrayRemove,
   arrayUnion,
 } from 'firebase/firestore';
-import { ProfileItem } from '@/pages/myPage/[...params]';
+// import { ProfileItem } from '@/pages/myPage/[...params]';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import DmButton from './DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';

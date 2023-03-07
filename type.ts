@@ -27,6 +27,7 @@ export interface RecruitPostType {
   selectedDays?: string[];
   participation?: ParticipationType[];
   createdAt?: number;
+  comment?: number;
 }
 
 export interface UserProfileType {
@@ -191,6 +192,7 @@ export interface BoardPostType {
   usePhoto?: string;
   userLv?: string;
   userLvName?: string;
+  comment?: number;
 }
 export interface GalleryBoardPostType {
   title?: string;
@@ -205,4 +207,5 @@ export interface GalleryBoardPostType {
   userPhoto?: string;
   userLv?: string;
   userLvName?: string;
+  comment?: number;
 }

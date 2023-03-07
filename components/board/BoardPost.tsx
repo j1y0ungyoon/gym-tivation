@@ -60,7 +60,7 @@ const BoardPost = ({
         </ItemContentWrapper>
         <InformationWrapper>
           <ItemNickName>{nickName}</ItemNickName>
-          <ItemCreatedAt>{createdAt}</ItemCreatedAt>
+          <ItemCreatedAt>{String(createdAt).slice(0, -3)}</ItemCreatedAt>
           <LikeWrapper>
             <Image alt="like" src={smallLike} />
             <ItemLike>{like?.length}</ItemLike>

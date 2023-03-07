@@ -8,6 +8,8 @@ import styled from 'styled-components';
 
 import MainComment from './MainComment';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 interface MainCommentListProps {
   data:
@@ -25,6 +27,7 @@ const MainCommentList = ({ id }: MainCommentType) => {
   const user = authService.currentUser?.uid;
   const nickName = authService.currentUser?.displayName;
   const userPhoto = authService.currentUser?.photoURL;
+  const { showModal } = useModal();
 
   const { data, isLoading } = useQuery(['getCommentData', id], getMainComments);
 
@@ -66,7 +69,10 @@ const MainCommentList = ({ id }: MainCommentType) => {
 
   const onSubmitCommemt = async () => {
     if (!inputComment) {
-      alert('댓글 내용을 입력해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 작성해주세요!' },
+      });
       return;
     }
     const getNumber: any = data?.length;
