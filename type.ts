@@ -27,6 +27,7 @@ export interface RecruitPostType {
   selectedDays?: string[];
   participation?: ParticipationType[];
   createdAt?: number;
+  comment?: number;
 }
 
 export interface UserProfileType {
@@ -49,7 +50,12 @@ export interface EditRecruitPostParameterType {
   recruitPostId: string;
   edittedRecruitPost: object;
 }
-
+export interface GalleryParameterType {
+  id: string;
+  editGalleryPost: object;
+  deleteGalleryPost: object;
+  photo: string | undefined;
+}
 export interface editUserParticipationParameterType {
   userId: string;
   edittedProfile: object;
@@ -136,24 +142,29 @@ export interface DayType {
   setSelectedDays: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export interface BoardCommentType {
-  id: string;
+export interface MainCommentType {
+  id?: string;
   user?: string;
-  nickName?: string;
-  photo?: string;
-  boardComment?: string;
-  postId?: string;
+  nickName?: string | undefined | null;
+  photo?: string | undefined | null;
+  comment?: string;
   createdAt?: number;
-}
-
-export interface GalleryCommentType {
-  id: string;
-  user?: string;
-  nickName?: string;
-  photo?: string;
-  galleryComment?: string;
-  postId?: string;
-  createdAt?: number;
+  userLv?: string;
+  userLvName?: string;
+  item?: any;
+  postCount?: number | undefined;
+  number?: number | undefined;
+  data?: {
+    user: string | undefined;
+    nickName: string | null | undefined;
+    photo: string | null | undefined;
+    comment: string;
+    createdAt: number;
+    userLv: string;
+    userLvName: string;
+    number: number;
+    postCount: any;
+  };
 }
 
 // export interface InitialSelectedDaysType {
@@ -181,13 +192,14 @@ export interface BoardPostType {
   usePhoto?: string;
   userLv?: string;
   userLvName?: string;
+  comment?: number;
 }
 export interface GalleryBoardPostType {
   title?: string;
   item?: any;
   content?: string;
   id?: string;
-  photo?: string;
+  photo?: string | undefined;
   createdAt?: number;
   userId?: string;
   nickName?: string;
@@ -195,4 +207,5 @@ export interface GalleryBoardPostType {
   userPhoto?: string;
   userLv?: string;
   userLvName?: string;
+  comment?: number;
 }

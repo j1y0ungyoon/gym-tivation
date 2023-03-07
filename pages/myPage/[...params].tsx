@@ -1,77 +1,20 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
-import { useState, useEffect } from 'react';
-import {
-  collection,
-  query,
-  onSnapshot,
-  getDocs,
-  orderBy,
-} from 'firebase/firestore';
-import ProfileEdit from '@/components/ProfileEdit';
-import MyPageCalendar from '@/components/MyPageCalendar';
-import LoginState from '@/components/LoginState';
-import MyPageGalley from '@/components/MyPageGallery';
-import MyPageLike from '@/components/MyPageLike';
-import MyPageBoard from '@/components/MyPageBoard';
-import MyPageRecruit from '@/components/MyPageRecruit';
-import { theme } from '@/styles/theme';
-
-export type ProfileItem = {
-  id: string;
-  area?: string;
-  introduction?: string;
-  instagram?: string;
-  displayName?: string;
-  email?: string;
-  photoURL?: string;
-  loginState?: boolean;
-  following?: string;
-  follower?: string;
-  uid?: string;
-  lv?: number;
-  lvName?: string;
-};
-export type Board = {
-  id: string;
-  photo: string;
-  userId: string;
-  nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  createdAt: number;
-  comment: number;
-  like: [];
-};
-export type Gallery = {
-  id: string;
-  photo: string;
-  userId: string;
-  nickName: string;
-  title: string;
-  content: string;
-  category: string;
-  createdAt: number;
-  comment: number;
-  like: [];
-};
-
-// next.js = 랜더의 주체가 node 서버에서 랜더를 하고 뿌림 마운팅 node가 마운팅 후에 핸들링 브라우저
+import { useState } from 'react';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
+import ProfileEdit from '@/components/mypage/ProfileEdit';
+import MyPageCalendar from '@/components/mypage/MyPageCalendar';
+import LoginState from '@/components/mypage/LoginState';
+import MyPageGalley from '@/components/mypage/MyPageGallery';
+import MyPageLike from '@/components/mypage/MyPageLike';
+import MyPageBoard from '@/components/mypage/MyPageBoard';
+import MyPageRecruit from '@/components/mypage/MyPageRecruit';
+import { useQuery } from 'react-query';
+import Loading from '@/components/common/globalModal/Loading';
+//mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id
   const paramsId = String(params);
-
-  const [isLoadCalendar, setIsLoadCalendar] = useState<boolean>(false);
-  //프로필 정보 불러오기
-  const [profileInformation, setProfileInformation] = useState<ProfileItem[]>(
-    [],
-  );
-  //MyPageBoard 불러오기
-  const [boardInformation, setBoardInFormation] = useState([] as any);
-
-  //MyPageGallery 불러오기
-  const [galleryInformation, setGalleryInFormation] = useState([] as any);
 
   //토글
   const [toggle, setToggle] = useState(false);
@@ -80,17 +23,20 @@ const MyPage = ({ params }: any) => {
   };
 
   //MyPage 메뉴
-  const [galley, setGalley] = useState(true);
-  const [board, setBoard] = useState(false);
-  const [like, setLike] = useState(false);
-  const [meeting, setMeeting] = useState(false);
+  const [galleyMenu, setGalleyMenu] = useState(true);
+  const [boardMenu, setBoardMenu] = useState(false);
+  const [likeMenu, setLikeMenu] = useState(false);
+  const [meetingMenu, setMeetingMenu] = useState(false);
   const [followModal, setFollowModal] = useState(false);
 
   //버튼
-  const galleyButton = !galley ? (
+  const galleyButton = !galleyMenu ? (
     <GalleyButton
       onClick={() => {
-        setGalley(true), setBoard(false), setLike(false), setMeeting(false);
+        setGalleyMenu(true),
+          setBoardMenu(false),
+          setLikeMenu(false),
+          setMeetingMenu(false);
       }}
     >
       오운완 갤러리
@@ -100,10 +46,13 @@ const MyPage = ({ params }: any) => {
       오운완 갤러리
     </GalleyButton>
   );
-  const boardButton = !board ? (
+  const boardButton = !boardMenu ? (
     <GalleyButton
       onClick={() => {
-        setGalley(false), setBoard(true), setLike(false), setMeeting(false);
+        setGalleyMenu(false),
+          setBoardMenu(true),
+          setLikeMenu(false),
+          setMeetingMenu(false);
       }}
     >
       게시판
@@ -114,10 +63,13 @@ const MyPage = ({ params }: any) => {
     </GalleyButton>
   );
 
-  const likeButton = !like ? (
+  const likeButton = !likeMenu ? (
     <GalleyButton
       onClick={() => {
-        setGalley(false), setBoard(false), setLike(true), setMeeting(false);
+        setGalleyMenu(false),
+          setBoardMenu(false),
+          setLikeMenu(true),
+          setMeetingMenu(false);
       }}
     >
       좋아요
@@ -127,10 +79,13 @@ const MyPage = ({ params }: any) => {
       좋아요
     </GalleyButton>
   );
-  const meetingButton = !meeting ? (
+  const meetingButton = !meetingMenu ? (
     <GalleyButton
       onClick={() => {
-        setGalley(false), setBoard(false), setLike(false), setMeeting(true);
+        setGalleyMenu(false),
+          setBoardMenu(false),
+          setLikeMenu(false),
+          setMeetingMenu(true);
       }}
     >
       참여중 모임
@@ -141,39 +96,50 @@ const MyPage = ({ params }: any) => {
     </GalleyButton>
   );
 
-  //profile 컬렉션 불러오기
-  const profileOnSnapShot = () => {
-    paramsId === authService.currentUser?.uid
-      ? setIsLoadCalendar(true)
-      : setIsLoadCalendar(false);
+  // 프로필 불러오기
+
+  const getProfile = async () => {
     const q = query(collection(dbService, 'profile'));
-    onSnapshot(q, (snapshot) => {
-      const newprofiles = snapshot.docs.map((doc) => {
-        const newprofile = {
-          id: doc.id,
-          ...doc.data(),
-        };
-        return newprofile;
-      });
-      setProfileInformation(newprofiles);
-    });
+    const data = await getDocs(q);
+    return data.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
   };
-  // 팔로워, 팔로잉 불러오기
 
-  //MyPageBoard 불러오기
+  const { isLoading: profileLoading, data: profile } = useQuery(
+    'profile',
+    getProfile,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+  // 게시판 불러오기
   const getBoardPost = async () => {
     const q = query(
       collection(dbService, 'posts'),
       orderBy('createdAt', 'desc'),
     );
     const data = await getDocs(q);
-    const getBoardData = data.docs.map((doc: any) => ({
+    return data.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    setBoardInFormation(getBoardData);
   };
-  //post 댓글 불러오기
+
+  const { isLoading: boardLoading, data: board } = useQuery(
+    'board',
+    getBoardPost,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
 
   //MyPageGallery 불러오기
   const getGalleryPost = async () => {
@@ -182,31 +148,40 @@ const MyPage = ({ params }: any) => {
       orderBy('createdAt', 'desc'),
     );
     const data = await getDocs(q);
-    const getGalleryData = data.docs.map((doc: any) => ({
+    return data.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    setGalleryInFormation(getGalleryData);
   };
-  useEffect(() => {
-    profileOnSnapShot();
-    getBoardPost();
-    getGalleryPost();
-    return () => {
-      profileOnSnapShot();
-      getBoardPost();
-      getGalleryPost();
-      // followGetDoc(); //useEffect가 업데이트 되기 전 실행됨
-    };
-  }, [paramsId, authService.currentUser]);
+  const { isLoading: galleryLoading, data: gallery } = useQuery(
+    'gallery',
+    getGalleryPost,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+  const combineData = board?.concat(gallery);
+
+  if (galleryLoading) {
+    return <Loading />;
+  }
+  if (profileLoading) {
+    return <Loading />;
+  }
+  if (boardLoading) {
+    return <Loading />;
+  }
 
   return (
     <MyPageWrapper>
-      {profileInformation && (
+      {profile && (
         <MyPageContainer>
           <ProfileBox>
-            {profileInformation
-              .filter((item) => item.id === String(paramsId))
+            {profile
+              .filter((item) => item.id === paramsId)
               .map((item) => {
                 return (
                   <ProfileEdit
@@ -220,7 +195,9 @@ const MyPage = ({ params }: any) => {
               })}
           </ProfileBox>
           <ScheduleBox>
-            <Schedule>{isLoadCalendar && <MyPageCalendar />}</Schedule>
+            <Schedule>
+              {paramsId === authService.currentUser?.uid && <MyPageCalendar />}
+            </Schedule>
           </ScheduleBox>
           <NavigationBox>
             {galleyButton}
@@ -229,34 +206,25 @@ const MyPage = ({ params }: any) => {
             {meetingButton}
           </NavigationBox>
           <MypageBox>
-            {galley && (
+            <>
+              {gallery && galleyMenu && (
+                <GalleyBox>
+                  <MyPageGalley paramsId={paramsId} gallery={gallery} />
+                </GalleyBox>
+              )}
+            </>
+            {board && boardMenu && (
               <GalleyBox>
-                <MyPageGalley
-                  paramsId={paramsId}
-                  galleryInformation={galleryInformation}
-                />
+                <MyPageBoard paramsId={paramsId} board={board} />
+              </GalleyBox>
+            )}
+            {combineData && likeMenu && (
+              <GalleyBox>
+                <MyPageLike combineData={combineData} paramsId={paramsId} />
               </GalleyBox>
             )}
 
-            {board && (
-              <GalleyBox>
-                <MyPageBoard
-                  paramsId={paramsId}
-                  boardInformation={boardInformation}
-                />
-              </GalleyBox>
-            )}
-            {like && (
-              <GalleyBox>
-                <MyPageLike
-                  galleryInformation={galleryInformation}
-                  boardInformation={boardInformation}
-                  paramsId={paramsId}
-                />
-              </GalleyBox>
-            )}
-
-            {meeting && (
+            {meetingMenu && (
               <GalleyBox>
                 <MyPageRecruit paramsId={paramsId} />
               </GalleyBox>
@@ -291,7 +259,7 @@ const MyPage = ({ params }: any) => {
                     )}
                   </ToggleButtonBox>
                   <LoginStateBox>
-                    {profileInformation.map((item) => {
+                    {profile.map((item) => {
                       return (
                         <LoginState
                           followModal={followModal}
@@ -329,7 +297,7 @@ const MyPageWrapper = styled.div`
 `;
 const MyPageContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
-  height : calc(100%-40px);
+  height : calc(100% - 40px);
 `;
 const ProfileBox = styled.div`
   float: left;
@@ -349,7 +317,7 @@ const NavigationBox = styled.div`
   gap: 16px;
   display: flex;
   float: left;
-  width: 63%;
+  width: 65%;
   height: 70px;
   text-align: left;
   margin-top: 2vh;
@@ -374,8 +342,7 @@ const GalleyButton = styled.button`
 
 const GalleyBox = styled.div`
   width: 98%;
-  height: 100%;
-
+  height: 98%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
@@ -384,7 +351,7 @@ const GalleyBox = styled.div`
 
 const MypageBox = styled.div`
   float: left;
-  width: 70%;
+  width: 72%;
   height: 51%;
   margin-left: 10px;
 `;
@@ -407,6 +374,7 @@ const ToggleButton = styled.button`
     cursor: pointer;
     background-color: black;
     color: white;
+    transition: 0.7s;
   }
   :focus {
     background-color: black;

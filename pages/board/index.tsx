@@ -1,18 +1,13 @@
-import BoardItem from '@/components/BoardItem';
-// import Search from '@/components/Search';
-import { dbService } from '@/firebase';
+import BoardItem from '@/components/board/BoardItem';
+import Loading from '@/components/common/globalModal/Loading';
+import SearchDropDown from '@/components/common/globalModal/SearchDropDown';
 import { BoardPostType } from '@/type';
-import {
-  collection,
-  DocumentData,
-  DocumentSnapshot,
-  onSnapshot,
-  orderBy,
-  query,
-} from 'firebase/firestore';
+import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import { getBoardPosts } from '../api/api';
 
 interface BoardProps {
   category?: any;
@@ -25,8 +20,12 @@ interface boardCategoryProps {
 }
 const Board = () => {
   const [category, setCategory] = useState('운동정보');
-  const [boardPosts, setBoardPosts] = useState([]);
   const router = useRouter();
+  const { data, isLoading } = useQuery(['getPostsData'], getBoardPosts);
+
+  const [searchCategory, setSearchCategory] = useState('전체');
+  const [searchInput, setSearchInput] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   const onClickCategoryButton = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -40,29 +39,15 @@ const Board = () => {
     });
   };
 
-  const getPost = () => {
-    const q = query(
-      collection(dbService, 'posts'),
-      orderBy('createdAt', 'desc'),
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot: any) => {
-      const newPosts = snapshot.docs.map((doc: any) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setBoardPosts(newPosts);
-    });
-    return unsubscribe;
+  const onKeyPressSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setSearchText(searchInput);
+    }
   };
 
-  useEffect(() => {
-    const unsubscribe = getPost();
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -98,8 +83,32 @@ const Board = () => {
           </ButtonWrapper>
 
           <ContentWrapper>
+            <SearchBox>
+              <SearchInputBox>
+                <SearchInput
+                  placeholder={
+                    searchText
+                      ? `'${searchText}'의 검색 결과`
+                      : '검색어를 입력하세요!'
+                  }
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setSearchInput(e.target.value)
+                  }
+                  onKeyPress={onKeyPressSearch}
+                  value={searchInput}
+                />
+              </SearchInputBox>
+              <SearchDropDown setSearchCategory={setSearchCategory}>
+                {searchCategory}
+              </SearchDropDown>
+            </SearchBox>
             <BoardContent>
-              <BoardItem category={category} boardPosts={boardPosts} />
+              <BoardItem
+                category={category}
+                data={data}
+                searchText={searchText}
+                searchCategory={searchCategory}
+              />
             </BoardContent>
           </ContentWrapper>
         </BoardMain>
@@ -117,7 +126,6 @@ const BoardMain = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
 `;
 const ContentWrapper = styled.div`
   background-color: white;
@@ -125,6 +133,19 @@ const ContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   width: 100%;
   height: 100%;
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #000;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+    margin: 40px 0;
+  }
 `;
 const BoardContent = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
@@ -155,7 +176,24 @@ const CategoryContainter = styled.div`
 
 const CategoryButton = styled.button<boardCategoryProps>`
   ${({ theme }) => theme.btn.category}
-  width:140px;
+  width:150px;
   margin: 10px;
+`;
+
+const SearchBox = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+`;
+const SearchInputBox = styled.div`
+  ${({ theme }) => theme.inputDiv}
+  width: 320px;
+  border: 1px solid black;
+  margin-right: 10px;
+`;
+const SearchInput = styled.input`
+  ${({ theme }) => theme.input}
 `;
 export default Board;

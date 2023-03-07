@@ -1,29 +1,29 @@
-import { authService, dbService, storage } from '@/firebase';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
-import React, { useEffect, useRef, useState } from 'react';
+import { authService, dbService } from '@/firebase';
+import { collection, doc, getDocs, query, where } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 // import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
-import BoardCategory from '@/components/BoardCategory';
+import BoardCategory from '@/components/board/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 // import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
+import { useMutation, useQueryClient } from 'react-query';
+import { addBoardPost } from '../api/api';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
+
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 });
 
 const Post = () => {
+  const queryClient = useQueryClient();
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
   const [category, setCategory] = useState('');
@@ -32,8 +32,9 @@ const Post = () => {
   // const [imageUpload, setImageUpload] = useState<any>('');
   // const [boardPhoto, setBoardPhoto] = useState('');
   const router = useRouter();
-  const today = new Date().toLocaleString().slice(0, -3);
-
+  const today = new Date().toLocaleString();
+  const { mutate, isLoading } = useMutation(addBoardPost);
+  const { showModal } = useModal();
   const modules = {
     toolbar: [
       [{ font: [] }],
@@ -51,12 +52,8 @@ const Post = () => {
     ],
 
     clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
       matchVisual: false,
     },
-    // handler: {
-    //   image: imageHandler,
-    // },
   };
 
   const formats = [
@@ -84,20 +81,6 @@ const Post = () => {
     setBoardContent(value);
   };
 
-  // const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setImageUpload(event.target.files?.[0]);
-  // };
-
-  // useEffect(() => {
-  //   const imageRef = ref(storage, `images/${nanoid()}`);
-  //   if (!imageUpload) return;
-  //   uploadBytes(imageRef, imageUpload).then((snapshot) => {
-  //     getDownloadURL(snapshot.ref).then((url) => {
-  //       setBoardPhoto(url);
-  //     });
-  //   });
-  // }, [imageUpload]);
-
   //Board로 이동
   const goToBoard = () => {
     router.push({
@@ -116,9 +99,14 @@ const Post = () => {
     setUserLvName(getLvName);
     setUserLv(getLv);
   };
+
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      // toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
       router.push('/board');
     }
     profileData();
@@ -132,15 +120,27 @@ const Post = () => {
     event.preventDefault();
 
     if (!boardTitle) {
-      toast.warn('제목을 입력해주세요!');
+      // toast.warn('제목을 입력해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '제목을 입력해주세요!' },
+      });
       return;
     }
     if (!boardContent) {
-      toast.warn('내용을 입력해주세요!');
+      // toast.warn('내용을 입력해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 입력해주세요!' },
+      });
       return;
     }
     if (!category) {
-      toast.warn('카테고리를 선택해주세요!');
+      // toast.warn('카테고리를 선택해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '카테고리를 선택해주세요!' },
+      });
       return;
     }
     profileData();
@@ -157,13 +157,16 @@ const Post = () => {
       userPhoto: authService.currentUser?.photoURL,
       userLv: userLv,
       userLvName: userLvName,
+      comment: 0,
     };
-
-    await addDoc(collection(dbService, 'posts'), newPost)
-      .then(() => console.log('post'))
-      .catch((error) => {
-        console.log('에러 발생!', error);
-      });
+    mutate(newPost, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('addPost', { refetchActive: true });
+      },
+    });
+    if (isLoading) {
+      return <Loading />;
+    }
 
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
@@ -175,21 +178,14 @@ const Post = () => {
         if (!sfDoc.exists()) {
           throw '데이터가 없습니다.';
         }
-        const newwLvName = sfDoc.data().lvName;
         const newLv = sfDoc.data().lv + 1;
         transaction.update(sfDocRef, { lv: newLv });
-        if (newwLvName === '일반인' && newLv > 4) {
-          transaction.update(sfDocRef, { lvName: '헬애기' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬애기' && newLv > 14) {
-          transaction.update(sfDocRef, { lvName: '헬린이' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬린이' && newLv > 29) {
-          transaction.update(sfDocRef, { lvName: '헬른이' });
-          transaction.update(sfDocRef, { lv: 1 });
-        } else if (newwLvName === '헬른이' && newLv > 59) {
-          transaction.update(sfDocRef, { lvName: '헬애비' });
-          transaction.update(sfDocRef, { lv: 1 });
+        if (60 > newLv && newLv > 29) {
+          transaction.update(sfDocRef, { lvName: 'green' });
+        } else if (90 > newLv && newLv > 59) {
+          transaction.update(sfDocRef, { lvName: 'blue' });
+        } else if (newLv > 89) {
+          transaction.update(sfDocRef, { lvName: 'red' });
         }
       });
     } catch (error: any) {
@@ -197,7 +193,6 @@ const Post = () => {
     }
 
     goToBoard();
-    // setBoardPhoto('');
   };
 
   return (
@@ -289,17 +284,6 @@ const ContentContainer = styled.div`
   height: 80%;
   padding: 2rem;
 `;
-// const ContentInput = styled.textarea`
-//   display: flex;
-//   padding: 1rem;
-//   width: 50%;
-//   height: 90%;
-//   border-radius: 2rem;
-//   font-size: 1.5rem;
-//   margin: 1rem;
-//   resize: none;
-//   border: none;
-// `;
 const Title = styled.span`
   display: flex;
   flex-direction: column;

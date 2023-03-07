@@ -1,20 +1,32 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { authService, dbService } from '@/firebase';
-import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import { dbService } from '@/firebase';
+import {
+  collection,
+  getCountFromServer,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import MainCommentList from '@/components/MainCommentList';
+import { nanoid } from 'nanoid';
+import HomeComment from '@/components/HomeComment';
+import Loading from '@/components/common/globalModal/Loading';
 
 type ImgBoxProps = {
-  mainImg: string;
+  img: string;
 };
 
 const Home = () => {
-  const user = authService.currentUser;
-
   const [mainImgs, setMainImgs] = useState<any>([]);
+  const [userCount, setUserCount] = useState<number>();
+  const [mainComments, setMainComments] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getGallery = async () => {
@@ -29,13 +41,40 @@ const Home = () => {
       const gallery = q.docs.map((doc) => {
         return doc.data().photo;
       });
-
       setMainImgs(gallery);
     };
+
+    const getProfile = async () => {
+      const profileCollection = collection(dbService, 'profile');
+      const snapshot = await getCountFromServer(profileCollection);
+      const profileCount = snapshot.data().count;
+
+      setUserCount(profileCount);
+    };
+    getProfile();
     getGallery();
   }, []);
 
-  const settings = {
+  useEffect(() => {
+    const getComment = async () => {
+      const q = await getDocs(
+        query(
+          collection(dbService, 'mainComment'),
+          orderBy('createdAt', 'desc'),
+          limit(10),
+        ),
+      );
+
+      const comment = q.docs.map((doc) => {
+        return doc.data();
+      });
+      setMainComments(comment);
+      setIsLoading(false);
+    };
+    getComment();
+  }, []);
+
+  const imgSettings = {
     className: 'center',
     dots: false,
     centerMode: true,
@@ -44,20 +83,63 @@ const Home = () => {
     autoplaySpeed: 2000,
     slidesToShow: 3,
     slideToScroll: 1,
-    centerPadding: '60px',
+    centerPadding: '0',
     speed: 500,
-    arrows: false,
+    nextArrow: (
+      <ArrowR>
+        <SVG src={'/assets/icons/next.svg'} />
+      </ArrowR>
+    ),
+    prevArrow: (
+      <ArrowL>
+        <SVG src={'/assets/icons/prev.svg'} />
+      </ArrowL>
+    ),
   };
+
+  const commentSettings = {
+    infinite: true,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 1800,
+    autoplaySpeed: 1800,
+    cssEase: 'linear',
+    pauseOnHover: false,
+  };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <HomeWrapper>
       <HomeContainer>
-        <TitleText>현재 함께 운동중인 동료들 2683명!</TitleText>
-        <SliderContainer {...settings}>
-          {mainImgs?.map((mainImg: string) => {
-            return <Img key={mainImg} mainImg={mainImg} />;
-          })}
-        </SliderContainer>
+        <SubTitleText>
+          운동 동기부여 어렵지 않아요! GYMTIVATION과 함께해봐요!
+        </SubTitleText>
+        <TitleText>
+          {userCount}명의 동료들이 짐티베이션에 참여하고 있습니다!
+        </TitleText>
+        <SliderWrapper>
+          <ImgSliderContainer {...imgSettings}>
+            {mainImgs?.map((mainImg: string) => {
+              return <Img key={mainImg} img={mainImg} />;
+            })}
+          </ImgSliderContainer>
+
+          <TitleSvg src={'/assets/icons/title.svg'} />
+        </SliderWrapper>
+
+        <SliderWrapper>
+          <MainCommentSliderContainer {...commentSettings}>
+            {mainComments?.map((mainComment: any) => {
+              return <HomeComment key={nanoid()} mainComment={mainComment} />;
+            })}
+          </MainCommentSliderContainer>
+        </SliderWrapper>
+
+        <MainCommentList />
       </HomeContainer>
     </HomeWrapper>
   );
@@ -65,32 +147,56 @@ const Home = () => {
 
 const HomeWrapper = styled.main`
   ${({ theme }) => theme.mainLayout.wrapper}
+  height: 100%;
 `;
 
 const HomeContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
+  height: 100%;
 `;
 
+const SubTitleText = styled.h1`
+  height: 24px;
+  margin-top: 60px;
+  font-size: 20px;
+  text-align: center;
+`;
 const TitleText = styled.h1`
   height: 60px;
-  margin-top: 50px;
-  font-size: 3rem;
+  margin-top: 10px;
+  font-size: 30px;
   font-weight: bold;
   text-align: center;
 `;
-
+const SliderWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 const Img = styled.div<ImgBoxProps>`
-  background-image: ${(props) => `url(${props.mainImg})`};
+  background-image: ${(props) => `url(${props.img})`};
   background-size: cover;
   background-position: center center;
 `;
 
-const SliderContainer = styled(Slider)`
+const ImgSliderContainer = styled(Slider)`
   width: 100%;
-  height: calc(100% - 120px);
+  height: calc(100% - 320px);
+  min-height: 620px;
+  max-height: 720px;
+
+  position: relative;
+
+  .slick-prev::before,
+  .slick-next::before {
+    opacity: 0;
+    display: none;
+  }
 
   .slick-list {
     width: 100%;
+    min-height: 600px;
     height: 100%;
   }
 
@@ -98,25 +204,104 @@ const SliderContainer = styled(Slider)`
   }
 
   .slick-slide {
-    min-height: 740px;
-    height: calc(100vh - 240px);
+    min-height: 600px;
+    height: calc(100vh - 440px);
     display: flex;
     align-items: center;
   }
   .slick-slide div {
-    width: 100%;
+    width: 380px;
+    height: 380px;
   }
   .slick-slide div div {
-    height: 500px;
+    width: 100%;
+    height: 100%;
     border-radius: 500px;
+    border: 2px solid black;
+    /* box-shadow: -2px 2px 0px 1px #000000; */
     object-fit: cover;
   }
   .slick-center div div {
-    height: 500px;
+    width: 100%;
+    height: 100%;
     border-radius: 500px;
+    border: 1px solid black;
+    box-shadow: -2px 2px 0px 1px #000000;
     transition: all 300ms ease;
     transform: scale(1.4);
   }
 `;
+
+const TitleSvg = styled.img`
+  position: absolute;
+  bottom: 40px;
+`;
+
+const ArrowR = styled.div`
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: 48px;
+  z-index: 99;
+`;
+const ArrowL = styled.div`
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 48px;
+  z-index: 99;
+`;
+const SVG = styled.img`
+  width: 40px;
+  height: 40px;
+`;
+
+const MainCommentSliderContainer = styled(Slider)`
+  width: 100%;
+  height: 100px;
+  margin: 105px 0;
+  position: relative;
+  /* 
+  .slick-prev::before,
+  .slick-next::before {
+    opacity: 0;
+    display: none;
+  }
+
+  .slick-list {
+    width: 100%;
+    min-height: 600px;
+    height: 100%;
+  }
+
+  .silck-track {
+  }
+
+  .slick-slide {
+    min-height: 600px;
+    height: calc(100vh - 440px);
+    display: flex;
+    align-items: center;
+  }
+  .slick-slide div {
+    width: 380px;
+    height: 380px;
+  }
+  .slick-slide div div {
+    width: 100%;
+    height: 100%;
+    border-radius: 500px;
+    object-fit: cover;
+  }
+  .slick-center div div {
+    width: 100%;
+    height: 100%;
+    border-radius: 500px;
+    transition: all 300ms ease;
+    transform: scale(1.4);
+  } */
+`;
+
+const MainCommentWrapper = styled.div``;
 
 export default Home;

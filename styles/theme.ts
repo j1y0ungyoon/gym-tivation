@@ -12,9 +12,9 @@ export const theme = {
       height: 50px;
       padding: 0 25px;
       border-radius: 50px;
-      border: none;
+      border: 1px solid black;
 
-      background-color: #d9d9d9;
+      background-color: #fff;
       color: #000;
       :hover {
         background-color: #FF3D00;
@@ -30,10 +30,10 @@ export const theme = {
       height: 50px;
       padding: 0 25px;
       border-radius: 50px;
-      border: none;
+      border: 1px solid black;
       font-size: 16px;
-      background-color: #d9d9d9;
-      color: #000;
+      background-color: #FF3D00;
+      color: #fff;
       :hover {
         background-color: #000;
         color: #fff;
@@ -45,14 +45,14 @@ export const theme = {
       height : 40px;
       padding : 0 20px;
       border-radius : 40px;
-      border: none;
+      border: 1px solid black;
       font-size : 16px;
 
-      background-color: #d9d9d9;
-      color: #000;
+      background-color: #000;
+      color: #fff;
       :hover {
-        background-color: #000;
-        color: #fff;
+        background-color: #fff;
+        color: #000;
       }
     `,
 
@@ -61,14 +61,14 @@ export const theme = {
       height : 30px;
       padding : 0 15px;
       border-radius : 30px;
-      border: none;
+      border: 1px solid black;
       font-size : 14px;
 
-      background-color: #d9d9d9;
-      color: #000;
+      background-color: #000;
+      color: #fff;
       :hover {
-        background-color: #000;
-        color: #fff;
+        background-color: #fff;
+        color: #000;
       }
     `,
   },
@@ -81,12 +81,15 @@ export const theme = {
       min-height : 740px;
       height : calc(100vh - 80px);
       margin : 0 auto;
+      margin-left : 180px;
       background-color:#FFFCF3;
+      border-left : 1px solid #f0dcca;
+      padding: 0 20px
   `,
     container: `
       min-width : 640px;
       width : 100%;
-      max-width : 1220px;
+      max-width : 1440px;
       margin : 20px auto;
       height:100%;
     `,
@@ -108,13 +111,13 @@ export const theme = {
       border-radius : 20px;
       justify-content: space-between;
       padding : 0 20px;
-      background-color: #eee;
+      background-color: #fff;
     `,
   input: `
       width: 100%;
       border: none;
       outline: none;
-      background-color: #eee;
+      background-color: #fff;
     `,
 
   profileDiv: `

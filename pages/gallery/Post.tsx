@@ -1,5 +1,5 @@
 import { authService, dbService, storage } from '@/firebase';
-import { addDoc, collection, runTransaction, doc } from 'firebase/firestore';
+import { runTransaction, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
@@ -7,18 +7,25 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import mouseClick from '../../public/assets/icons/mouseClick.png';
+import imageCompression from 'browser-image-compression';
+import { useMutation, useQueryClient } from 'react-query';
+import { addGalleryPost } from '../api/api';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
+
 const Post = () => {
-  const [imageUpload, setImageUpload] = useState<any>('');
+  const queryClient = useQueryClient();
+  const [imageUpload, setImageUpload] = useState<File | undefined>();
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
-
   const router = useRouter();
-
+  const { mutate, isLoading } = useMutation(addGalleryPost);
   const today = new Date().toLocaleString('ko-KR').slice(0, 20);
   // const displayName = authService.currentUser?.displayName;
   //image upload
-
+  const { showModal } = useModal();
   const onChangeGalleryTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGalleryTitle(event.target.value);
   };
@@ -33,8 +40,35 @@ const Post = () => {
       pathname: `/gallery`,
     });
   };
-  const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUpload(event.target.files?.[0]);
+  const imageCompress = async (image: File) => {
+    const options = {
+      maxSizeMB: 1,
+      maxwidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(image, options);
+      console.log(
+        'compressedFile instanceof Blob',
+        compressedFile instanceof Blob,
+      ); // true
+      console.log(
+        `compressedFile size ${compressedFile.size / 1024 / 1024} MB`,
+      ); // smaller than maxSizeMB
+
+      return compressedFile;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const originalImage: any = event.target.files?.[0];
+    // setGalleryPhoto(URL.createObjectURL(originalImage));
+    console.log('original size', originalImage?.size);
+    if (!originalImage) return;
+    const compressedImage = await imageCompress(originalImage);
+    setImageUpload(compressedImage);
   };
 
   useEffect(() => {
@@ -49,7 +83,11 @@ const Post = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      toast.info('로그인을 먼저 해주세요!');
+      // toast.info('로그인을 먼저 해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
       router.push('/gallery');
     }
   }, []);
@@ -60,14 +98,11 @@ const Post = () => {
   //Create
   const onSubmitGallery = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!galleryTitle) {
-      toast.warn('제목을 입력해주세요');
+
+    if (!galleryContent) {
+      toast.warn('내용을 입력해주세요');
       return;
     }
-    // if (!galleryContent) {
-    //   toast.warn('내용을 입력해주세요');
-    //   return;
-    // }
     if (!galleryPhoto) {
       toast.warn('사진을 선택해주세요');
       return;
@@ -84,12 +119,17 @@ const Post = () => {
       userPhoto: authService.currentUser?.photoURL,
       comment: 0,
     };
+    mutate(newGalleryPost, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('getGalleryData', {
+          refetchActive: true,
+        });
+      },
+    });
+    if (isLoading) {
+      return <Loading />;
+    }
 
-    await addDoc(collection(dbService, 'gallery'), newGalleryPost)
-      .then(() => console.log('post'))
-      .catch((error) => {
-        console.log('에러 발생!', error);
-      });
     //lv 추가 및 lvName 추가
     const id = String(authService.currentUser?.uid);
     try {
@@ -130,7 +170,7 @@ const Post = () => {
       <GalleryPostContainer>
         <GalleryContent>
           <GalleryPostContent onSubmit={onSubmitGallery}>
-            <GalleryTitleContainer>
+            {/* <GalleryTitleContainer>
               <Title>제목 </Title>
 
               <InputDiv>
@@ -139,7 +179,7 @@ const Post = () => {
                   value={galleryTitle}
                 />
               </InputDiv>
-            </GalleryTitleContainer>
+            </GalleryTitleContainer> */}
 
             <GalleryContentContainer>
               <GalleryImageWarpper htmlFor="input-file">
@@ -151,11 +191,11 @@ const Post = () => {
                   onChange={onChangeUpload}
                 />
               </GalleryImageWarpper>
-              {/* <GalleryContentInput
-            placeholder="글을 입력해주세요"
-            onChange={onChangeGalleryContent}
-            value={galleryContent}
-          /> */}
+              <GalleryContentInput
+                placeholder="글을 입력해주세요"
+                onChange={onChangeGalleryContent}
+                value={galleryContent}
+              />
             </GalleryContentContainer>
             <GalleryButtonWrapper>
               <GalleryPostButton type="submit">게시하기</GalleryPostButton>

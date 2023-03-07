@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, useRef, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from 'react-query';
 import {
   editRecruitPost,
   deleteRecruitPost,
@@ -23,10 +23,10 @@ import {
 } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
 import styled from 'styled-components';
-import UseDropDown from '@/components/UseDropDown';
-import SearchMyGym from '@/components/SearchMyGym';
-import CommentList from '@/components/CommentList';
-import SelectDay from '@/components/SelectDay';
+import UseDropDown from '@/components/common/dropDown/UseDropDown';
+import SearchMyGym from '@/components/mapBoard/SearchMyGym';
+import CommentList from '@/components/comment/CommentList';
+import SelectDay from '@/components/mapBoard/SelectDay';
 import { nanoid } from 'nanoid';
 import {
   AllDaysBox,
@@ -38,6 +38,9 @@ import {
   UpperBox,
 } from '../mapBoard/WritingRecruitment';
 import { toast } from 'react-toastify';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import Loading from '@/components/common/globalModal/Loading';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -95,6 +98,8 @@ const RecruitDetail = ({ params }: any) => {
   const [currentUserProfile, setCurrentUserProfile] =
     useState<UserProfileType>();
 
+  const { showModal } = useModal();
+
   // 유저 프로필 수정 useMutation (운동 참여 버튼 클릭 시 필요)
   const { mutate: reviseUserProfile } = useMutation(
     ['editUserProfile', currentUserProfile?.uid],
@@ -139,18 +144,24 @@ const RecruitDetail = ({ params }: any) => {
 
   // 게시글 삭제 클릭 이벤트
   const onClickDeletePost = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-
-    if (answer) {
-      try {
-        await removeRecruitPost(id);
-        router.push('/mapBoard');
-      } catch (error) {
-        console.log('에러입니다', error);
-      }
-    } else {
-      return;
+    try {
+      await removeRecruitPost(id);
+      router.push('/mapBoard');
+      ``;
+    } catch (error) {
+      console.log('에러입니다', error);
     }
+  };
+
+  // confrim 모달로 게시글 삭제하기
+  const openConfirmModal = () => {
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onClickDeletePost,
+      },
+    });
   };
 
   // 게시글 수정을 위한 input open
@@ -181,34 +192,52 @@ const RecruitDetail = ({ params }: any) => {
   // 게시글 수정
   const onSubmitEdittedPost = async () => {
     if (!editTitle) {
-      toast.info('제목을 작성해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '제목을 작성해 주세요!' },
+      });
       editTitleRef.current?.focus();
       return;
     }
 
     if (!editContent) {
-      toast.info('내용을 작성해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '내용을 작성해 주세요!' },
+      });
       editContentRef.current?.focus();
       return;
     }
 
     if (!detailAddress) {
-      toast.info('운동 장소를 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '운동 장소를 입력해 주세요!' },
+      });
       return;
     }
 
     if (start === '') {
-      toast.info('운동 시간을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '시작 시간을 입력해 주세요!' },
+      });
       return;
     }
 
     if (end === '') {
-      toast.info('운동 시간을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '종료 시간을 입력해 주세요!' },
+      });
       return;
     }
 
     if (selectedDays.length === 0) {
-      toast.info('운동 요일을 입력해 주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '요일을 입력해 주세요!' },
+      });
       return;
     }
 
@@ -244,7 +273,10 @@ const RecruitDetail = ({ params }: any) => {
   const onClcikParticipate = async () => {
     // 비로그인 사용자가 참여 버튼을 눌렀을 때
     if (!authService.currentUser) {
-      toast.info('로그인 후 이용해주세요!');
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인 후 이용해 주세요!' },
+      });
       return;
     }
     // 로그인 사용자가 참여 버튼을 눌렀을 때
@@ -302,7 +334,11 @@ const RecruitDetail = ({ params }: any) => {
               userId: authService.currentUser.uid,
               edittedProfile,
             });
-            toast.success('참여가 완료 되었습니다!');
+            // toast.success('참여가 완료 되었습니다!');
+            showModal({
+              modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+              modalProps: { contentText: '참여가 완료 되었습니다!' },
+            });
             return;
           }
         }
@@ -333,7 +369,11 @@ const RecruitDetail = ({ params }: any) => {
             { userParticipation: [...edittedProfilesArr] },
           );
         }
-        toast.info('참여를 취소했습니다!');
+        // toast.info('참여를 취소했습니다!');
+        showModal({
+          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+          modalProps: { contentText: '참여를 취소했습니다!' },
+        });
         return;
       }
     }
@@ -401,15 +441,15 @@ const RecruitDetail = ({ params }: any) => {
   }, [refetchedPost]);
 
   if (!refetchedPost) {
-    return <div>데이터를 불러오고 있습니다.</div>;
+    return <Loading />;
   }
 
   return (
     <>
       {isEditting ? (
-        <div>게시물을 수정중입니다</div>
+        <Loading />
       ) : isDeleting ? (
-        <div>게시물을 삭제중입니다</div>
+        <Loading />
       ) : (
         <>
           {changeForm ? (
@@ -528,7 +568,7 @@ const RecruitDetail = ({ params }: any) => {
                         <StyledButton onClick={onClickChangeForm}>
                           수정
                         </StyledButton>
-                        <StyledButton onClick={onClickDeletePost}>
+                        <StyledButton onClick={openConfirmModal}>
                           삭제
                         </StyledButton>
                       </EditAndDeleteButtonBox>

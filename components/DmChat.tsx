@@ -15,6 +15,8 @@ import {
   updateDoc,
   arrayUnion,
 } from 'firebase/firestore';
+import { useRecoilState } from 'recoil';
+import { roomState } from '@/recoil/dmData';
 
 type ChatLog = {
   id?: number;
@@ -25,24 +27,19 @@ type ChatLog = {
   roomNum?: string;
 };
 
-type DmChatProps = {
-  roomNum?: string;
-};
-
 type DmTextProps = {
   user?: string;
 };
 
-const DmChat = ({ roomNum }: DmChatProps) => {
+const DmChat = () => {
   const router = useRouter();
-  console.log('roomNum', roomNum);
 
   const [dmInputValue, setDmInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
+  const [roomNum, setRoomNum] = useRecoilState(roomState);
 
   const user = authService.currentUser;
   const username = user?.displayName;
-  const anonymousname = 'user-' + nanoid();
 
   const dmLogBoxRef = useRef<HTMLDivElement>();
 
@@ -59,7 +56,6 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       );
       data.docs.map((doc) => {
         if (doc.data().id == roomNum) {
-          console.log(doc.id);
           return setChatId(doc.id);
         }
       });
@@ -72,14 +68,15 @@ const DmChat = ({ roomNum }: DmChatProps) => {
       );
 
       const prevChatLog = chatDoc?.docs[0]?.data().chatLog;
-      console.log(prevChatLog);
       setChatLogs(prevChatLog);
     };
 
     // roomNum 바뀔때마다 챗로그 비우고, DB에서 채팅로그 받아옴
     setChatLogs([]);
-    getDocId();
-    chatLogsGetDoc();
+    if (roomNum) {
+      getDocId();
+      chatLogsGetDoc();
+    }
     router.isReady;
   }, [roomNum]);
 
@@ -98,7 +95,6 @@ const DmChat = ({ roomNum }: DmChatProps) => {
         console.log('연결성공!');
 
         socket.emit('roomEnter', roomNum);
-        console.log(roomNum);
       });
 
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
@@ -149,8 +145,8 @@ const DmChat = ({ roomNum }: DmChatProps) => {
     const chatLog = {
       id: nanoid(),
       msg: (e.target as any).value,
-      username: username ? username : anonymousname,
-      photoURL: user ? user.photoURL : null,
+      username: username,
+      photoURL: user?.photoURL,
       date: time,
       roomNum,
     };
@@ -178,15 +174,15 @@ const DmChat = ({ roomNum }: DmChatProps) => {
   return (
     <DmChatWrapper>
       <DmLogBox ref={dmLogBoxRef}>
-        <DmBox>
+        {/* <DmBox>
           <UserImg src={`${authService.currentUser?.photoURL}`} />
           <div>
             <DmName>{username}</DmName>
             <DmText>{roomNum}방에 입장하셨습니다.</DmText>
           </div>
-        </DmBox>
+        </DmBox> */}
         {chatLogs?.map((chatLog) => (
-          <DmBox key={chatLog?.id}>
+          <DmBox key={nanoid()}>
             <UserImg src={`${chatLog.photoURL}`} />
             <div>
               <DmName>{chatLog?.username}</DmName>
@@ -196,13 +192,17 @@ const DmChat = ({ roomNum }: DmChatProps) => {
           </DmBox>
         ))}
       </DmLogBox>
-      <DmInput
-        placeholder="채팅을 입력하세요."
-        type="text"
-        onKeyPress={postChat}
-        value={dmInputValue}
-        onChange={onChangeInputValue}
-      />
+      {user ? (
+        <DmInput
+          placeholder="채팅을 입력하세요."
+          type="text"
+          onKeyPress={postChat}
+          value={dmInputValue}
+          onChange={onChangeInputValue}
+        />
+      ) : (
+        <DmInput placeholder="로그인 후 이용 가능합니다." disabled />
+      )}
     </DmChatWrapper>
   );
 };
