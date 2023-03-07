@@ -44,12 +44,24 @@ const UploadImage = ({
       },
     );
   };
+  console.log('업로드', progressPercent);
 
   return (
     <UploadImageWrapper>
       <UploadContainer htmlFor="input-file">
         <PhotoBox>
           <Photo src={imageURL} />
+
+          {99 > progressPercent && progressPercent > 1 ? (
+            <>
+              <ProgressPercent>
+                <div>
+                  <div>업로드중...</div>
+                  <div>{progressPercent}%</div>
+                </div>
+              </ProgressPercent>
+            </>
+          ) : null}
         </PhotoBox>
       </UploadContainer>
       <PhotoInput
@@ -87,4 +99,19 @@ const PhotoBox = styled.div`
   :hover {
     cursor: pointer;
   }
+  position: relative;
+`;
+const ProgressPercent = styled.div`
+  display: flex;
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 70%;
+  left: 0;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000aa;
+  color: white;
+  z-index: 200;
 `;
