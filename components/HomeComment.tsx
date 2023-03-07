@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 const HomeComment = ({ mainComment }: any) => {
-  console.log('이거보면됨', mainComment.photo);
   return (
     <HomeCommentWrapper>
       <HomeCommentContainer>
