@@ -97,16 +97,7 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  {item.category === undefined ? (
-                    <NickNameText>
-                      {String(item.createdAt).slice(0, -1)}
-                    </NickNameText>
-                  ) : (
-                    <NickNameText>
-                      {String(item.createdAt).slice(0, -3)}
-                    </NickNameText>
-                  )}
-
+                  <NickNameText>{String(item.date)}</NickNameText>
                   <IconImg src="/assets/icons/myPage/Likes.svg" />
                   <NickNameText>
                     {item.like ? item.like.length : 0}
