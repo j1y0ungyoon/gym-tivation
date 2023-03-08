@@ -25,11 +25,10 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         });
         router.push('/');
         authService.signOut();
-        // toast.info('로그아웃');
-        showModal({
-          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-          modalProps: { contentText: '로그아웃 되었습니다!' },
-        });
+        // showModal({
+        //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        //   modalProps: { contentText: '로그아웃 되었습니다!' },
+        // });
       }
     } catch {
       (error: any) => {

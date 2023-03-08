@@ -122,11 +122,10 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        // toast.success('로그인 완료');
-        showModal({
-          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-          modalProps: { contentText: '로그인이 완료되었습니다!' },
-        });
+        // showModal({
+        //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        //   modalProps: { contentText: '로그인이 완료되었습니다!' },
+        // });
         router.push('/');
       } else {
         authService.signOut();
@@ -203,11 +202,10 @@ const SignIn = () => {
           chatLog: [],
         });
       }
-      // toast.success('로그인 완료');
-      showModal({
-        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-        modalProps: { contentText: '로그인이 완료되었습니다!' },
-      });
+      // showModal({
+      //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+      //   modalProps: { contentText: '로그인이 완료되었습니다!' },
+      // });
       router.push('/');
     } catch (error: any) {
       toast.error(error.message);

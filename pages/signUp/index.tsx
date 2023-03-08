@@ -235,7 +235,6 @@ const SignUp = () => {
         enterUser: [user?.uid, '나와의채팅'],
         chatLog: [],
       });
-      // toast.warn('인증 메일을 확인해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '인증 메일을 확인해주세요!' },
