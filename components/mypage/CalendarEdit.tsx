@@ -57,7 +57,7 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
         onChange={(e) => {
           setTextAreaContent(e.target.value);
         }}
-        placeholder="Enter를 누르면 저장됩니다"
+        placeholder="Enter를 누르면 저장됩니다."
         onKeyPress={() => onClickCalendarEdit(item.id)}
       />
     </>
