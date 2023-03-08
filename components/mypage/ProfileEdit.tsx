@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect, useCallback, useId } from 'react';
-import UploadImage from '@/components/ProfileUpLoad';
+import UploadImage from '@/components/mypage/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
 import {
   doc,

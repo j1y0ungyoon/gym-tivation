@@ -15,7 +15,7 @@ import {
   AiFillEye,
   AiFillEyeInvisible,
 } from 'react-icons/ai';
-import UploadImage from '@/components/ProfileUpLoad';
+import UploadImage from '@/components/mypage/ProfileUpLoad';
 import { useRouter } from 'next/router';
 import { getDocs, collection, query } from 'firebase/firestore';
 import { toast } from 'react-toastify';

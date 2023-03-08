@@ -15,6 +15,7 @@ const UploadImage = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [progressPercent, setProgressPercent] = useState<number>(0); // 파일 업로드 상태 확인 가능
+  //이미지 압축 및 업로드
   const onChangeImage = async (
     e: React.ChangeEvent<EventTarget & HTMLInputElement>,
   ) => {
@@ -24,7 +25,8 @@ const UploadImage = ({
       console.log('압축전', file);
       const options = {
         maxSizeMB: 1,
-        maxWidthOrHeight: 100,
+        maxWidthOrHeight: 300,
+        useWebWorker: true,
       };
       const compressionFile = await imageCompression(file, options);
       if (!compressionFile) return null;
