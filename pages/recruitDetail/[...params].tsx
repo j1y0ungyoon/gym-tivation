@@ -37,10 +37,11 @@ import {
   Time,
   UpperBox,
 } from '../mapBoard/WritingRecruitment';
-import { toast } from 'react-toastify';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import Loading from '@/components/common/globalModal/Loading';
+import FollowButton from '@/components/FollowButton';
+import DmButton from '@/components/DmButton';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -99,6 +100,10 @@ const RecruitDetail = ({ params }: any) => {
     useState<UserProfileType>();
 
   const { showModal } = useModal();
+
+  const { data, isLoading: gettingYourProfile } = useQuery('profile');
+
+  const yourProfile = data as ProfileItem[];
 
   // 유저 프로필 수정 useMutation (운동 참여 버튼 클릭 시 필요)
   const { mutate: reviseUserProfile } = useMutation(
@@ -603,14 +608,16 @@ const RecruitDetail = ({ params }: any) => {
                           <span>{`${refetchedPost.lvName} Lv${refetchedPost.lv}`}</span>
                         </UserNameBox>
 
-                        {/* <FollowAndMessageBox>
-                          <FollowAndMessageImg src="/assets/icons/mapBoard/follow_icon_inactive.svg" />
-                          팔로우
-                        </FollowAndMessageBox>
-                        <FollowAndMessageBox>
-                          <FollowAndMessageImg src="/assets/icons/mapBoard/message_icon_inactive.svg" />
-                          메세지
-                        </FollowAndMessageBox> */}
+                        <FollowButton
+                          Id={refetchedPost.userId}
+                          item={
+                            yourProfile.filter(
+                              (item) => item.id === refetchedPost.userId,
+                            )[0]
+                          }
+                        />
+
+                        <DmButton id={refetchedPost.userId} />
                       </UserImageAndNameBox>
                       {authService.currentUser?.uid ===
                       refetchedPost.userId ? null : (
@@ -814,8 +821,6 @@ const ParticipationBtn = styled.button`
   align-items: center;
   justify-content: center;
   height: 2.6rem;
-  background-color: white;
-  border: 1px solid black;
   font-weight: bold;
 `;
 
