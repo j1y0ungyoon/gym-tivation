@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { query, collection, getDocs, where } from 'firebase/firestore';
 import { dbService, authService } from '@/firebase';
-import Follow from '@/components/Follow';
+import Follow from './mypage/Follow';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 

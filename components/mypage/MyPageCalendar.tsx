@@ -158,8 +158,8 @@ const DotBox = styled.div`
 `;
 const CalendarDot = styled.div`
   margin-top: 5px;
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: #0094ff;
 `;

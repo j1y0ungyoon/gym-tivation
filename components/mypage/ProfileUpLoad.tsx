@@ -1,7 +1,9 @@
-import { authService, storage } from '@/firebase';
+import { storage } from '@/firebase';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
+import imageCompression from 'browser-image-compression';
+import { async } from '@firebase/util';
 
 // storage 이미지 업로드 후 불러오기
 const UploadImage = ({
@@ -13,38 +15,46 @@ const UploadImage = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [progressPercent, setProgressPercent] = useState<number>(0); // 파일 업로드 상태 확인 가능
-  const onChangeImage = (
+  //이미지 압축 및 업로드
+  const onChangeImage = async (
     e: React.ChangeEvent<EventTarget & HTMLInputElement>,
   ) => {
     e.preventDefault();
-    const file = e.target.files;
-    if (!file) return null;
-    const storegeRef = ref(storage, `profile/${file[0].name}`);
-    const uploadTask = uploadBytesResumable(storegeRef, file[0]);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-        );
-        setProgressPercent(progress);
-      },
-      (error) => {
-        switch (error.code) {
-          case 'sotrage/canceled':
-            alert('업로드 취소');
-            break;
-        }
-      },
-      () => {
-        e.target.value = '';
-        getDownloadURL(storegeRef).then((downloadURL) => {
-          setImageURL(downloadURL);
-        });
-      },
-    );
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 300,
+        useWebWorker: true,
+      };
+      const compressionFile = await imageCompression(file, options);
+      if (!compressionFile) return null;
+      const storegeRef = ref(storage, `profile/${compressionFile.name}`);
+      const uploadTask = uploadBytesResumable(storegeRef, compressionFile);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+          );
+          setProgressPercent(progress);
+        },
+        (error) => {
+          switch (error.code) {
+            case 'sotrage/canceled':
+              alert('업로드 취소');
+              break;
+          }
+        },
+        () => {
+          e.target.value = '';
+          getDownloadURL(storegeRef).then((downloadURL) => {
+            setImageURL(downloadURL);
+          });
+        },
+      );
+    }
   };
-  console.log('업로드', progressPercent);
 
   return (
     <UploadImageWrapper>

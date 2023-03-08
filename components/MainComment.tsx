@@ -6,10 +6,12 @@ import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import { useRouter } from 'next/router';
 
 const MainComment = ({ item }: any) => {
   const queryClient = useQueryClient();
   const user = authService.currentUser?.uid;
+  const router = useRouter();
   //   댓글 삭제 useMutation
   const { mutate: removeBoardComment, isLoading: isDeleting } =
     useMutation(deleteMainComment);
@@ -51,13 +53,27 @@ const MainComment = ({ item }: any) => {
     });
   };
 
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: {
+        id,
+      },
+    });
+  };
+
   return (
     <>
       <CommentWrapper>
         <CommentContainer>
           <NumberWrapper>{item.number}등</NumberWrapper>
           <NickName>
-            <ProfileImage src={item?.photo} />
+            <ProfileImage
+              src={item?.photo}
+              onClick={() => {
+                goToMyPage(item.user);
+              }}
+            />
             {item?.nickName}
           </NickName>
 
@@ -158,6 +174,9 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   margin-left: 1rem;
   margin-right: 0.6rem;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export default MainComment;
