@@ -1,10 +1,11 @@
 import BoardItem from '@/components/board/BoardItem';
 import Loading from '@/components/common/globalModal/Loading';
 import SearchDropDown from '@/components/common/globalModal/SearchDropDown';
+import { authService } from '@/firebase';
 import { BoardPostType } from '@/type';
 import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { getBoardPosts } from '../api/api';
@@ -21,8 +22,7 @@ interface boardCategoryProps {
 const Board = () => {
   const [category, setCategory] = useState('운동정보');
   const router = useRouter();
-  const { data, isLoading } = useQuery(['getPostsData'], getBoardPosts);
-
+  const { data, isLoading } = useQuery(['getPostData'], getBoardPosts);
   const [searchCategory, setSearchCategory] = useState('전체');
   const [searchInput, setSearchInput] = useState('');
   const [searchText, setSearchText] = useState('');
@@ -45,10 +45,10 @@ const Board = () => {
     }
   };
 
+  useEffect(() => {}, [authService.currentUser]);
   if (isLoading) {
     return <Loading />;
   }
-
   return (
     <>
       <BoardWrapper>
