@@ -9,6 +9,8 @@ import { toast } from 'react-toastify';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useQuery } from 'react-query';
+import { useRecoilState } from 'recoil';
+import { navMenuState } from '@/recoil/navMenu';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
@@ -16,6 +18,9 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
+
+  const [nowMenu, setNowMenu] = useRecoilState(navMenuState);
+
   const onLogout = async () => {
     try {
       const user = authService.currentUser;
@@ -63,7 +68,13 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   };
   return (
     <HeaderWrapper>
-      <Logo onClick={() => router.push('/')} src="/assets/images/Logo.png" />
+      <Logo
+        onClick={() => {
+          router.push('/');
+          setNowMenu('home');
+        }}
+        src="/assets/images/Logo.png"
+      />
 
       <Itembox>
         <SearchBar>

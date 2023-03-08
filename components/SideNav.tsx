@@ -1,13 +1,15 @@
 import { authService } from '@/firebase';
+import { navMenuState } from '@/recoil/navMenu';
 import { useRouter } from 'next/router';
 
 import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
 
-  const [nowMenu, setNowMenu] = useState('');
+  const [nowMenu, setNowMenu] = useRecoilState(navMenuState);
 
   const id = authService.currentUser?.uid;
   const goToDetailMyPage = (id: any) => {
