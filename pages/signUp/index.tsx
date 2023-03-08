@@ -159,23 +159,23 @@ const SignUp = () => {
 
   const emailIcon =
     isValidEmail && !emailCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon = isValidPassword ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const passwordCheckIcon = isValidPasswordCheck ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const nickNameIcon =
     isValidNickName && !nickNameCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -235,7 +235,6 @@ const SignUp = () => {
         enterUser: [user?.uid, '나와의채팅'],
         chatLog: [],
       });
-      // toast.warn('인증 메일을 확인해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '인증 메일을 확인해주세요!' },

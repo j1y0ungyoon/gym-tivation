@@ -99,13 +99,13 @@ const SignIn = () => {
 
   const emailIcon =
     isValidEmail === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon =
     isValidPassword === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -122,11 +122,10 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        // toast.success('로그인 완료');
-        showModal({
-          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-          modalProps: { contentText: '로그인이 완료되었습니다!' },
-        });
+        // showModal({
+        //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        //   modalProps: { contentText: '로그인이 완료되었습니다!' },
+        // });
         router.push('/');
       } else {
         authService.signOut();
@@ -196,17 +195,17 @@ const SignIn = () => {
           lvName: 'Yellow',
           loginState: true,
         });
+        console.log('실험');
         await addDoc(collection(dbService, 'dms'), {
           id: user?.uid,
           enterUser: [user?.uid, '나와의채팅'],
           chatLog: [],
         });
       }
-      // toast.success('로그인 완료');
-      showModal({
-        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-        modalProps: { contentText: '로그인이 완료되었습니다!' },
-      });
+      // showModal({
+      //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+      //   modalProps: { contentText: '로그인이 완료되었습니다!' },
+      // });
       router.push('/');
     } catch (error: any) {
       toast.error(error.message);
