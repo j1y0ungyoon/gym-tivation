@@ -104,7 +104,7 @@ const UserClose2 = styled.div`
   display: block;
   width: 100vw;
   position: fixed;
-  top: 62vh;
+  top: 20vh;
   left: 0;
   right: 0;
   bottom: 0;

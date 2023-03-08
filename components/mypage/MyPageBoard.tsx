@@ -44,9 +44,7 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  <NickNameText>
-                    {String(item.createdAt).slice(0, -3)}
-                  </NickNameText>
+                  <NickNameText>{String(item.date).slice(0, -3)}</NickNameText>
                   <IconImg src="/assets/icons/myPage/Likes.svg" />
                   <NickNameText>
                     {item.like ? item.like.length : 0}

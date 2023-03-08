@@ -131,8 +131,8 @@ const DmButtonWrapper = styled.button`
   background-color: #fff;
   color: #000;
   :hover {
-    background-color: ${({ theme }) => theme.color.brandColor100};
-    color: #fff;
+    background-color: #ffcab5;
+    color: black;
   }
 `;
 
