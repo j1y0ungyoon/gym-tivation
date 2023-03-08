@@ -57,7 +57,7 @@ const CalendarEdit = ({ item, mark, setMark }: CalendarProps) => {
         onChange={(e) => {
           setTextAreaContent(e.target.value);
         }}
-        placeholder="입력시 Enter 키를 눌러주세요."
+        placeholder="Enter를 넣으면 저장됩니다."
         onKeyPress={() => onClickCalendarEdit(item.id)}
       />
     </>

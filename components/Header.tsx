@@ -1,6 +1,6 @@
 import { authService, dbService } from '@/firebase';
 import { doc, updateDoc, query, collection, getDocs } from 'firebase/firestore';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import SearchUser from './SearchUser';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -57,6 +57,10 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     },
   );
 
+  const toggleDropMenu = (e: React.MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation(); // 이벤트 캡쳐링 방지
+    setSearchOpen((prevState) => !prevState);
+  };
   return (
     <HeaderWrapper>
       <Logo onClick={() => router.push('/')} src="/assets/images/Logo.png" />
@@ -76,7 +80,19 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             onFocus={() => {
               setSearchOpen(true);
             }}
+            placeholder="유저를 검색해주세요"
           />
+          {searchOpen && (
+            <SearchCloseButton
+              onClick={() => {
+                setSearchOpen(false);
+                setSearchName('');
+              }}
+            >
+              X
+            </SearchCloseButton>
+          )}
+
           <SearchIcon src="/assets/icons/searchIcon.svg" />
         </SearchBar>
         {searchOpen && (
@@ -171,6 +187,13 @@ const LogoutBtn = styled.button`
   :hover {
     background-color: ${({ theme }) => theme.color.brandColor100};
     color: #fff;
+  }
+`;
+const SearchCloseButton = styled.span`
+  font-size: 16px;
+  margin-right: 4px;
+  :hover {
+    cursor: pointer;
   }
 `;
 

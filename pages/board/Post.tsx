@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/board/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
-import { toast } from 'react-toastify';
 // import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 
@@ -29,10 +28,11 @@ const Post = () => {
   const [category, setCategory] = useState('');
   const [userLv, setUserLv] = useState('');
   const [userLvName, setUserLvName] = useState('');
+
   // const [imageUpload, setImageUpload] = useState<any>('');
   // const [boardPhoto, setBoardPhoto] = useState('');
   const router = useRouter();
-  const today = new Date().toLocaleString();
+  const today = new Date().toLocaleString('ko-KR').slice(0, -3);
   const { mutate, isLoading } = useMutation(addBoardPost);
   const { showModal } = useModal();
   const modules = {
@@ -109,12 +109,10 @@ const Post = () => {
       });
       router.push('/board');
     }
+
     profileData();
   }, []);
 
-  if (!authService.currentUser) {
-    return <div>로그인이 필요합니다.</div>;
-  }
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -149,7 +147,7 @@ const Post = () => {
       title: boardTitle,
       content: boardContent,
       category: category,
-      createdAt: today,
+      createdAt: Date.now(),
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
       // photo: boardPhoto,
@@ -158,12 +156,17 @@ const Post = () => {
       userLv: userLv,
       userLvName: userLvName,
       comment: 0,
+      date: today,
     };
-    mutate(newPost, {
+
+    await mutate(newPost, {
       onSuccess: () => {
-        queryClient.invalidateQueries('addPost', { refetchActive: true });
+        queryClient.invalidateQueries('getPostData', {
+          refetchActive: true,
+        });
       },
     });
+
     if (isLoading) {
       return <Loading />;
     }
@@ -195,6 +198,9 @@ const Post = () => {
     goToBoard();
   };
 
+  if (!authService.currentUser) {
+    return <div>로그인이 필요합니다.</div>;
+  }
   return (
     <>
       <PostWrapper>

@@ -3,7 +3,7 @@ import { dbService } from '@/firebase';
 import Image from 'next/image';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useQuery } from 'react-query';
@@ -52,13 +52,20 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
     return data.docs.map((doc) => doc.data().postLike);
   };
 
-  const { isLoading: likeLoading, data: like } = useQuery('like', getPostLike, {
+  const {
+    isLoading: likeLoading,
+    data: like,
+    refetch,
+  } = useQuery('like', getPostLike, {
     onSuccess: () => {},
     onError: (error) => {
       console.log('error : ', error);
     },
   });
-
+  // Like를 다시 받아옴
+  useEffect(() => {
+    refetch();
+  }, [paramsId]);
   return (
     <MyPageBoardWrapper>
       {combineData
@@ -85,21 +92,17 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                   <BoardCategory>
                     {item.category === undefined ? '오운완 갤러리' : '게시판'}
                   </BoardCategory>
-                  <BoardTitleText>{item.title}</BoardTitleText>
+                  {item.category === undefined ? (
+                    <BoardTitleText>{item.content}</BoardTitleText>
+                  ) : (
+                    <BoardTitleText>{item.title}</BoardTitleText>
+                  )}
+
                   <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
                   <NickNameText>{item.nickName}</NickNameText>
-                  {item.category === undefined ? (
-                    <NickNameText>
-                      {String(item.createdAt).slice(0, -1)}
-                    </NickNameText>
-                  ) : (
-                    <NickNameText>
-                      {String(item.createdAt).slice(0, -3)}
-                    </NickNameText>
-                  )}
-
+                  <NickNameText>{String(item.date)}</NickNameText>
                   <IconImg src="/assets/icons/myPage/Likes.svg" />
                   <NickNameText>
                     {item.like ? item.like.length : 0}
@@ -213,5 +216,5 @@ const IconImg = styled.img`
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 5px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 `;

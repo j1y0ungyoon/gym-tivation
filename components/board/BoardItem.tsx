@@ -19,7 +19,6 @@ const BoardItem = ({
   searchText,
 }: BoardItemProps) => {
   const [searchedPosts, setSearchedPosts] = useState<BoardPostType[]>([]);
-
   const filteredCategory = data?.filter(
     (item: any) => item.category === category,
   );
@@ -56,15 +55,14 @@ const BoardItem = ({
 
   useEffect(() => {
     getSearchedPosts();
-  }, [searchText, searchCategory, category]);
+  }, [searchText, searchCategory, category, data]);
 
   return (
     <>
       {searchedPosts?.map((boardPost: any) => {
         return (
-          <BoardList key={nanoid()}>
+          <BoardList key={boardPost.id}>
             <BoardPost
-              key={boardPost.id}
               item={boardPost.item}
               title={boardPost.title}
               id={boardPost.id}
@@ -73,7 +71,7 @@ const BoardItem = ({
               category={boardPost.category}
               // photo={boardPost.photo}
               like={boardPost.like}
-              createdAt={boardPost.createdAt}
+              createdAt={boardPost.date}
             />
           </BoardList>
         );

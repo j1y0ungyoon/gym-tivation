@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 type FollowButtonType = {
   item: ProfileItem;
-  Id: string;
+  Id?: string;
 };
 //item은 firebase profile를 map으로 돌린 값
 //Id는 상대방 id값
@@ -89,8 +89,8 @@ const EditButton = styled.button`
   background-color: #fff;
   color: #000;
   :hover {
-    background-color: ${({ theme }) => theme.color.brandColor100};
-    color: #fff;
+    background-color: #ffcab5;
+    color: black;
   }
 `;
 const IconImg = styled.img`

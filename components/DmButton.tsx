@@ -2,19 +2,13 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { apponentState, dmListsState, roomState } from '@/recoil/dmData';
 import { useRecoilState } from 'recoil';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
-import {
-  addDoc,
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-} from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
 
 interface DmButtonProps {
-  id: string;
+  id?: string;
 }
 
 const DmButton = ({ id }: DmButtonProps) => {
@@ -23,6 +17,7 @@ const DmButton = ({ id }: DmButtonProps) => {
   const [roomNum, setRoomNum] = useRecoilState(roomState);
 
   const user = authService.currentUser;
+  const userId = String(user?.uid);
   const router = useRouter();
 
   // const getDms = async () => {
@@ -55,10 +50,8 @@ const DmButton = ({ id }: DmButtonProps) => {
   }, [user]);
 
   const onClickDm = async () => {
+    if (!id) return;
     setApponentId(id);
-    if (!id) {
-      return;
-    }
 
     // if (!user?.uid || !id) {
     //   return console.log('뭔가 못받음');
@@ -116,10 +109,14 @@ const DmButton = ({ id }: DmButtonProps) => {
   };
 
   return (
-    <DmButtonWrapper onClick={() => onClickDm()}>
-      <IconImg src="/assets/icons/myPage/DM.svg" />
-      메시지
-    </DmButtonWrapper>
+    <>
+      {id !== userId ? (
+        <DmButtonWrapper onClick={() => onClickDm()}>
+          <IconImg src="/assets/icons/myPage/DM.svg" />
+          메시지
+        </DmButtonWrapper>
+      ) : null}
+    </>
   );
 };
 
@@ -131,8 +128,8 @@ const DmButtonWrapper = styled.button`
   background-color: #fff;
   color: #000;
   :hover {
-    background-color: ${({ theme }) => theme.color.brandColor100};
-    color: #fff;
+    background-color: #ffcab5;
+    color: black;
   }
 `;
 

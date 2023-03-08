@@ -26,7 +26,6 @@ const GalleryDetail = ({ params }: any) => {
   const [prevPhoto, setPrevPhoto] = useState('');
   const [editGalleryContent, setEditGalleryContent] = useState<string>('');
   const [editImageUpload, setEditImageUpload] = useState<File | undefined>();
-
   const [id] = params;
   const router = useRouter();
   const { data: detailGalleryPost, isLoading } = useQuery(
@@ -45,45 +44,23 @@ const GalleryDetail = ({ params }: any) => {
     setEditGalleryTitle(event.target.value);
   };
 
-  // const onChangeEditGalleryContent = (
-  //   event: React.ChangeEvent<HTMLTextAreaElement>,
-  // ) => {
-  //   setEditGalleryContent(event.target.value);
-  // };
+  const onChangeGalleryContent = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setEditGalleryContent(event.target.value);
+  };
+
+  const onChangeEditGalleryContent = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setEditGalleryContent(event.target.value);
+  };
 
   const toGallery = () => {
     router.push({
       pathname: `/gallery`,
     });
   };
-  // 수정 useMutation
-  // const { isLoading: isEditting, mutate: editGalleryBoardPost } = useMutation(
-  //   ['editGalleryBoard', id],
-  //   (body: GalleryParameterType) => editGalleryBoard(body),
-  //   {
-  //     onSuccess: () => {
-  //       console.log('수정성공');
-  //     },
-  //     onError: (error) => {
-  //       console.log('수정 실패:', error);
-  //     },
-  //   },
-  // );
-
-  //삭제 useMutation
-
-  // const { isLoading: isDeleting, mutate: removeGalleryPost } = useMutation(
-  //   [deleteGalleryPost, id],
-  //   (body: any) => deleteGalleryPost(body),
-  //   {
-  //     onSuccess: () => {
-  //       console.log('삭제성공');
-  //     },
-  //     onError: (err) => {
-  //       console.log('삭제 실패:', err);
-  //     },
-  //   },
-  // );
 
   const onClickDeleteGalleryPost = async () => {
     const answer = confirm('정말 삭제하시겠습니까?');
@@ -195,7 +172,7 @@ const GalleryDetail = ({ params }: any) => {
           <GalleryEditContainer>
             <GalleryContent>
               <GalleryPostForm onSubmit={onSubmitEditGallery}>
-                <EditTitleContainer>
+                {/* <EditTitleContainer>
                   <Title>제목 </Title>
 
                   <InputDiv>
@@ -204,7 +181,7 @@ const GalleryDetail = ({ params }: any) => {
                       defaultValue={detailGalleryPost?.data()?.title}
                     />
                   </InputDiv>
-                </EditTitleContainer>
+                </EditTitleContainer> */}
 
                 <GalleryContentContainer>
                   <GalleryImageLabel>
@@ -216,11 +193,11 @@ const GalleryDetail = ({ params }: any) => {
                       onChange={onChangeUpload}
                     />
                   </GalleryImageLabel>
-                  {/* <GalleryContentInput
-            placeholder="글을 입력해주세요"
-            onChange={onChangeGalleryContent}
-            value={galleryContent}
-          /> */}
+                  <GalleryContentInput
+                    placeholder="글을 입력해주세요"
+                    onChange={onChangeGalleryContent}
+                    defaultValue={detailGalleryPost?.data()?.content}
+                  />
                 </GalleryContentContainer>
                 <GalleryButtonWrapper>
                   <GalleryPostButton onClick={onClickChangeGalleryDetail}>
@@ -239,9 +216,9 @@ const GalleryDetail = ({ params }: any) => {
               <GalleryTitleContainer>
                 <InfoWrapper>
                   <TitleUpperWrapper>
-                    <DetailGalleryTitle>
+                    {/* <DetailGalleryTitle>
                       {detailGalleryPost?.data()?.title}
-                    </DetailGalleryTitle>
+                    </DetailGalleryTitle> */}
                   </TitleUpperWrapper>
                   <BottomWrapper>
                     <UserImage src={detailGalleryPost?.data()?.userPhoto} />
@@ -279,9 +256,9 @@ const GalleryDetail = ({ params }: any) => {
                 <GalleryImageWrapper>
                   <GalleryImagePreview src={detailGalleryPost?.data()?.photo} />
                 </GalleryImageWrapper>
-                {/* <DetailGalleryContent>
-                  {detailGalleryPost?.content}
-                </DetailGalleryContent> */}
+                <DetailGalleryContent>
+                  {detailGalleryPost?.data()?.content}
+                </DetailGalleryContent>
 
                 <CommentWrapper>
                   <CommentContainer>
@@ -296,6 +273,7 @@ const GalleryDetail = ({ params }: any) => {
     </>
   );
 };
+const DetailGalleryContent = styled.div``;
 const GalleryImageWrapper = styled.div`
   display: flex;
   width: 100%;
@@ -359,6 +337,7 @@ const EditWrapper = styled.div`
 
 const UserImage = styled.img`
   height: 50px;
+  width: 50px;
   border-radius: 40px;
   margin-left: 10px;
 `;

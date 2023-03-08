@@ -32,7 +32,7 @@ const MyPageGalley = ({ paramsId, gallery }: GalleryGet) => {
             >
               <GalleryPhoto src={item.photo} />
 
-              <PhotoDate>{String(item.createdAt).slice(0, -10)}</PhotoDate>
+              <PhotoDate>{String(item.date)}</PhotoDate>
             </GalleryContainer>
           );
         })}
@@ -63,6 +63,11 @@ const GalleryContainer = styled.div`
   max-width: 190px;
   max-height: 190px;
   position: relative;
+  :hover {
+    cursor: pointer;
+    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
+  }
 `;
 
 const GalleryPhoto = styled.img`
@@ -70,11 +75,6 @@ const GalleryPhoto = styled.img`
   height: 100%;
   border-radius: 1rem;
   object-fit: cover;
-  :hover {
-    cursor: pointer;
-    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
-    transition: 0.3s;
-  }
 `;
 const PhotoDate = styled.button`
   position: absolute;
