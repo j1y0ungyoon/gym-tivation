@@ -80,6 +80,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             onFocus={() => {
               setSearchOpen(true);
             }}
+            placeholder="유저를 검색해주세요"
           />
           {searchOpen && (
             <SearchCloseButton
