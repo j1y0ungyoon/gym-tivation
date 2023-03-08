@@ -32,7 +32,7 @@ const MyPageGalley = ({ paramsId, gallery }: GalleryGet) => {
             >
               <GalleryPhoto src={item.photo} />
 
-              <PhotoDate>{String(item.createdAt).slice(0, -10)}</PhotoDate>
+              <PhotoDate>{String(item.date).slice(0, -10)}</PhotoDate>
             </GalleryContainer>
           );
         })}
