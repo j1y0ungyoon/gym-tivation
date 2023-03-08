@@ -159,23 +159,23 @@ const SignUp = () => {
 
   const emailIcon =
     isValidEmail && !emailCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon = isValidPassword ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const passwordCheckIcon = isValidPasswordCheck ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const nickNameIcon =
     isValidNickName && !nickNameCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );

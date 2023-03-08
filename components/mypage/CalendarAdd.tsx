@@ -47,7 +47,7 @@ const CalendarAdd = ({ markDate, userUid }: CalendarAddInformation) => {
         onChange={(e) => {
           setCalendarText(e.target.value);
         }}
-        placeholder="Enter를 넣으면 저장됩니다."
+        placeholder="Enter를 누르면 저장됩니다"
         onKeyPress={onClickCalendarAdd}
       />
       {/* <CalendarButton onClick={onClickCalendarAdd}>등록</CalendarButton> */}

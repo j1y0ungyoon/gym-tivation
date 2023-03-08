@@ -11,7 +11,6 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   const id = authService.currentUser?.uid;
   const goToDetailMyPage = (id: any) => {
-    console.log('아이디', id);
     router.push({
       pathname: `/myPage/${id}`,
       query: { id },

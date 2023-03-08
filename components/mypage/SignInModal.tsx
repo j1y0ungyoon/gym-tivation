@@ -35,7 +35,7 @@ const SignInModal = ({ onClickCloseModal, email_validation }: ModalProps) => {
   );
   const emailIcon =
     isValidEmail === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );

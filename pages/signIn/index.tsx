@@ -99,13 +99,13 @@ const SignIn = () => {
 
   const emailIcon =
     isValidEmail === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon =
     isValidPassword === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -196,6 +196,7 @@ const SignIn = () => {
           lvName: 'Yellow',
           loginState: true,
         });
+        console.log('실험');
         await addDoc(collection(dbService, 'dms'), {
           id: user?.uid,
           enterUser: [user?.uid, '나와의채팅'],
