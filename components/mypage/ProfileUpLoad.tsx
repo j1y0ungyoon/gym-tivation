@@ -22,7 +22,6 @@ const UploadImage = ({
     e.preventDefault();
     if (e.target.files !== null) {
       const file = e.target.files[0];
-      console.log('압축전', file);
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 300,
@@ -30,7 +29,6 @@ const UploadImage = ({
       };
       const compressionFile = await imageCompression(file, options);
       if (!compressionFile) return null;
-      console.log('압축', compressionFile);
       const storegeRef = ref(storage, `profile/${compressionFile.name}`);
       const uploadTask = uploadBytesResumable(storegeRef, compressionFile);
       uploadTask.on(

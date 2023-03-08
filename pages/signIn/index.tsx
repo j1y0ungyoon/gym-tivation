@@ -195,7 +195,6 @@ const SignIn = () => {
           lvName: 'Yellow',
           loginState: true,
         });
-        console.log('실험');
         await addDoc(collection(dbService, 'dms'), {
           id: user?.uid,
           enterUser: [user?.uid, '나와의채팅'],
