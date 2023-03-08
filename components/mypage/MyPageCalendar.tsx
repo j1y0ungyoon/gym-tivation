@@ -158,10 +158,10 @@ const DotBox = styled.div`
 `;
 const CalendarDot = styled.div`
   margin-top: 5px;
-  width: 10px;
-  height: 10px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background-color: green;
+  background-color: #0094ff;
 `;
 const CalendarBox = styled.div`
   width: 100%;
@@ -302,7 +302,7 @@ const CalendarCSS = styled.div`
   .react-calendar__tile--now {
     background: #ff4800;
     border-radius: 8px;
-    color: black;
+    color: white;
   }
 
   .react-calendar__month-view__weekdays {
