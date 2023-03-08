@@ -29,6 +29,7 @@ type Board = {
   createdAt: number;
   comment: number;
   like: [];
+  date: string;
 };
 type Gallery = {
   id: string;
@@ -41,6 +42,7 @@ type Gallery = {
   createdAt: number;
   comment: number;
   like: [];
+  date: string;
 };
 type Follows = {
   id: string;
