@@ -22,7 +22,7 @@ const Post = () => {
   const [galleryPhoto, setGalleryPhoto] = useState('');
   const router = useRouter();
   const { mutate, isLoading } = useMutation(addGalleryPost);
-  const today = new Date().toLocaleString('ko-KR').slice(0, 20);
+  const today = new Date().toLocaleString('ko-KR').slice(0, -3);
   // const displayName = authService.currentUser?.displayName;
   //image upload
   const { showModal } = useModal();
@@ -111,13 +111,14 @@ const Post = () => {
     const newGalleryPost = {
       title: galleryTitle,
       content: galleryContent,
-      createdAt: today,
+      createdAt: Date.now(),
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
       photo: galleryPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
       comment: 0,
+      date: today,
     };
     mutate(newGalleryPost, {
       onSuccess: () => {

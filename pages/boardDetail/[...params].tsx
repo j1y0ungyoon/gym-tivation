@@ -88,7 +88,6 @@ const Detail = ({ params }: any) => {
   const { showModal } = useModal();
 
   const [id] = params;
-  const [profile, setProfile] = useState<any>('');
 
   const { data: detailPost, isLoading } = useQuery(
     ['post', id],
@@ -109,7 +108,9 @@ const Detail = ({ params }: any) => {
           { id: id, photo: detailPost?.data()?.photo },
           {
             onSuccess: () => {
-              queryClient.invalidateQueries('post', { refetchActive: true });
+              queryClient.invalidateQueries('getPostData', {
+                refetchActive: true,
+              });
             },
           },
         );
@@ -150,7 +151,7 @@ const Detail = ({ params }: any) => {
       { id, editDetailPost },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries('getDetailData', {
+          queryClient.invalidateQueries('getPostData', {
             refetchActive: true,
           });
         },

@@ -94,7 +94,7 @@ export const deleteMainComment = async (id: string) => {
 };
 
 export const getGalleryPosts = async ({ queryKey }: any) => {
-  const [, id] = queryKey;
+  // const [, id] = queryKey;
   const q = query(
     collection(dbService, 'gallery'),
     orderBy('createdAt', 'desc'),
@@ -113,7 +113,8 @@ export const addGalleryPost = async (item: any) => {
 //게시글 가져오기
 
 export const getBoardPosts = async ({ queryKey }: any) => {
-  const [, id] = queryKey;
+  // const [, id] = queryKey;
+
   const q = query(collection(dbService, 'posts'), orderBy('createdAt', 'desc'));
   const snapshot = await getDocs(q);
   const data = snapshot.docs.map((doc) => ({
