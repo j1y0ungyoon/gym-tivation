@@ -1,5 +1,5 @@
 import CommentList from '@/components/comment/CommentList';
-import Like from '@/components/Like';
+import Like from '@/components/common/Like';
 import { authService, storage } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';

@@ -22,7 +22,7 @@ const Post = () => {
   const [galleryPhoto, setGalleryPhoto] = useState('');
   const router = useRouter();
   const { mutate, isLoading } = useMutation(addGalleryPost);
-  const today = new Date().toLocaleString('ko-KR').slice(0, -3);
+  const today = new Date().toLocaleString('en-US').slice(0, -6);
   // const displayName = authService.currentUser?.displayName;
   //image upload
   const { showModal } = useModal();
@@ -69,6 +69,7 @@ const Post = () => {
     if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
     setImageUpload(compressedImage);
+    // setImageUpload(originalImage);
   };
 
   useEffect(() => {

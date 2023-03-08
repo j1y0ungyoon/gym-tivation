@@ -32,7 +32,8 @@ const Post = () => {
   // const [imageUpload, setImageUpload] = useState<any>('');
   // const [boardPhoto, setBoardPhoto] = useState('');
   const router = useRouter();
-  const today = new Date().toLocaleString('ko-KR').slice(0, -3);
+  const today = new Date().toLocaleString('en-US').slice(0, -6);
+
   const { mutate, isLoading } = useMutation(addBoardPost);
   const { showModal } = useModal();
   const modules = {
@@ -94,8 +95,8 @@ const Post = () => {
       where('uid', '==', authService.currentUser?.uid),
     );
     const docsData = await getDocs(q);
-    const getLvName = docsData.docs[0].data().lvName;
-    const getLv = docsData.docs[0].data().lv;
+    const getLvName = docsData.docs[0]?.data().lvName;
+    const getLv = docsData.docs[0]?.data().lv;
     setUserLvName(getLvName);
     setUserLv(getLv);
   };
@@ -208,12 +209,19 @@ const Post = () => {
           <PostForm onSubmit={onSubmitBoard}>
             <PostUpperWrapper>
               <TitleContainer>
-                <Title>제목</Title>
-                <InputDiv>
-                  <PostTitle onChange={onChangeBoardTitle} value={boardTitle} />
-                </InputDiv>
+                <TitleBox>
+                  <Title>제목</Title>
+                  <InputDiv>
+                    <PostTitle
+                      onChange={onChangeBoardTitle}
+                      value={boardTitle}
+                    />
+                  </InputDiv>
+                </TitleBox>
               </TitleContainer>
-              <BoardCategory setCategory={setCategory} />
+              <CategoryContainer>
+                <BoardCategory setCategory={setCategory} />
+              </CategoryContainer>
             </PostUpperWrapper>
             <ContentContainer>
               {/* <PostImageWrapper>
@@ -232,10 +240,10 @@ const Post = () => {
                 modules={modules}
                 formats={formats}
               />
+              <PostButtonWrapper>
+                <PostButton type="submit">작성완료</PostButton>
+              </PostButtonWrapper>
             </ContentContainer>
-            <PostButtonWrapper>
-              <PostButton type="submit">작성완료</PostButton>
-            </PostButtonWrapper>
           </PostForm>
         </PostContainer>
       </PostWrapper>
@@ -249,35 +257,53 @@ const PostWrapper = styled.div`
 `;
 const PostContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container};
+  height: calc(100% - 40px);
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   display: flex;
   flex-direction: column;
   background-color: white;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 
 const PostForm = styled.form`
   flex-direction: column;
   align-items: center;
-  height: 90%;
+  height: 100%;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   margin: 20px;
 `;
 const PostUpperWrapper = styled.div`
-  margin-left: 50px;
+  display: center;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  height: 15%;
 `;
 const InputDiv = styled.div`
   ${({ theme }) => theme.inputDiv};
+  box-shadow: -2px 2px 0px 1px #000000;
+
   background-color: white;
   margin: 10px 0;
   margin-left: 62px;
   width: 85%;
   border: 1px solid black;
 `;
+const TitleBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+`;
+const CategoryContainer = styled.div`
+  height: 50%;
+`;
 const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: row;
+  height: 50%;
 `;
 const PostTitle = styled.input`
   ${({ theme }) => theme.input}
@@ -285,10 +311,10 @@ const PostTitle = styled.input`
 `;
 const ContentContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   height: 80%;
-  padding: 2rem;
+  padding: 10px;
 `;
 const Title = styled.span`
   display: flex;
@@ -299,19 +325,28 @@ const PostButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  height: 5%;
+  margin: 20px 0;
 `;
 const PostButton = styled.button`
   ${({ theme }) => theme.btn.btn50}
   border: 1px solid black;
-  margin-right: 20px;
-  margin-bottom: 10px;
+  box-shadow: -2px 2px 0px 1px #000000;
+
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  :hover {
+    background-color: black;
+    color: white;
+  }
 `;
 
 const Editor = styled(ReactQuill)`
   width: 100%;
-  height: 90%;
-  margin: 1rem;
+  height: 80%;
   border: 1px solid black;
+  margin: 10px 0;
+  box-shadow: -2px 2px 0px 1px #000000;
+
   border-radius: ${({ theme }) => theme.borderRadius.radius10};
   .ql-toolbar.ql-snow + .ql-container.ql-snow {
     border: none;
