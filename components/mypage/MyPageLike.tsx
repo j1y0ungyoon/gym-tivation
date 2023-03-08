@@ -92,7 +92,12 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                   <BoardCategory>
                     {item.category === undefined ? '오운완 갤러리' : '게시판'}
                   </BoardCategory>
-                  <BoardTitleText>{item.title}</BoardTitleText>
+                  {item.category === undefined ? (
+                    <BoardTitleText>{item.content}</BoardTitleText>
+                  ) : (
+                    <BoardTitleText>{item.title}</BoardTitleText>
+                  )}
+
                   <RecruitComment>[{item.comment}]</RecruitComment>
                 </TitleBox>
                 <NickNameBox>
