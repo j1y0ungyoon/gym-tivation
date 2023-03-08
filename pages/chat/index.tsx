@@ -128,7 +128,7 @@ const Chat = () => {
       }));
       const myDms = dms.filter((dm: any) => {
         if (dm.enterUser) {
-          if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
+          if (dm.enterUser[0] === user?.uid || dm.enterUser[1] === user?.uid) {
             return dm;
           }
         }
