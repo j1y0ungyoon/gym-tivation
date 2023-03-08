@@ -140,6 +140,7 @@ export default MyPageCalendar;
 
 const CalendarWrapper = styled.div`
   width: 100%;
+  min-width: 250px;
   border-radius: 16px;
   border-style: solid;
   padding-top: 20px;
