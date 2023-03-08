@@ -7,6 +7,7 @@ import { authService, dbService } from '@/firebase';
 import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import { useRouter } from 'next/router';
 
 const Comment = ({
   comment,
@@ -19,6 +20,7 @@ const Comment = ({
   const [isClickedLike, setIsClickedLike] = useState(false);
 
   const { showModal } = useModal();
+  const router = useRouter();
 
   // 좋아요 클릭 시 댓글 수정 useMutation
   const { mutate: clickLike } = useMutation(
@@ -163,6 +165,14 @@ const Comment = ({
       return;
     }
   };
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: {
+        id,
+      },
+    });
+  };
 
   if (isDeleting) {
     return <div>삭제중입니다</div>;
@@ -172,7 +182,12 @@ const Comment = ({
     <>
       <CommentWrapper>
         <UserProfile>
-          <ProfileImage src={comment.userPhoto} />
+          <ProfileImage
+            src={comment.userPhoto}
+            onClick={() => {
+              goToMyPage(comment.userId);
+            }}
+          />
           <ContentLikeBox>
             <CommentContent>
               <NickName>{comment.nickName}</NickName>
@@ -252,6 +267,9 @@ const CommentContent = styled.div`
 const ProfileImage = styled.img`
   ${({ theme }) => theme.profileDiv};
   margin-right: 8px;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const ContentLikeBox = styled.div`

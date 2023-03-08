@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { authService, dbService } from '@/firebase';
 import { useState, useEffect, useCallback, useId } from 'react';
-import UploadImage from '@/components/ProfileUpLoad';
+import UploadImage from '@/components/mypage/ProfileUpLoad';
 import { updateProfile } from 'firebase/auth';
 import {
   doc,
@@ -98,7 +98,7 @@ const ProfileEdit = ({
 
   const nickNameIcon =
     isValidNickName && !nickNameCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -107,11 +107,11 @@ const ProfileEdit = ({
   const Level = Number(item.lv);
   const helpLevel = () => {
     if (Level < 30) {
-      setMessage(`까지 Lv${30 - Level} 남았습니다. `);
+      setMessage(`까지 LV${30 - Level} 남았습니다. `);
     } else if (29 < Level && Level < 60) {
-      setMessage(`까지 Lv${60 - Level} 남았습니다.`);
+      setMessage(`까지 LV${60 - Level} 남았습니다.`);
     } else if (59 < Level && Level < 90) {
-      setMessage(`까지 Lv${90 - Level} 남았습니다.`);
+      setMessage(`까지 LV${90 - Level} 남았습니다.`);
     }
   };
   const helpLevelText = (
@@ -646,7 +646,7 @@ const LevelHelpBox = styled.div`
   z-index: 2000;
   width: 340px;
   height: 260px;
-  margin-top: 110px;
+  margin-top: 130px;
   margin-left: 120px;
   position: fixed;
   border-radius: 15px;

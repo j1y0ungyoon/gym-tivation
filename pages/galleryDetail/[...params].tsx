@@ -62,6 +62,15 @@ const GalleryDetail = ({ params }: any) => {
     });
   };
 
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: {
+        id,
+      },
+    });
+  };
+
   const onClickDeleteGalleryPost = async () => {
     const answer = confirm('정말 삭제하시겠습니까?');
     if (answer) {
@@ -221,7 +230,12 @@ const GalleryDetail = ({ params }: any) => {
                     </DetailGalleryTitle> */}
                   </TitleUpperWrapper>
                   <BottomWrapper>
-                    <UserImage src={detailGalleryPost?.data()?.userPhoto} />
+                    <UserImage
+                      src={detailGalleryPost?.data()?.userPhoto}
+                      onClick={() => {
+                        goToMyPage(detailGalleryPost?.data()?.userId);
+                      }}
+                    />
                     <LevelWrapper>
                       <NicknameWrapper>
                         {detailGalleryPost?.data()?.nickName}
@@ -340,6 +354,9 @@ const UserImage = styled.img`
   width: 50px;
   border-radius: 40px;
   margin-left: 10px;
+  :hover {
+    cursor: pointer;
+  }
 `;
 const LevelWrapper = styled.span`
   display: flex;
