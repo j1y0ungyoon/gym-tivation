@@ -61,7 +61,6 @@ const UploadImage = ({
       <UploadContainer htmlFor="input-file">
         <PhotoBox>
           <Photo src={imageURL} />
-
           {99 > progressPercent && progressPercent > 1 ? (
             <>
               <ProgressPercent>

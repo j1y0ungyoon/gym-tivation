@@ -18,6 +18,7 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 import DmButton from '../DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import FollowButton from '../FollowButton';
+import Loading from '../common/globalModal/Loading';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -147,14 +148,18 @@ const ProfileEdit = ({
     }
   };
 
-  const { mutate: onProfileEdit } = useMutation(['profileEdit'], ProfileEdit, {
-    onSuccess: async () => {
-      await queryClient.invalidateQueries('profile');
+  const { isLoading: profileEdit, mutate: onProfileEdit } = useMutation(
+    ['profileEdit'],
+    ProfileEdit,
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries('profile');
+      },
+      onError: (error) => {
+        console.log('error : ', error);
+      },
     },
-    onError: (error) => {
-      console.log('error : ', error);
-    },
-  });
+  );
 
   //게시판 + 갤러리
   const getBoardNumber = async () => {
@@ -483,6 +488,7 @@ const ProfileEdit = ({
                         setNickName(item.displayName);
                         setInstagram(item.instagram);
                         setIntroduction(item.introduction);
+                        setPhotoURL(item.photoURL);
                       }}
                     >
                       취소
