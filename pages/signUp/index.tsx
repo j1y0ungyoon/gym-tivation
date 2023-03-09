@@ -392,15 +392,7 @@ const SignUp = () => {
           <TOUHeaderText>GYMTIVATION 이용약관</TOUHeaderText>
 
           <TouAllCheckBox>
-            {allCheck === false ? (
-              <>
-                <AiOutlineCheckCircle
-                  onClick={onClickAllCheckBtn}
-                  style={{ marginTop: '3px' }}
-                />
-                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
-              </>
-            ) : (
+            {(touCheck && piCheck && lbCheck) || allCheck ? (
               <>
                 <AiFillCheckCircle
                   onClick={onClickCancelCheckBtn}
@@ -412,6 +404,14 @@ const SignUp = () => {
                 >
                   모두 동의하기
                 </TOUText>
+              </>
+            ) : (
+              <>
+                <AiOutlineCheckCircle
+                  onClick={onClickAllCheckBtn}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
               </>
             )}
           </TouAllCheckBox>
