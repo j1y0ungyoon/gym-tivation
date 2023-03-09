@@ -99,13 +99,13 @@ const SignIn = () => {
 
   const emailIcon =
     isValidEmail === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon =
     isValidPassword === true ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -122,11 +122,10 @@ const SignIn = () => {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
         });
-        // toast.success('로그인 완료');
-        showModal({
-          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-          modalProps: { contentText: '로그인이 완료되었습니다!' },
-        });
+        // showModal({
+        //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        //   modalProps: { contentText: '로그인이 완료되었습니다!' },
+        // });
         router.push('/');
       } else {
         authService.signOut();
@@ -202,11 +201,10 @@ const SignIn = () => {
           chatLog: [],
         });
       }
-      // toast.success('로그인 완료');
-      showModal({
-        modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-        modalProps: { contentText: '로그인이 완료되었습니다!' },
-      });
+      // showModal({
+      //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+      //   modalProps: { contentText: '로그인이 완료되었습니다!' },
+      // });
       router.push('/');
     } catch (error: any) {
       toast.error(error.message);
@@ -331,16 +329,16 @@ const HeaderText = styled.h2`
 
 const InputBox = styled.div`
   width: 100%;
-  height: 17%;
+  height: 110px;
 `;
 
 const PasswordInputBox = styled.div`
   width: 100%;
-  height: 17%;
+  height: 90px;
   margin-bottom: 40px;
 `;
 const SignInInput = styled.input`
-  width: 40%;
+  width: 400px;
   height: 48px;
   border-radius: 20px;
   padding-left: 16px;
@@ -350,7 +348,7 @@ const SignInInput = styled.input`
 const SignInButton = styled.button`
   margin-bottom: 20px;
   border-radius: 2rem;
-  width: 40%;
+  width: 400px;
   height: 48px;
   color: white;
   background-color: black;
@@ -367,7 +365,7 @@ const SignInButton = styled.button`
 const GoogleSignInButton = styled.button`
   margin-top: 70px;
   border-radius: 2rem;
-  width: 40%;
+  width: 400px;
   height: 48px;
   color: black;
   background-color: white;
@@ -383,7 +381,7 @@ const GoogleSignInButton = styled.button`
 
 const InputText = styled.p`
   font-weight: bold;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   margin-bottom: 8px;
@@ -391,7 +389,7 @@ const InputText = styled.p`
 
 const IconValidation = styled.div`
   margin-top: 10px;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
 `;
@@ -407,22 +405,24 @@ const PasswordShow = styled.div`
   }
 `;
 const GuideText = styled.span`
-  width: 30%;
+  width: 200px;
   margin: auto;
   font-weight: 600;
   font-size: 14px;
-  text-align: right;
+  text-align: center;
+  padding-left: 60px;
   :hover {
     cursor: pointer;
     color: gray;
   }
 `;
 const GuideText2 = styled.span`
-  width: 30%;
+  width: 200px;
   margin: auto;
   font-weight: 600;
   font-size: 14px;
-  text-align: left;
+  text-align: center;
+  padding-right: 50px;
   :hover {
     cursor: pointer;
     color: gray;
@@ -431,12 +431,12 @@ const GuideText2 = styled.span`
 
 const GuideBox = styled.div`
   display: flex;
-  width: 40%;
+  width: 400px;
   height: 4%;
   margin: auto;
 `;
 const PasswordInput = styled.input`
-  width: 40%;
+  width: 400px;
   height: 48px;
   margin-left: 28px;
   margin-right: 12px;

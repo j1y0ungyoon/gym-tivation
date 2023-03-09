@@ -143,7 +143,7 @@ const DmChat = () => {
     const time = `${hours}:${minutes}:${seconds}`;
 
     const chatLog = {
-      id: nanoid(),
+      id: user?.uid,
       msg: (e.target as any).value,
       username: username,
       photoURL: user?.photoURL,
@@ -183,7 +183,12 @@ const DmChat = () => {
         </DmBox> */}
         {chatLogs?.map((chatLog) => (
           <DmBox key={nanoid()}>
-            <UserImg src={`${chatLog.photoURL}`} />
+            <UserImg
+              src={`${chatLog.photoURL}`}
+              onClick={(e) => {
+                return router.push(`/myPage/${chatLog.id}`);
+              }}
+            />
             <div>
               <DmName>{chatLog?.username}</DmName>
               <DmText user={user?.uid}>{chatLog?.msg}</DmText>
@@ -216,6 +221,7 @@ const DmChatWrapper = styled.section`
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   overflow-y: auto;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `;
 
 const DmLogBox = styled.div<any>`
@@ -249,6 +255,7 @@ const UserImg = styled.img`
   height: 40px;
   border-radius: 50px;
   margin-right: 10px;
+  cursor: pointer;
 `;
 const DmName = styled.div`
   font-weight: bold;

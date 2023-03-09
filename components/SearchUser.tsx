@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { query, collection, getDocs, where } from 'firebase/firestore';
 import { dbService, authService } from '@/firebase';
-import Follow from '@/components/Follow';
+import Follow from './mypage/Follow';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 
@@ -39,7 +39,7 @@ const SearchUser = ({
   return (
     <>
       <UserWrapper>
-        <UserClose
+        {/* <UserClose
           onClick={() => {
             setSearchOpen(false);
           }}
@@ -48,7 +48,7 @@ const SearchUser = ({
           onClick={() => {
             setSearchOpen(false);
           }}
-        ></UserClose2>
+        ></UserClose2> */}
         {searchName.length > 0 &&
           (profile as ProfileItem[])
             .filter(
@@ -89,23 +89,24 @@ const UserWrapper = styled.div`
   }
 `;
 
-const UserClose = styled.div`
-  z-index: 1500;
-  width: 66vw;
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-`;
-const UserClose2 = styled.div`
-  z-index: 1500;
-  display: block;
-  width: 100vw;
-  position: fixed;
-  top: 20vh;
-  left: 0;
-  right: 0;
-  bottom: 0;
-`;
+// const UserClose = styled.div`
+//   z-index: 1500;
+//   width: 66vw;
+//   display: block;
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+// `;
+// const UserClose2 = styled.div`
+//   z-index: 1500;
+//   display: block;
+//   width: 100vw;
+//   position: fixed;
+//   top: 40vh;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background-color: black;
+// `;

@@ -93,14 +93,21 @@ const CategoryWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 100%;
   font-size: ${({ theme }) => theme.font.font70};
 `;
 const CategoryContainer = styled.div`
-  justify-content: space-between;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* justify-content: space-between; */
 `;
 const CategoryLabel = styled.label``;
 const CategoryText = styled.span`
   ${({ theme }) => theme.btn.btn50}
+  box-shadow: -2px 2px 0px 1px #000000;
+
   font-size: 18px;
   width: 150px;
   display: flex;

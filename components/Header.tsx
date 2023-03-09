@@ -9,6 +9,8 @@ import { toast } from 'react-toastify';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useQuery } from 'react-query';
+import { useRecoilState } from 'recoil';
+import { navMenuState } from '@/recoil/navMenu';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
@@ -16,20 +18,23 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
+
+  const [nowMenu, setNowMenu] = useRecoilState(navMenuState);
+  
+  const user = authService.currentUser;
+  
   const onLogout = async () => {
     try {
-      const user = authService.currentUser;
       if (user !== null) {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: false,
         });
         router.push('/');
         authService.signOut();
-        // toast.info('로그아웃');
-        showModal({
-          modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-          modalProps: { contentText: '로그아웃 되었습니다!' },
-        });
+        // showModal({
+        //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
+        //   modalProps: { contentText: '로그아웃 되었습니다!' },
+        // });
       }
     } catch {
       (error: any) => {
@@ -46,23 +51,33 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     }));
   };
 
-  const { isLoading: profileLoading, data: profile } = useQuery(
-    'profile',
-    getProfile,
-    {
-      onSuccess: () => {},
-      onError: (error) => {
-        console.log('error : ', error);
-      },
+  const { isLoading, data: profile } = useQuery('profile', getProfile, {
+    onSuccess: () => {},
+    onError: (error) => {
+      console.log('error : ', error);
     },
-  );
+  });
+  const id = authService.currentUser?.uid;
+  const goToDetailMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: { id },
+    });
+  };
 
   return (
     <HeaderWrapper>
-      <Logo onClick={() => router.push('/')} src="/assets/images/Logo.png" />
+      <Logo
+        onClick={() => {
+          router.push('/');
+          setNowMenu('home');
+        }}
+        src="/assets/images/Logo.png"
+      />
 
       <Itembox>
         <SearchBar>
+          <SearchIcon src="/assets/icons/searchIcon.svg" />
           <SearchInput
             value={searchName}
             onChange={(e) => {
@@ -76,13 +91,39 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             onFocus={() => {
               setSearchOpen(true);
             }}
+            placeholder="유저를 검색해주세요"
           />
-          <SearchIcon src="/assets/icons/searchIcon.svg" />
+          {searchOpen && searchName.length > 0 && (
+            <SearchClose
+              src="/assets/icons/closeBtn.svg"
+              onClick={() => {
+                setSearchOpen(false);
+                setSearchName('');
+              }}
+            />
+          )}
         </SearchBar>
         {searchOpen && (
           <SearchUser setSearchOpen={setSearchOpen} searchName={searchName} />
         )}
-
+        <>
+          {authService.currentUser && (
+            <UserBox
+              onClick={() => {
+                goToDetailMyPage(id);
+              }}
+            >
+              <ProfilePhoto>
+                {authService.currentUser?.photoURL && (
+                  <Photo src={authService.currentUser?.photoURL} />
+                )}
+              </ProfilePhoto>
+              <TextBox>
+                <FollowText>{authService.currentUser?.displayName}</FollowText>
+              </TextBox>
+            </UserBox>
+          )}
+        </>
         {!isLoggedIn ? (
           <SignBox>
             <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>/
@@ -117,6 +158,7 @@ const Logo = styled.img`
 const SearchBar = styled.div`
   width: 400px;
   height: 40px;
+  margin-right: 80px;
   background-color: #ddd;
   border-radius: 25px;
   display: flex;
@@ -129,7 +171,7 @@ const SearchBar = styled.div`
 const SearchInput = styled.input`
   width: 400px;
   height: 40px;
-  margin-left: 20px;
+  margin-right: 20px;
   border: none;
   outline: none;
   background-color: white;
@@ -137,8 +179,8 @@ const SearchInput = styled.input`
 
 const SearchIcon = styled.img`
   width: 20px;
-  margin-right: 20px;
-  margin-left: 5px;
+  margin-left: 15px;
+  margin-right: 8px;
 `;
 
 const Itembox = styled.div`
@@ -171,6 +213,49 @@ const LogoutBtn = styled.button`
   :hover {
     background-color: ${({ theme }) => theme.color.brandColor100};
     color: #fff;
+  }
+`;
+const SearchClose = styled.img`
+  font-size: 16px;
+  margin-right: 16px;
+  :hover {
+    cursor: pointer;
+  }
+`;
+
+const ProfilePhoto = styled.div`
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: black;
+`;
+const Photo = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+const FollowText = styled.span`
+  color: white;
+  font-size: 16px;
+
+  text-align: center;
+  font-weight: bolder;
+`;
+
+const TextBox = styled.div`
+  text-align: left;
+  margin-top: 8px;
+`;
+
+const UserBox = styled.div`
+  display: flex;
+  margin-left: 26px;
+  margin-right: 36px;
+
+  :hover {
+    cursor: pointer;
   }
 `;
 
