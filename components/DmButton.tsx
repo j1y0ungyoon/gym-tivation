@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { apponentState, dmListsState, roomState } from '@/recoil/dmData';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 import { authService, dbService } from '@/firebase';
+import useModal from '@/hooks/useModal';
 
 interface DmButtonProps {
   id?: string;
@@ -19,6 +20,7 @@ const DmButton = ({ id }: DmButtonProps) => {
   const user = authService.currentUser;
   const userId = String(user?.uid);
   const router = useRouter();
+  const { showModal } = useModal();
 
   // const getDms = async () => {
   //   const q = query(collection(dbService, 'dms'));
@@ -111,7 +113,16 @@ const DmButton = ({ id }: DmButtonProps) => {
   return (
     <>
       {id !== userId ? (
-        <DmButtonWrapper onClick={() => onClickDm()}>
+        <DmButtonWrapper
+          onClick={() =>
+            authService.currentUser
+              ? onClickDm()
+              : showModal({
+                  modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                  modalProps: { contentText: '로그인 후 이용해주세요!' },
+                })
+          }
+        >
           <IconImg src="/assets/icons/myPage/DM.svg" />
           메시지
         </DmButtonWrapper>
