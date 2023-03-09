@@ -26,7 +26,7 @@ const HomeCommentWrapper = styled.div`
 const HomeCommentContainer = styled.div`
   padding: 0 20px;
   display: flex;
-  border-right: 1px solid black;
+  border-left: 1px solid black;
 `;
 
 const ContentBox = styled.div`

@@ -15,7 +15,7 @@ import {
   AiFillEye,
   AiFillEyeInvisible,
 } from 'react-icons/ai';
-import UploadImage from '@/components/ProfileUpLoad';
+import UploadImage from '@/components/mypage/ProfileUpLoad';
 import { useRouter } from 'next/router';
 import { getDocs, collection, query } from 'firebase/firestore';
 import { toast } from 'react-toastify';
@@ -76,6 +76,8 @@ const SignUp = () => {
       setEmailInformation((prev: any) => [...prev, doc.data().email]);
     });
   };
+
+  const touCheckButton = touCheck && piCheck && lbCheck;
 
   //유효헝 검사
 
@@ -159,23 +161,23 @@ const SignUp = () => {
 
   const emailIcon =
     isValidEmail && !emailCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon = isValidPassword ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const passwordCheckIcon = isValidPasswordCheck ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const nickNameIcon =
     isValidNickName && !nickNameCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -235,7 +237,6 @@ const SignUp = () => {
         enterUser: [user?.uid, '나와의채팅'],
         chatLog: [],
       });
-      // toast.warn('인증 메일을 확인해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '인증 메일을 확인해주세요!' },
@@ -391,15 +392,7 @@ const SignUp = () => {
           <TOUHeaderText>GYMTIVATION 이용약관</TOUHeaderText>
 
           <TouAllCheckBox>
-            {allCheck === false ? (
-              <>
-                <AiOutlineCheckCircle
-                  onClick={onClickAllCheckBtn}
-                  style={{ marginTop: '3px' }}
-                />
-                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
-              </>
-            ) : (
+            {(touCheck && piCheck && lbCheck) || allCheck ? (
               <>
                 <AiFillCheckCircle
                   onClick={onClickCancelCheckBtn}
@@ -411,6 +404,14 @@ const SignUp = () => {
                 >
                   모두 동의하기
                 </TOUText>
+              </>
+            ) : (
+              <>
+                <AiOutlineCheckCircle
+                  onClick={onClickAllCheckBtn}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
               </>
             )}
           </TouAllCheckBox>
@@ -533,7 +534,7 @@ const SignUp = () => {
           </TOU>
           <SignUpButton
             onClick={onClicktermsOfUse}
-            disabled={(!touCheck === !piCheck) === !lbCheck}
+            disabled={touCheckButton === false}
           >
             동의하고 가입하기
           </SignUpButton>
@@ -562,7 +563,7 @@ const PasswordShow = styled.div`
 `;
 const InputText = styled.p`
   font-weight: bold;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   margin-bottom: 8px;
@@ -570,7 +571,7 @@ const InputText = styled.p`
 
 const IconValidation = styled.div`
   margin-top: 10px;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
 `;
@@ -583,7 +584,7 @@ const TextValidation = styled.span`
 const SignUpButton = styled.button`
   margin-top: 4vh;
   border-radius: 2rem;
-  width: 40%;
+  width: 400px;
   height: 48px;
   background-color: white;
   border-style: solid;
@@ -605,7 +606,7 @@ const TOUContainer = styled.div`
 const TouCheckBox = styled.div`
   display: flex;
   height: 5%;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   margin-top: 34px;
@@ -617,7 +618,7 @@ const TouCheckBox = styled.div`
 const TouAllCheckBox = styled.div`
   display: flex;
   height: 5%;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   font-size: 20px;
@@ -635,7 +636,7 @@ const TOUHeaderText = styled.div`
 const TOU = styled.div`
   margin-top: 2vh;
   height: 13%;
-  width: 40%;
+  width: 400px;
   margin: auto;
   overflow: auto;
   background-color: white;
@@ -655,14 +656,14 @@ const InputBox = styled.div`
   height: 15%;
 `;
 const SignUpInput = styled.input`
-  width: 40%;
+  width: 400px;
   height: 48px;
   border-radius: 20px;
   padding-left: 16px;
   font-size: 16px;
 `;
 const PasswordInput = styled.input`
-  width: 40%;
+  width: 400px;
   height: 48px;
   margin-left: 28px;
   margin-right: 12px;

@@ -1,10 +1,9 @@
-import { authService, dbService } from '@/firebase';
-import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
+import { authService } from '@/firebase';
 import Image from 'next/image';
 
 import styled from 'styled-components';
-import likeImg from '../public/assets/images/likeImg.png';
-import checkedLike from '../public/assets/images/checkedLike.png';
+import like from '../../public/assets/icons/deactive_like_button.svg';
+import checkedLike from '../../public/assets/icons/active_like_button.svg';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
 import {
@@ -95,19 +94,8 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             },
           );
         }
-        // await updateDoc(doc(dbService, 'posts', id), {
-        //   like: [...detailPost.like, user],
-        // });
-        // await updateDoc(doc(dbService, 'profile', user), {
-        //   postLike: arrayUnion(id),
-        // });
-        // await updateDoc(doc(dbService, 'posts', id), {
-        //   like: detailPost?.like.filter((prev: any) => prev !== user),
-        // });
-        // await updateDoc(doc(dbService, 'profile', user), {
-        //   postLike: arrayRemove(id),
-        // });
       }
+
       if (gallery) {
         if (!galleryLikeChecked) {
           addGalleryLike(
@@ -163,29 +151,22 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
       }
     }
   };
-  // await updateDoc(doc(dbService, 'gallery', detailGalleryPost.id), {
-  //   like: [...detailGalleryPost.like, user],
-  // });
-  // await updateDoc(doc(dbService, 'profile', user), {
-  //   postLike: arrayUnion(detailGalleryPost.id),
-  // });
-  // await updateDoc(doc(dbService, 'gallery', detailGalleryPost.id), {
-  //   like: detailGalleryPost?.like.filter((prev: any) => prev !== user),
-  // });
-  // await updateDoc(doc(dbService, 'profile', user), {
-  //   postLike: arrayRemove(detailGalleryPost.id),
-  // });
 
   return (
     <LikeWrapper>
       {board ? (
         <>
-          <LikeContainer>
-            좋아요
+          <LikeContainer onClick={likeCounter}>
             <LikeCount>{boardLikeCount}</LikeCount>
+            <Text
+              style={
+                boardLikeChecked ? { color: '#FF3D00' } : { color: 'black' }
+              }
+            >
+              좋아요
+            </Text>
             <Image
-              src={boardLikeChecked ? checkedLike : likeImg}
-              onClick={likeCounter}
+              src={boardLikeChecked ? checkedLike : like}
               alt="좋아요"
               width={50}
               height={50}
@@ -194,12 +175,17 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
         </>
       ) : (
         <>
-          <LikeContainer>
-            좋아요
+          <LikeContainer onClick={likeCounter}>
+            <Text
+              style={
+                galleryLikeChecked ? { color: 'black' } : { color: 'white' }
+              }
+            >
+              좋아요
+            </Text>
             <LikeCount>{galleryLikeCount}</LikeCount>
             <Image
-              src={galleryLikeChecked ? checkedLike : likeImg}
-              onClick={likeCounter}
+              src={galleryLikeChecked ? checkedLike : like}
               alt="좋아요"
               width={50}
               height={50}
@@ -210,6 +196,10 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
     </LikeWrapper>
   );
 };
+const Text = styled.span`
+  font-weight: 600;
+  font-size: ${({ theme }) => theme.font.font50};
+`;
 
 const LikeWrapper = styled.div`
   display: flex;
@@ -217,14 +207,25 @@ const LikeWrapper = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const LikeContainer = styled.div`
+const LikeContainer = styled.button`
   display: flex;
+  width: 100%;
+  margin: 0 30px;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  border: none;
+  background-color: white;
   flex-direction: column;
   align-items: center;
   padding: 10px;
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+    outline: none;
+    width: 100%;
+  }
 `;
 
 const LikeCount = styled.span`
   display: flex;
+  font-weight: 600;
 `;
 export default Like;

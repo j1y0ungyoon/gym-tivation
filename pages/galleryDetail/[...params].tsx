@@ -1,5 +1,5 @@
 import CommentList from '@/components/comment/CommentList';
-import Like from '@/components/Like';
+import Like from '@/components/common/Like';
 import { authService, storage } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { nanoid } from 'nanoid';
@@ -59,6 +59,15 @@ const GalleryDetail = ({ params }: any) => {
   const toGallery = () => {
     router.push({
       pathname: `/gallery`,
+    });
+  };
+
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: {
+        id,
+      },
     });
   };
 
@@ -221,7 +230,12 @@ const GalleryDetail = ({ params }: any) => {
                     </DetailGalleryTitle> */}
                   </TitleUpperWrapper>
                   <BottomWrapper>
-                    <UserImage src={detailGalleryPost?.data()?.userPhoto} />
+                    <UserImage
+                      src={detailGalleryPost?.data()?.userPhoto}
+                      onClick={() => {
+                        goToMyPage(detailGalleryPost?.data()?.userId);
+                      }}
+                    />
                     <LevelWrapper>
                       <NicknameWrapper>
                         {detailGalleryPost?.data()?.nickName}
@@ -340,6 +354,9 @@ const UserImage = styled.img`
   width: 50px;
   border-radius: 40px;
   margin-left: 10px;
+  :hover {
+    cursor: pointer;
+  }
 `;
 const LevelWrapper = styled.span`
   display: flex;

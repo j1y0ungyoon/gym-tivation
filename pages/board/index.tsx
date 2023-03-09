@@ -78,7 +78,10 @@ const Board = () => {
               </CategoryButton>
             </CategoryContainter>
             <PostButtonContainer>
-              <PostButton onClick={onClickPostButton}>게시글 업로드</PostButton>
+              <PostButton onClick={onClickPostButton}>
+                게시글 업로드
+                <PostIcon src="/assets/icons/writingIcon.svg" />
+              </PostButton>
             </PostButtonContainer>
           </ButtonWrapper>
 
@@ -168,6 +171,10 @@ const PostButtonContainer = styled.div`
 `;
 const PostButton = styled.button`
   ${({ theme }) => theme.btn.btn100}
+  box-shadow: -2px 2px 0px 1px #000000;
+`;
+const PostIcon = styled.img`
+  margin-left: 10px;
 `;
 
 const CategoryContainter = styled.div`
@@ -176,7 +183,8 @@ const CategoryContainter = styled.div`
 
 const CategoryButton = styled.button<boardCategoryProps>`
   ${({ theme }) => theme.btn.category}
-  width:150px;
+  box-shadow: -2px 2px 0px 1px #000000;
+  width: 150px;
   margin: 10px;
 `;
 

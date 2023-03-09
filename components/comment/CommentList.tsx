@@ -215,7 +215,9 @@ const InputWrapper = styled.div`
 const CommentInput = styled.input`
   width: 100%;
   ${({ theme }) => theme.inputDiv}
-  border: 0.1px solid black;
+  border:1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
+
   outline: none;
   background-color: white;
 `;
