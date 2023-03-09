@@ -77,8 +77,6 @@ const SignUp = () => {
     });
   };
 
-  const touCheckButton = touCheck && piCheck && lbCheck;
-
   //유효헝 검사
 
   const signUpdisabled =
@@ -392,7 +390,15 @@ const SignUp = () => {
           <TOUHeaderText>GYMTIVATION 이용약관</TOUHeaderText>
 
           <TouAllCheckBox>
-            {(touCheck && piCheck && lbCheck) || allCheck ? (
+            {allCheck === false ? (
+              <>
+                <AiOutlineCheckCircle
+                  onClick={onClickAllCheckBtn}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
+              </>
+            ) : (
               <>
                 <AiFillCheckCircle
                   onClick={onClickCancelCheckBtn}
@@ -404,14 +410,6 @@ const SignUp = () => {
                 >
                   모두 동의하기
                 </TOUText>
-              </>
-            ) : (
-              <>
-                <AiOutlineCheckCircle
-                  onClick={onClickAllCheckBtn}
-                  style={{ marginTop: '3px' }}
-                />
-                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
               </>
             )}
           </TouAllCheckBox>
@@ -534,7 +532,7 @@ const SignUp = () => {
           </TOU>
           <SignUpButton
             onClick={onClicktermsOfUse}
-            disabled={touCheckButton === false}
+            disabled={(!touCheck === !piCheck) === !lbCheck}
           >
             동의하고 가입하기
           </SignUpButton>
