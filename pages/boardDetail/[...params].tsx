@@ -182,6 +182,14 @@ const Detail = ({ params }: any) => {
       pathname: `/board`,
     });
   };
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: {
+        id,
+      },
+    });
+  };
 
   //게시글 수정 토글 버튼
   const onClickChangeDetail = () => {
@@ -277,7 +285,13 @@ const Detail = ({ params }: any) => {
                     </TitleBox>
                   </TitleUpperWrapper>
                   <TitleBottomWrapper>
-                    <UserImage src={detailPost?.data()?.userPhoto} />
+                    <UserImage
+                      src={detailPost?.data()?.userPhoto}
+                      onClick={() => {
+                        goToMyPage(detailPost?.data()?.userId);
+                      }}
+                    />
+
                     <LevelWrapper>
                       <NicknameWrapper>
                         {detailPost?.data()?.nickName}
@@ -461,7 +475,10 @@ const UserImage = styled.img`
   height: 50px;
   width: 50px;
   border-radius: 40px;
-  /* margin-left: 10px; */
+  margin-left: 10px;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const DetailTitleContainer = styled.div`

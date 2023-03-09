@@ -210,7 +210,7 @@ const ImgSliderContainer = styled(Slider)`
     align-items: center;
   }
   .slick-slide div {
-    width: 380px;
+    width: 100%;
     height: 380px;
   }
   .slick-slide div div {

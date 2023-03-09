@@ -14,6 +14,7 @@ import styled from 'styled-components';
 import DmChat from '@/components/DmChat';
 import DmButton from '@/components/DmButton';
 import DmListUserName from '@/components/DmListUserName';
+import { useRouter } from 'next/router';
 
 type ChatLog = {
   id: string | undefined;
@@ -45,6 +46,7 @@ const Chat = () => {
   const username = user?.displayName;
   const anonymousname = 'user-' + nanoid();
   const chatLogBoxRef = useRef<HTMLDivElement>();
+  const router = useRouter();
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
@@ -103,7 +105,7 @@ const Chat = () => {
     const time = `${hours}:${minutes}:${seconds}`;
 
     const chatLog = {
-      id: nanoid(),
+      id: user?.uid,
       msg: (e.target as any).value,
       username: username ? username : anonymousname,
       photoURL: user ? user.photoURL : null,
@@ -207,7 +209,12 @@ const Chat = () => {
                         return (
                           <SearchResult key={item.id}>
                             <UserInfo>
-                              <UserImg src={`${item.photoURL}`} />
+                              <UserImg
+                                src={`${item.photoURL}`}
+                                onClick={(e) => {
+                                  return router.push(`/myPage/${item.id}`);
+                                }}
+                              />
                               <UserName>{item.displayName}</UserName>
                             </UserInfo>
                             <DmButton id={item.id} />
@@ -246,7 +253,12 @@ const Chat = () => {
             <ChatLogBox ref={chatLogBoxRef}>
               {chatLogs.map((chatLog) => (
                 <ChatBox key={chatLog.id}>
-                  <UserImg src={`${chatLog.photoURL}`} />
+                  <UserImg
+                    src={`${chatLog.photoURL}`}
+                    onClick={(e) => {
+                      return router.push(`/myPage/${chatLog.id}`);
+                    }}
+                  />
                   <div>
                     <ChatName>{chatLog.username}</ChatName>
                     <ChatText>{chatLog.msg}</ChatText>
@@ -306,6 +318,7 @@ const MyDmListContainer = styled.section`
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   overflow-y: auto;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `;
 
 const SearchWrapper = styled.div`
@@ -392,6 +405,7 @@ const ChattingContainer = styled.section`
   padding: 60px;
   width: 100%;
   height: calc(100vh - 200px);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `;
 
 const ChatLogBox = styled.div<any>`
@@ -429,6 +443,7 @@ const UserImg = styled.img`
   height: 40px;
   border-radius: 50px;
   margin-right: 10px;
+  cursor: pointer;
 `;
 const UserName = styled.span`
   font-size: 16px;

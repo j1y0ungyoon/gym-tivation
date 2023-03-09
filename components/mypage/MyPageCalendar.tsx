@@ -140,6 +140,7 @@ export default MyPageCalendar;
 
 const CalendarWrapper = styled.div`
   width: 100%;
+  min-width: 250px;
   border-radius: 16px;
   border-style: solid;
   padding-top: 20px;
@@ -158,8 +159,8 @@ const DotBox = styled.div`
 `;
 const CalendarDot = styled.div`
   margin-top: 5px;
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: #0094ff;
 `;

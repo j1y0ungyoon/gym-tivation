@@ -15,7 +15,7 @@ import {
   AiFillEye,
   AiFillEyeInvisible,
 } from 'react-icons/ai';
-import UploadImage from '@/components/ProfileUpLoad';
+import UploadImage from '@/components/mypage/ProfileUpLoad';
 import { useRouter } from 'next/router';
 import { getDocs, collection, query } from 'firebase/firestore';
 import { toast } from 'react-toastify';
@@ -76,6 +76,8 @@ const SignUp = () => {
       setEmailInformation((prev: any) => [...prev, doc.data().email]);
     });
   };
+
+  const touCheckButton = touCheck && piCheck && lbCheck;
 
   //유효헝 검사
 
@@ -159,23 +161,23 @@ const SignUp = () => {
 
   const emailIcon =
     isValidEmail && !emailCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
   const passwordIcon = isValidPassword ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const passwordCheckIcon = isValidPasswordCheck ? (
-    <AiFillCheckCircle color="green" />
+    <AiFillCheckCircle color="#0094FF" />
   ) : (
     <AiFillCheckCircle color="red" />
   );
   const nickNameIcon =
     isValidNickName && !nickNameCheck ? (
-      <AiFillCheckCircle color="green" />
+      <AiFillCheckCircle color="#0094FF" />
     ) : (
       <AiFillCheckCircle color="red" />
     );
@@ -235,7 +237,6 @@ const SignUp = () => {
         enterUser: [user?.uid, '나와의채팅'],
         chatLog: [],
       });
-      // toast.warn('인증 메일을 확인해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '인증 메일을 확인해주세요!' },
@@ -391,15 +392,7 @@ const SignUp = () => {
           <TOUHeaderText>GYMTIVATION 이용약관</TOUHeaderText>
 
           <TouAllCheckBox>
-            {allCheck === false ? (
-              <>
-                <AiOutlineCheckCircle
-                  onClick={onClickAllCheckBtn}
-                  style={{ marginTop: '3px' }}
-                />
-                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
-              </>
-            ) : (
+            {(touCheck && piCheck && lbCheck) || allCheck ? (
               <>
                 <AiFillCheckCircle
                   onClick={onClickCancelCheckBtn}
@@ -411,6 +404,14 @@ const SignUp = () => {
                 >
                   모두 동의하기
                 </TOUText>
+              </>
+            ) : (
+              <>
+                <AiOutlineCheckCircle
+                  onClick={onClickAllCheckBtn}
+                  style={{ marginTop: '3px' }}
+                />
+                <TOUText onClick={onClickAllCheckBtn}>모두 동의하기</TOUText>
               </>
             )}
           </TouAllCheckBox>
@@ -533,7 +534,7 @@ const SignUp = () => {
           </TOU>
           <SignUpButton
             onClick={onClicktermsOfUse}
-            disabled={(!touCheck === !piCheck) === !lbCheck}
+            disabled={touCheckButton === false}
           >
             동의하고 가입하기
           </SignUpButton>

@@ -6,10 +6,12 @@ import { doc, runTransaction } from 'firebase/firestore';
 import { dbService } from '@/firebase';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import { useRouter } from 'next/router';
 
 const MainComment = ({ item }: any) => {
   const queryClient = useQueryClient();
   const user = authService.currentUser?.uid;
+  const router = useRouter();
   //   댓글 삭제 useMutation
   const { mutate: removeBoardComment, isLoading: isDeleting } =
     useMutation(deleteMainComment);
@@ -51,13 +53,27 @@ const MainComment = ({ item }: any) => {
     });
   };
 
+  const goToMyPage = (id: any) => {
+    router.push({
+      pathname: `/myPage/${id}`,
+      query: {
+        id,
+      },
+    });
+  };
+
   return (
     <>
       <CommentWrapper>
         <CommentContainer>
           <NumberWrapper>{item.number}등</NumberWrapper>
           <NickName>
-            <ProfileImage src={item?.photo} />
+            <ProfileImage
+              src={item?.photo}
+              onClick={() => {
+                goToMyPage(item.user);
+              }}
+            />
             {item?.nickName}
           </NickName>
 
@@ -117,11 +133,11 @@ const CommentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   border: 1px solid black;
-  margin: 10px;
+  margin: 10px 0;
   align-items: center;
   justify-content: center;
   height: 80px;
-  width: 1200px;
+  width: 100%;
   box-shadow: -2px 2px 0px 0px #000000;
   border-radius: 19px;
   background-color: white;
@@ -147,8 +163,9 @@ export const NickName = styled.div`
 `;
 const DeleteButton = styled.button`
   ${({ theme }) => theme.btn.btn50}
-  min-width:70px;
-  margin: 10px;
+  font-size: 14px;
+  min-width: 80px;
+  margin-right: 20px;
 `;
 const ProfileImage = styled.img`
   display: flex;
@@ -158,6 +175,9 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   margin-left: 1rem;
   margin-right: 0.6rem;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export default MainComment;
