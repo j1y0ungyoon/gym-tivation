@@ -136,9 +136,9 @@ const ProgressPercent = styled.div`
   z-index: 200;
 `;
 const IconImg = styled.img`
-  width: 1.7rem;
-  height: 1.7rem;
-  margin-top: 4px;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 7px;
 `;
 const IconImgBox = styled.div`
   position: absolute;

@@ -58,7 +58,19 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       query: { id },
     });
   };
-
+  const onClickGalleryPostButton = () => {
+    router.push({
+      pathname: `/gallery/Post`,
+    });
+  };
+  const onClickPostButton = () => {
+    router.push({
+      pathname: `/board/Post`,
+    });
+  };
+  const goToWrite = () => {
+    router.push('/mapBoard/WritingRecruitment');
+  };
   return (
     <HeaderWrapper>
       <Logo onClick={() => router.push('/')} src="/assets/images/Logo.png" />
@@ -101,12 +113,12 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         )}
         <>
           {authService.currentUser && (
-            <UserBox
-              onClick={() => {
-                goToDetailMyPage(id);
-              }}
-            >
-              <ProfilePhoto>
+            <UserBox>
+              <ProfilePhoto
+                onClick={() => {
+                  goToDetailMyPage(id);
+                }}
+              >
                 {authService.currentUser?.photoURL && (
                   <Photo src={authService.currentUser?.photoURL} />
                 )}
@@ -114,6 +126,25 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
               <TextBox>
                 <FollowText>{authService.currentUser?.displayName}</FollowText>
               </TextBox>
+              <HelpBox className="HelpBox">
+                {!isLoggedIn ? (
+                  <SignBox>
+                    <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>
+                    /<Sign onClick={() => router.push('/signIn')}>로그인</Sign>
+                  </SignBox>
+                ) : (
+                  <div>
+                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
+                    <LogoutBtn onClick={onClickGalleryPostButton}>
+                      오운완 글쓰기
+                    </LogoutBtn>
+                    <LogoutBtn onClick={onClickPostButton}>
+                      게시판 글쓰기
+                    </LogoutBtn>
+                    <LogoutBtn onClick={goToWrite}>동료 모집하기</LogoutBtn>
+                  </div>
+                )}
+              </HelpBox>
             </UserBox>
           )}
         </>
@@ -122,9 +153,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>/
             <Sign onClick={() => router.push('/signIn')}>로그인</Sign>
           </SignBox>
-        ) : (
-          <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
-        )}
+        ) : null}
       </Itembox>
     </HeaderWrapper>
   );
@@ -183,6 +212,7 @@ const Itembox = styled.div`
 
 const SignBox = styled.div`
   margin: 10px;
+  margin-right: 46px;
 `;
 
 const Sign = styled.span`
@@ -195,12 +225,14 @@ const Sign = styled.span`
 `;
 
 const LogoutBtn = styled.button`
-  width: 120px;
-  height: 40px;
-  margin-right: 25px;
-  padding: 0;
-  border-radius: 50px;
+  width: 128px;
+  height: 50px;
   border: none;
+  font-size: 14px;
+  border-bottom-style: solid;
+  border-bottom-width: 0.1px;
+  border-color: lightgray;
+  /* border-width: 1px; */
   background-color: white;
   color: #000;
   :hover {
@@ -244,11 +276,37 @@ const TextBox = styled.div`
 
 const UserBox = styled.div`
   display: flex;
+  margin-top: 10px;
   margin-left: 26px;
-  margin-right: 36px;
-
+  margin-right: 46px;
+  height: 50px;
   :hover {
     cursor: pointer;
+    .HelpBox {
+      display: flex;
+    }
+  }
+`;
+
+const HelpBox = styled.div`
+  display: none;
+  z-index: 2000;
+  width: 128px;
+  height: 200px;
+  text-align: center;
+  margin-top: 150px;
+  margin-left: 20px;
+  position: fixed;
+  border-radius: 15px;
+  background-color: white;
+  transform: translate(-50%, -50%) !important;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  box-shadow: -2px 2px 0px #000000;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
   }
 `;
 
