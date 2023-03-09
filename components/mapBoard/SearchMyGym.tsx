@@ -45,14 +45,11 @@ const SearchMyGym = (props: SearchMyGymProps) => {
 
     geocoder.coord2Address(coordinate.lng, coordinate.lat, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
-        console.log('어디임? ', result[0].address.address_name);
         setDetailAddress(result[0].address.address_name);
       }
 
       if (status === kakao.maps.services.Status.ZERO_RESULT) {
         console.log(result);
-        console.log('좌표', coordinate.lat, coordinate.lng);
-        console.log('이상함');
       }
     });
   };
@@ -121,26 +118,25 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   return (
     <BackgroundContainer onClick={closeMap} ref={modalRef}>
       <ModalContainer>
-        <SerachBar>
-          <SerachInput
-            onChange={onChangeInputRegion}
-            onKeyPress={onPressSetRegion}
-            value={inputRegion}
-            placeholder="예시) 서울 종로구"
-          />
-          <SerachImg
-            src="/assets/icons/searchIcon.svg"
-            onClick={onClickSetRegion}
-          />
-        </SerachBar>
-        <Map // 로드뷰를 표시할 Container
+        <SearchHeadBox>
+          <HeadText>운동 장소</HeadText>
+          <SerachBar>
+            <SerachImg
+              src="/assets/icons/searchIcon.svg"
+              onClick={onClickSetRegion}
+            />
+            <SerachInput
+              onChange={onChangeInputRegion}
+              onKeyPress={onPressSetRegion}
+              value={inputRegion}
+              placeholder="예시) 서울 종로구"
+            />
+          </SerachBar>
+        </SearchHeadBox>
+        <StyledMap // 로드뷰를 표시할 Container
           center={{
             lat: 37.566826,
             lng: 126.9786567,
-          }}
-          style={{
-            width: '100%',
-            height: '80%',
           }}
           level={2}
           // @ts-ignore
@@ -173,13 +169,12 @@ const SearchMyGym = (props: SearchMyGymProps) => {
                   xAnchor={0.5}
                   yAnchor={2.5}
                 >
-                  <InfoBox>{marker.content}</InfoBox>
+                  <InfoBox onClick={onClickOkButton}>{marker.content}</InfoBox>
                 </CustomOverlayMap>
               )}
             </MapMarker>
           ))}
-        </Map>
-        <ConfirmButton onClick={onClickOkButton}>선택 완료</ConfirmButton>
+        </StyledMap>
       </ModalContainer>
     </BackgroundContainer>
   );
@@ -192,17 +187,21 @@ const InfoBox = styled.div`
   justify-content: center;
   align-items: center;
   height: 40px;
-  min-width: 200px;
+  min-width: 150px;
   padding: 10px 20px;
-
+  box-shadow: -1px 1px 0px 1px #000000;
   background-color: white;
-  border: 2px solid black;
+  border: 1px solid black;
   border-radius: 8px;
   overflow: hidden; // 을 사용해 영역을 감출 것
   text-overflow: ellipsis; // 로 ... 을 만들기
   white-space: nowrap; // 아래줄로 내려가는 것을 막기위해
   word-break: break-all;
   font-size: ${({ theme }) => theme.font.font50};
+  &:hover {
+    background-color: ${({ theme }) => theme.color.brandColor100};
+    color: white;
+  }
 `;
 
 const BackgroundContainer = styled.div`
@@ -225,29 +224,44 @@ const ModalContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  border-radius: 2rem;
+  border-radius: ${({ theme }) => theme.borderRadius.radius100};
   align-items: center;
   justify-content: center;
-  padding: 20px 0;
+  padding-top: 40px;
   width: 40%;
   min-width: 500px;
   height: 85%;
   min-height: 600px;
-  background-color: white;
+  background-color: #fffcf3;
   z-index: 1000;
+  box-shadow: -2px 2px 0px 1px #000000;
+`;
+
+const SearchHeadBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  margin-bottom: 0.8rem;
+`;
+
+const HeadText = styled.span`
+  font-size: ${({ theme }) => theme.font.font50};
+  font-weight: bold;
 `;
 
 const SerachBar = styled.div`
   ${({ theme }) => theme.inputDiv}
   background-color: white;
-  border: 2px solid black;
-  width: 85%;
-  margin-bottom: 0.7rem;
+  border: 1px solid black;
+  width: 78%;
+  box-shadow: -1px 1px 0px 1px #000000;
 `;
 
 const SerachImg = styled.img`
   width: 20px;
-  margin-left: 10px;
+  margin-right: 10px;
   cursor: pointer;
 `;
 
@@ -257,14 +271,26 @@ const SerachInput = styled.input`
 `;
 
 const ConfirmButton = styled.button`
-  width: 6rem;
-  height: 3rem;
-  background-color: #d9d9d9;
-  border-radius: 1rem;
+  width: 100px;
+  height: 40px;
+  color: white;
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   font-weight: bold;
-  margin-top: 2rem;
+  box-shadow: -1px 1px 0px 1px #000000;
+
   &:hover {
     background-color: black;
     color: white;
   }
+`;
+
+const StyledMap = styled(Map)`
+  width: 100%;
+  height: 100%;
+  border-top: 3px solid black;
+  border-bottom: 1px solid black;
+  margin-top: 20px;
+  border-bottom-left-radius: ${({ theme }) => theme.borderRadius.radius100};
+  border-bottom-right-radius: ${({ theme }) => theme.borderRadius.radius100};
 `;

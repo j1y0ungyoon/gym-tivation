@@ -209,7 +209,6 @@ const InputWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   margin-top: 10px;
-  margin-bottom: 10px;
 `;
 
 const CommentInput = styled.input`
