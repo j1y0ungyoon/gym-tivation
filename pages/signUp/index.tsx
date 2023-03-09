@@ -77,6 +77,8 @@ const SignUp = () => {
     });
   };
 
+  const touCheckButton = touCheck && piCheck && lbCheck;
+
   //유효헝 검사
 
   const signUpdisabled =
@@ -532,7 +534,7 @@ const SignUp = () => {
           </TOU>
           <SignUpButton
             onClick={onClicktermsOfUse}
-            disabled={(!touCheck === !piCheck) === !lbCheck}
+            disabled={touCheckButton === false}
           >
             동의하고 가입하기
           </SignUpButton>
