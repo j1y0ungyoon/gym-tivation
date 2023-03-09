@@ -563,7 +563,7 @@ const PasswordShow = styled.div`
 `;
 const InputText = styled.p`
   font-weight: bold;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   margin-bottom: 8px;
@@ -571,7 +571,7 @@ const InputText = styled.p`
 
 const IconValidation = styled.div`
   margin-top: 10px;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
 `;
@@ -584,7 +584,7 @@ const TextValidation = styled.span`
 const SignUpButton = styled.button`
   margin-top: 4vh;
   border-radius: 2rem;
-  width: 40%;
+  width: 400px;
   height: 48px;
   background-color: white;
   border-style: solid;
@@ -606,7 +606,7 @@ const TOUContainer = styled.div`
 const TouCheckBox = styled.div`
   display: flex;
   height: 5%;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   margin-top: 34px;
@@ -618,7 +618,7 @@ const TouCheckBox = styled.div`
 const TouAllCheckBox = styled.div`
   display: flex;
   height: 5%;
-  width: 40%;
+  width: 400px;
   margin: auto;
   text-align: left;
   font-size: 20px;
@@ -636,7 +636,7 @@ const TOUHeaderText = styled.div`
 const TOU = styled.div`
   margin-top: 2vh;
   height: 13%;
-  width: 40%;
+  width: 400px;
   margin: auto;
   overflow: auto;
   background-color: white;
@@ -656,14 +656,14 @@ const InputBox = styled.div`
   height: 15%;
 `;
 const SignUpInput = styled.input`
-  width: 40%;
+  width: 400px;
   height: 48px;
   border-radius: 20px;
   padding-left: 16px;
   font-size: 16px;
 `;
 const PasswordInput = styled.input`
-  width: 40%;
+  width: 400px;
   height: 48px;
   margin-left: 28px;
   margin-right: 12px;
