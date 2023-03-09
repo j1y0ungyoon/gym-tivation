@@ -133,11 +133,11 @@ const CommentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   border: 1px solid black;
-  margin: 10px;
+  margin: 10px 0;
   align-items: center;
   justify-content: center;
   height: 80px;
-  width: 1200px;
+  width: 100%;
   box-shadow: -2px 2px 0px 0px #000000;
   border-radius: 19px;
   background-color: white;
@@ -163,8 +163,9 @@ export const NickName = styled.div`
 `;
 const DeleteButton = styled.button`
   ${({ theme }) => theme.btn.btn50}
-  min-width:70px;
-  margin: 10px;
+  font-size: 14px;
+  min-width: 80px;
+  margin-right: 20px;
 `;
 const ProfileImage = styled.img`
   display: flex;

@@ -163,11 +163,7 @@ const MainCommentList = ({ id }: MainCommentType) => {
 };
 
 const CommentContainer = styled.div`
-  height: 500px;
-  overflow: auto;
-  ::-webkit-scrollbar {
-    display: none;
-  }
+  width: 100%;
 `;
 const LvWrapper = styled.span`
   display: flex;
@@ -176,7 +172,7 @@ const LvWrapper = styled.span`
   /* align-items: center; */
   flex-direction: center;
   margin: 5px;
-  min-width: 12%;
+  min-width: calc(5% + 100px);
 `;
 const CountWrapper = styled.span`
   display: flex;
@@ -200,7 +196,7 @@ const MainCommentWrapper = styled.div`
   margin: 10px;
   align-items: center;
   justify-content: center;
-  width: 1200px;
+  width: 100%;
 `;
 const Text = styled.span`
   display: flex;
@@ -212,7 +208,7 @@ const ContentWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 1200px;
+  width: 100%;
 `;
 const Icon = styled.img`
   width: 50px;
@@ -237,8 +233,7 @@ const CommentListWrapper = styled.div``;
 const CommentWrapper = styled.div`
   display: flex;
   align-items: flex-start;
-  width: 80%;
-  margin: 10px;
+  width: 100%;
 `;
 const InputContainer = styled.div`
   display: flex;
@@ -260,7 +255,7 @@ const ButtonWrapper = styled.div``;
 const SubmitCommentButton = styled.button`
   margin: 10px;
   height: 40px;
-  width: 70px;
+  width: 100px;
   border-radius: 30px;
   padding: 0 15px;
   border: none;
