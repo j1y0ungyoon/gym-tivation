@@ -13,10 +13,10 @@ import {
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import MainCommentList from '@/components/MainCommentList';
 import { nanoid } from 'nanoid';
 import HomeComment from '@/components/HomeComment';
 import Loading from '@/components/common/globalModal/Loading';
+import MainCommentList from '@/components/comment/MainCommentList';
 
 type ImgBoxProps = {
   img: string;
