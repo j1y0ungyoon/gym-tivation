@@ -282,6 +282,8 @@ const UserBox = styled.div`
   height: 50px;
   :hover {
     cursor: pointer;
+    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
     .HelpBox {
       display: flex;
     }

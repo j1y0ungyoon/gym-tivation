@@ -262,11 +262,11 @@ const MyPage = ({ params }: any) => {
                     {profile.map((item) => {
                       return (
                         <LoginState
-                          followModal={followModal}
                           key={item.id}
                           item={item}
                           toggle={toggle}
                           paramsId={paramsId}
+                          setFollowModal={setFollowModal}
                         />
                       );
                     })}
