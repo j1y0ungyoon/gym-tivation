@@ -272,12 +272,13 @@ const SignIn = () => {
               </IconValidation>
             )}
           </PasswordInputBox>
-          <SignInButton
-            disabled={(isValidEmail && isValidPassword) === false}
-            onClick={onClicksignIn}
-          >
-            로그인하기
-          </SignInButton>
+
+          {isValidEmail && isValidPassword === true ? (
+            <SignUpButton2 onClick={onClicksignIn}>로그인 하기</SignUpButton2>
+          ) : (
+            <SignUpButton> 로그인 하기</SignUpButton>
+          )}
+
           <GuideBox>
             <GuideText onClick={() => router.push('/signUp')}>
               이메일 가입
@@ -285,6 +286,7 @@ const SignIn = () => {
             <GuideText2 onClick={onClickOpenModal}>비밀번호 찾기</GuideText2>
           </GuideBox>
           <GoogleSignInButton onClick={onClickGoogleSignIn}>
+            <GoogleIconImg src="/assets/icons/myPage/google.svg" />
             구글로 간편 로그인하기
           </GoogleSignInButton>
         </SignInBox>
@@ -317,14 +319,14 @@ const SignInBox = styled.div`
   height: 80%;
 `;
 const IconImg = styled.img`
-  width: 5rem;
-  height: 5rem;
+  width: 60px;
+  height: 64px;
 `;
 const HeaderText = styled.h2`
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   margin-top: 1vh;
-  margin-bottom: 80px;
+  margin-bottom: 60px;
 `;
 
 const InputBox = styled.div`
@@ -340,26 +342,13 @@ const PasswordInputBox = styled.div`
 const SignInInput = styled.input`
   width: 400px;
   height: 48px;
-  border-radius: 20px;
+  border-radius: 30px;
   padding-left: 16px;
   font-size: 16px;
-`;
-
-const SignInButton = styled.button`
-  margin-bottom: 20px;
-  border-radius: 2rem;
-  width: 400px;
-  height: 48px;
-  color: white;
-  background-color: black;
-  border-style: solid;
-  border-width: 0.1rem;
-  font-size: 16px;
-  :hover {
-    cursor: pointer;
-    color: black;
-    background-color: white;
+  :focus {
+    outline: none;
   }
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 
 const GoogleSignInButton = styled.button`
@@ -372,6 +361,7 @@ const GoogleSignInButton = styled.button`
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
   :hover {
     cursor: pointer;
     color: white;
@@ -440,7 +430,41 @@ const PasswordInput = styled.input`
   height: 48px;
   margin-left: 28px;
   margin-right: 12px;
-  border-radius: 20px;
+  border-radius: 30px;
   padding-left: 16px;
   font-size: 16px;
+  :focus {
+    outline: none;
+  }
+  box-shadow: -2px 2px 0px 0px #000000;
+`;
+const SignUpButton = styled.button`
+  margin-bottom: 20px;
+  border-radius: 2rem;
+  width: 400px;
+  height: 48px;
+  background-color: #d9d9d9;
+  color: #797979;
+  border-style: solid;
+  border-width: 0.1rem;
+  font-size: 16px;
+  border: none;
+`;
+const SignUpButton2 = styled.button`
+  margin-bottom: 20px;
+  border-radius: 2rem;
+  width: 400px;
+  height: 48px;
+  background-color: #ff4800;
+  color: white;
+  border-style: solid;
+  border-width: 0.1rem;
+  font-size: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
+`;
+const GoogleIconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5px;
+  margin-bottom: 2px;
 `;

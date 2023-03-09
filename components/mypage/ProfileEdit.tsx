@@ -18,7 +18,6 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 import DmButton from '../DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import FollowButton from '../FollowButton';
-import Loading from '../common/globalModal/Loading';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -148,18 +147,14 @@ const ProfileEdit = ({
     }
   };
 
-  const { isLoading: profileEdit, mutate: onProfileEdit } = useMutation(
-    ['profileEdit'],
-    ProfileEdit,
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('profile');
-      },
-      onError: (error) => {
-        console.log('error : ', error);
-      },
+  const { mutate: onProfileEdit } = useMutation(['profileEdit'], ProfileEdit, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('profile');
     },
-  );
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
 
   //게시판 + 갤러리
   const getBoardNumber = async () => {
@@ -213,11 +208,13 @@ const ProfileEdit = ({
           <InformationBox>
             <EditPhotoBox>
               <ProfilePhoto>
-                {item.photoURL === null ? (
-                  <Photo src="https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg" />
-                ) : (
-                  <Photo src={item.photoURL} />
-                )}
+                <ProfilePhotoBox>
+                  {item.photoURL === null ? (
+                    <Photo src="https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg" />
+                  ) : (
+                    <Photo src={item.photoURL} />
+                  )}
+                </ProfilePhotoBox>
               </ProfilePhoto>
               <LevelBox>
                 {item.lvName === 'Yellow' && (
@@ -595,7 +592,7 @@ const InformationBox = styled.div`
   overflow: hidden;
 `;
 const EditPhotoBox = styled.div`
-  padding-top: 10px;
+  padding-top: 24px;
   width: 250px;
   height: 250px;
   float: left;
@@ -626,11 +623,20 @@ const NameBox = styled.div`
   }
 `;
 const ProfilePhoto = styled.div`
-  width: 150px;
-  height: 150px;
+  width: 124px;
+  height: 124px;
   margin: auto;
-  border-radius: 70%;
   overflow: hidden;
+  padding-left: 3px;
+`;
+const ProfilePhotoBox = styled.div`
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 70%;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 const Photo = styled.img`
   width: 100%;
@@ -638,8 +644,9 @@ const Photo = styled.img`
   object-fit: cover;
 `;
 const LevelBox = styled.div`
+  margin-right: 12px;
   position: relative;
-  margin-top: 14px;
+  margin-top: 8px;
   :hover {
     cursor: help;
     .levelHelpBox {
@@ -846,7 +853,7 @@ const HelpLvText = styled.span`
 const LevelIcon = styled.img`
   width: 30px;
   height: 30px;
-  margin-right: 8px;
+  margin-right: 4px;
   margin-bottom: 6px;
   border-radius: 50%;
 `;
