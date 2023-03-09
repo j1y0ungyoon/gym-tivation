@@ -391,6 +391,7 @@ const FollowToggleButton = styled.button`
   border-radius: 30px;
 `;
 const LoginStateBox = styled.div`
+  height: 80%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
