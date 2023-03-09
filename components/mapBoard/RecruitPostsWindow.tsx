@@ -32,7 +32,7 @@ const RecruitPostsWindow = (props: RecruitPostsWindowPropsType) => {
       <InfoBox key={`info-box-${post.id}`} onClick={getCoordinate}>
         <ParticipationImage
           key={`info-image-${post.id}`}
-          src="/assets/icons/mapBoard/like_icon_inactive.svg"
+          src="/assets/icons/mapBoard/FistImage2.svg"
         />
         <ParticipationNumText
           key={`info-text-${post.id}`}
@@ -46,13 +46,20 @@ export default RecruitPostsWindow;
 
 const InfoBox = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  height: 30px;
-  width: 210px;
+  height: 40px;
+  width: 220px;
   background-color: white;
   border: 1px solid black;
   border-radius: 8px;
+  box-shadow: -2px 2px 0px 1px #000000;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.02, 1.02); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.1s;
+    background-color: #ffcab5;
+  }
 `;
 
 // 지도 화면에서 info window가 벗어나면 사라져버림.. 어떡해야함?
@@ -123,8 +130,9 @@ const ImageTextBox = styled.div`
 `;
 
 const ParticipationImage = styled.img`
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
 `;
 
 const ParticipationNumText = styled.span`

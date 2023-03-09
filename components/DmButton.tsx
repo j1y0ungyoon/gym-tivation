@@ -136,6 +136,7 @@ export default DmButton;
 const DmButtonWrapper = styled.button`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
+  box-shadow: -2px 2px 0px 1px #000000;
   background-color: #fff;
   color: #000;
   :hover {
