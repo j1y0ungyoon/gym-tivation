@@ -10,14 +10,14 @@ import {
   collection,
   getDocs,
   where,
-  arrayRemove,
-  arrayUnion,
 } from 'firebase/firestore';
 // import { ProfileItem } from '@/pages/myPage/[...params]';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import DmButton from '../DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import FollowButton from '../FollowButton';
+import useModal from '@/hooks/useModal';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -60,7 +60,7 @@ const ProfileEdit = ({
   const [instagram, setInstagram] = useState(item.instagram);
   const [nickNameMessage, setNickNameMessage] = useState<string>('');
   const [isValidNickName, setIsValidNickName] = useState(true);
-
+  const { showModal } = useModal();
   const user = String(authService.currentUser?.uid);
   const queryClient = useQueryClient();
   //닉네임 중복 검사
@@ -83,7 +83,7 @@ const ProfileEdit = ({
   const nickNameCheck = nickNameGetCheck?.includes(nickName);
   const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const nickName_validation = new RegExp(
-      /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+      /^(?=.*[A-Za-z0-9가-힣])[A-Za-z0-9가-힣]{2,8}$/,
     );
     const nickNameCurrent = e.target.value;
     setNickName(nickNameCurrent);
@@ -91,7 +91,9 @@ const ProfileEdit = ({
       setNickNameMessage('');
       setIsValidNickName(true);
     } else {
-      setNickNameMessage('2글자 이상 8글자 이하로 입력해주세요.');
+      setNickNameMessage(
+        '특수문자 제외 2글자 이상 8글자 이하로 공백 없이 입력해주세요.',
+      );
       setIsValidNickName(false);
     }
   }, []);
@@ -341,7 +343,14 @@ const ProfileEdit = ({
                 </FollowNumberText>
                 <FollowText
                   onClick={() => {
-                    setFollowModal(true);
+                    authService.currentUser === null
+                      ? showModal({
+                          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                          modalProps: {
+                            contentText: '로그인 후 이용해주세요!',
+                          },
+                        })
+                      : setFollowModal(true);
                     setToggle(true);
                   }}
                 >
@@ -352,7 +361,14 @@ const ProfileEdit = ({
                 </FollowNumberText>
                 <FollowText
                   onClick={() => {
-                    setFollowModal(true);
+                    authService.currentUser === null
+                      ? showModal({
+                          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                          modalProps: {
+                            contentText: '로그인 후 이용해주세요!',
+                          },
+                        })
+                      : setFollowModal(true);
                     setToggle(false);
                   }}
                 >
@@ -362,7 +378,6 @@ const ProfileEdit = ({
                   {item.following === undefined ? '0' : item.following.length}
                 </FollowNumberText>
               </FollowBox>
-
               <IntroductionText
                 readOnly
                 value={item.introduction}
@@ -593,7 +608,9 @@ const InformationBox = styled.div`
 `;
 const EditPhotoBox = styled.div`
   padding-top: 24px;
-  width: 250px;
+  margin-left: 20px;
+
+  width: 200px;
   height: 250px;
   float: left;
 `;
@@ -660,7 +677,7 @@ const LevelHelpBox = styled.div`
   width: 340px;
   height: 260px;
   margin-top: 130px;
-  margin-left: 120px;
+  margin-left: 90px;
   position: fixed;
   border-radius: 15px;
   background-color: white;
@@ -704,7 +721,7 @@ const AreaText = styled.span`
   font-weight: bold;
 `;
 const IntroductionText = styled.textarea`
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 16px;
   border: none;
   width: 300px;
@@ -722,7 +739,7 @@ const IntroductionText = styled.textarea`
   }
 `;
 const IntroductionEditText = styled.textarea`
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 16px;
   border: none;
   width: 300px;
@@ -800,7 +817,7 @@ const InstagramImage = styled.img`
   height: 30px;
 `;
 const InstagramBox = styled.div`
-  margin-top: 10px;
+  margin-top: 6px;
   color: black;
   font-size: 16px;
   font-weight: 700;
@@ -817,7 +834,7 @@ const InstagramBox = styled.div`
   }
 `;
 const FollowBox = styled.div`
-  margin-top: 36px; ;
+  margin-top: 20px; ;
 `;
 
 const FollowText = styled.span`

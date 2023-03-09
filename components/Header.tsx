@@ -69,17 +69,22 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           <SearchInput
             value={searchName}
             onChange={(e) => {
-              setSearchName(
-                e.target.value.replace(
-                  /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi,
-                  '',
-                ),
-              );
+              authService.currentUser &&
+                setSearchName(
+                  e.target.value.replace(
+                    /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi,
+                    '',
+                  ),
+                );
             }}
             onFocus={() => {
               setSearchOpen(true);
             }}
-            placeholder="유저를 검색해주세요"
+            placeholder={
+              authService.currentUser
+                ? '유저를 검색해주세요'
+                : '로그인 후 이용해주세요.'
+            }
           />
           {searchOpen && searchName.length > 0 && (
             <SearchClose
@@ -91,7 +96,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             />
           )}
         </SearchBar>
-        {searchOpen && (
+        {authService.currentUser && searchOpen && (
           <SearchUser setSearchOpen={setSearchOpen} searchName={searchName} />
         )}
         <>

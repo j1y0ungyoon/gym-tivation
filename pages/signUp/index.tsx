@@ -110,7 +110,7 @@ const SignUp = () => {
   );
   const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const nickName_validation = new RegExp(
-      /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+      /^(?=.*[A-Za-z0-9가-힣])[A-Za-z0-9가-힣]{2,8}$/,
     );
     const nickNameCurrent = e.target.value;
     setNickName(nickNameCurrent);
@@ -118,7 +118,9 @@ const SignUp = () => {
       setNickNameMessage('');
       setIsValidNickName(true);
     } else {
-      setNickNameMessage('2글자 이상 8글자 이하로 입력해주세요.');
+      setNickNameMessage(
+        '특수문자 제외 2글자 이상 8글자 이하로 공백 없이 입력해주세요.',
+      );
       setIsValidNickName(false);
     }
   }, []);
