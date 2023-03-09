@@ -107,20 +107,22 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           <SearchUser setSearchOpen={setSearchOpen} searchName={searchName} />
         )}
         <>
-          <UserBox
-            onClick={() => {
-              goToDetailMyPage(id);
-            }}
-          >
-            <ProfilePhoto>
-              {authService.currentUser?.photoURL && (
-                <Photo src={authService.currentUser?.photoURL} />
-              )}
-            </ProfilePhoto>
-            <TextBox>
-              <FollowText>{authService.currentUser?.displayName}</FollowText>
-            </TextBox>
-          </UserBox>
+          {authService.currentUser && (
+            <UserBox
+              onClick={() => {
+                goToDetailMyPage(id);
+              }}
+            >
+              <ProfilePhoto>
+                {authService.currentUser?.photoURL && (
+                  <Photo src={authService.currentUser?.photoURL} />
+                )}
+              </ProfilePhoto>
+              <TextBox>
+                <FollowText>{authService.currentUser?.displayName}</FollowText>
+              </TextBox>
+            </UserBox>
+          )}
         </>
         {!isLoggedIn ? (
           <SignBox>
