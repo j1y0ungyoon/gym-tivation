@@ -1,7 +1,7 @@
 import CommentList from '@/components/comment/CommentList';
 import Like from '@/components/common/Like';
 import { authService, storage } from '@/firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -10,11 +10,17 @@ import {
   deleteGalleryPost,
   editGalleryBoard,
   getFetchedGalleryDetail,
+  getProfile,
 } from '../api/api';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
+import { Dropdown } from 'react-bootstrap';
+import GalleryToggle from '@/components/common/dropDown/galleryToggle';
+import DmButton from '@/components/DmButton';
+import FollowButton from '@/components/FollowButton';
 
+interface GalleryDetailProps {}
 const GalleryDetail = ({ params }: any) => {
   const queryClient = useQueryClient();
   // const [detailGalleryPost, setDetailGalleryPost] = useState<
@@ -26,23 +32,20 @@ const GalleryDetail = ({ params }: any) => {
   const [prevPhoto, setPrevPhoto] = useState('');
   const [editGalleryContent, setEditGalleryContent] = useState<string>('');
   const [editImageUpload, setEditImageUpload] = useState<File | undefined>();
+  const [progressPercent, setProgressPercent] = useState(0);
   const [id] = params;
   const router = useRouter();
   const { data: detailGalleryPost, isLoading } = useQuery(
     ['gallery', id],
     getFetchedGalleryDetail,
   );
+  const { data } = useQuery(['profile'], getProfile);
+  console.log(data);
   const { mutate: editGallery, isLoading: isEditing } =
     useMutation(editGalleryBoard);
   const { mutate: removeGalleryPost, isLoading: isDeleting } =
     useMutation(deleteGalleryPost);
   const user = authService.currentUser?.uid;
-
-  const onChangeEditGalleryTitle = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setEditGalleryTitle(event.target.value);
-  };
 
   const onChangeGalleryContent = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
@@ -145,17 +148,51 @@ const GalleryDetail = ({ params }: any) => {
     if (!originalImage) return;
     const compressedImage = await imageCompress(originalImage);
     setEditImageUpload(compressedImage);
+    if (!event.target.files) return;
+    const file = event.target.files[0];
+    const options = {
+      maxSizeMB: 1,
+      maxwidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    const compressionFile = await imageCompression(file, options);
+    if (!compressionFile) return null;
+    const imageRef = ref(storage, `gallery/${nanoid()}}`);
+    uploadBytesResumable(imageRef, compressionFile).on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+        );
+        setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case 'sotrage/canceled':
+            alert('업로드 취소');
+            break;
+        }
+      },
+      () => {
+        event.target.value = '';
+        getDownloadURL(imageRef).then((downloadURL) => {
+          setEditGalleryPhoto(downloadURL);
+        });
+      },
+    );
+    console.log('original size', file?.size);
+    console.log(`compressedFile size ${compressionFile.size / 1024 / 1024} MB`);
   };
 
   // image upload 불러오기
   useEffect(() => {
-    const imageRef = ref(storage, `gallery/${nanoid()}`);
-    if (!editImageUpload) return;
-    uploadBytes(imageRef, editImageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        setEditGalleryPhoto(url);
-      });
-    });
+    // const imageRef = ref(storage, `gallery/${nanoid()}`);
+    // if (!editImageUpload) return;
+    // uploadBytes(imageRef, editImageUpload).then((snapshot) => {
+    //   getDownloadURL(snapshot.ref).then((url) => {
+    //     setEditGalleryPhoto(url);
+    //   });
+    // });
   }, [editImageUpload]);
   const onClickChangeGalleryDetail = () => {
     setChangeGalleryPost(!changeGalleryPost);
@@ -173,113 +210,154 @@ const GalleryDetail = ({ params }: any) => {
   if (isEditing) {
     return <Loading />;
   }
+  // if (data !== null) return;
+  const userInformation: any = data?.filter(
+    (item) => item.id === authService.currentUser?.uid,
+  );
+
+  const followInformation: any = data?.filter(
+    (item) => item.id === detailGalleryPost?.data()?.userId,
+  )[0];
 
   return (
     <>
       {changeGalleryPost ? (
         <GalleryEditWrapper>
           <GalleryEditContainer>
-            <GalleryContent>
-              <GalleryPostForm onSubmit={onSubmitEditGallery}>
-                {/* <EditTitleContainer>
-                  <Title>제목 </Title>
-
-                  <InputDiv>
-                    <GalleryPostTitle
-                      onChange={onChangeEditGalleryTitle}
-                      defaultValue={detailGalleryPost?.data()?.title}
-                    />
-                  </InputDiv>
-                </EditTitleContainer> */}
-
-                <GalleryContentContainer>
-                  <GalleryImageLabel>
-                    <GalleryEditPreview src={editGalleryPhoto} />
-                    <GalleryImageInput
-                      id="input-file"
-                      type="file"
-                      accept="image/*"
-                      onChange={onChangeUpload}
-                    />
-                  </GalleryImageLabel>
-                  <GalleryContentInput
-                    placeholder="글을 입력해주세요"
-                    onChange={onChangeGalleryContent}
-                    defaultValue={detailGalleryPost?.data()?.content}
-                  />
-                </GalleryContentContainer>
+            <GalleryPostForm onSubmit={onSubmitEditGallery}>
+              {/* <GalleryContent> */}
+              <UpperWrapper>
                 <GalleryButtonWrapper>
-                  <GalleryPostButton onClick={onClickChangeGalleryDetail}>
+                  <GalleryPostButton
+                    style={{ backgroundColor: 'white', color: 'black' }}
+                    onClick={onClickChangeGalleryDetail}
+                  >
                     취소
                   </GalleryPostButton>
+                  {/* <EditButtonModal>버튼</EditButtonModal> */}
                   <GalleryPostButton type="submit">수정완료</GalleryPostButton>
                 </GalleryButtonWrapper>
-              </GalleryPostForm>
-            </GalleryContent>
+              </UpperWrapper>
+
+              <GalleryContentContainer>
+                <GalleryImageLabel>
+                  <GalleryEditPreview src={editGalleryPhoto} />
+
+                  {progressPercent > 1 && 99 > progressPercent ? (
+                    <ProgressPercent>
+                      <div>
+                        <div>업로드중..</div>
+                        <div>{progressPercent}</div>
+                      </div>
+                    </ProgressPercent>
+                  ) : null}
+                  <GalleryImageInput
+                    id="input-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={onChangeUpload}
+                  />
+                </GalleryImageLabel>
+                <ContentWrapper>
+                  <UserInfo>
+                    <UserPhoto
+                      src={detailGalleryPost?.data()?.userPhoto}
+                    ></UserPhoto>
+                    <UserNameInfo>
+                      <UserName>{detailGalleryPost?.data()?.nickName}</UserName>
+                      <div>
+                        <UserLv>
+                          Lv {userInformation.map((item: any) => item.lv)}
+                        </UserLv>
+                        <UserLvName>
+                          {userInformation.map((item: any) => item.lvName)}
+                        </UserLvName>
+                      </div>
+                    </UserNameInfo>
+                  </UserInfo>
+                  <GalleryInputWrapper>
+                    <GalleryContentInput
+                      placeholder="글을 입력해주세요"
+                      onChange={onChangeGalleryContent}
+                      defaultValue={detailGalleryPost?.data()?.content}
+                    />
+                  </GalleryInputWrapper>
+                </ContentWrapper>
+              </GalleryContentContainer>
+            </GalleryPostForm>
+            {/* </GalleryContent> */}
           </GalleryEditContainer>
         </GalleryEditWrapper>
       ) : (
         <GalleryPostWrapper>
           <GalleryPostContainer>
             <GalleryContent>
-              <GalleryTitleContainer>
-                <InfoWrapper>
-                  <TitleUpperWrapper>
-                    {/* <DetailGalleryTitle>
-                      {detailGalleryPost?.data()?.title}
-                    </DetailGalleryTitle> */}
-                  </TitleUpperWrapper>
-                  <BottomWrapper>
-                    <UserImage
-                      src={detailGalleryPost?.data()?.userPhoto}
-                      onClick={() => {
-                        goToMyPage(detailGalleryPost?.data()?.userId);
-                      }}
-                    />
-                    <LevelWrapper>
-                      <NicknameWrapper>
-                        {detailGalleryPost?.data()?.nickName}
-                      </NicknameWrapper>
-                      <LevelContainer>
-                        Lv{detailGalleryPost?.data()?.userLv}
-                        {detailGalleryPost?.data()?.userLvName}
-                      </LevelContainer>
-                    </LevelWrapper>
-                  </BottomWrapper>
-                </InfoWrapper>
-                <EditWrapper>
-                  <LikeContainer>
-                    <Like
-                      detailGalleryPost={detailGalleryPost?.data()}
-                      id={id}
-                    />
-                  </LikeContainer>
-                  {user === detailGalleryPost?.data()?.userId ? (
-                    <GalleryButtonWrapper>
-                      <GalleryPostButton onClick={onClickChangeGalleryDetail}>
-                        수정
-                      </GalleryPostButton>
-                      <GalleryPostButton onClick={onClickDeleteGalleryPost}>
-                        삭제
-                      </GalleryPostButton>
-                    </GalleryButtonWrapper>
-                  ) : null}
-                </EditWrapper>
-              </GalleryTitleContainer>
-              <GalleryContentContainer>
+              <DetailContentContainer>
                 <GalleryImageWrapper>
                   <GalleryImagePreview src={detailGalleryPost?.data()?.photo} />
                 </GalleryImageWrapper>
-                <DetailGalleryContent>
-                  {detailGalleryPost?.data()?.content}
-                </DetailGalleryContent>
-
-                <CommentWrapper>
-                  <CommentContainer>
-                    <CommentList category="갤러리" id={id} />
-                  </CommentContainer>
-                </CommentWrapper>
-              </GalleryContentContainer>
+                <DetailContent>
+                  <GalleryTitleContainer>
+                    <InfoWrapper>
+                      <BottomWrapper>
+                        <UserImage
+                          src={detailGalleryPost?.data()?.userPhoto}
+                          onClick={() => {
+                            goToMyPage(detailGalleryPost?.data()?.userId);
+                          }}
+                        />
+                        <LevelWrapper>
+                          <NicknameWrapper>
+                            {detailGalleryPost?.data()?.nickName}
+                          </NicknameWrapper>
+                          <LevelContainer>
+                            Lv
+                            <UserLv>
+                              {userInformation?.map((item: any) => item.lv)}
+                            </UserLv>
+                            <UserLvName>
+                              {userInformation?.map((item: any) => item.lvName)}
+                            </UserLvName>
+                          </LevelContainer>
+                        </LevelWrapper>
+                        <FollowButton
+                          item={followInformation}
+                          Id={followInformation?.id}
+                        />
+                        <DMWrapper>
+                          <DmButton id={followInformation?.id} />
+                        </DMWrapper>
+                        {user === detailGalleryPost?.data()?.userId ? (
+                          <DropDownWrapper>
+                            <EditDropDown className="DropDownBox">
+                              <EditButton onClick={onClickChangeGalleryDetail}>
+                                수정
+                              </EditButton>
+                              <EditButton onClick={onClickDeleteGalleryPost}>
+                                삭제
+                              </EditButton>
+                            </EditDropDown>
+                          </DropDownWrapper>
+                        ) : null}
+                      </BottomWrapper>
+                    </InfoWrapper>
+                    <DetailGalleryContent>
+                      {detailGalleryPost?.data()?.content}
+                    </DetailGalleryContent>
+                    <LikeContainer>
+                      <Like
+                        detailGalleryPost={detailGalleryPost?.data()}
+                        id={id}
+                      />
+                    </LikeContainer>
+                  </GalleryTitleContainer>
+                  <CommentWrapper>
+                    <CommentContainer>
+                      <CommentList category="갤러리" id={id} />
+                    </CommentContainer>
+                  </CommentWrapper>
+                </DetailContent>
+              </DetailContentContainer>
             </GalleryContent>
           </GalleryPostContainer>
         </GalleryPostWrapper>
@@ -287,27 +365,44 @@ const GalleryDetail = ({ params }: any) => {
     </>
   );
 };
-const DetailGalleryContent = styled.div``;
-const GalleryImageWrapper = styled.div`
+const DetailContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  height: 100%;
+  font-size: ${({ theme }) => theme.font.font10};
+  background-color: ${({ theme }) => theme.color.backgroundColor};
+  outline: none;
+  resize: none;
+  border: none;
+  border-radius: 0 40px 40px 0;
+`;
+const DetailGalleryContent = styled.div`
   display: flex;
   width: 100%;
+  height: 60%;
+  font-size: ${({ theme }) => theme.font.font10};
+  background-color: ${({ theme }) => theme.color.backgrounColor};
+  padding: 10px;
+  border: none;
+  overflow-y: auto;
+`;
+const GalleryImageWrapper = styled.div`
+  display: flex;
+  width: 65%;
   height: 100%;
   flex-direction: column;
   border-right: 1px solid black;
+  border-radius: 40px 0 0 40px;
 `;
 const GalleryPostWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
-  min-height: 980px;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
 const GalleryPostContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container};
-  border-radius: ${({ theme }) => theme.borderRadius.radius100};
-  display: flex;
-  flex-direction: column;
-  min-height: 900px;
+  height: calc(100% - 40px);
 `;
 const CommentWrapper = styled.div`
   display: flex;
@@ -315,31 +410,45 @@ const CommentWrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
   padding-bottom: 20px;
-  width: 60%;
-  height: 100%;
+  width: 100%;
+  height: 60%;
+  border-radius: 0 0 40px 0;
+  background-color: white;
 `;
 const CommentContainer = styled.div`
   padding: 20px auto;
   display: flex;
-  width: 90%;
+  width: 95%;
   height: 100%;
   overflow: auto;
+  background-color: white;
 `;
 const LikeContainer = styled.div`
-  border: 1px solid black;
-  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 10%;
+  padding: 5px;
+
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  :hover {
+    cursor: pointer;
+    transform: scale(1.05, 1.05);
+    transition: 0.3s;
+  }
 `;
 const BottomWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 10px;
 `;
 
 const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
+  height: 20%;
+  padding: 10px;
 `;
 const EditWrapper = styled.div`
   display: flex;
@@ -353,29 +462,43 @@ const UserImage = styled.img`
   height: 50px;
   width: 50px;
   border-radius: 40px;
-  margin-left: 10px;
   :hover {
     cursor: pointer;
+    transform: scale(1.1, 1.1);
   }
 `;
 const LevelWrapper = styled.span`
+  width: 80%;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
 `;
-const LevelContainer = styled.div``;
+const DMWrapper = styled.div``;
+const LevelContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 const NicknameWrapper = styled.span`
   font-weight: 600;
 `;
 const GalleryContent = styled.div`
-  background-color: white;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
-  width: 95%;
-  height: 95%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
   border: 1px solid black;
-  margin: 20px 20px;
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
-
+const UpperWrapper = styled.div`
+  background-color: ${({ theme }) => theme.color.backgroundColor};
+  border-radius: 40px 40px 0 0;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  height: 5%;
+  border-bottom: 1px solid black;
+`;
 const DetailGalleryTitle = styled.div`
   display: flex;
   align-items: center;
@@ -391,17 +514,17 @@ const GalleryEditWrapper = styled.div`
 `;
 const GalleryEditContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container};
-  border-radius: ${({ theme }) => theme.borderRadius.radius100};
-  display: flex;
-  flex-direction: column;
+  height: calc(100% - 40px);
 `;
 
 const GalleryPostForm = styled.form`
-  flex-direction: column;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
-  align-items: center;
-  height: 90%;
-  margin: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 const EditTitleContainer = styled.div`
   display: flex;
@@ -424,15 +547,89 @@ const InputDiv = styled.div`
 `;
 const GalleryTitleContainer = styled.div`
   display: flex;
-  padding: 10px;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
-  height: 20%;
+  height: 40%;
   min-height: 180px;
-
-  border-radius: 50px 50px 0 0;
-  background-color: ${({ theme }) => theme.color.backgroundColor};
+  border-radius: 0 40px 0 0;
   border-bottom: 1px solid black;
+  background-color: ${({ theme }) => theme.color.backgroundColor};
+`;
+const DropDownWrapper = styled.div`
+  display: inline-block;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  /* background-color: pink; */
+  background-image: url('/assets/icons/dotButton.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  :hover {
+    cursor: pointer;
+    .DropDownBox {
+      display: flex;
+    }
+  }
+`;
+
+const EditDropDown = styled.div`
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  border-radius: 10px;
+  border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
+
+  z-index: 1;
+  top: 20px;
+  right: 0;
+  overflow: hidden;
+
+  margin-right: 20px;
+`;
+const EditButton = styled.button`
+  border: none;
+  width: 100%;
+  height: 50%;
+  background-color: white;
+  &:hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+  }
+`;
+const EidtDropdDownToggle = styled(Dropdown.Toggle)`
+  background-color: ${({ theme }) => theme.color.backgroundColor};
+  padding: 0px;
+  border: none;
+  background-image: url('/assets/icons/dotButton.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  :hover {
+    background-color: ${({ theme }) => theme.color.backgroundColor};
+  }
+  :active {
+    background-color: ${({ theme }) => theme.color.backgroundColor};
+  }
+  :focus {
+    background-color: ${({ theme }) => theme.color.backgroundColor};
+  }
+  :checked {
+    background-color: ${({ theme }) => theme.color.backgroundColor};
+  }
+  :show {
+    background-color: ${({ theme }) => theme.color.backgroundColor};
+  }
+`;
+const EditDropDownItem = styled(Dropdown.Item)``;
+const EditDropDownMenu = styled(Dropdown.Menu)`
+  display: none;
+`;
+const EditButtonWrapper = styled.div`
+  width: 100%;
+  height: 10%;
 `;
 const TitleUpperWrapper = styled.div`
   display: flex;
@@ -445,13 +642,35 @@ const GalleryPostTitle = styled.input`
   ${({ theme }) => theme.input}
   background-color:white;
 `;
-const GalleryContentContainer = styled.div`
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  background-color: ${({ theme }) => theme.color.backgroundColor};
+  border-radius: 0 0 40px 0;
+`;
+const GalleryInputWrapper = styled.div`
   display: flex;
   justify-content: center;
+  width: 100%;
+  height: 95%;
+
+  font-size: ${({ theme }) => theme.font.font10};
+  background-color: ${({ theme }) => theme.color.backgroundColor};
+  border-radius: 0 0 40px 0;
+`;
+
+const GalleryContentContainer = styled.div`
+  display: flex;
   flex-direction: row;
   width: 100%;
-  height: 80%;
-  /* min-height: 720px; */
+  height: 95%;
+`;
+const DetailContentContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
 `;
 
 const GalleryEditBox = styled.div`
@@ -463,51 +682,124 @@ const GalleryEditBox = styled.div`
 `;
 const GalleryContentInput = styled.textarea`
   display: flex;
-  padding: 1rem;
-  width: 50%;
-  height: 90%;
-  border-radius: 2rem;
-  font-size: 1.5rem;
-  margin: 1rem;
+  width: 90%;
+  height: 70%;
+  font-size: ${({ theme }) => theme.font.font10};
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: -2px 2px 0px 1px #000000;
+  border: 1px solid black;
+  padding: 20px;
+  outline: none;
   resize: none;
-  border: none;
 `;
 const GalleryButtonWrapper = styled.div`
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   width: 100%;
-  height: 20%;
-  margin: 10px auto;
+  height: 100%;
+  margin: 0 20px;
 `;
+const EditButtonModal = styled.div`
+  /* z-index: 2000;
+  width: 550px;
+  height: 600px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  border-radius: 15px;
+  transform: translate(-50%, -50%) !important;
+  padding-top: 1.5rem;
+  background-color: #fffcf3;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: black; */
+`;
+
 const GalleryPostButton = styled.button`
   ${({ theme }) => theme.btn.btn30}
-  border:1px solid black;
+  background-color:${({ theme }) => theme.color.brandColor100};
+  border: 1px solid black;
   margin-left: 10px;
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 const GalleryImageInput = styled.input`
   display: none;
 `;
-
-const GalleryImageLabel = styled.label`
+const ProgressPercent = styled.div`
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000aa;
+  color: white;
+  z-index: 200;
   display: flex;
   width: 100%;
+  height: 100%;
   flex-direction: column;
 `;
+const GalleryImageLabel = styled.label`
+  display: flex;
+  width: 65%;
+  height: 100%;
+  flex-direction: column;
+  border-right: 1px solid black;
+  border-radius: 0 0 0 40px;
+`;
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 5%;
+  padding: 20px 30px;
+  margin: 20px 0;
+`;
+const UserNameInfo = styled.span`
+  display: flex;
+  flex-direction: column;
+`;
+const UserName = styled.span`
+  margin-right: 20px;
+`;
+const UserPhoto = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  margin-right: 10px;
+  object-fit: cover;
+`;
+const UserLv = styled.span`
+  margin-right: 5px;
+  font-size: ${({ theme }) => theme.font.font10};
+`;
+const UserLvName = styled.span`
+  font-size: ${({ theme }) => theme.font.font10};
+`;
 const GalleryEditPreview = styled.img`
-  margin-top: 1rem;
+  border: none;
   width: 100%;
   height: 100%;
-  border-radius: ${({ theme }) => theme.borderRadius.radius50};
-  border: 1px solid black;
   overflow: hidden;
   object-fit: cover;
+  border-radius: 0 0 0 40px;
+  /* background-image: url('/assets/images/galleryUploadImage.svg');
+  background-repeat: no-repeat;
+  background-position: center center; */
+  :hover {
+    transform: scale(0.99, 0.99);
+    transition: 0.3s;
+  }
 `;
 
 const GalleryImagePreview = styled.img`
+  border: none;
   width: 100%;
   height: 100%;
-  padding: 10px;
+  overflow: hidden;
   object-fit: cover;
+  border-radius: 40px 0 0 40px;
 `;
 const EditImagePreview = styled.img`
   margin-top: 1rem;

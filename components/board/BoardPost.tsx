@@ -80,9 +80,13 @@ const BoardPostWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   height: 9rem;
   padding: 0.5rem;
+  box-shadow: -2px 2px 0px 1px #000000;
   cursor: pointer;
   :hover {
     background-color: ${({ theme }) => theme.color.brandColor50};
+    cursor: pointer;
+    transform: scale(1.02, 1.02);
+    transition: 0.3s;
   }
 `;
 const CommentCount = styled.div`

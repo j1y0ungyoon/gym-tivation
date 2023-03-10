@@ -6,6 +6,7 @@ import {
   deleteBoardPost,
   editBoardPost,
   getFetchedBoardDetail,
+  getProfile,
 } from '../api/api';
 import Like from '@/components/common/Like';
 import dynamic from 'next/dynamic';
@@ -17,6 +18,8 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import Loading from '@/components/common/globalModal/Loading';
+import DmButton from '@/components/DmButton';
+import FollowButton from '@/components/FollowButton';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -93,6 +96,7 @@ const Detail = ({ params }: any) => {
     ['post', id],
     getFetchedBoardDetail,
   );
+  const { data } = useQuery(['profile'], getProfile);
   const { mutate, isLoading: isEditing } = useMutation(editBoardPost);
 
   const { mutate: removeBoardPost, isLoading: isDeleting } =
@@ -211,7 +215,9 @@ const Detail = ({ params }: any) => {
   if (isEditing) {
     return <Loading />;
   }
-
+  const followInformation: any = data?.filter(
+    (item) => item.id === detailPost?.data()?.userId,
+  )[0];
   return (
     <>
       {changeDetailPost ? (
@@ -301,6 +307,11 @@ const Detail = ({ params }: any) => {
                         {detailPost?.data()?.userLvName}
                       </LevelContainer>
                     </LevelWrapper>
+                    <FollowButton
+                      item={followInformation}
+                      Id={followInformation?.id}
+                    />
+                    <DmButton id={followInformation?.id} />
                   </TitleBottomWrapper>
                 </InfoWrapper>
                 <EditWrapper>
@@ -454,13 +465,13 @@ const TitleUpperWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 10px 0;
+  margin: 20px 0;
 `;
 const TitleBottomWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 10px 0;
+  margin: 20px 0;
 `;
 
 const DetailContent = styled.div`
@@ -475,9 +486,9 @@ const UserImage = styled.img`
   height: 50px;
   width: 50px;
   border-radius: 40px;
-  margin-left: 10px;
   :hover {
     cursor: pointer;
+    transform: scale(1.1, 1.1);
   }
 `;
 
@@ -486,7 +497,7 @@ const DetailTitleContainer = styled.div`
   padding: 10px;
   flex-direction: row;
   width: 100%;
-  height: 15%;
+  height: 20%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 1px solid black;
@@ -518,7 +529,7 @@ const InputDiv = styled.div`
   background-color: white;
   margin: 10px 0;
   margin-left: 62px;
-  width: 85%;
+  width: 80%;
   border: 1px solid black;
 `;
 const EditInputDiv = styled.div`
@@ -547,15 +558,19 @@ const ContentBox = styled.div`
   box-shadow: -2px 2px 0px 1px #000000;
   min-height: 40%;
   width: 100%;
+  overflow-y: auto;
   /* height: 40%; */
 `;
 const LikeContainer = styled.div`
   border: 1px solid black;
   margin: 15px;
-  background-color: white;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   box-shadow: -2px 2px 0px 1px #000000;
   :hover {
+    cursor: pointer;
+    transform: scale(1.05, 1.05);
+    transition: 0.3s;
+
     background-color: ${({ theme }) => theme.color.brandColor50};
   }
 `;
@@ -571,8 +586,7 @@ const ContentContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 85%;
-  border: 1px solid black;
+  height: 80%;
   border-bottom: none;
   padding: 32px;
 `;
@@ -585,11 +599,18 @@ const DetailPostButton = styled.button`
   border: 1px solid black;
   margin: 5px;
   box-shadow: -2px 2px 0px 1px #000000;
+  :hover {
+    cursor: pointer;
+    transform: scale(1.05, 1.05);
+    transition: 0.3s;
+    background-color: ${({ theme }) => theme.color.brandColor50};
+  }
 `;
 const DetailPostDate = styled.span`
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  margin: 0 10px;
   font-size: ${({ theme }) => theme.font.font10};
   color: gray;
   height: 100%;
@@ -607,7 +628,7 @@ const DetailPostTitle = styled.p`
 const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 80%;
 `;
 const DetailEditButtonWrapper = styled.div`
   display: flex;
@@ -626,6 +647,10 @@ const DetailEditButton = styled.button`
 
   background-color: ${({ theme }) => theme.color.brandColor100};
   :hover {
+    cursor: pointer;
+    transform: scale(1.05, 1.05);
+    transition: 0.3s;
+
     background-color: black;
     color: white;
   }
@@ -651,7 +676,7 @@ const CategoryWrapper = styled.div`
 
 const CategoryText = styled.span`
   font-size: 18px;
-  width: 84px;
+  width: 100px;
   height: 30px;
   background: white;
   border-radius: 50px;

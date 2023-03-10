@@ -175,29 +175,63 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
         </>
       ) : (
         <>
-          <LikeContainer onClick={likeCounter}>
+          <GalleryLikeContainer
+            style={
+              galleryLikeChecked
+                ? { backgroundColor: '#FF4800' }
+                : { backgroundColor: 'white' }
+            }
+            onClick={likeCounter}
+          >
+            <Image
+              src="/assets/icons/likeIcon.svg"
+              alt="좋아요"
+              width={25}
+              height={25}
+            />
             <Text
               style={
-                galleryLikeChecked ? { color: 'black' } : { color: 'white' }
+                galleryLikeChecked ? { color: 'white' } : { color: 'black' }
               }
             >
               좋아요
             </Text>
-            <LikeCount>{galleryLikeCount}</LikeCount>
-            <Image
-              src={galleryLikeChecked ? checkedLike : like}
-              alt="좋아요"
-              width={50}
-              height={50}
-            />
-          </LikeContainer>
+            <LikeCount
+              style={
+                galleryLikeChecked ? { color: 'white' } : { color: 'black' }
+              }
+            >
+              {galleryLikeCount}
+            </LikeCount>
+          </GalleryLikeContainer>
         </>
       )}
     </LikeWrapper>
   );
 };
+const GalleryLikeContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 5px 10px;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  border: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
+
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+    outline: none;
+    width: 100%;
+  }
+`;
+
 const Text = styled.span`
   font-weight: 600;
+  margin: 0 5px;
   font-size: ${({ theme }) => theme.font.font50};
 `;
 
@@ -227,5 +261,6 @@ const LikeContainer = styled.button`
 const LikeCount = styled.span`
   display: flex;
   font-weight: 600;
+  margin: 0 5px;
 `;
 export default Like;

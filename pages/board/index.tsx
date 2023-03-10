@@ -129,6 +129,7 @@ const BoardMain = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: calc(100% - 40px);
 `;
 const ContentWrapper = styled.div`
   background-color: white;
@@ -136,6 +137,7 @@ const ContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   width: 100%;
   height: 100%;
+  box-shadow: -2px 2px 0px 1px #000000;
   overflow-y: auto;
   ::-webkit-scrollbar {
     width: 8px;
