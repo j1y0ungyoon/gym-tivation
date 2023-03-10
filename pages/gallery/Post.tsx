@@ -1,43 +1,21 @@
 import { authService, dbService, storage } from '@/firebase';
-import {
-  runTransaction,
-  doc,
-  query,
-  collection,
-  getDocs,
-} from 'firebase/firestore';
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import { runTransaction, doc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import mouseClick from '../../public/assets/icons/mouseClick.png';
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import {
-  addGalleryPost,
-  getFetchedGalleryDetail,
-  getProfile,
-} from '../api/api';
+import { addGalleryPost, getProfile } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import Loading from '@/components/common/globalModal/Loading';
-import { Snapshot } from 'recoil';
-import GlobalModal from '@/components/common/globalModal/GlobalModal';
-import Image from 'next/image';
-import { theme } from '@/styles/theme';
 interface PostProps {
   item: any;
 }
 const Post = () => {
   const queryClient = useQueryClient();
-  const [imageUpload, setImageUpload] = useState<File | undefined>();
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryContent, setGalleryContent] = useState('');
   const [galleryPhoto, setGalleryPhoto] = useState('');
@@ -186,10 +164,11 @@ const Post = () => {
     goToGallery();
     setGalleryPhoto('');
   };
-  //displayname, lv, lvname, photourl
-
+  const UserPhotoUrl: string | null = authService.currentUser?.photoURL;
   const userInformation: any = data?.filter((item) => item.id === user?.uid);
-
+  if (!UserPhotoUrl) {
+    return <Loading />;
+  }
   return (
     <GalleryPostWrapper>
       <GalleryPostContainer>
@@ -225,7 +204,7 @@ const Post = () => {
             </GalleryImageWarpper>
             <ContentWrapper>
               <UserInfo>
-                <UserPhoto src={user?.photoURL}></UserPhoto>
+                <UserPhoto src={UserPhotoUrl}></UserPhoto>
                 <UserNameInfo>
                   <UserName>{authService.currentUser.displayName}</UserName>
                   <div>

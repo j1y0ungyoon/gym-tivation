@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { addBoardPost, getProfile } from '../api/api';
+import { addBoardPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import Loading from '@/components/common/globalModal/Loading';
