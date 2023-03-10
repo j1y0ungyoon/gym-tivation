@@ -57,6 +57,7 @@ const GalleryContentWrapper = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   flex-direction: column;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
   display: flex;
   height: calc(100% - 120px);
   width: 100%;
@@ -67,11 +68,10 @@ const GalleryBoardContainer = styled.div``;
 const GalleryBoardContent = styled.div`
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  flex-direction: column;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 10px;
+  padding: 40px;
 `;
 const ButtonWrapper = styled.div`
   display: flex;
@@ -85,6 +85,7 @@ const ButtonContainer = styled.div`
 `;
 const PostButton = styled.button`
   ${({ theme }) => theme.btn.btn100}
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 
 export default Gallery;

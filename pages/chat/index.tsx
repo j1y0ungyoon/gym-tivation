@@ -20,7 +20,7 @@ import {
 
 import styled from 'styled-components';
 import DmChat from '@/components/chat/DmChat';
-import DmButton from '@/components/DmButton';
+import DmButton, { MemoizedDmButton } from '@/components/DmButton';
 import { MemoizedDmListUserInfo } from '@/components/chat/DmListUserInfo';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
@@ -279,7 +279,7 @@ const Chat = () => {
                               />
                               <UserName>{item.displayName}</UserName>
                             </UserInfo>
-                            <DmButton id={item.id} />
+                            <MemoizedDmButton id={item.id} />
                           </SearchResult>
                         );
                       })}

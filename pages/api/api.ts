@@ -265,3 +265,5 @@ export const addDm = async ({ myId, appoId }: AddDmParams) => {
 
 //   return res.data();
 // };
+
+// 프로필 불러오기
