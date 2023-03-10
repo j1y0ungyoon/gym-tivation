@@ -140,12 +140,12 @@ const FollowText = styled.span`
 const TextBox = styled.div`
   margin-top: 8px;
   text-align: left;
-  width: 100px;
+  width: 140px;
 `;
 const StateBox = styled.div`
   margin-top: 16px;
   text-align: right;
-  width: 500px;
+  width: 420px;
 `;
 const ClickFollowButton = styled.button`
   background-color: white;
