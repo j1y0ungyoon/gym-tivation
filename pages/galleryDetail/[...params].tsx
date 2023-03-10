@@ -16,20 +16,17 @@ import imageCompression from 'browser-image-compression';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
 import { Dropdown } from 'react-bootstrap';
-import GalleryToggle from '@/components/common/dropDown/galleryToggle';
 import DmButton from '@/components/DmButton';
 import FollowButton from '@/components/FollowButton';
 
 interface GalleryDetailProps {}
 const GalleryDetail = ({ params }: any) => {
   const queryClient = useQueryClient();
-  // const [detailGalleryPost, setDetailGalleryPost] = useState<
-  //   GalleryBoardPostType | undefined
-  // >();
+
   const [changeGalleryPost, setChangeGalleryPost] = useState(false);
   const [editGalleryTitle, setEditGalleryTitle] = useState<string>('');
   const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
-  const [prevPhoto, setPrevPhoto] = useState('');
+
   const [editGalleryContent, setEditGalleryContent] = useState<string>('');
   const [editImageUpload, setEditImageUpload] = useState<File | undefined>();
   const [progressPercent, setProgressPercent] = useState(0);
@@ -40,7 +37,7 @@ const GalleryDetail = ({ params }: any) => {
     getFetchedGalleryDetail,
   );
   const { data } = useQuery(['profile'], getProfile);
-  console.log(data);
+
   const { mutate: editGallery, isLoading: isEditing } =
     useMutation(editGalleryBoard);
   const { mutate: removeGalleryPost, isLoading: isDeleting } =
