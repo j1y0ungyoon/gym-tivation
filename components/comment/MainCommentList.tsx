@@ -112,10 +112,10 @@ const MainCommentList = ({ id }: MainCommentType) => {
     <CommentListWrapper>
       <InputWrapper>
         <TextContainer>
-          <Icon src={'/assets/icons/main/Fire.png'} />
+          <Icon alt="불꽃 아이콘" src={'/assets/icons/main/Fire.png'} />
 
           <TextWrapper>GYMTIVATE 한마디</TextWrapper>
-          <Icon src={'/assets/icons/main/Fire.png'} />
+          <Icon alt="불꽃 아이콘" src={'/assets/icons/main/Fire.png'} />
         </TextContainer>
 
         <InputContainer>

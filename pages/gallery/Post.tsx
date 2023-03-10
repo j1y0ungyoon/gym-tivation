@@ -181,9 +181,15 @@ const Post = () => {
           <GalleryContentContainer>
             <GalleryImageWarpper htmlFor="input-file">
               {galleryPhoto ? (
-                <GalleryImagePreview src={galleryPhoto} />
+                <GalleryImagePreview
+                  alt="갤러리 업로드 이미지"
+                  src={galleryPhoto}
+                />
               ) : (
-                <GalleryDefaultImagePreview src="/assets/images/galleryUploadImage.svg" />
+                <GalleryDefaultImagePreview
+                  alt="업로드 전 기본 이미지"
+                  src="/assets/images/galleryUploadImage.svg"
+                />
               )}
               {progressPercent > 1 && 99 > progressPercent ? (
                 <>
@@ -204,7 +210,7 @@ const Post = () => {
             </GalleryImageWarpper>
             <ContentWrapper>
               <UserInfo>
-                <UserPhoto src={UserPhotoUrl}></UserPhoto>
+                <UserPhoto alt="유저 이미지" src={UserPhotoUrl}></UserPhoto>
                 <UserNameInfo>
                   <UserName>{authService.currentUser.displayName}</UserName>
                   <div>

@@ -238,7 +238,10 @@ const GalleryDetail = ({ params }: any) => {
 
               <GalleryContentContainer>
                 <GalleryImageLabel>
-                  <GalleryEditPreview src={editGalleryPhoto} />
+                  <GalleryEditPreview
+                    alt="수정 전 이미지"
+                    src={editGalleryPhoto}
+                  />
 
                   {progressPercent > 1 && 99 > progressPercent ? (
                     <ProgressPercent>
@@ -258,6 +261,7 @@ const GalleryDetail = ({ params }: any) => {
                 <ContentWrapper>
                   <UserInfo>
                     <UserPhoto
+                      alt="유저 이미지"
                       src={detailGalleryPost?.data()?.userPhoto}
                     ></UserPhoto>
                     <UserNameInfo>
@@ -291,13 +295,17 @@ const GalleryDetail = ({ params }: any) => {
             <GalleryContent>
               <DetailContentContainer>
                 <GalleryImageWrapper>
-                  <GalleryImagePreview src={detailGalleryPost?.data()?.photo} />
+                  <GalleryImagePreview
+                    alt="업로드 이미지"
+                    src={detailGalleryPost?.data()?.photo}
+                  />
                 </GalleryImageWrapper>
                 <DetailContent>
                   <GalleryTitleContainer>
                     <InfoWrapper>
                       <BottomWrapper>
                         <UserImage
+                          alt="유저 이미지"
                           src={detailGalleryPost?.data()?.userPhoto}
                           onClick={() => {
                             goToMyPage(detailGalleryPost?.data()?.userId);
