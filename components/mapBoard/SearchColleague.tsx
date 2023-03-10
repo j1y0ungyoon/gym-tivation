@@ -102,10 +102,7 @@ const SearchColleague = (props: MapModalProps) => {
           center={{ lat: 33.5563, lng: 126.79581 }}
           style={{ width: '90%', height: '90%', borderRadius: '2rem' }}
         >
-          <MapMarker
-            key={`${nanoid()}`}
-            position={{ lat: 33.55635, lng: 126.795841 }}
-          >
+          <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
             <div style={{ color: '#000' }}>설정된 좌표가 없습니다!</div>
           </MapMarker>
         </Map>
@@ -129,7 +126,6 @@ const SearchColleague = (props: MapModalProps) => {
           />
         </SearchBar>
         <StyledMap
-          key={`map-${myPosition.center.lat}-${myPosition.center.lng}`}
           center={myPosition.center}
           //@ts-ignore
           onCreate={setMap}
@@ -138,9 +134,8 @@ const SearchColleague = (props: MapModalProps) => {
           {recruitPosts.map((post) => {
             if (post.coordinate) {
               return (
-                <>
+                <div key={nanoid()}>
                   <MapMarker
-                    key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
                     position={{
                       lat: post.coordinate?.lat,
                       lng: post?.coordinate?.lng,
@@ -160,13 +155,12 @@ const SearchColleague = (props: MapModalProps) => {
                     yAnchor={2.5}
                   >
                     <RecruitPostsWindow
-                      key={`recruit-post-window-${nanoid()}`}
                       post={post}
                       recruitPosts={recruitPosts}
                       setMarkerCoordi={setMarkerCoordi}
                     />
                   </CustomOverlayMap>
-                </>
+                </div>
               );
             }
           })}
