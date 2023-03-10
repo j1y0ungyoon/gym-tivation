@@ -15,7 +15,7 @@ import { navMenuState } from '@/recoil/navMenu';
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
   const { showModal } = useModal();
-
+  //유저 검색창
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
 
