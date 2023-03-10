@@ -83,7 +83,6 @@ export const theme = {
       margin : 0 auto;
       margin-left : 180px;
       background-color:#FFFCF3;
-      border-left : 1px solid #f0dcca;
       padding: 0 20px
   `,
     container: `
