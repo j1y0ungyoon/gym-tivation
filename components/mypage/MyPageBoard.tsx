@@ -30,11 +30,11 @@ const MyPageBoard = ({ paramsId, board }: BoardGet) => {
               key={item.id}
               onClick={() => goToBoardDetailPost(item.id)}
             >
-              {/* <PhotoBox>
-                <ProfilePhoto>
-                  <Photo src={item.photo} />
-                </ProfilePhoto>
-              </PhotoBox> */}
+              <UserPhotoBox>
+                <UserPhoto>
+                  <Photo src={item.userPhoto} />
+                </UserPhoto>
+              </UserPhotoBox>
               <TitleNickNameBox>
                 <TitleBox>
                   <BoardCategory>{item.category}</BoardCategory>
@@ -159,4 +159,15 @@ const IconImg = styled.img`
   height: 1.5rem;
   margin-right: 5px;
   margin-bottom: 2px;
+`;
+const UserPhoto = styled.div`
+  width: 95%;
+  height: 100%;
+  border-radius: 70%;
+  overflow: hidden;
+`;
+const UserPhotoBox = styled.div`
+  margin: auto;
+  width: 80px;
+  height: 70px;
 `;
