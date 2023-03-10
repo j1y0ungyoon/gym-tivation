@@ -84,12 +84,13 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           router.push('/');
           setNowMenu('home');
         }}
+        alt="짐티베이션 로고"
         src="/assets/images/Logo.png"
       />
 
       <Itembox>
         <SearchBar>
-          <SearchIcon src="/assets/icons/searchIcon.svg" />
+          <SearchIcon alt="유저검색 버튼" src="/assets/icons/searchIcon.svg" />
           <SearchInput
             value={searchName}
             onChange={(e) => {
@@ -112,6 +113,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           />
           {searchOpen && searchName.length > 0 && (
             <SearchClose
+              alt="검색 취소 버튼"
               src="/assets/icons/closeBtn.svg"
               onClick={() => {
                 setSearchOpen(false);
@@ -128,7 +130,10 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             <UserBox>
               <ProfilePhoto>
                 {authService.currentUser?.photoURL && (
-                  <Photo src={authService.currentUser?.photoURL} />
+                  <Photo
+                    alt="유저 사진"
+                    src={authService.currentUser?.photoURL}
+                  />
                 )}
               </ProfilePhoto>
               <TextBox>

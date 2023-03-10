@@ -24,10 +24,12 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       {nowMenu === 'home' ? (
         <NavBtn
           onClick={() => router.push('/')}
+          alt="홈 버튼"
           src={'/assets/icons/nav/nav_home_active.svg'}
         />
       ) : (
         <NavBtn
+          alt="홈 버튼"
           onClick={() => {
             router.push('/');
             setNowMenu('home');
@@ -39,6 +41,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
       {nowMenu === 'chat' ? (
         <NavBtn
+          alt="채팅 게시판 버튼"
           onClick={() => router.push('/chat')}
           src={'/assets/icons/nav/nav_chat_active.svg'}
         />
@@ -49,12 +52,14 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             setNowMenu('chat');
             return;
           }}
+          alt="채팅 게시판 버튼"
           src={'/assets/icons/nav/nav_chat.svg'}
         />
       )}
       {nowMenu === 'board' ? (
         <NavBtn
           onClick={() => router.push('/board')}
+          alt="게시판 버튼"
           src={'/assets/icons/nav/nav_board_active.svg'}
         />
       ) : (
@@ -64,16 +69,19 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             setNowMenu('board');
             return;
           }}
+          alt="게시판 버튼"
           src={'/assets/icons/nav/nav_board.svg'}
         />
       )}
       {nowMenu === 'mapBoard' ? (
         <NavBtn
+          alt="운동 동료 모집 게시판 버튼"
           onClick={() => router.push('/mapBoard')}
           src={'/assets/icons/nav/nav_recruit_active.svg'}
         />
       ) : (
         <NavBtn
+          alt="운동 동료 모집 게시판 버튼"
           onClick={() => {
             router.push('/mapBoard');
             setNowMenu('mapBoard');
@@ -84,11 +92,13 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       )}
       {nowMenu === 'gallery' ? (
         <NavBtn
+          alt="오운완 갤러리 버튼"
           onClick={() => router.push('/gallery')}
           src={'/assets/icons/nav/nav_gallery_active.svg'}
         />
       ) : (
         <NavBtn
+          alt="오운완 갤러리 버튼"
           onClick={() => {
             router.push('/gallery');
             setNowMenu('gallery');
@@ -101,6 +111,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       {isLoggedIn &&
         (nowMenu === 'my' ? (
           <NavBtn
+            alt="마이페이지 버튼"
             onClick={() => goToDetailMyPage(id)}
             src={'/assets/icons/nav/nav_my_active.svg'}
           />
@@ -111,6 +122,7 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
               setNowMenu('my');
               return;
             }}
+            alt="마이페이지 버튼"
             src={'/assets/icons/nav/nav_my.svg'}
           />
         ))}

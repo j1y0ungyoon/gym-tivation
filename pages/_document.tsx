@@ -39,8 +39,10 @@ export default class MyDocument extends Document {
   }
   render() {
     return (
-      <Html>
+      <Html lang="kr">
+        <title>Gymtivation</title>
         <Head>
+          <meta name="description" content="당신의 득근 파트너스 Gymtivation" />
           <meta property="og:type" content={'website'} />
           <meta property="og:title" content={'짐티베이션'} />
           <meta

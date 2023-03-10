@@ -88,12 +88,12 @@ const Home = () => {
     pauseOnHover: false,
     nextArrow: (
       <ArrowR>
-        <SVG src={'/assets/icons/next.svg'} />
+        <SVG alt="다음" src={'/assets/icons/next.svg'} />
       </ArrowR>
     ),
     prevArrow: (
       <ArrowL>
-        <SVG src={'/assets/icons/prev.svg'} />
+        <SVG alt="이전" src={'/assets/icons/prev.svg'} />
       </ArrowL>
     ),
   };
@@ -129,7 +129,7 @@ const Home = () => {
             })}
           </ImgSliderContainer>
 
-          <TitleSvg src={'/assets/icons/title.svg'} />
+          <TitleSvg alt="let's gymtivate!" src={'/assets/icons/title.svg'} />
         </SliderWrapper>
 
         <SliderWrapper>

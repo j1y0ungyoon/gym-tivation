@@ -147,8 +147,9 @@ const CalendarWrapper = styled.div`
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: 20px;
-  border-width: 0.1rem;
+  border-width: 1px;
   background-color: white;
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 const DotBox = styled.div`
   width: 100%;
