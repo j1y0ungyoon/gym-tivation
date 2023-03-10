@@ -168,8 +168,8 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             <Image
               src={boardLikeChecked ? checkedLike : like}
               alt="좋아요"
-              width={50}
-              height={50}
+              width={30}
+              height={30}
             />
           </LikeContainer>
         </>

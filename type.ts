@@ -189,7 +189,7 @@ export interface BoardPostType {
   userId?: string;
   nickName?: string;
   like?: string;
-  usePhoto?: string;
+  userPhoto?: string;
   userLv?: string;
   userLvName?: string;
   comment?: number;

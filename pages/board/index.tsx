@@ -86,25 +86,27 @@ const Board = () => {
           </ButtonWrapper>
 
           <ContentWrapper>
-            <SearchBox>
-              <SearchInputBox>
-                <SearchInput
-                  placeholder={
-                    searchText
-                      ? `'${searchText}'의 검색 결과`
-                      : '검색어를 입력하세요!'
-                  }
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setSearchInput(e.target.value)
-                  }
-                  onKeyPress={onKeyPressSearch}
-                  value={searchInput}
-                />
-              </SearchInputBox>
-              <SearchDropDown setSearchCategory={setSearchCategory}>
-                {searchCategory}
-              </SearchDropDown>
-            </SearchBox>
+            <SearchBoxWrapper>
+              <SearchBox>
+                <SearchInputBox>
+                  <SearchInput
+                    placeholder={
+                      searchText
+                        ? `'${searchText}'의 검색 결과`
+                        : '검색어를 입력하세요!'
+                    }
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setSearchInput(e.target.value)
+                    }
+                    onKeyPress={onKeyPressSearch}
+                    value={searchInput}
+                  />
+                </SearchInputBox>
+                <SearchDropDown setSearchCategory={setSearchCategory}>
+                  {searchCategory}
+                </SearchDropDown>
+              </SearchBox>
+            </SearchBoxWrapper>
             <BoardContent>
               <BoardItem
                 category={category}
@@ -156,10 +158,10 @@ const BoardContent = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   flex-direction: column;
-
   width: 100%;
+  margin: 10px 0;
 `;
 const ButtonWrapper = styled.div`
   display: flex;
@@ -189,21 +191,30 @@ const CategoryButton = styled.button<boardCategoryProps>`
   width: 150px;
   margin: 10px;
 `;
+const SearchBoxWrapper = styled.div`
+  display: flex;
+  align-items: center;
 
+  justify-content: center;
+`;
 const SearchBox = styled.div`
   margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 100%;
+  width: 90%;
 `;
 const SearchInputBox = styled.div`
   ${({ theme }) => theme.inputDiv}
   width: 320px;
   border: 1px solid black;
   margin-right: 10px;
+  box-shadow: -2px 2px 0px 1px #000000;
+
+  background-color: ${({ theme }) => theme.color.backgroundColor};
 `;
 const SearchInput = styled.input`
   ${({ theme }) => theme.input}
+  background-color: ${({ theme }) => theme.color.backgroundColor};
 `;
 export default Board;

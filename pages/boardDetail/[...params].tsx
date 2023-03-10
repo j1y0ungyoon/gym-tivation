@@ -357,6 +357,10 @@ const Detail = ({ params }: any) => {
     </>
   );
 };
+const DetailBox = styled.div`
+  width: 100%;
+  height: 100%;
+`;
 
 const PostEditWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
@@ -387,6 +391,7 @@ const PostEditForm = styled.form`
 `;
 const PostContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container};
+  height: calc(100% - 40px);
 `;
 const ContentEditContainer = styled.div`
   display: flex;
@@ -475,6 +480,10 @@ const TitleBottomWrapper = styled.div`
 `;
 
 const DetailContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background-color: white;
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
@@ -500,8 +509,8 @@ const DetailTitleContainer = styled.div`
   height: 20%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
-  border-bottom: 1px solid black;
-  padding: 20px;
+  border-bottom: 3px solid black;
+  padding: 40px 74px;
 `;
 const CategoryContainer = styled.div`
   height: 50%;
@@ -558,12 +567,14 @@ const ContentBox = styled.div`
   box-shadow: -2px 2px 0px 1px #000000;
   min-height: 40%;
   width: 100%;
+
   overflow-y: auto;
   /* height: 40%; */
 `;
 const LikeContainer = styled.div`
   border: 1px solid black;
   margin: 15px;
+  width: 120px;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   box-shadow: -2px 2px 0px 1px #000000;
   :hover {
@@ -584,11 +595,13 @@ const PostTitle = styled.input`
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 80%;
+  width: calc(100% - 150px);
+  border-bottom: none;
+
   align-items: center;
   justify-content: center;
-  height: 80%;
-  border-bottom: none;
-  padding: 32px;
+  margin: 20px;
 `;
 
 const DetailPostButton = styled.button`
@@ -672,11 +685,13 @@ const CategoryWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  /* padding: 5px; */
 `;
 
+const CategoryTextWrapper = styled.div``;
 const CategoryText = styled.span`
   font-size: 18px;
-  width: 100px;
+  width: 120px;
   height: 30px;
   background: white;
   border-radius: 50px;
