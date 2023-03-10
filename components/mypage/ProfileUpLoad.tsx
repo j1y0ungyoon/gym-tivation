@@ -71,6 +71,9 @@ const UploadImage = ({
             </>
           ) : null}
         </PhotoBox>
+        <IconImgBox>
+          <IconImg src="/assets/icons/myPage/photo.svg" />
+        </IconImgBox>
       </UploadContainer>
       <PhotoInput
         id="input-file"
@@ -87,7 +90,12 @@ const UploadImage = ({
 export default UploadImage;
 
 const UploadImageWrapper = styled.div``;
-const UploadContainer = styled.label``;
+const UploadContainer = styled.label`
+  position: relative;
+
+  width: 120px;
+  height: 120px;
+`;
 
 const PhotoInput = styled.input`
   display: none;
@@ -98,8 +106,8 @@ const Photo = styled.img`
   object-fit: cover;
 `;
 const PhotoBox = styled.div`
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   margin: auto;
   margin-bottom: 2vh;
   border-radius: 70%;
@@ -108,6 +116,9 @@ const PhotoBox = styled.div`
     cursor: pointer;
   }
   position: relative;
+  box-shadow: -2px 2px 0px 0px #000000;
+  border-style: solid;
+  border-width: 1px;
 `;
 const ProgressPercent = styled.div`
   display: flex;
@@ -122,4 +133,23 @@ const ProgressPercent = styled.div`
   background-color: #000000aa;
   color: white;
   z-index: 200;
+`;
+const IconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 7px;
+`;
+const IconImgBox = styled.div`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #ff4800;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 1px;
+  :hover {
+    cursor: pointer;
+  }
 `;

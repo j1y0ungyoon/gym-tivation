@@ -32,6 +32,7 @@ const ToggleButton = styled.button`
   border: 1px solid black;
   margin-right: 1rem;
   background-color: white;
+  box-shadow: -2px 2px 0px 1px #000000;
   &:hover {
     background-color: #ffcab5;
     color: black;

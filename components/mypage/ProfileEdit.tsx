@@ -10,15 +10,14 @@ import {
   collection,
   getDocs,
   where,
-  arrayRemove,
-  arrayUnion,
 } from 'firebase/firestore';
 // import { ProfileItem } from '@/pages/myPage/[...params]';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import DmButton from '../DmButton';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import FollowButton from '../FollowButton';
-import Loading from '../common/globalModal/Loading';
+import useModal from '@/hooks/useModal';
 
 type ProfileEditProps = {
   item: ProfileItem;
@@ -36,6 +35,7 @@ const OPTIONS = [
   { area: '부산', name: '부산' },
   { area: '충북', name: '충북' },
   { area: '충남', name: '충남' },
+  { area: '대구', name: '대구' },
 ];
 
 //기본이미지
@@ -61,7 +61,7 @@ const ProfileEdit = ({
   const [instagram, setInstagram] = useState(item.instagram);
   const [nickNameMessage, setNickNameMessage] = useState<string>('');
   const [isValidNickName, setIsValidNickName] = useState(true);
-
+  const { showModal } = useModal();
   const user = String(authService.currentUser?.uid);
   const queryClient = useQueryClient();
   //닉네임 중복 검사
@@ -84,7 +84,7 @@ const ProfileEdit = ({
   const nickNameCheck = nickNameGetCheck?.includes(nickName);
   const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const nickName_validation = new RegExp(
-      /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+      /^(?=.*[A-Za-z0-9가-힣])[A-Za-z0-9가-힣]{2,8}$/,
     );
     const nickNameCurrent = e.target.value;
     setNickName(nickNameCurrent);
@@ -92,16 +92,18 @@ const ProfileEdit = ({
       setNickNameMessage('');
       setIsValidNickName(true);
     } else {
-      setNickNameMessage('2글자 이상 8글자 이하로 입력해주세요.');
+      setNickNameMessage(
+        '특수문자 제외 2글자 이상 8글자 이하로 공백 없이 입력해주세요.',
+      );
       setIsValidNickName(false);
     }
   }, []);
 
   const nickNameIcon =
     isValidNickName && !nickNameCheck ? (
-      <AiFillCheckCircle color="#0094FF" />
+      <AiFillCheckCircle color="#0094FF" style={{ marginLeft: '6px' }} />
     ) : (
-      <AiFillCheckCircle color="red" />
+      <AiFillCheckCircle color="red" style={{ marginLeft: '6px' }} />
     );
   const [message, setMessage] = useState('');
   //Level 메시지
@@ -148,18 +150,14 @@ const ProfileEdit = ({
     }
   };
 
-  const { isLoading: profileEdit, mutate: onProfileEdit } = useMutation(
-    ['profileEdit'],
-    ProfileEdit,
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries('profile');
-      },
-      onError: (error) => {
-        console.log('error : ', error);
-      },
+  const { mutate: onProfileEdit } = useMutation(['profileEdit'], ProfileEdit, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('profile');
     },
-  );
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
 
   //게시판 + 갤러리
   const getBoardNumber = async () => {
@@ -213,11 +211,13 @@ const ProfileEdit = ({
           <InformationBox>
             <EditPhotoBox>
               <ProfilePhoto>
-                {item.photoURL === null ? (
-                  <Photo src="https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg" />
-                ) : (
-                  <Photo src={item.photoURL} />
-                )}
+                <ProfilePhotoBox>
+                  {item.photoURL === null ? (
+                    <Photo src="https://blog.kakaocdn.net/dn/c3vWTf/btqUuNfnDsf/VQMbJlQW4ywjeI8cUE91OK/img.jpg" />
+                  ) : (
+                    <Photo src={item.photoURL} />
+                  )}
+                </ProfilePhotoBox>
               </ProfilePhoto>
               <LevelBox>
                 {item.lvName === 'Yellow' && (
@@ -303,17 +303,13 @@ const ProfileEdit = ({
             <EditNickNameBox>
               <NickNameAreaBox>
                 <NameBox>
-                  {instagram === '' ? null : (
-                    <InstagramText
-                      href={`https://www.instagram.com/${instagram}/`}
-                      target="_blank"
-                    >
-                      {item.instagram}
-                    </InstagramText>
-                  )}
-
-                  <InstagramImage src="/assets/icons/myPage/Ins.svg" />
-
+                  <NickNameText>{item.displayName}</NickNameText>
+                  <InstagramText
+                    href={`https://www.instagram.com/${instagram}/`}
+                    target="_blank"
+                  >
+                    <InstagramImage src="/assets/icons/myPage/Ins.svg" />
+                  </InstagramText>
                   {authService.currentUser?.uid === paramsId ? (
                     <EditButton
                       onClick={() => {
@@ -330,7 +326,6 @@ const ProfileEdit = ({
                   )}
                 </NameBox>
                 <InstagramBox>
-                  <NickNameText>{item.displayName}</NickNameText>
                   <AreaImage src="/assets/icons/myPage/Area.svg" />
                   <AreaText>{item.area}</AreaText>
                 </InstagramBox>
@@ -344,7 +339,14 @@ const ProfileEdit = ({
                 </FollowNumberText>
                 <FollowText
                   onClick={() => {
-                    setFollowModal(true);
+                    authService.currentUser === null
+                      ? showModal({
+                          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                          modalProps: {
+                            contentText: '로그인 후 이용해주세요!',
+                          },
+                        })
+                      : setFollowModal(true);
                     setToggle(true);
                   }}
                 >
@@ -355,7 +357,14 @@ const ProfileEdit = ({
                 </FollowNumberText>
                 <FollowText
                   onClick={() => {
-                    setFollowModal(true);
+                    authService.currentUser === null
+                      ? showModal({
+                          modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                          modalProps: {
+                            contentText: '로그인 후 이용해주세요!',
+                          },
+                        })
+                      : setFollowModal(true);
                     setToggle(false);
                   }}
                 >
@@ -365,7 +374,6 @@ const ProfileEdit = ({
                   {item.following === undefined ? '0' : item.following.length}
                 </FollowNumberText>
               </FollowBox>
-
               <IntroductionText
                 readOnly
                 value={item.introduction}
@@ -472,17 +480,16 @@ const ProfileEdit = ({
               <EditNickNameBox>
                 <NickNameAreaBox>
                   <NameBox>
-                    <InstagramInput
+                    <NickNameImage src="/assets/icons/myPage/profile_icon.svg" />
+                    <TextInput
                       spellCheck="false"
-                      value={instagram}
-                      onChange={(e) => {
-                        setInstagram(e.target.value);
-                      }}
-                      placeholder="instagram"
-                      maxLength={20}
+                      value={nickName}
+                      onChange={onChangeName}
+                      placeholder="닉네임"
+                      maxLength={8}
                     />
-                    <InstagramImage src="/assets/icons/myPage/Ins.svg" />
-                    <EditButton
+
+                    <EditCancelButton
                       onClick={() => {
                         setIsProfileEdit(false);
                         setNickName(item.displayName);
@@ -492,22 +499,30 @@ const ProfileEdit = ({
                       }}
                     >
                       취소
-                    </EditButton>
+                    </EditCancelButton>
                     <EditButton
                       type="submit"
                       disabled={isValidNickName === nickNameCheck}
                     >
-                      완료
+                      저장하기
                     </EditButton>
                   </NameBox>
-                  <InstagramBox>
-                    <TextInput
-                      spellCheck="false"
-                      value={nickName}
-                      onChange={onChangeName}
-                      placeholder="닉네임"
-                      maxLength={8}
-                    />
+                  <InputBox>
+                    {nickName !== item.displayName && (
+                      <>
+                        {nickNameIcon}
+                        <TextValidation
+                          className={`message ${
+                            isValidNickName ? 'success' : 'error'
+                          }`}
+                        >
+                          {nickNameCheck ? '중복된 닉네임입니다' : ''}
+                          {nickNameMessage}
+                        </TextValidation>
+                      </>
+                    )}
+                  </InputBox>
+                  <EditInstagramBox>
                     <AreaImage src="/assets/icons/myPage/Area.svg" />
                     <Select
                       onChange={(e) => {
@@ -521,52 +536,20 @@ const ProfileEdit = ({
                         </option>
                       ))}
                     </Select>
-                    <InputBox>
-                      {nickName !== item.displayName && (
-                        <>
-                          {nickNameIcon}
-                          <TextValidation
-                            className={`message ${
-                              isValidNickName ? 'success' : 'error'
-                            }`}
-                          >
-                            {nickNameCheck ? '중복된 닉네임입니다' : ''}
-                            {nickNameMessage}
-                          </TextValidation>
-                        </>
-                      )}
-                    </InputBox>
-                  </InstagramBox>
+                  </EditInstagramBox>
                 </NickNameAreaBox>
                 <FollowBox>
-                  <PostNumberText>게시글</PostNumberText>
-                  <FollowNumberText>
-                    {galleryNumber && BoardNumber
-                      ? galleryNumber?.length + BoardNumber?.length
-                      : 0}
-                  </FollowNumberText>
-                  <FollowText
-                    onClick={() => {
-                      setFollowModal(true);
-                      setToggle(true);
+                  <EditInstaImage src="/assets/icons/myPage/Ins.svg" />
+                  <Span>https://www.instagram.com/</Span>
+                  <InstagramInput
+                    spellCheck="false"
+                    value={instagram}
+                    onChange={(e) => {
+                      setInstagram(e.target.value);
                     }}
-                  >
-                    팔로워
-                  </FollowText>
-                  <FollowNumberText>
-                    {item.follower === undefined ? '0' : item.follower.length}
-                  </FollowNumberText>
-                  <FollowText
-                    onClick={() => {
-                      setFollowModal(true);
-                      setToggle(false);
-                    }}
-                  >
-                    팔로잉
-                  </FollowText>
-                  <FollowNumberText>
-                    {item.following === undefined ? '0' : item.following.length}
-                  </FollowNumberText>
+                    placeholder=""
+                    maxLength={20}
+                  ></InstagramInput>
                 </FollowBox>
                 <IntroductionEditText
                   spellCheck="false"
@@ -589,14 +572,15 @@ const ProfileEdit = ({
 export default ProfileEdit;
 
 const InformationBox = styled.div`
-  width: 900px;
+  width: 1000px;
   height: 280px;
   padding-top: 0.5vh;
   overflow: hidden;
 `;
 const EditPhotoBox = styled.div`
-  padding-top: 10px;
-  width: 250px;
+  padding-top: 24px;
+  margin-left: 20px;
+  width: 200px;
   height: 250px;
   float: left;
 `;
@@ -609,6 +593,7 @@ const EditNickNameBox = styled.div`
   text-align: left;
 `;
 const NameBox = styled.div`
+  display: flex;
   height: 40px;
   font-size: 24px;
   font-weight: 600;
@@ -626,11 +611,20 @@ const NameBox = styled.div`
   }
 `;
 const ProfilePhoto = styled.div`
-  width: 150px;
-  height: 150px;
+  width: 124px;
+  height: 124px;
   margin: auto;
-  border-radius: 70%;
   overflow: hidden;
+  padding-left: 3px;
+`;
+const ProfilePhotoBox = styled.div`
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 70%;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 const Photo = styled.img`
   width: 100%;
@@ -638,8 +632,9 @@ const Photo = styled.img`
   object-fit: cover;
 `;
 const LevelBox = styled.div`
+  margin-right: 12px;
   position: relative;
-  margin-top: 14px;
+  margin-top: 8px;
   :hover {
     cursor: help;
     .levelHelpBox {
@@ -653,7 +648,7 @@ const LevelHelpBox = styled.div`
   width: 340px;
   height: 260px;
   margin-top: 130px;
-  margin-left: 120px;
+  margin-left: 90px;
   position: fixed;
   border-radius: 15px;
   background-color: white;
@@ -689,15 +684,16 @@ const NickNameAreaBox = styled.div`
   height: 70px;
 `;
 const NickNameText = styled.span`
-  font-size: 18px;
-  font-weight: 600;
+  margin-top: 2px;
+  margin-left: 4px;
+  margin-right: 16px;
 `;
 const AreaText = styled.span`
   font-size: 1rem;
   font-weight: bold;
 `;
 const IntroductionText = styled.textarea`
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 16px;
   border: none;
   width: 300px;
@@ -715,18 +711,18 @@ const IntroductionText = styled.textarea`
   }
 `;
 const IntroductionEditText = styled.textarea`
-  margin-top: 20px;
+  margin-top: 8px;
+  padding: 8px;
   font-size: 16px;
-  border: none;
-  width: 300px;
-  height: 72px;
+  font-weight: 400;
+  border-width: 2px;
+  width: 460px;
+  height: 64px;
+  border-radius: 10px;
   text-align: left;
   resize: none;
   overflow: auto;
-  background-color: #fffcf3;
-  border-bottom-color: black;
-  border-bottom-style: solid;
-  border-bottom-width: 0.1rem;
+  box-shadow: -2px 2px 0px 0px #000000;
   :focus {
     outline: none;
   }
@@ -738,62 +734,103 @@ const IntroductionEditText = styled.textarea`
 const EditButton = styled.button`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
+  background-color: 
+#FF4800;
+  color: white;
   :hover {
     cursor: pointer;
+    background-color: black;
+    color: white;
   }
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
-
+const EditCancelButton = styled.button`
+  margin-left: 20px;
+  height: 40px;
+  border-radius: 40px;
+  border: 1px solid black;
+  font-size: 16px;
+  background-color: white;
+  width: 80px;
+  color: black;
+  :hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+  }
+  box-shadow: -2px 2px 0px 0px #000000;
+`;
 const TextInput = styled.input`
-  width: 160px;
+  width: 170px;
   height: 26px;
-  border: none;
-  font-size: 18px;
-  font-weight: 600;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 400;
   text-align: left;
-  background-color: #fffcf3;
-  border-bottom-color: black;
-  border-bottom-style: solid;
-  border-bottom-width: 0.1rem;
+  border-radius: 30px;
+  box-shadow: -2px 2px 0px 0px #000000;
   :focus {
     outline: none;
   }
 `;
 
 const Select = styled.select`
-  width: 60px;
-  font-size: 1rem;
-  background-color: #fffcf3;
+  width: 70px;
+  padding: 6px;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
   margin-left: 2px;
-  border: none;
+  box-shadow: -2px 2px 0px 0px #000000;
+  border-radius: 30px;
+  border-color: black;
   :focus {
     outline: none;
   }
 `;
 const InstagramInput = styled.input`
-  width: 160px;
-  height: 33px;
-  border: none;
-  font-size: 24px;
+  width: 420px;
+  height: 26px;
+  padding: 18px;
+  padding-left: 223px;
+  border-radius: 30px;
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 400;
   color: black;
-  font-weight: 600;
   text-align: left;
-  background-color: #fffcf3;
+  margin-top: 20px;
   border-bottom-color: black;
   border-bottom-style: solid;
   border-bottom-width: 0.1rem;
+  box-shadow: -2px 2px 0px 0px #000000;
   :focus {
     outline: none;
   }
 `;
-const InstagramText = styled.a`
-  margin-right: 20px;
-`;
+const InstagramText = styled.a``;
 const InstagramImage = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
 `;
 const InstagramBox = styled.div`
-  margin-top: 10px;
+  margin-top: 12px;
+  color: black;
+  font-size: 16px;
+  font-weight: 700;
+  a:link {
+    color: black;
+    text-decoration: none;
+  }
+  a:visited {
+    color: black;
+    text-decoration: none;
+  }
+  a:hover {
+    color: lightgray;
+  }
+`;
+const EditInstagramBox = styled.div`
   color: black;
   font-size: 16px;
   font-weight: 700;
@@ -810,9 +847,15 @@ const InstagramBox = styled.div`
   }
 `;
 const FollowBox = styled.div`
-  margin-top: 36px; ;
+  position: relative;
+  margin-top: 20px;
+  width: 700px;
 `;
-
+const Span = styled.span`
+  position: absolute;
+  margin-top: 29px;
+  margin-left: 20px;
+`;
 const FollowText = styled.span`
   font-size: 18px;
   margin-right: 12px;
@@ -836,7 +879,12 @@ const TextValidation = styled.span`
   margin-left: 8px;
   font-size: 12px;
 `;
-const InputBox = styled.div``;
+const InputBox = styled.div`
+  display: flex;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  height: 8px;
+`;
 
 const HelpLvText = styled.span`
   font-size: 1.2rem;
@@ -846,7 +894,7 @@ const HelpLvText = styled.span`
 const LevelIcon = styled.img`
   width: 30px;
   height: 30px;
-  margin-right: 8px;
+  margin-right: 4px;
   margin-bottom: 6px;
   border-radius: 50%;
 `;
@@ -860,7 +908,13 @@ const LevelIcons = styled.img`
 const AreaImage = styled.img`
   width: 30px;
   height: 30px;
-  margin-left: 20px;
+  margin-right: 8px;
+`;
+const EditInstaImage = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  margin-bottom: 6px;
 `;
 const IconBox = styled.div`
   text-align: center;
@@ -870,4 +924,10 @@ const LevelText = styled.div`
   font-weight: bolder;
   font-size: 20px;
   margin-bottom: 8px;
+`;
+const NickNameImage = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  margin-top: 10px;
 `;

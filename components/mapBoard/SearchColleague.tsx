@@ -157,7 +157,7 @@ const SearchColleague = (props: MapModalProps) => {
                       lng: post?.coordinate?.lng,
                     }}
                     xAnchor={0.5}
-                    yAnchor={3}
+                    yAnchor={2.5}
                   >
                     <RecruitPostsWindow
                       key={`recruit-post-window-${nanoid()}`}
@@ -216,8 +216,9 @@ const SearchBar = styled.div`
   background-color: white;
   border: 1px solid black;
   width: 80%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  box-shadow: -2px 2px 0px 1px #000000;
+  margin-top: 30px;
+  margin-bottom: 30px;
 `;
 
 const SerachImg = styled.img`

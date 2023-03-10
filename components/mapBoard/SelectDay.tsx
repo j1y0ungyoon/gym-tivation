@@ -151,9 +151,9 @@ const SelectDay = (props: DayType) => {
       )}
 
       {every ? (
-        <ToggledDayBox value="매일 " onClick={onClickSelectDay}>
-          <ToggledDayText>매일</ToggledDayText>
-        </ToggledDayBox>
+        <ToggledEveryDayBox value="매일 " onClick={onClickSelectDay}>
+          <EveryDayText>매일</EveryDayText>
+        </ToggledEveryDayBox>
       ) : (
         <EveryDayBox value="매일 " onClick={onClickSelectDay}>
           <EveryDayText>매일</EveryDayText>
@@ -173,6 +173,7 @@ const ToggledDayBox = styled.button`
   height: 40px;
   margin-right: 0.6rem;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   cursor: pointer;
   background-color: #ffcab5;
@@ -194,6 +195,7 @@ const DayBox = styled.button`
   height: 40px;
   margin-right: 0.6rem;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   cursor: pointer;
 
@@ -207,11 +209,26 @@ const EveryDayBox = styled.button`
   width: 44px;
   height: 42px;
   margin-right: 0.6rem;
+  box-shadow: -2px 2px 0px 1px #000000;
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   cursor: pointer;
 
   background-color: white;
+`;
+
+const ToggledEveryDayBox = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 42px;
+  margin-right: 0.6rem;
+  box-shadow: -2px 2px 0px 1px #000000;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  cursor: pointer;
+  background-color: #ffcab5; ;
 `;
 
 const EveryDayText = styled.span`

@@ -254,11 +254,11 @@ const MyPage = ({ params }: any) => {
                     {profile.map((item) => {
                       return (
                         <LoginState
-                          followModal={followModal}
                           key={item.id}
                           item={item}
                           toggle={toggle}
                           paramsId={paramsId}
+                          setFollowModal={setFollowModal}
                         />
                       );
                     })}
@@ -383,6 +383,7 @@ const FollowToggleButton = styled.button`
   border-radius: 30px;
 `;
 const LoginStateBox = styled.div`
+  height: 80%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;

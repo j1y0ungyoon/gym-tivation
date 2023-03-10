@@ -1,7 +1,7 @@
 import { authService, dbService } from '@/firebase';
 import { doc, updateDoc, query, collection, getDocs } from 'firebase/firestore';
 import { useState } from 'react';
-import SearchUser from './SearchUser';
+import SearchUser from '../SearchUser';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
@@ -20,9 +20,9 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const [searchName, setSearchName] = useState<string>('');
 
   const [nowMenu, setNowMenu] = useRecoilState(navMenuState);
-  
+
   const user = authService.currentUser;
-  
+
   const onLogout = async () => {
     try {
       if (user !== null) {
@@ -64,7 +64,19 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       query: { id },
     });
   };
-
+  const onClickGalleryPostButton = () => {
+    router.push({
+      pathname: `/gallery/Post`,
+    });
+  };
+  const onClickPostButton = () => {
+    router.push({
+      pathname: `/board/Post`,
+    });
+  };
+  const goToWrite = () => {
+    router.push('/mapBoard/WritingRecruitment');
+  };
   return (
     <HeaderWrapper>
       <Logo
@@ -81,17 +93,22 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           <SearchInput
             value={searchName}
             onChange={(e) => {
-              setSearchName(
-                e.target.value.replace(
-                  /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi,
-                  '',
-                ),
-              );
+              authService.currentUser &&
+                setSearchName(
+                  e.target.value.replace(
+                    /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi,
+                    '',
+                  ),
+                );
             }}
             onFocus={() => {
               setSearchOpen(true);
             }}
-            placeholder="유저를 검색해주세요"
+            placeholder={
+              authService.currentUser
+                ? '유저를 검색해주세요'
+                : '로그인 후 이용해주세요.'
+            }
           />
           {searchOpen && searchName.length > 0 && (
             <SearchClose
@@ -103,17 +120,17 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             />
           )}
         </SearchBar>
-        {searchOpen && (
+        {authService.currentUser && searchOpen && (
           <SearchUser setSearchOpen={setSearchOpen} searchName={searchName} />
         )}
         <>
           {authService.currentUser && (
-            <UserBox
-              onClick={() => {
-                goToDetailMyPage(id);
-              }}
-            >
-              <ProfilePhoto>
+            <UserBox>
+              <ProfilePhoto
+                onClick={() => {
+                  goToDetailMyPage(id);
+                }}
+              >
                 {authService.currentUser?.photoURL && (
                   <Photo src={authService.currentUser?.photoURL} />
                 )}
@@ -121,6 +138,25 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
               <TextBox>
                 <FollowText>{authService.currentUser?.displayName}</FollowText>
               </TextBox>
+              <HelpBox className="HelpBox">
+                {!isLoggedIn ? (
+                  <SignBox>
+                    <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>
+                    /<Sign onClick={() => router.push('/signIn')}>로그인</Sign>
+                  </SignBox>
+                ) : (
+                  <div>
+                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
+                    <LogoutBtn onClick={onClickGalleryPostButton}>
+                      오운완 글쓰기
+                    </LogoutBtn>
+                    <LogoutBtn onClick={onClickPostButton}>
+                      게시판 글쓰기
+                    </LogoutBtn>
+                    <LogoutBtn onClick={goToWrite}>동료 모집하기</LogoutBtn>
+                  </div>
+                )}
+              </HelpBox>
             </UserBox>
           )}
         </>
@@ -129,9 +165,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             <Sign onClick={() => router.push('/signUp')}>회원가입</Sign>/
             <Sign onClick={() => router.push('/signIn')}>로그인</Sign>
           </SignBox>
-        ) : (
-          <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
-        )}
+        ) : null}
       </Itembox>
     </HeaderWrapper>
   );
@@ -190,6 +224,7 @@ const Itembox = styled.div`
 
 const SignBox = styled.div`
   margin: 10px;
+  margin-right: 46px;
 `;
 
 const Sign = styled.span`
@@ -202,12 +237,14 @@ const Sign = styled.span`
 `;
 
 const LogoutBtn = styled.button`
-  width: 120px;
-  height: 40px;
-  margin-right: 25px;
-  padding: 0;
-  border-radius: 50px;
+  width: 128px;
+  height: 50px;
   border: none;
+  font-size: 14px;
+  border-bottom-style: solid;
+  border-bottom-width: 0.1px;
+  border-color: lightgray;
+  /* border-width: 1px; */
   background-color: white;
   color: #000;
   :hover {
@@ -251,11 +288,39 @@ const TextBox = styled.div`
 
 const UserBox = styled.div`
   display: flex;
+  margin-top: 10px;
   margin-left: 26px;
-  margin-right: 36px;
-
+  margin-right: 46px;
+  height: 50px;
   :hover {
     cursor: pointer;
+    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
+    .HelpBox {
+      display: flex;
+    }
+  }
+`;
+
+const HelpBox = styled.div`
+  display: none;
+  z-index: 2000;
+  width: 128px;
+  height: 200px;
+  text-align: center;
+  margin-top: 150px;
+  margin-left: 20px;
+  position: fixed;
+  border-radius: 15px;
+  background-color: white;
+  transform: translate(-50%, -50%) !important;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  box-shadow: -2px 2px 0px #000000;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
   }
 `;
 
