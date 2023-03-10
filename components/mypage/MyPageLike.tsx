@@ -147,7 +147,7 @@ const MyPageBoardContainer = styled.div`
   margin-bottom: 16px;
   :hover {
     cursor: pointer;
-    transform: scale(1.05, 1.05);
+    transform: scale(1.03, 1.03);
     transition: 0.3s;
   }
 `;
