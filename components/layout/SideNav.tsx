@@ -119,6 +119,8 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 };
 
 const SideNavWrapper = styled.nav`
+  border-right: 1px solid #f0dcca;
+
   position: fixed;
   width: 180px;
   height: calc(100vh - 80px);

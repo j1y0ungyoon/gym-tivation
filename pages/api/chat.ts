@@ -43,7 +43,6 @@ const socketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       socket.on('roomEnter', (roomNum) => {
         console.log('룸넘버', roomNum);
         socket.join(roomNum);
-        // roomNum 이 방 번호, -> userId 로 바꿔줘야 함 / AuthService 에 userId 가 맞는지??
       });
     });
   }

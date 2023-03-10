@@ -1,7 +1,7 @@
 import { authService, dbService } from '@/firebase';
 import { doc, updateDoc, query, collection, getDocs } from 'firebase/firestore';
 import { useState } from 'react';
-import SearchUser from './SearchUser';
+import SearchUser from '../SearchUser';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
@@ -20,9 +20,9 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const [searchName, setSearchName] = useState<string>('');
 
   const [nowMenu, setNowMenu] = useRecoilState(navMenuState);
-  
+
   const user = authService.currentUser;
-  
+
   const onLogout = async () => {
     try {
       if (user !== null) {

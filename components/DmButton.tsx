@@ -1,112 +1,77 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { apponentState, dmListsState, roomState } from '@/recoil/dmData';
+import { dmListsState, roomState } from '@/recoil/dmData';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 
-import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
-import { authService, dbService } from '@/firebase';
+import { authService } from '@/firebase';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { addDm, getMyDms } from '@/pages/api/api';
+import Loading from './common/globalModal/Loading';
 
 interface DmButtonProps {
   id?: string;
 }
 
 const DmButton = ({ id }: DmButtonProps) => {
-  const [apponentId, setApponentId] = useRecoilState(apponentState);
   const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
   const [roomNum, setRoomNum] = useRecoilState(roomState);
 
   const user = authService.currentUser;
   const userId = String(user?.uid);
   const router = useRouter();
+  const ids = dmLists.map((dmList: any) => dmList.id);
+  const queryClient = useQueryClient();
 
-  // const getDms = async () => {
-  //   const q = query(collection(dbService, 'dms'));
-  //   const getDmsDocs = await getDocs(q);
+  // myDms 불러오는 함수
+  const { data: myDms, isLoading: myDmsLoading } = useQuery(
+    ['myDms', user?.uid],
+    getMyDms,
+  );
 
-  //   setDmLists(() =>
-  //     getDmsDocs.docs
-  //       .map((doc) => doc.data())
-  //       .filter((dm) => dm.enterUser.includes(user?.uid)),
-  //   );
-  // };
+  // dm 추가 뮤테이션
+  const { mutate: createDm } = useMutation('createDm', addDm, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('myDms');
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   useEffect(() => {
-    // getDms();
-    // console.log('@@@@@@@@@@', dmLists);
-
-    onSnapshot(query(collection(dbService, 'dms')), (snapshot: any) => {
-      const dms = snapshot.docs.map((doc: any) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      const myDms = dms.filter((dm: any) => {
-        if ((dm.enterUser[0] || dm.enterUser[1]) === user?.uid) {
-          return dm;
-        }
-      });
-      setDmLists(myDms);
-    });
-  }, [user]);
+    setDmLists(myDms);
+  }, [ids]);
 
   const onClickDm = async () => {
-    if (!id) return;
-    setApponentId(id);
+    if (!id || !user) return;
 
-    // if (!user?.uid || !id) {
-    //   return console.log('뭔가 못받음');
-    // }
-    // console.log('dmLists 입니다', { dmLists, id });
-    // for (const dmList of dmLists) {
-    //   if (dmList.enterUser.includes(id)) {
-    //     console.log('있는방');
-    //     setRoomNum(user?.uid + id);
-    //     break;
-    //   } else {
-    //     console.log('없는방');
-    //     await addDoc(collection(dbService, 'dms'), {
-    //       id: user?.uid + id,
-    //       enterUser: [user?.uid, id],
-    //       chatLog: [],
-    //     });
-    //     setRoomNum(user?.uid + id);
-    //     getDms();
-    //     break;
-    //   }
-    // }
+    // 리스트에 없는 방일 때
+    if (!ids.includes(`${user.uid + id}` || `${id + user.uid}`)) {
+      createDm({ myId: user.uid, appoId: id });
+      setRoomNum(user.uid + id);
+      if (router.pathname !== '/chat') {
+        router.push('/chat');
+      }
+    }
 
-    for (let i = 0; i < dmLists.length; i++) {
-      const dmList = dmLists[i];
-      const regex = new RegExp(
-        `^(${user?.uid}|${apponentId})(${apponentId}|${user?.uid})$`,
-      );
-
-      if (regex.test(dmList.id)) {
-        console.log('이미 있는 방임');
-        setRoomNum(dmList.id);
-        if (router.pathname !== '/chat') {
-          console.log('채팅방 아니네? 채팅방 보내줌');
-          router.push('/chat');
-          break;
-        }
-        break;
-      } else {
-        console.log('없는 방이네? 추가함');
-        addDoc(collection(dbService, 'dms'), {
-          id: user?.uid + apponentId,
-          enterUser: [user?.uid, apponentId],
-          chatLog: [],
-        });
-        setRoomNum(user?.uid + apponentId);
-        if (router.pathname !== '/chat') {
-          console.log('채팅방 아니네? 채팅방 보내줌');
-          router.push('/chat');
-          break;
-        }
-        break;
+    // 리스트에 이미 있는 방일 때
+    if (ids.includes(`${user.uid + id}`)) {
+      setRoomNum(user.uid + id);
+      if (router.pathname !== '/chat') {
+        router.push('/chat');
+      }
+    } else if (ids.includes(`${id + user.uid}`)) {
+      setRoomNum(id + user.uid);
+      if (router.pathname !== '/chat') {
+        router.push('/chat');
       }
     }
   };
+
+  if (myDmsLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
