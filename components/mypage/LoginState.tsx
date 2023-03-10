@@ -95,7 +95,11 @@ const LoginState = ({
                     <Photo src={item.photoURL} />
                   </ProfilePhoto>
                 </PhotoBox>
-                <TextBox>
+                <TextBox
+                  onClick={() => {
+                    goToMyPage(item.id);
+                  }}
+                >
                   <FollowText>
                     {item.displayName}
                     {item.loginState && true ? (
@@ -125,7 +129,11 @@ const LoginState = ({
                     <Photo src={item.photoURL} />
                   </ProfilePhoto>
                 </PhotoBox>
-                <TextBox>
+                <TextBox
+                  onClick={() => {
+                    goToMyPage(item.id);
+                  }}
+                >
                   <FollowText>
                     {item.displayName}
                     {item.loginState && true ? (
@@ -159,6 +167,8 @@ const OnOffBox = styled.div`
   margin-bottom: 16px;
   :hover {
     cursor: pointer;
+    transform: scale(1.05, 1.05); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
   }
 `;
 const PhotoBox = styled.div`
