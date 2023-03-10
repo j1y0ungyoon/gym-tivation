@@ -162,21 +162,26 @@ const ParticipationBox = styled.div`
 `;
 
 const DayText = styled.span`
-  /* ${({ theme }) => theme.font.font10} */
   margin: 2px;
   font-size: 12px;
-  width: 90%;
-  overflow: hidden; // 을 사용해 영역을 감출 것
-  text-overflow: ellipsis; // 로 ... 을 만들기
-  white-space: nowrap; // 아래줄로 내려가는 것을 막기위해
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   word-break: break-all;
 `;
 
 const TimeText = styled.span`
-  /* ${({ theme }) => theme.font.font10} */
   font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
 `;
 
 const ParticipationText = styled.span`
   font-size: ${({ theme }) => theme.font.font10};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
 `;
