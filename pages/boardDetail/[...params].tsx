@@ -490,6 +490,7 @@ const DetailContent = styled.div`
   box-shadow: -2px 2px 0px 1px #000000;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 `;
 const UserImage = styled.img`
   height: 50px;
@@ -506,7 +507,7 @@ const DetailTitleContainer = styled.div`
   padding: 10px;
   flex-direction: row;
   width: 100%;
-  height: 20%;
+  height: 29%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 3px solid black;
