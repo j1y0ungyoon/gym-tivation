@@ -70,11 +70,11 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
               }}
               key={item.id}
             >
-              <PhotoBox>
-                <ProfilePhoto>
+              <UserPhotoBox>
+                <UserPhoto>
                   <Photo src={item.userPhoto} />
-                </ProfilePhoto>
-              </PhotoBox>
+                </UserPhoto>
+              </UserPhotoBox>
               <TitleNickNameBox>
                 <TitleBox>
                   <BoardTitleText>{item.title}</BoardTitleText>
@@ -189,9 +189,10 @@ const MyPageBoardContainer = styled.div`
   border-width: 0.1rem;
   border-radius: 15px;
   margin-bottom: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
   :hover {
     cursor: pointer;
-    transform: scale(1.05, 1.05);
+    transform: scale(1.03, 1.03);
     transition: 0.3s;
   }
 `;
@@ -226,4 +227,15 @@ const RecruitComment = styled.span`
   color: gray;
   font-weight: bolder;
   margin-left: 15px;
+`;
+const UserPhoto = styled.div`
+  width: 95%;
+  height: 100%;
+  border-radius: 70%;
+  overflow: hidden;
+`;
+const UserPhotoBox = styled.div`
+  margin: auto;
+  width: 80px;
+  height: 70px;
 `;
