@@ -99,6 +99,7 @@ const MapBoard = () => {
           <MapBoardHeadContainer>
             <MapBoardWritingButton onClick={goToWrite}>
               모집글 작성하기
+              <PencilImage src="/assets/icons/mapBoard/pencil.svg" />
             </MapBoardWritingButton>
           </MapBoardHeadContainer>
 
@@ -170,6 +171,7 @@ const MapBox = styled.main`
   align-items: center;
   border: 1px solid black;
   border-radius: 2rem;
+  box-shadow: -2px 2px 0px 1px #000000;
   width: 50%;
   height: 100%;
   background-color: white;
@@ -184,6 +186,7 @@ const MapBoardPostsBox = styled.div`
   border: 1px solid black;
   background-color: #ffff;
   border-radius: 2rem;
+  box-shadow: -2px 2px 0px 1px #000000;
   width: 50%;
   height: 100%;
 
@@ -196,7 +199,13 @@ const MapBoardPostsBox = styled.div`
 
 const MapBoardPostHead = styled.span`
   font-size: ${({ theme }) => theme.font.font70};
-  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  padding-bottom: 10px;
+  margin-left: 32px;
 `;
 
 const MapBoardHeadContainer = styled.section`
@@ -208,11 +217,21 @@ const MapBoardHeadContainer = styled.section`
 const MapBoardWritingButton = styled.button`
   ${({ theme }) => theme.btn.btn100}
   background-color: ${({ theme }) => theme.color.brandColor100};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
   color: white;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
   /* &:hover {
     background-color: #ffcab5;
   } */
+`;
+
+const PencilImage = styled.img`
+  width: 20px;
+  height: 20px;
 `;
 
 const MapdBox2 = styled.div`
@@ -232,7 +251,7 @@ const EmptyPostImageBox = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: 650px;
 `;
 
 const EmptyPostTextBox = styled.div`

@@ -34,7 +34,7 @@ const RecruitPost = (props: RecruitPostPropsType) => {
               <ClockImage src="/assets/icons/mapBoard/One oclock.svg" />
               <TimeText>{`${post.startTime} ~ ${post.endTime}`}</TimeText>
             </TimeTextBox>
-            <ParticipationImage src="/assets/icons/mapBoard/like_icon_inactive.svg" />
+            <ParticipationImage src="/assets/icons/mapBoard/FistImage2.svg" />
             <ParticipationText>{`현재 ${post.participation?.length}명이 참여중입니다`}</ParticipationText>
           </DayTimeInfoBox>
         </RecruitPostInfoBox>
@@ -58,10 +58,16 @@ const RecruitPostBox = styled.div`
   margin-bottom: 8px;
   padding: 1rem;
   background-color: white;
+  box-shadow: -2px 2px 0px 1px #000000;
 
   cursor: pointer;
   &:hover {
     background-color: #ffcab5;
+  }
+  :hover {
+    cursor: pointer;
+    transform: scale(1.02, 1.02); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.3s;
   }
 `;
 
@@ -115,9 +121,10 @@ const DayImage = styled.img`
 `;
 
 const ParticipationImage = styled.img`
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   margin-right: 8px;
+  border-radius: 6px;
 `;
 
 const DayTextBox = styled.div`
@@ -128,19 +135,21 @@ const DayTextBox = styled.div`
   max-width: 42%;
   margin-right: 1rem;
   border: 1px solid black;
-  border-radius: ${({ theme }) => theme.borderRadius.radius10};
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   padding: 0.4rem;
+  box-shadow: -2px 2px 0px 1px #000000;
   background-color: #ffff;
 `;
 const TimeTextBox = styled.div`
   display: flex;
   align-items: center;
-  min-width: 30%;
+  min-width: 24%;
   margin-right: 1rem;
   border: 1px solid black;
-  border-radius: ${({ theme }) => theme.borderRadius.radius10};
+  border-radius: ${({ theme }) => theme.borderRadius.radius50};
   padding: 0.4rem;
-  background-color: #ffff;
+  box-shadow: -2px 2px 0px 1px #000000;
+  background-color: white;
 `;
 
 const ParticipationBox = styled.div`
@@ -154,6 +163,7 @@ const ParticipationBox = styled.div`
 
 const DayText = styled.span`
   /* ${({ theme }) => theme.font.font10} */
+  margin: 2px;
   font-size: 12px;
   width: 90%;
   overflow: hidden; // 을 사용해 영역을 감출 것

@@ -141,6 +141,10 @@ const SignInInput = styled.input`
   border-radius: 20px;
   padding-left: 16px;
   font-size: 16px;
+  :focus {
+    outline: none;
+  }
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 const IconValidation = styled.div`
   margin-top: 10px;
@@ -158,11 +162,12 @@ const TextValidation = styled.span`
 const SignInButton = styled.button`
   border-radius: 2rem;
   width: 100%;
-  height: 16%;
+  height: 48px;
   background-color: white;
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
   :hover {
     cursor: pointer;
     background-color: black;

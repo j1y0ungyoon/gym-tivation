@@ -8,6 +8,8 @@ import { authService } from '@/firebase';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { addDm, getMyDms } from '@/pages/api/api';
 import Loading from './common/globalModal/Loading';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import useModal from '@/hooks/useModal';
 
 interface DmButtonProps {
   id?: string;
@@ -22,6 +24,7 @@ const DmButton = ({ id }: DmButtonProps) => {
   const router = useRouter();
   const ids = dmLists.map((dmList: any) => dmList.id);
   const queryClient = useQueryClient();
+  const { showModal } = useModal();
 
   // myDms 불러오는 함수
   const { data: myDms, isLoading: myDmsLoading } = useQuery(
@@ -76,7 +79,16 @@ const DmButton = ({ id }: DmButtonProps) => {
   return (
     <>
       {id !== userId ? (
-        <DmButtonWrapper onClick={() => onClickDm()}>
+        <DmButtonWrapper
+          onClick={() =>
+            authService.currentUser
+              ? onClickDm()
+              : showModal({
+                  modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                  modalProps: { contentText: '로그인 후 이용해주세요!' },
+                })
+          }
+        >
           <IconImg src="/assets/icons/myPage/DM.svg" />
           메시지
         </DmButtonWrapper>
@@ -90,6 +102,7 @@ export default DmButton;
 const DmButtonWrapper = styled.button`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
+  box-shadow: -2px 2px 0px 1px #000000;
   background-color: #fff;
   color: #000;
   :hover {

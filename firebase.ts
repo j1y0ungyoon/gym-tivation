@@ -26,6 +26,17 @@ const firebaseConfig = {
   measurementId: 'G-8BKMFDZ3HS',
 };
 
+// 창순님 키
+// const firebaseConfig = {
+//   apiKey: 'AIzaSyBlo4W0GPP8wQVOhJeFmHzRdWBj8ND-KjU',
+//   authDomain: 'gymtivation03.firebaseapp.com',
+//   projectId: 'gymtivation03',
+//   storageBucket: 'gymtivation03.appspot.com',
+//   messagingSenderId: '344246592041',
+//   appId: '1:344246592041:web:d6f2b301b9e44cd4f1b238',
+//   measurementId: 'G-ETSC9ENJ6Z',
+// };
+
 //창순님 키
 // const firebaseConfig = {
 //   apiKey: 'AIzaSyBlo4W0GPP8wQVOhJeFmHzRdWBj8ND-KjU',
