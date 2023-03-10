@@ -251,13 +251,17 @@ const Chat = () => {
                   )}
                   {searchValue.length > 0 ? (
                     <SearchCancel
+                      alt="검색 취소 버튼"
                       src={'/assets/icons/closeBtn.svg'}
                       onClick={() => {
                         setSearchValue('');
                       }}
                     />
                   ) : null}
-                  <SearchIcon src="/assets/icons/searchIcon.svg" />
+                  <SearchIcon
+                    alt="찾기 버튼"
+                    src="/assets/icons/searchIcon.svg"
+                  />
                 </SearchBar>
                 {searchValue.length > 0 ? (
                   <SearchResultWrapper>
@@ -321,6 +325,7 @@ const Chat = () => {
               {chatLogs?.map((chatLog) => (
                 <ChatBox key={nanoid()}>
                   <UserImg
+                    alt="유저 이미지"
                     src={`${chatLog.photoURL}`}
                     onClick={(e) => {
                       return router.push(`/myPage/${chatLog.id}`);
@@ -338,7 +343,7 @@ const Chat = () => {
             <ChatInputBox>
               {user ? (
                 <>
-                  <UserImg src={`${user?.photoURL}`} />
+                  <UserImg alt="유저이미지" src={`${user?.photoURL}`} />
                   <ChatInput
                     placeholder="채팅을 입력하세요."
                     type="text"
