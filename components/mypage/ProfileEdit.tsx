@@ -684,7 +684,7 @@ const NickNameAreaBox = styled.div`
   height: 70px;
 `;
 const NickNameText = styled.span`
-  margin-top: 4px;
+  margin-top: 2px;
   margin-left: 4px;
   margin-right: 16px;
 `;

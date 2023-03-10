@@ -387,7 +387,9 @@ const SignUp = () => {
           {signUpdisabled === true ? (
             <SignUpButton2 type="submit">회원가입 하기</SignUpButton2>
           ) : (
-            <SignUpButton> 회원가입 하기</SignUpButton>
+            <SignUpButton disabled={signUpdisabled === false}>
+              회원가입 하기
+            </SignUpButton>
           )}
         </SignUpContainer>
       ) : (
@@ -542,7 +544,9 @@ const SignUp = () => {
               동의하고 가입하기
             </TouButton2>
           ) : (
-            <TouButton>동의하고 가입하기</TouButton>
+            <TouButton disabled={touCheckButton === false}>
+              동의하고 가입하기
+            </TouButton>
           )}
         </TOUContainer>
       )}
