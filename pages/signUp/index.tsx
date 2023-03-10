@@ -511,7 +511,13 @@ const SignUp = () => {
                   }}
                   style={{ marginTop: '3px' }}
                 />
-                <TOUText>위치정보 동의(필수)</TOUText>
+                <TOUText
+                  onClick={() => {
+                    setLBCheck(true);
+                  }}
+                >
+                  위치정보 동의(필수)
+                </TOUText>
               </>
             ) : (
               <>

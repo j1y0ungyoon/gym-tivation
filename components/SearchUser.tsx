@@ -78,12 +78,13 @@ const UserWrapper = styled.div`
   position: absolute;
   overflow: auto;
   width: 400px;
-  max-height: 300px;
+  max-height: 270px;
   top: 70px;
   border-radius: 10px;
   background-color: white;
   border-style: solid;
   border-width: 1px;
+  box-shadow: -2px 2px 0px 1px #000000;
   ::-webkit-scrollbar {
     display: none;
   }

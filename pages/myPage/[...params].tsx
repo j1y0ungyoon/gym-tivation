@@ -56,11 +56,11 @@ const MyPage = ({ params }: any) => {
           setMeetingMenu(false);
       }}
     >
-      게시판
+      작성한 글
     </GalleyButton>
   ) : (
     <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
-      게시판
+      작성한 글
     </GalleyButton>
   );
 
@@ -300,6 +300,7 @@ const ScheduleBox = styled.div`
   float: right;
   margin-top: 0.5vh;
   margin-bottom: 0.5vh;
+  margin-right: 16px;
   width: 25%;
 `;
 const Schedule = styled.div`
@@ -321,6 +322,7 @@ const NavigationBox = styled.div`
 
 const GalleyButton = styled.button`
   ${({ theme }) => theme.btn.category}
+  min-width: 130px;
   background-color: white;
   border: black;
   border-style: solid;
