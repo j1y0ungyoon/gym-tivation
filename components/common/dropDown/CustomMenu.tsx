@@ -11,7 +11,7 @@ const CustomMenu = React.forwardRef(
     const [value, setValue] = useState('');
 
     return (
-      <div
+      <StyledMenuBox
         ref={ref}
         style={style}
         className={className}
@@ -31,7 +31,7 @@ const CustomMenu = React.forwardRef(
               !value || child.props.children.toLowerCase().startsWith(value),
           )}
         </StyledUl>
-      </div>
+      </StyledMenuBox>
     );
   },
 );
@@ -39,6 +39,11 @@ const CustomMenu = React.forwardRef(
 CustomMenu.displayName = 'CustomMenu';
 
 export default CustomMenu;
+
+const StyledMenuBox = styled.div`
+  border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
+`;
 
 const StyledUl = styled.ul`
   min-height: 4rem;

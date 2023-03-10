@@ -85,6 +85,7 @@ const Home = () => {
     slideToScroll: 1,
     centerPadding: '0',
     speed: 500,
+    pauseOnHover: false,
     nextArrow: (
       <ArrowR>
         <SVG src={'/assets/icons/next.svg'} />
@@ -102,8 +103,8 @@ const Home = () => {
     slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 1800,
-    autoplaySpeed: 1800,
+    speed: 3000,
+    autoplaySpeed: 3000,
     cssEase: 'linear',
     pauseOnHover: false,
   };

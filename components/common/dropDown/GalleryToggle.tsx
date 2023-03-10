@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 // The forwardRef is important!!
 // Dropdown needs access to the DOM node in order to position the Menu
-const CustomToggle = React.forwardRef(
+const GalleryToggle = React.forwardRef(
   ({ children, onClick }: { children: any; onClick: any }, ref: any) => (
     <ToggleButton
       ref={ref}
@@ -13,13 +13,12 @@ const CustomToggle = React.forwardRef(
       }}
     >
       {children}
-      &#x25bc;
     </ToggleButton>
   ),
 );
-CustomToggle.displayName = 'CustomToggle';
+GalleryToggle.displayName = 'GalleryToggle';
 
-export default CustomToggle;
+export default GalleryToggle;
 
 const ToggleButton = styled.button`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
@@ -32,7 +31,6 @@ const ToggleButton = styled.button`
   border: 1px solid black;
   margin-right: 1rem;
   background-color: white;
-  box-shadow: -2px 2px 0px 1px #000000;
   &:hover {
     background-color: #ffcab5;
     color: black;

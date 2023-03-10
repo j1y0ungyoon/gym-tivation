@@ -223,6 +223,43 @@ export const updateGalleryUnLike = async ({
   });
 };
 
+export const getProfile = async () => {
+  const q = query(collection(dbService, 'profile'));
+  const data = await getDocs(q);
+  return data.docs.map((doc: any) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
+// 내 DM리스트 가져오기
+export const getMyDms = async ({ queryKey }: any) => {
+  const [_, id] = queryKey;
+
+  const snapshot = await getDocs(query(collection(dbService, 'dms')));
+  const allDmLists = snapshot.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() };
+  });
+
+  const myDms = allDmLists.filter((dm: any) => {
+    if (dm.enterUser) {
+      if (dm.enterUser[0] === id || dm.enterUser[1] === id) {
+        return dm;
+      }
+    }
+  });
+
+  return myDms;
+};
+
+// Dm 추가
+export const addDm = async ({ myId, appoId }: AddDmParams) => {
+  await addDoc(collection(dbService, 'dms'), {
+    id: myId + appoId,
+    enterUser: [myId, appoId],
+    chatLog: [],
+  });
+};
+
 // export const fetchRecruitPost = async (recruitPostId: string) => {
 //   const res = await getDoc(doc(dbService, 'recruitments', recruitPostId));
 
