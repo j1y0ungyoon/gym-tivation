@@ -411,6 +411,7 @@ const FollowModal = styled.div`
   top: 50%;
   left: 50%;
   border-radius: 15px;
+  box-shadow: -2px 2px 0px 0px #000000;
   transform: translate(-50%, -50%) !important;
   padding-top: 1.5rem;
   background-color: #fffcf3;
