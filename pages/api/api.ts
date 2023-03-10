@@ -223,14 +223,6 @@ export const updateGalleryUnLike = async ({
   });
 };
 
-export const getProfile = async () => {
-  const q = query(collection(dbService, 'profile'));
-  const data = await getDocs(q);
-  return data.docs.map((doc: any) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-};
 // 내 DM리스트 가져오기
 export const getMyDms = async ({ queryKey }: any) => {
   const [_, id] = queryKey;
