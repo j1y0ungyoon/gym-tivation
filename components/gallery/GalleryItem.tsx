@@ -15,6 +15,10 @@ const GalleryItem = ({ data }: any) => {
             key={galleryPhotos.id}
             id={galleryPhotos.id}
             photo={galleryPhotos.photo}
+            userPhoto={galleryPhotos.userPhoto}
+            nickName={galleryPhotos.nickName}
+            content={galleryPhotos.content}
+            userId={galleryPhotos.userId}
           />
         );
       })}
@@ -25,12 +29,15 @@ const GalleryItem = ({ data }: any) => {
 const GalleryList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
+
   height: 100%;
   border-radius: 0.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
+
   justify-content: center;
   align-content: flex-start;
+  gap: 16px;
   ::-webkit-scrollbar {
     width: 8px;
   }

@@ -265,3 +265,14 @@ export const addDm = async ({ myId, appoId }: AddDmParams) => {
 
 //   return res.data();
 // };
+
+// 프로필 불러오기
+
+export const getProfile = async () => {
+  const q = query(collection(dbService, 'profile'));
+  const data = await getDocs(q);
+  return data.docs.map((doc: any) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
