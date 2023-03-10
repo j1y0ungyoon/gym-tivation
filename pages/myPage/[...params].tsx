@@ -155,6 +155,7 @@ const MyPage = ({ params }: any) => {
       },
     },
   );
+
   const combineData = board?.concat(gallery);
 
   if (galleryLoading) {
@@ -324,9 +325,9 @@ const GalleyButton = styled.button`
   ${({ theme }) => theme.btn.category}
   min-width: 130px;
   background-color: white;
-  border: black;
   border-style: solid;
   border-width: 0.1rem;
+  box-shadow: -2px 2px 0px 0px #000000;
   :hover {
     cursor: pointer;
     background-color: black;

@@ -189,6 +189,7 @@ const MyPageBoardContainer = styled.div`
   border-width: 0.1rem;
   border-radius: 15px;
   margin-bottom: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
   :hover {
     cursor: pointer;
     transform: scale(1.03, 1.03);
