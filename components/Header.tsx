@@ -20,9 +20,9 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const [searchName, setSearchName] = useState<string>('');
 
   const [nowMenu, setNowMenu] = useRecoilState(navMenuState);
-  
+
   const user = authService.currentUser;
-  
+
   const onLogout = async () => {
     try {
       if (user !== null) {
@@ -126,11 +126,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         <>
           {authService.currentUser && (
             <UserBox>
-              <ProfilePhoto
-                onClick={() => {
-                  goToDetailMyPage(id);
-                }}
-              >
+              <ProfilePhoto>
                 {authService.currentUser?.photoURL && (
                   <Photo src={authService.currentUser?.photoURL} />
                 )}
@@ -146,7 +142,6 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                   </SignBox>
                 ) : (
                   <div>
-                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
                     <LogoutBtn onClick={onClickGalleryPostButton}>
                       오운완 글쓰기
                     </LogoutBtn>
@@ -154,6 +149,14 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                       게시판 글쓰기
                     </LogoutBtn>
                     <LogoutBtn onClick={goToWrite}>동료 모집하기</LogoutBtn>
+                    <LogoutBtn
+                      onClick={() => {
+                        goToDetailMyPage(id);
+                      }}
+                    >
+                      마이페이지
+                    </LogoutBtn>
+                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
                   </div>
                 )}
               </HelpBox>
@@ -294,7 +297,7 @@ const UserBox = styled.div`
   height: 50px;
   :hover {
     cursor: pointer;
-    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transform: scale(1.05); /* 가로2배 새로 1.2배 로 커짐 */
     transition: 0.3s;
     .HelpBox {
       display: flex;
@@ -306,10 +309,10 @@ const HelpBox = styled.div`
   display: none;
   z-index: 2000;
   width: 128px;
-  height: 200px;
+  height: 250px;
   text-align: center;
-  margin-top: 150px;
-  margin-left: 20px;
+  margin-top: 172px;
+  margin-left: 26px;
   position: fixed;
   border-radius: 15px;
   background-color: white;
