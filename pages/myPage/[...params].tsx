@@ -11,6 +11,7 @@ import MyPageBoard from '@/components/mypage/MyPageBoard';
 import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
+import { getProfile } from '../api/api';
 //mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id
@@ -55,11 +56,11 @@ const MyPage = ({ params }: any) => {
           setMeetingMenu(false);
       }}
     >
-      게시판
+      작성한 글
     </GalleyButton>
   ) : (
     <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
-      게시판
+      작성한 글
     </GalleyButton>
   );
 
@@ -97,15 +98,6 @@ const MyPage = ({ params }: any) => {
   );
 
   // 프로필 불러오기
-
-  const getProfile = async () => {
-    const q = query(collection(dbService, 'profile'));
-    const data = await getDocs(q);
-    return data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  };
 
   const { isLoading: profileLoading, data: profile } = useQuery(
     'profile',
@@ -262,11 +254,11 @@ const MyPage = ({ params }: any) => {
                     {profile.map((item) => {
                       return (
                         <LoginState
-                          followModal={followModal}
                           key={item.id}
                           item={item}
                           toggle={toggle}
                           paramsId={paramsId}
+                          setFollowModal={setFollowModal}
                         />
                       );
                     })}
@@ -308,6 +300,7 @@ const ScheduleBox = styled.div`
   float: right;
   margin-top: 0.5vh;
   margin-bottom: 0.5vh;
+  margin-right: 16px;
   width: 25%;
 `;
 const Schedule = styled.div`
@@ -329,6 +322,7 @@ const NavigationBox = styled.div`
 
 const GalleyButton = styled.button`
   ${({ theme }) => theme.btn.category}
+  min-width: 130px;
   background-color: white;
   border: black;
   border-style: solid;
@@ -391,6 +385,7 @@ const FollowToggleButton = styled.button`
   border-radius: 30px;
 `;
 const LoginStateBox = styled.div`
+  height: 80%;
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;

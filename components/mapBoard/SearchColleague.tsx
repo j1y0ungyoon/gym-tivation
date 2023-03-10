@@ -2,7 +2,7 @@ import { dbService } from '@/firebase';
 import { MapModalProps, RecruitPostType } from '@/type';
 import { collection, getDocs } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
-import React, { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 import MyLocationMarker from './MyLocationMarker';
@@ -102,10 +102,7 @@ const SearchColleague = (props: MapModalProps) => {
           center={{ lat: 33.5563, lng: 126.79581 }}
           style={{ width: '90%', height: '90%', borderRadius: '2rem' }}
         >
-          <MapMarker
-            key={`${nanoid()}`}
-            position={{ lat: 33.55635, lng: 126.795841 }}
-          >
+          <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
             <div style={{ color: '#000' }}>설정된 좌표가 없습니다!</div>
           </MapMarker>
         </Map>
@@ -129,7 +126,6 @@ const SearchColleague = (props: MapModalProps) => {
           />
         </SearchBar>
         <StyledMap
-          key={`map-${myPosition.center.lat}-${myPosition.center.lng}`}
           center={myPosition.center}
           //@ts-ignore
           onCreate={setMap}
@@ -138,9 +134,8 @@ const SearchColleague = (props: MapModalProps) => {
           {recruitPosts.map((post) => {
             if (post.coordinate) {
               return (
-                <>
+                <div key={nanoid()}>
                   <MapMarker
-                    key={`marker-${post.coordinate?.lat}-${post?.coordinate?.lng}-id-${post.id}`}
                     position={{
                       lat: post.coordinate?.lat,
                       lng: post?.coordinate?.lng,
@@ -157,16 +152,15 @@ const SearchColleague = (props: MapModalProps) => {
                       lng: post?.coordinate?.lng,
                     }}
                     xAnchor={0.5}
-                    yAnchor={3}
+                    yAnchor={2.5}
                   >
                     <RecruitPostsWindow
-                      key={`recruit-post-window-${nanoid()}`}
                       post={post}
                       recruitPosts={recruitPosts}
                       setMarkerCoordi={setMarkerCoordi}
                     />
                   </CustomOverlayMap>
-                </>
+                </div>
               );
             }
           })}
@@ -216,8 +210,9 @@ const SearchBar = styled.div`
   background-color: white;
   border: 1px solid black;
   width: 80%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  box-shadow: -2px 2px 0px 1px #000000;
+  margin-top: 30px;
+  margin-bottom: 30px;
 `;
 
 const SerachImg = styled.img`

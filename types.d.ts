@@ -30,6 +30,7 @@ type Board = {
   comment: number;
   like: [];
   date: string;
+  userPhoto: string;
 };
 type Gallery = {
   id: string;
@@ -43,6 +44,7 @@ type Gallery = {
   comment: number;
   like: [];
   date: string;
+  userPhoto: string;
 };
 type Follows = {
   id: string;
@@ -69,4 +71,8 @@ type CalendarItem = {
   mark?: boolean;
   date?: string;
   content?: string;
+};
+type AddDmParams = {
+  myId: string;
+  appoId: string;
 };

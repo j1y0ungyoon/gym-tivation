@@ -20,7 +20,6 @@ type Like = {
 };
 type LikeGet = {
   paramsId: string;
-
   combineData: Board[];
 };
 
@@ -34,6 +33,7 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
       },
     });
   };
+
   const goToGalleryDetailPost = (id: any) => {
     router.push({
       pathname: `/galleryDetail/${id}`,
@@ -86,11 +86,19 @@ const MyPageLike = ({ paramsId, combineData }: LikeGet) => {
                     <Photo src={item.photo} />
                   </ProfilePhoto>
                 </PhotoBox>
-              ) : null}
+              ) : (
+                <UserPhotoBox>
+                  <UserPhoto>
+                    <Photo src={item.userPhoto} />
+                  </UserPhoto>
+                </UserPhotoBox>
+              )}
               <TitleNickNameBox>
                 <TitleBox>
                   <BoardCategory>
-                    {item.category === undefined ? '오운완 갤러리' : '게시판'}
+                    {item.category === undefined
+                      ? '오운완 갤러리'
+                      : item.category}
                   </BoardCategory>
                   {item.category === undefined ? (
                     <BoardTitleText>{item.content}</BoardTitleText>
@@ -147,6 +155,11 @@ const MyPageBoardContainer = styled.div`
 const PhotoBox = styled.div`
   width: 28%;
   height: 100%;
+`;
+const UserPhotoBox = styled.div`
+  margin: auto;
+  width: 80px;
+  height: 70px;
 `;
 const ProfilePhoto = styled.div`
   width: 95%;
@@ -217,4 +230,10 @@ const IconImg = styled.img`
   height: 1.5rem;
   margin-right: 5px;
   margin-bottom: 4px;
+`;
+const UserPhoto = styled.div`
+  width: 95%;
+  height: 100%;
+  border-radius: 70%;
+  overflow: hidden;
 `;

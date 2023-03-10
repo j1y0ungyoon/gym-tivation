@@ -4,17 +4,28 @@ import io from 'socket.io-client';
 
 import { nanoid } from 'nanoid';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { dmListsState, roomState } from '@/recoil/dmData';
+import { apponentState, roomState } from '@/recoil/dmData';
 import { useRecoilState } from 'recoil';
 
 import { authService, dbService } from '@/firebase';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  updateDoc,
+} from 'firebase/firestore';
 
 import styled from 'styled-components';
-import DmChat from '@/components/DmChat';
-import DmButton from '@/components/DmButton';
-import DmListUserName from '@/components/DmListUserName';
+import DmChat from '@/components/chat/DmChat';
+import DmButton, { MemoizedDmButton } from '@/components/DmButton';
+import { MemoizedDmListUserInfo } from '@/components/chat/DmListUserInfo';
 import { useRouter } from 'next/router';
+import { useQuery } from 'react-query';
+import { getMyDms } from '../api/api';
+import Loading from '@/components/common/globalModal/Loading';
 
 type ChatLog = {
   id: string | undefined;
@@ -22,12 +33,13 @@ type ChatLog = {
   username: string;
   photoURL?: string | null | undefined;
   date?: string;
+  roomNum?: string;
 };
 
 type DmList = {
   id: string;
   enterUser: string[];
-  chatLog: string[];
+  chatLog: ChatLog[];
 };
 
 const Chat = () => {
@@ -35,10 +47,10 @@ const Chat = () => {
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap> | null>(null);
 
-  const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
   const [roomNum, setRoomNum] = useRecoilState(roomState);
+  const [apponentId, setApponentId] = useRecoilState(apponentState);
 
-  const [isMyDmOn, setIsMyDmOn] = useState(true);
+  const [isMyDmOn, setIsMyDmOn] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [users, setUsers] = useState<any>();
 
@@ -47,6 +59,34 @@ const Chat = () => {
   const anonymousname = 'user-' + nanoid();
   const chatLogBoxRef = useRef<HTMLDivElement>();
   const router = useRouter();
+
+  // myDms 불러오는 함수
+  const { data: myDms, isLoading: myDmsLoading } = useQuery(
+    ['myDms', user?.uid],
+    getMyDms,
+  );
+
+  // 최초에 채팅로그 받아오기
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    // DB에서 챗로그 가져오기
+    const chatLogsGetDoc = async () => {
+      const chatDoc = await getDoc(
+        doc(collection(dbService, 'allChat'), 'allChat'),
+      );
+
+      const prevChatLog = chatDoc?.data()?.chatLog;
+      setChatLogs(prevChatLog);
+    };
+
+    setChatLogs([]);
+    chatLogsGetDoc();
+
+    router.isReady;
+  }, [user]);
 
   // useEffect 로 처음 접속시 소켓서버 접속
   useEffect(() => {
@@ -59,15 +99,19 @@ const Chat = () => {
       setSocket(socket as any);
 
       // 초기 연결
-      socket.on('connect', () => {
-        console.log('연결성공!');
-      });
+      socket.on('connect', () => {});
 
       // "chat" 이름으로 받은 chatLogs(채팅내용들) 서버에서 받아옴
       socket.on('chat', (chatLog: any) => {
         // 만약 전체채팅이 아니면 return
         if (!chatLog.roomNum) {
-          setChatLogs((prev) => [...prev, chatLog]);
+          setChatLogs((prev) => {
+            if (!prev) {
+              return [chatLog];
+            } else {
+              return [...prev, chatLog];
+            }
+          });
         }
       });
     };
@@ -112,6 +156,16 @@ const Chat = () => {
       date: time,
     };
 
+    await updateDoc(doc(dbService, 'allChat', 'allChat'), {
+      chatLog: arrayUnion({
+        id: nanoid(),
+        msg: chatLog.msg,
+        username: chatLog.username,
+        photoURL: chatLog.photoURL,
+        date: chatLog.date,
+      }),
+    });
+
     // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
     socket?.emit('chat', chatLog);
     setInputValue('');
@@ -120,24 +174,6 @@ const Chat = () => {
   const onChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
-
-  // 처음에 dms 불러오는 함수
-  useEffect(() => {
-    onSnapshot(query(collection(dbService, 'dms')), (snapshot: any) => {
-      const dms = snapshot.docs.map((doc: any) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      const myDms = dms.filter((dm: any) => {
-        if (dm.enterUser) {
-          if (dm.enterUser[0] === user?.uid || dm.enterUser[1] === user?.uid) {
-            return dm;
-          }
-        }
-      });
-      setDmLists([...myDms]);
-    });
-  }, [user]);
 
   useEffect(() => {
     const getUsers = () => {
@@ -156,20 +192,46 @@ const Chat = () => {
     getUsers();
   }, []);
 
+  const onClickDmUser = (enterUser: any) => {
+    enterUser.forEach((id: string) => {
+      if (id !== user?.uid) {
+        setApponentId(id);
+      }
+    });
+  };
+
+  if (myDmsLoading) {
+    return <Loading />;
+  }
+
   return (
     <ChatWrapper>
       <ChatContainer>
-        <CategoryContainer>
-          <CategoryBtn
-            onClick={() => {
-              setIsMyDmOn(true);
-            }}
-          >
-            DM
-          </CategoryBtn>
-          <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
-        </CategoryContainer>
-
+        {isMyDmOn ? (
+          <CategoryContainer>
+            <CategoryBtn onClick={() => setIsMyDmOn(false)}>All</CategoryBtn>
+            <ActivatedCategoryBtn
+              onClick={() => {
+                setIsMyDmOn(true);
+              }}
+            >
+              DM
+            </ActivatedCategoryBtn>
+          </CategoryContainer>
+        ) : (
+          <CategoryContainer>
+            <ActivatedCategoryBtn onClick={() => setIsMyDmOn(false)}>
+              All
+            </ActivatedCategoryBtn>
+            <CategoryBtn
+              onClick={() => {
+                setIsMyDmOn(true);
+              }}
+            >
+              DM
+            </CategoryBtn>
+          </CategoryContainer>
+        )}
         {isMyDmOn ? (
           <DmContainer>
             <MyDmListContainer>
@@ -207,7 +269,7 @@ const Chat = () => {
                       )
                       .map((item: any) => {
                         return (
-                          <SearchResult key={item.id}>
+                          <SearchResult key={nanoid()}>
                             <UserInfo>
                               <UserImg
                                 src={`${item.photoURL}`}
@@ -217,7 +279,7 @@ const Chat = () => {
                               />
                               <UserName>{item.displayName}</UserName>
                             </UserInfo>
-                            <DmButton id={item.id} />
+                            <MemoizedDmButton id={item.id} />
                           </SearchResult>
                         );
                       })}
@@ -225,15 +287,20 @@ const Chat = () => {
                 ) : null}
               </SearchWrapper>
 
-              {dmLists?.map((dmList: DmList) => {
+              {myDms?.map((dmList: any) => {
                 return (
                   <MyDmListBox key={nanoid()}>
                     {dmList.enterUser?.includes(`${user?.uid}`) ? (
-                      <MyDmList onClick={() => setRoomNum(dmList.id)}>
-                        {dmList.enterUser.map((enterUser) => {
+                      <MyDmList
+                        onClick={() => {
+                          onClickDmUser(dmList.enterUser);
+                          setRoomNum(dmList.id);
+                        }}
+                      >
+                        {dmList.enterUser.map((enterUser: any) => {
                           if (enterUser !== authService.currentUser?.uid) {
                             return (
-                              <DmListUserName
+                              <MemoizedDmListUserInfo
                                 enterUser={enterUser}
                                 key={nanoid()}
                               />
@@ -251,8 +318,8 @@ const Chat = () => {
         ) : (
           <ChattingContainer>
             <ChatLogBox ref={chatLogBoxRef}>
-              {chatLogs.map((chatLog) => (
-                <ChatBox key={chatLog.id}>
+              {chatLogs?.map((chatLog) => (
+                <ChatBox key={nanoid()}>
                   <UserImg
                     src={`${chatLog.photoURL}`}
                     onClick={(e) => {
@@ -318,7 +385,7 @@ const MyDmListContainer = styled.section`
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   overflow-y: auto;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 
 const SearchWrapper = styled.div`
@@ -405,7 +472,7 @@ const ChattingContainer = styled.section`
   padding: 60px;
   width: 100%;
   height: calc(100vh - 200px);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 
 const ChatLogBox = styled.div<any>`
@@ -493,6 +560,16 @@ const CategoryContainer = styled.div`
 
 const CategoryBtn = styled.button`
   ${({ theme }) => theme.btn.category}
+  box-shadow: -2px 2px 0px 1px #000000;
+
+  margin-bottom: 20px;
+  margin-right: 10px;
+`;
+const ActivatedCategoryBtn = styled.button`
+  ${({ theme }) => theme.btn.category}
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  color: white;
+  box-shadow: -2px 2px 0px 1px #000000;
 
   margin-bottom: 20px;
   margin-right: 10px;

@@ -10,7 +10,7 @@ import { runTransaction } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { addBoardPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
@@ -32,7 +32,7 @@ const Post = () => {
   // const [imageUpload, setImageUpload] = useState<any>('');
   // const [boardPhoto, setBoardPhoto] = useState('');
   const router = useRouter();
-  const today = new Date().toLocaleString('en-US').slice(0, -6);
+  const today = new Date().toLocaleString('ko-KR').slice(0, -3);
 
   const { mutate, isLoading } = useMutation(addBoardPost);
   const { showModal } = useModal();
@@ -103,7 +103,6 @@ const Post = () => {
 
   useEffect(() => {
     if (!authService.currentUser) {
-      // toast.info('로그인을 먼저 해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
         modalProps: { contentText: '로그인 후 이용해주세요!' },

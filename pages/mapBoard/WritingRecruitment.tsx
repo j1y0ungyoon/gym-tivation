@@ -205,18 +205,24 @@ const WritingRecruitment = () => {
 
               <PlaceContainer>
                 <StyledText>운동 장소</StyledText>
-                <SearchLocationButton onClick={onClickOpenMap}>
-                  <SearchButtonText>위치 찾기</SearchButtonText>
-                </SearchLocationButton>
+                <RoundPushpinImg src="/assets/icons/mapBoard/Round pushpin.svg" />
+
                 {gymName ? (
                   <GymLocationBox>
                     <PlaceText>{gymName}</PlaceText>
                     <DetailAddressText>({detailAddress})</DetailAddressText>
+                    <CancelImage
+                      src="/assets/icons/mapBoard/modal_cancel_x_button.svg"
+                      onClick={() => {
+                        setGymName('');
+                        setDetailAddress('');
+                      }}
+                    />
                   </GymLocationBox>
                 ) : (
-                  <GymLocationBox>
-                    원하는 헬스장을 검색해 주세요!
-                  </GymLocationBox>
+                  <SearchLocationButton onClick={onClickOpenMap}>
+                    <SearchButtonText>위치 찾기</SearchButtonText>
+                  </SearchLocationButton>
                 )}
               </PlaceContainer>
               <DayAndTimeContainer>
@@ -250,23 +256,25 @@ const WritingRecruitment = () => {
                   <AllTimesBox>
                     <ClockImage src="/assets/icons/mapBoard/One oclock.svg" />
                     <SmallText>시간</SmallText>
-                    <UseDropDown
-                      key={`start-${nanoid()}`}
-                      setStart={setStart}
-                      setEnd={setEnd}
-                    >
-                      시작 시간
-                    </UseDropDown>
-                    <Time>{start ? `${start}  ~` : '시작 시간  ~'}</Time>
+                    <DropDownButtonBox>
+                      <UseDropDown
+                        key={`start-${nanoid()}`}
+                        setStart={setStart}
+                        setEnd={setEnd}
+                      >
+                        시작 시간
+                      </UseDropDown>
+                      <Time>{start ? `${start}` : '00 : 00'}</Time>
 
-                    <UseDropDown
-                      key={`end-${nanoid()}`}
-                      setStart={setStart}
-                      setEnd={setEnd}
-                    >
-                      종료 시간
-                    </UseDropDown>
-                    <Time>{end ? end : '종료 시간'}</Time>
+                      <UseDropDown
+                        key={`end-${nanoid()}`}
+                        setStart={setStart}
+                        setEnd={setEnd}
+                      >
+                        종료 시간
+                      </UseDropDown>
+                      <Time>{end ? end : '00 : 00'}</Time>
+                    </DropDownButtonBox>
                   </AllTimesBox>
                 </AllDaysAndTimes>
               </DayAndTimeContainer>
@@ -278,9 +286,11 @@ const WritingRecruitment = () => {
                 value={recruitContent}
                 placeholder="문구 입력.."
               />
-              <UploadButtonBox onClick={onSubmitRecruitPost}>
-                작성 완료
-              </UploadButtonBox>
+              <UploadButtonContainer>
+                <UploadButtonBox onClick={onSubmitRecruitPost}>
+                  작성 완료
+                </UploadButtonBox>
+              </UploadButtonContainer>
             </TextAreaContainer>
           </WritingFormBox>
         </WritingFormContainer>
@@ -306,6 +316,7 @@ export const WritingFormWrapper = styled.main`
 
 const WritingFormContainer = styled.section`
   ${({ theme }) => theme.mainLayout.container}
+  height: calc(100% - 40px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -317,10 +328,11 @@ const WritingFormBox = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 90%;
-  padding: 20px;
+  height: 100%;
+  /* padding: 20px; */
   border: 1px solid black;
-  background-color: white;
+  box-shadow: -2px 2px 0px 1px #000000;
+  background-color: #fffcf3;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
 `;
 
@@ -329,8 +341,12 @@ export const UpperBox = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  height: 40%;
-  width: 95%;
+  gap: 10px;
+  padding: 40px;
+  padding-left: 75px;
+  padding-right: 75px;
+  height: 35%;
+  width: 100%;
 `;
 
 export const TitleContainer = styled.section`
@@ -346,7 +362,7 @@ export const PlaceContainer = styled.section`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 20%;
+  min-height: 60px;
   width: 100%;
 `;
 
@@ -359,19 +375,27 @@ const DetailAddressText = styled.span`
   font-size: ${({ theme }) => theme.font.font50};
 `;
 
+const CancelImage = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+
 const DayAndTimeContainer = styled.section`
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 40%;
   width: 100%;
+  margin-top: -4px;
 `;
 
 const AllDaysAndTimes = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
+  gap: 20px;
   width: 90%;
   height: 100%;
 `;
@@ -381,6 +405,7 @@ export const AllDaysBox = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  min-width: 900px;
   width: 100%;
 `;
 
@@ -389,7 +414,15 @@ export const AllTimesBox = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  min-width: 900px;
   width: 100%;
+`;
+
+export const DropDownButtonBox = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 500px;
 `;
 
 export const SmallText = styled.span`
@@ -401,7 +434,7 @@ export const SmallText = styled.span`
 
 export const Time = styled.span`
   font-size: ${({ theme }) => theme.font.font30};
-  width: 10%;
+  min-width: 70px;
   margin-right: 0.5rem;
 `;
 
@@ -410,9 +443,11 @@ export const SearchLocationButton = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 10%;
-  height: 85%;
+  width: 92px;
+  height: 40px;
+  margin-left: 6px;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   background-color: white;
   &:hover {
@@ -428,14 +463,8 @@ const GymLocationBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  width: 72%;
-  min-width: 60%;
-  height: 85%;
-  margin-left: 3%;
-  padding: 1rem;
-  border: 1px solid black;
-  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  max-width: 100%;
+  height: 80%;
 `;
 
 const SelectedDayBox = styled.div`
@@ -448,27 +477,43 @@ const SelectedDayBox = styled.div`
 
 const TextAreaInput = styled.textarea`
   resize: none;
-  width: 100%;
-  height: 75%;
+  width: calc(100% - 150px);
+  height: 65%;
   padding: 1.5rem;
+  margin-top: 40px;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
+
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
 `;
+
+const UploadButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: calc(100% - 150px);
+  margin-top: 45px;
+`;
+
 const TextAreaContainer = styled.section`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
+  border-top: 3px solid black;
   margin-top: 2%;
-  width: 95%;
+  width: 100%;
   height: 80%;
+  background-color: white;
+  border-bottom-left-radius: ${({ theme }) => theme.borderRadius.radius100};
+  border-bottom-right-radius: ${({ theme }) => theme.borderRadius.radius100};
 `;
 
 const UploadButtonBox = styled.button`
-  width: 10rem;
-  height: 3rem;
+  width: 120px;
+  height: 40px;
   font-size: ${({ theme }) => theme.font.font50};
   font-weight: bold;
+  box-shadow: -2px 2px 0px 1px #000000;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   background-color: ${({ theme }) => theme.color.brandColor100};
   color: white;
@@ -484,21 +529,29 @@ export const StyledText = styled.span`
   min-width: 10%;
 `;
 
+export const RoundPushpinImg = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+`;
+
 export const TitleInput = styled.input`
-  width: 85%;
-  height: 100%;
-  min-width: 70%;
+  width: 100%;
+  height: 40px;
   padding: 1rem;
   border: 1px solid black;
+  box-shadow: -2px 2px 0px 1px #000000;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
 `;
 
 export const ClockImage = styled.img`
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+  margin-right: 6px;
 `;
 
 export const DayImage = styled.img`
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+  margin-right: 6px;
 `;

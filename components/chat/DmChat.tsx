@@ -16,7 +16,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { useRecoilState } from 'recoil';
-import { roomState } from '@/recoil/dmData';
+import { apponentState, roomState } from '@/recoil/dmData';
 
 type ChatLog = {
   id?: number;
@@ -33,13 +33,19 @@ type DmTextProps = {
 
 const DmChat = () => {
   const router = useRouter();
+  const user = authService.currentUser;
+  const username = user?.displayName;
 
   const [dmInputValue, setDmInputValue] = useState('');
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
   const [roomNum, setRoomNum] = useRecoilState(roomState);
-
-  const user = authService.currentUser;
-  const username = user?.displayName;
+  const [apponentId, setApponentId] = useRecoilState(apponentState);
+  const [apponentName, setApponentName] = useState<string | null | undefined>(
+    username,
+  );
+  const [apponentPhoto, setApponentPhoto] = useState<string | null | undefined>(
+    '',
+  );
 
   const dmLogBoxRef = useRef<HTMLDivElement>();
 
@@ -49,6 +55,12 @@ const DmChat = () => {
 
   // 처음에 채팅로그 받아오기
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+    if (!roomNum) {
+      setRoomNum(user.uid);
+    }
     // DB에서 roomNum 과 같은 doc의 id 받아와서 chatId에 입력해줌
     const getDocId = async () => {
       const data = await getDocs(
@@ -92,8 +104,6 @@ const DmChat = () => {
 
       // 초기 연결
       socket.on('connect', () => {
-        console.log('연결성공!');
-
         socket.emit('roomEnter', roomNum);
       });
 
@@ -171,65 +181,95 @@ const DmChat = () => {
     setDmInputValue(e.target.value);
   };
 
+  const getApponentInfo = async () => {
+    const userDoc = await getDocs(
+      query(collection(dbService, 'profile'), where('uid', '==', apponentId)),
+    );
+
+    const name = userDoc?.docs[0]?.data().displayName;
+    const photo = userDoc?.docs[0]?.data().photoURL;
+
+    setApponentName(name);
+    setApponentPhoto(photo);
+  };
+
+  useEffect(() => {
+    if (user && apponentId === '나와의채팅') {
+      setApponentName(user?.displayName);
+      setApponentPhoto(user?.photoURL);
+    } else {
+      getApponentInfo();
+    }
+  }, [apponentId]);
+
   return (
     <DmChatWrapper>
-      <DmLogBox ref={dmLogBoxRef}>
-        {/* <DmBox>
-          <UserImg src={`${authService.currentUser?.photoURL}`} />
-          <div>
-            <DmName>{username}</DmName>
-            <DmText>{roomNum}방에 입장하셨습니다.</DmText>
-          </div>
-        </DmBox> */}
-        {chatLogs?.map((chatLog) => (
-          <DmBox key={nanoid()}>
-            <UserImg
-              src={`${chatLog.photoURL}`}
-              onClick={(e) => {
-                return router.push(`/myPage/${chatLog.id}`);
-              }}
-            />
-            <div>
-              <DmName>{chatLog?.username}</DmName>
-              <DmText user={user?.uid}>{chatLog?.msg}</DmText>
-              <DmTime>{chatLog.date}</DmTime>
-            </div>
-          </DmBox>
-        ))}
-      </DmLogBox>
-      {user ? (
-        <DmInput
-          placeholder="채팅을 입력하세요."
-          type="text"
-          onKeyPress={postChat}
-          value={dmInputValue}
-          onChange={onChangeInputValue}
-        />
-      ) : (
-        <DmInput placeholder="로그인 후 이용 가능합니다." disabled />
-      )}
+      <DmUserInfoBox>
+        <UserImg src={`${apponentPhoto}`} />
+        <span>{apponentName}</span>
+      </DmUserInfoBox>
+      <Test>
+        <DmLogBox ref={dmLogBoxRef}>
+          {chatLogs?.map((chatLog) => (
+            <DmBox key={nanoid()}>
+              <UserImg
+                src={`${chatLog.photoURL}`}
+                onClick={(e) => {
+                  return router.push(`/myPage/${chatLog.id}`);
+                }}
+              />
+              <div>
+                <DmName>{chatLog?.username}</DmName>
+                <DmText user={user?.uid}>{chatLog?.msg}</DmText>
+                <DmTime>{chatLog.date}</DmTime>
+              </div>
+            </DmBox>
+          ))}
+        </DmLogBox>
+        {user ? (
+          <DmInput
+            placeholder="채팅을 입력하세요."
+            type="text"
+            onKeyPress={postChat}
+            value={dmInputValue}
+            onChange={onChangeInputValue}
+          />
+        ) : (
+          <DmInput placeholder="로그인 후 이용 가능합니다." disabled />
+        )}
+      </Test>
     </DmChatWrapper>
   );
 };
+const Test = styled.div`
+  height: calc(100% - 150px);
+`;
 
 const DmChatWrapper = styled.section`
   width: 60%;
   min-width: 400px;
   margin-left: 20px;
   background-color: #fff;
-  padding: 20px;
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
-  overflow-y: auto;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: -2px 2px 0px 1px #000000;
+`;
+
+const DmUserInfoBox = styled.div`
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid black;
+  width: 100%;
+  padding: 20px 30px;
 `;
 
 const DmLogBox = styled.div<any>`
   max-width: 100%;
-  height: calc(100% - 50px);
+  height: calc(100%);
   overflow-y: auto;
   word-break: break-all;
-  padding-right: 10px;
+  padding: 30px;
+  padding-bottom: 10px;
 
   ::-webkit-scrollbar {
     width: 8px;
@@ -241,7 +281,6 @@ const DmLogBox = styled.div<any>`
   ::-webkit-scrollbar-track {
     background-color: transparent;
     border-radius: 10px;
-    margin-bottom: 20px;
   }
 `;
 const DmBox = styled.div`
@@ -281,11 +320,12 @@ const DmTime = styled.span`
 `;
 
 const DmInput = styled.input`
-  width: 100%;
+  width: calc(100% - 40px);
   height: 48px;
   outline: none;
   border: 1px solid black;
   border-radius: 50px;
+  margin: 0 20px;
   padding: 5px 20px;
   font-size: 0.875rem;
   ::placeholder {
