@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import BoardPost from './BoardPost';
 import type { BoardPostType } from '@/type';
 import { useEffect, useState } from 'react';
-import { nanoid } from 'nanoid';
 
 interface BoardItemProps {
   category?: string;
@@ -72,6 +71,7 @@ const BoardItem = ({
               // photo={boardPost.photo}
               like={boardPost.like}
               createdAt={boardPost.date}
+              userPhoto={boardPost.userPhoto}
             />
           </BoardList>
         );
@@ -81,7 +81,7 @@ const BoardItem = ({
 };
 
 const BoardList = styled.div`
-  width: 100%;
+  width: 90%;
   height: 100%;
   overflow: auto;
 `;
