@@ -110,7 +110,7 @@ const SignUp = () => {
   );
   const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const nickName_validation = new RegExp(
-      /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/,
+      /^(?=.*[A-Za-z0-9가-힣])[A-Za-z0-9가-힣]{2,8}$/,
     );
     const nickNameCurrent = e.target.value;
     setNickName(nickNameCurrent);
@@ -118,7 +118,9 @@ const SignUp = () => {
       setNickNameMessage('');
       setIsValidNickName(true);
     } else {
-      setNickNameMessage('2글자 이상 8글자 이하로 입력해주세요.');
+      setNickNameMessage(
+        '특수문자 제외 2글자 이상 8글자 이하로 공백 없이 입력해주세요.',
+      );
       setIsValidNickName(false);
     }
   }, []);
@@ -342,7 +344,7 @@ const SignUp = () => {
             )}
           </InputBox>
           <InputBox>
-            <InputText>비밀번호 확인</InputText>
+            {/* <InputText>비밀번호 확인</InputText> */}
             <PasswordShow>
               <PasswordInput
                 id="passwordCheckInput"
@@ -368,7 +370,6 @@ const SignUp = () => {
                 />
               )}
             </PasswordShow>
-
             {passwordCheck.length > 0 && (
               <IconValidation>
                 {passwordCheckIcon}
@@ -382,9 +383,12 @@ const SignUp = () => {
               </IconValidation>
             )}
           </InputBox>
-          <SignUpButton disabled={signUpdisabled === false} type="submit">
-            가입하기
-          </SignUpButton>
+
+          {signUpdisabled === true ? (
+            <SignUpButton2 type="submit">회원가입 하기</SignUpButton2>
+          ) : (
+            <SignUpButton> 회원가입 하기</SignUpButton>
+          )}
         </SignUpContainer>
       ) : (
         <TOUContainer>
@@ -532,12 +536,14 @@ const SignUp = () => {
           <TOU>
             <span>{lb}</span>
           </TOU>
-          <SignUpButton
-            onClick={onClicktermsOfUse}
-            disabled={touCheckButton === false}
-          >
-            동의하고 가입하기
-          </SignUpButton>
+
+          {touCheckButton === true ? (
+            <TouButton2 onClick={onClicktermsOfUse}>
+              동의하고 가입하기
+            </TouButton2>
+          ) : (
+            <TouButton>동의하고 가입하기</TouButton>
+          )}
         </TOUContainer>
       )}
     </SignUpWrapper>
@@ -582,21 +588,51 @@ const TextValidation = styled.span`
   font-size: 12px;
 `;
 const SignUpButton = styled.button`
-  margin-top: 4vh;
   border-radius: 2rem;
   width: 400px;
   height: 48px;
-  background-color: white;
+  background-color: #d9d9d9;
+  color: #797979;
   border-style: solid;
   border-width: 0.1rem;
   font-size: 16px;
-  :hover {
-    cursor: pointer;
-    color: white;
-    background-color: black;
-  }
+  border: none;
 `;
-
+const SignUpButton2 = styled.button`
+  border-radius: 2rem;
+  width: 400px;
+  height: 48px;
+  background-color: #ff4800;
+  color: white;
+  border-style: solid;
+  border-width: 0.1rem;
+  font-size: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
+`;
+const TouButton = styled.button`
+  margin-top: 36px;
+  border-radius: 2rem;
+  width: 400px;
+  height: 48px;
+  background-color: #d9d9d9;
+  color: #797979;
+  border-style: solid;
+  border-width: 0.1rem;
+  font-size: 16px;
+  border: none;
+`;
+const TouButton2 = styled.button`
+  margin-top: 36px;
+  border-radius: 2rem;
+  width: 400px;
+  height: 48px;
+  background-color: #ff4800;
+  color: white;
+  border-style: solid;
+  border-width: 0.1rem;
+  font-size: 16px;
+  box-shadow: -2px 2px 0px 0px #000000;
+`;
 const TOUContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
   justify-content: center;
@@ -610,7 +646,7 @@ const TouCheckBox = styled.div`
   margin: auto;
   text-align: left;
   margin-top: 34px;
-  font-size: 20px;
+  font-size: 16px;
   :hover {
     cursor: pointer;
   }
@@ -621,14 +657,14 @@ const TouAllCheckBox = styled.div`
   width: 400px;
   margin: auto;
   text-align: left;
-  font-size: 20px;
+  font-size: 16px;
   :hover {
     cursor: pointer;
   }
 `;
 
 const TOUHeaderText = styled.div`
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   margin-top: 1vh;
   margin-bottom: 4vh;
@@ -649,30 +685,38 @@ const TOUText = styled.div`
 `;
 const ImageBox = styled.div`
   text-align: center;
-  margin-bottom: 30px;
+  margin-top: 40px;
 `;
 const InputBox = styled.div`
   width: 100%;
-  height: 15%;
+  height: 14%;
 `;
 const SignUpInput = styled.input`
   width: 400px;
   height: 48px;
-  border-radius: 20px;
+  border-radius: 30px;
   padding-left: 16px;
   font-size: 16px;
+  :focus {
+    outline: none;
+  }
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 const PasswordInput = styled.input`
   width: 400px;
   height: 48px;
   margin-left: 28px;
   margin-right: 12px;
-  border-radius: 20px;
+  border-radius: 30px;
   padding-left: 16px;
   font-size: 16px;
+  :focus {
+    outline: none;
+  }
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 const IconImg = styled.img`
-  width: 5rem;
-  height: 5rem;
+  width: 60px;
+  height: 64px;
   margin-right: 5px;
 `;

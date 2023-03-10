@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import { dbService, authService } from '@/firebase';
 import { doc, updateDoc, arrayRemove, arrayUnion } from 'firebase/firestore';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
 type FollowButtonType = {
   item: ProfileItem;
@@ -10,8 +12,10 @@ type FollowButtonType = {
 //item은 firebase profile를 map으로 돌린 값
 //Id는 상대방 id값
 const FollowButton = ({ item, Id }: FollowButtonType) => {
+  const { showModal } = useModal();
   const user = String(authService.currentUser?.uid);
   const queryClient = useQueryClient();
+
   //팔로우, 팔로잉
   const FollowOn = async () => {
     if (user !== null) {
@@ -71,7 +75,16 @@ const FollowButton = ({ item, Id }: FollowButtonType) => {
       ) : (
         <>
           {item.id === authService.currentUser?.uid ? null : (
-            <EditButton onClick={() => FollowOnClick()}>
+            <EditButton
+              onClick={() =>
+                authService.currentUser
+                  ? FollowOnClick()
+                  : showModal({
+                      modalType: GLOBAL_MODAL_TYPES.AlertModal,
+                      modalProps: { contentText: '로그인 후 이용해주세요!' },
+                    })
+              }
+            >
               <IconImg src="/assets/icons/myPage/Follow.svg" />
               팔로우
             </EditButton>

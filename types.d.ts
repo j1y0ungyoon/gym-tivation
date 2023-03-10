@@ -70,3 +70,7 @@ type CalendarItem = {
   date?: string;
   content?: string;
 };
+type AddDmParams = {
+  myId: string;
+  appoId: string;
+};
