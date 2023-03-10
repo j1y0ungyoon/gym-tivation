@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { dmListsState, roomState } from '@/recoil/dmData';
 import { useRecoilState } from 'recoil';
@@ -13,11 +13,18 @@ import useModal from '@/hooks/useModal';
 
 interface DmButtonProps {
   id?: string;
+  propWidth?: string;
+  propHeight?: string;
 }
-
-const DmButton = ({ id }: DmButtonProps) => {
+interface DmButtonWrapperProps {
+  width: string | undefined;
+  height: string | undefined;
+}
+const DmButton = ({ id, propWidth, propHeight }: DmButtonProps) => {
   const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
   const [roomNum, setRoomNum] = useRecoilState(roomState);
+  const [width, setWidth] = useState('100px');
+  const [height, setHeight] = useState('40px');
 
   const user = authService.currentUser;
   const userId = String(user?.uid);
@@ -43,6 +50,12 @@ const DmButton = ({ id }: DmButtonProps) => {
   });
 
   useEffect(() => {
+    if (propWidth) {
+      setWidth(propWidth);
+    }
+    if (propHeight) {
+      setHeight(propHeight);
+    }
     setDmLists(myDms);
   }, [ids]);
 
@@ -80,6 +93,8 @@ const DmButton = ({ id }: DmButtonProps) => {
     <>
       {id !== userId ? (
         <DmButtonWrapper
+          width={width}
+          height={height}
           onClick={() =>
             authService.currentUser
               ? onClickDm()
@@ -97,11 +112,14 @@ const DmButton = ({ id }: DmButtonProps) => {
   );
 };
 
+export const MemoizedDmButton = React.memo(DmButton);
 export default DmButton;
 
-const DmButtonWrapper = styled.button`
+const DmButtonWrapper = styled.button<DmButtonWrapperProps>`
   margin-left: 20px;
   ${({ theme }) => theme.btn.btn50}
+  min-width:${(props) => props.width};
+  height: ${(props) => props.height};
   box-shadow: -2px 2px 0px 1px #000000;
   background-color: #fff;
   color: #000;
