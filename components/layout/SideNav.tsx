@@ -195,6 +195,7 @@ const SideNavWrapper = styled.nav`
   ::-webkit-scrollbar {
     display: none;
   }
+  z-index: 20000;
 `;
 
 const NavBtn = styled.img`

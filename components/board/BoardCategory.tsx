@@ -21,7 +21,7 @@ const BoardCategory = ({ setCategory, setEditDetailCategory }: any) => {
     <>
       {post ? (
         <CategoryWrapper>
-          카테고리
+          <Text>카테고리</Text>
           <CategoryContainer>
             <CategoryLabel>
               <CategorySelect
@@ -54,7 +54,7 @@ const BoardCategory = ({ setCategory, setEditDetailCategory }: any) => {
         </CategoryWrapper>
       ) : (
         <CategoryWrapper>
-          카테고리
+          <Text>카테고리</Text>
           <CategoryContainer>
             <CategoryLabel>
               <CategorySelect
@@ -94,7 +94,10 @@ const CategoryWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   height: 100%;
-  font-size: ${({ theme }) => theme.font.font70};
+`;
+const Text = styled.span`
+  font-size: 20px;
+  margin-right: 7px;
 `;
 const CategoryContainer = styled.div`
   height: 100%;

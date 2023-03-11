@@ -588,6 +588,10 @@ const CategoryBtn = styled.button`
 
   margin-bottom: 20px;
   margin-right: 10px;
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+    color: black;
+  }
 `;
 const ActivatedCategoryBtn = styled.button`
   ${({ theme }) => theme.btn.category}
