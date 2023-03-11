@@ -28,9 +28,6 @@ const Post = () => {
   const [category, setCategory] = useState('');
   const [userLv, setUserLv] = useState('');
   const [userLvName, setUserLvName] = useState('');
-
-  // const [imageUpload, setImageUpload] = useState<any>('');
-  // const [boardPhoto, setBoardPhoto] = useState('');
   const router = useRouter();
   const today = new Date().toLocaleString('ko-KR').slice(0, -3);
 
@@ -223,16 +220,6 @@ const Post = () => {
               </CategoryContainer>
             </PostUpperWrapper>
             <ContentContainer>
-              {/* <PostImageWrapper>
-                <ImageInput
-                  type="file"
-                  accept="boardPhoto/*"
-                  onChange={onChangeUpload}
-                  multiple
-                />
-                <ImagePreview src={boardPhoto} />
-              </PostImageWrapper> */}
-
               <Editor
                 onChange={onChangeBoardContent}
                 value={boardContent}
@@ -273,20 +260,21 @@ const PostForm = styled.form`
   margin: 20px;
 `;
 const PostUpperWrapper = styled.div`
-  display: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 10px;
+  margin-top: 20px;
   height: 15%;
 `;
 const InputDiv = styled.div`
   ${({ theme }) => theme.inputDiv};
   box-shadow: -2px 2px 0px 1px #000000;
-
   background-color: white;
   margin: 10px 0;
-  margin-left: 62px;
-  width: 85%;
+  margin: 10px 0;
+  width: 100%;
   border: 1px solid black;
 `;
 const TitleBox = styled.div`
@@ -297,11 +285,14 @@ const TitleBox = styled.div`
 `;
 const CategoryContainer = styled.div`
   height: 50%;
+  width: calc(100% - 150px);
+  margin-top: 20px;
 `;
 const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: row;
+  width: calc(100% - 150px);
   height: 50%;
 `;
 const PostTitle = styled.input`
@@ -311,6 +302,8 @@ const PostTitle = styled.input`
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 80%;
   padding: 10px;
@@ -318,12 +311,14 @@ const ContentContainer = styled.div`
 const Title = styled.span`
   display: flex;
   flex-direction: column;
-  font-size: ${({ theme }) => theme.font.font70};
+  font-size: 20px;
+  width: 110px;
 `;
 const PostButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  width: calc(100% - 150px);
+
   height: 5%;
   margin: 20px 0;
 `;
@@ -340,10 +335,10 @@ const PostButton = styled.button`
 `;
 
 const Editor = styled(ReactQuill)`
-  width: 100%;
+  width: calc(100% - 150px);
   height: 80%;
   border: 1px solid black;
-  margin: 10px 0;
+  margin: 0 0 10px 0;
   box-shadow: -2px 2px 0px 1px #000000;
 
   border-radius: ${({ theme }) => theme.borderRadius.radius10};
@@ -354,24 +349,6 @@ const Editor = styled(ReactQuill)`
   .ql-toolbar.ql-snow {
     border: none;
   }
-`;
-
-const ImageInput = styled.input`
-  width: 100%;
-  height: 2rem;
-`;
-const ImagePreview = styled.img`
-  margin-top: 1rem;
-  width: 100%;
-  height: 100%;
-  border-radius: 2rem;
-`;
-const PostImageWrapper = styled.div`
-  display: flex;
-  width: 50%;
-  height: 90%;
-  flex-direction: column;
-  margin: 1rem;
 `;
 
 export default Post;

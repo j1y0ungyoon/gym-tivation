@@ -186,23 +186,23 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
             <Image
               src="/assets/icons/likeIcon.svg"
               alt="좋아요"
-              width={25}
-              height={25}
+              width={20}
+              height={20}
             />
-            <Text
+            <GalleryText
               style={
                 galleryLikeChecked ? { color: 'white' } : { color: 'black' }
               }
             >
               좋아요
-            </Text>
-            <LikeCount
+            </GalleryText>
+            <GalleryLikeCount
               style={
                 galleryLikeChecked ? { color: 'white' } : { color: 'black' }
               }
             >
               {galleryLikeCount}
-            </LikeCount>
+            </GalleryLikeCount>
           </GalleryLikeContainer>
         </>
       )}
@@ -217,8 +217,9 @@ const GalleryLikeContainer = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   border: none;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch
   justify-content: center;
+
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
 
@@ -227,6 +228,11 @@ const GalleryLikeContainer = styled.div`
     outline: none;
     width: 100%;
   }
+`;
+
+const GalleryText = styled.span`
+  font-size: 14px;
+  padding: 0 5px;
 `;
 
 const Text = styled.span`
@@ -262,5 +268,9 @@ const LikeCount = styled.span`
   display: flex;
   font-weight: 600;
   margin: 0 5px;
+`;
+const GalleryLikeCount = styled.span`
+  padding: 0 5px;
+  font-size: 14px;
 `;
 export default Like;
