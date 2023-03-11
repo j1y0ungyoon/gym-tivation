@@ -119,9 +119,9 @@ const ProfileEdit = ({
   };
   const helpLevelText = (
     <LevelHelpText>
-      게시판 및 오운완 갤러리에 사진을 올릴시에 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
-      &nbsp;레벨이 오르고, 일정 레벨 달성시에 &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-      타이틀을 획득할 수 있습니다
+      <span>게시판 및 오운완 갤러리에 사진을 올릴시에</span>
+      <div>레벨이 오르고, 일정 레벨 달성시에</div>
+      <span>타이틀을 획득할 수 있습니다</span>
     </LevelHelpText>
   );
   // 프로필 수정
@@ -290,8 +290,9 @@ const ProfileEdit = ({
                             입니다!
                           </LevelText>
                           <LevelHelpText>
-                            축하드립니다! 짐티베이션 최고 레벨을 달성하셨습니다!
-                            앞으로도 꾸준한 활동을 해주세요!
+                            <span>축하드립니다!</span>
+                            <div>짐티베이션 최고 레벨을 달성하셨습니다!</div>
+                            <span>앞으로도 꾸준한 활동을 해주세요!</span>
                           </LevelHelpText>
                         </>
                       )}
@@ -467,8 +468,9 @@ const ProfileEdit = ({
                               입니다!
                             </LevelText>
                             <LevelHelpText>
-                              축하드립니다! 짐티베이션 최고 레벨을
-                              달성하셨습니다!! 앞으로도 꾸준한 활동을 해주세요
+                              <span>축하드립니다!</span>
+                              <div>짐티베이션 최고 레벨을 달성하셨습니다!</div>
+                              <span>앞으로도 꾸준한 활동을 해주세요!</span>
                             </LevelHelpText>
                           </>
                         )}
@@ -669,6 +671,7 @@ const LevelMessage = styled.div`
   font-weight: bolder;
 `;
 const LevelHelpTextBox = styled.div`
+  margin: auto;
   text-align: center;
 `;
 const LevelHelpText = styled.span`
