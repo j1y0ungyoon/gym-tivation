@@ -142,6 +142,7 @@ const SideNavWrapper = styled.nav`
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+  z-index: 20000;
 `;
 
 const NavBtn = styled.img`

@@ -243,15 +243,6 @@ const Detail = ({ params }: any) => {
                 </CategoryContainer>
               </PostUpperWrapper>
               <ContentEditContainer>
-                {/* <DetailImageWrapper>
-                  <ImageInput
-                    type="file"
-                    accept="image/*"
-                    onChange={onChangeUpload}
-                  />
-                  <ImagePreview src={editDetailPhoto}></ImagePreview>
-                </DetailImageWrapper> */}
-
                 <Editor
                   onChange={onChangeEditContent}
                   defaultValue={detailPost?.data()?.content}
@@ -292,6 +283,7 @@ const Detail = ({ params }: any) => {
                   </TitleUpperWrapper>
                   <TitleBottomWrapper>
                     <UserImage
+                      alt="유저"
                       src={detailPost?.data()?.userPhoto}
                       onClick={() => {
                         goToMyPage(detailPost?.data()?.userId);
@@ -311,7 +303,7 @@ const Detail = ({ params }: any) => {
                       item={followInformation}
                       Id={followInformation?.id}
                     />
-                    <DmButton id={followInformation?.id} />
+                    <DmButton propWidth="50px" id={followInformation?.id} />
                   </TitleBottomWrapper>
                 </InfoWrapper>
                 <EditWrapper>
@@ -330,9 +322,6 @@ const Detail = ({ params }: any) => {
               <ContentContainer>
                 {/* <div>created At{detailPost?.createdAt}</div> */}
                 <ContentBox>
-                  {/* <DetailImageWrapper>
-                    <DetailPostPhoto src={detailPost?.photo} />
-                  </DetailImageWrapper> */}
                   <HTMLParser
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(detailPost?.data()?.content),
@@ -396,15 +385,19 @@ const PostContainer = styled.div`
 const ContentEditContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 80%;
   padding: 10px;
 `;
 const PostUpperWrapper = styled.div`
-  display: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 10px;
+  margin-top: 20px;
   height: 15%;
 `;
 const PostContent = styled.form`
@@ -437,10 +430,10 @@ const BottomWrapper = styled.div`
 `;
 
 const Editor = styled(ReactQuill)`
-  width: 100%;
+  width: calc(100% - 150px);
   height: 80%;
   border: 1px solid black;
-  margin: 10px 0;
+  margin: 0 0 10px 0;
   box-shadow: -2px 2px 0px 1px #000000;
 
   border-radius: ${({ theme }) => theme.borderRadius.radius10};
@@ -468,15 +461,15 @@ const LevelWrapper = styled.span`
 const LevelContainer = styled.div``;
 const TitleUpperWrapper = styled.div`
   display: flex;
+  width: 100%;
+  margin: 10px 0;
   flex-direction: row;
   align-items: center;
-  margin: 20px 0;
 `;
 const TitleBottomWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 20px 0;
 `;
 
 const DetailContent = styled.div`
@@ -493,8 +486,8 @@ const DetailContent = styled.div`
   overflow: hidden;
 `;
 const UserImage = styled.img`
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
   border-radius: 40px;
   :hover {
     cursor: pointer;
@@ -507,19 +500,23 @@ const DetailTitleContainer = styled.div`
   padding: 10px;
   flex-direction: row;
   width: 100%;
-  height: 29%;
+  height: 30%;
   border-radius: 50px 50px 0 0;
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 3px solid black;
-  padding: 40px 74px;
+  padding: 40px 75px;
 `;
 const CategoryContainer = styled.div`
   height: 50%;
+  width: calc(100% - 150px);
+  margin-top: 20px;
 `;
+
 const TitleEditContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: row;
+  width: calc(100% - 150px);
   height: 50%;
 `;
 const TitleContainer = styled.div`
@@ -530,16 +527,15 @@ const TitleContainer = styled.div`
 const Title = styled.span`
   display: flex;
   flex-direction: column;
-  font-size: ${({ theme }) => theme.font.font70};
+  font-size: 20px;
+  width: 110px;
 `;
 const InputDiv = styled.div`
   ${({ theme }) => theme.inputDiv};
   box-shadow: -2px 2px 0px 1px #000000;
-
   background-color: white;
   margin: 10px 0;
-  margin-left: 62px;
-  width: 80%;
+  width: 100%;
   border: 1px solid black;
 `;
 const EditInputDiv = styled.div`
@@ -648,8 +644,7 @@ const DetailEditButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-
-  width: 100%;
+  width: calc(100% - 150px);
 `;
 
 const DetailEditButton = styled.button`
@@ -704,53 +699,7 @@ const CategoryText = styled.span`
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
 `;
-// const ImageInput = styled.input`
-//   width: 100%;
-//   height: 2rem;
-// `;
-// const ImagePreview = styled.img`
-//   margin-top: 1rem;
-//   width: 100%;
-//   height: 90%;
-//   object-fit: cover;
-//   border-radius: 2rem;
-// `;
-// const DetailPostPhoto = styled.img`
-//   margin-top: 1rem;
-//   width: 100%;
-//   height: 90%;
-//   border-radius: 2rem;
-//   object-fit: cover;
-// `;
-// const DetailPostContent = styled.div`
-//   display: flex;
-//   padding: 1rem;
-//   width: 50%;
-//   height: 90%;
-//   border-radius: 2rem;
-//   /* font-size: 1.5rem; */
-//   margin: 1rem;
-//   border: 1px solid #777;
-//   overflow-y: auto;
-// `;
-// const DetailImageWrapper = styled.div`
-//   display: flex;
-//   width: 50%;
-//   height: 90%;
-//   flex-direction: column;
-//   margin: 1rem;
-// `;
-// const ContentInput = styled.textarea`
-//   display: flex;
-//   padding: 1rem;
-//   width: 50%;
-//   height: 90%;
-//   border-radius: 2rem;
-//   font-size: 1.5rem;
-//   margin: 1rem;
-//   resize: none;
-//   border: none;
-// `;
+
 export function getServerSideProps({ params: { params } }: any) {
   return {
     props: {

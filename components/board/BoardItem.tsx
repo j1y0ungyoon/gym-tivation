@@ -68,7 +68,6 @@ const BoardItem = ({
               userId={boardPost.userId}
               nickName={boardPost.nickName}
               category={boardPost.category}
-              // photo={boardPost.photo}
               like={boardPost.like}
               createdAt={boardPost.date}
               userPhoto={boardPost.userPhoto}
@@ -81,7 +80,10 @@ const BoardItem = ({
 };
 
 const BoardList = styled.div`
-  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 100%;
   overflow: auto;
 `;

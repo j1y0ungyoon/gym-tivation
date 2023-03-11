@@ -79,15 +79,15 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   };
   return (
     <HeaderWrapper>
-      <Logo
+      <LogoWrapper
         onClick={() => {
           router.push('/');
           setNowMenu('home');
         }}
-        alt="짐티베이션 로고"
-        src="/assets/images/Logo.png"
-      />
-
+      >
+        <Logo alt="짐티베이션 로고" src="/assets/icons/main/logoIcon.svg" />
+        <LogoText src="/assets/icons/main/GYMTIVATION.svg" />
+      </LogoWrapper>
       <Itembox>
         <SearchBar>
           <SearchIcon alt="유저검색 버튼" src="/assets/icons/searchIcon.svg" />
@@ -188,13 +188,32 @@ const HeaderWrapper = styled.header`
   border-bottom: 1px solid #ddd;
   background-color: black;
   min-width: 1180px;
+  z-index: 20000;
 `;
-
+const LogoWrapper = styled.div``;
+const LogoText = styled.img`
+  height: 15px;
+  margin-left: 12px;
+  object-fit: contain;
+  cursor: pointer;
+`;
 const Logo = styled.img`
   height: 30px;
   margin-left: 25px;
   object-fit: contain;
   cursor: pointer;
+  :hover {
+    animation: motion 0.3s linear 0s infinite alternate;
+    margin-top: 0;
+    @keyframes motion {
+      0% {
+        margin-top: 0px;
+      }
+      100% {
+        margin-top: 10px;
+      }
+    }
+  }
 `;
 
 const SearchBar = styled.div`
@@ -300,6 +319,7 @@ const UserBox = styled.div`
   margin-left: 26px;
   margin-right: 46px;
   height: 50px;
+  z-index: 30000;
   :hover {
     cursor: pointer;
     transform: scale(1.05); /* 가로2배 새로 1.2배 로 커짐 */
@@ -312,7 +332,7 @@ const UserBox = styled.div`
 
 const HelpBox = styled.div`
   display: none;
-  z-index: 2000;
+  z-index: 20000;
   width: 128px;
   height: 250px;
   text-align: center;

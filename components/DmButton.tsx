@@ -15,17 +15,42 @@ interface DmButtonProps {
   id?: string;
   propWidth?: string;
   propHeight?: string;
+  propDisplay?: string;
+  propBorderRadius?: string;
+  propMinWidth?: string;
+  propPadding?: string;
+  propMarginLeft?: string;
 }
 interface DmButtonWrapperProps {
-  width: string | undefined;
-  height: string | undefined;
+  width?: string | undefined;
+  height?: string | undefined;
+  borderRadius?: string | undefined;
+  minWidth?: string | undefined;
+  padding?: string | undefined;
+  marginLeft?: string | undefined;
 }
-const DmButton = ({ id, propWidth, propHeight }: DmButtonProps) => {
+interface TextProps {
+  display?: string | undefined;
+}
+const DmButton = ({
+  id,
+  propWidth,
+  propHeight,
+  propDisplay,
+  propBorderRadius,
+  propMinWidth,
+  propPadding,
+  propMarginLeft,
+}: DmButtonProps) => {
   const [dmLists, setDmLists] = useRecoilState<any>(dmListsState);
   const [roomNum, setRoomNum] = useRecoilState(roomState);
-  const [width, setWidth] = useState('100px');
+  const [width, setWidth] = useState('120px');
   const [height, setHeight] = useState('40px');
-
+  const [display, setDisplay] = useState('flex');
+  const [borderRadius, setBorderRadius] = useState('40px');
+  const [minWidth, setMinWidth] = useState('120px');
+  const [padding, setPadding] = useState('0 20px');
+  const [marginLeft, setMarginLeft] = useState('20px');
   const user = authService.currentUser;
   const userId = String(user?.uid);
   const router = useRouter();
@@ -55,6 +80,22 @@ const DmButton = ({ id, propWidth, propHeight }: DmButtonProps) => {
     }
     if (propHeight) {
       setHeight(propHeight);
+    }
+
+    if (propDisplay) {
+      setDisplay(propDisplay);
+    }
+    if (propBorderRadius) {
+      setBorderRadius(propBorderRadius);
+    }
+    if (propMinWidth) {
+      setMinWidth(propMinWidth);
+    }
+    if (propPadding) {
+      setPadding(propPadding);
+    }
+    if (propMarginLeft) {
+      setMarginLeft(propMarginLeft);
     }
     setDmLists(myDms);
   }, [ids]);
@@ -93,8 +134,12 @@ const DmButton = ({ id, propWidth, propHeight }: DmButtonProps) => {
     <>
       {id !== userId ? (
         <DmButtonWrapper
+          minWidth={minWidth}
           width={width}
           height={height}
+          borderRadius={borderRadius}
+          padding={padding}
+          marginLeft={marginLeft}
           onClick={() =>
             authService.currentUser
               ? onClickDm()
@@ -105,7 +150,7 @@ const DmButton = ({ id, propWidth, propHeight }: DmButtonProps) => {
           }
         >
           <IconImg src="/assets/icons/myPage/DM.svg" />
-          메시지
+          <Text display={display}> 메시지</Text>
         </DmButtonWrapper>
       ) : null}
     </>
@@ -116,22 +161,29 @@ export const MemoizedDmButton = React.memo(DmButton);
 export default DmButton;
 
 const DmButtonWrapper = styled.button<DmButtonWrapperProps>`
-  margin-left: 20px;
-  ${({ theme }) => theme.btn.btn50}
-  min-width:${(props) => props.width};
+  display: flex;
+  align-items: center;
+  margin-left: ${(props) => props.marginLeft};
+  justify-content: center;
+  ${({ theme }) => theme.btn.btn50};
+  min-width: ${(props) => props.minWidth};
+  width: ${(props) => props.width};
   height: ${(props) => props.height};
+  padding: ${(props) => props.padding};
   box-shadow: -2px 2px 0px 1px #000000;
   background-color: #fff;
   color: #000;
+  border-radius: ${(props) => props.borderRadius};
   :hover {
     background-color: #ffcab5;
     color: black;
   }
 `;
-
+const Text = styled.div<TextProps>`
+  display: ${(props) => props.display};
+  margin-left: 5px;
+`;
 const IconImg = styled.img`
   width: 1.5rem;
   height: 1.5rem;
-  margin-right: 5px;
-  margin-bottom: 2px;
 `;
