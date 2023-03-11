@@ -41,7 +41,7 @@ const Name = styled.div`
   height: 21px;
 `;
 const Comment = styled.div`
-  width: 200px;
+  max-width: 200px;
   position: relative;
   font-size: 16px;
   overflow: hidden;
