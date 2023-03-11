@@ -273,8 +273,9 @@ const UpperWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  height: 5%;
+  height: 8%;
   border-bottom: 1px solid black;
+  border-bottom: 3px solid black;
 `;
 const BottomWrapper = styled.div``;
 
@@ -287,7 +288,7 @@ const GalleryContent = styled.div`
   background-color: white;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   width: 95%;
-  height: 95%;
+  height: 9%;
   border: 1px solid black;
   margin: 20px 20px;
 `;
@@ -304,6 +305,7 @@ const GalleryPostContent = styled.form`
   background-color: white;
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
+  overflow: hidden;
 `;
 
 const Title = styled.span`
@@ -333,7 +335,7 @@ const GalleryContentContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 95%;
+  height: 92%;
 `;
 const ContentWrapper = styled.div`
   display: flex;
