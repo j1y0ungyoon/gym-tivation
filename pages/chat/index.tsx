@@ -27,6 +27,7 @@ import { useQuery } from 'react-query';
 import { getMyDms } from '../api/api';
 import Loading from '@/components/common/globalModal/Loading';
 import { chatCategoryState } from '@/recoil/chat';
+import Image from 'next/image';
 
 type ChatLog = {
   id: string | undefined;
@@ -519,7 +520,7 @@ const UserInfo = styled.div`
   display: flex;
   align-items: center;
 `;
-const UserImg = styled.img`
+const UserImg = styled.image`
   min-width: 40px;
   width: 40px;
   min-height: 40px;
