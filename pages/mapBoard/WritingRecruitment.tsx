@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import { useQuery } from 'react-query';
+import Loading from '@/components/common/globalModal/Loading';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -85,6 +87,8 @@ const WritingRecruitment = () => {
     setUserLvName(getLvName);
     setUserLv(getLv);
   };
+  const { isLoading: loginStateLoading, data: loginState } =
+    useQuery('loginState');
 
   const onSubmitRecruitPost = async () => {
     if (!recruitTitle) {
@@ -170,14 +174,17 @@ const WritingRecruitment = () => {
   };
 
   useEffect(() => {
-    if (!authService.currentUser) {
+    if (
+      (!loginStateLoading && loginState === undefined) ||
+      (!loginStateLoading && !loginState)
+    ) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '로그인을 해주세요!' },
       });
       router.push('/mapBoard');
     }
-  }, []);
+  }, [loginState, loginStateLoading]);
 
   // 현재 유저 프로필에서 LvName, Lv 가져오기
   useEffect(() => {
@@ -187,7 +194,9 @@ const WritingRecruitment = () => {
   if (!authService.currentUser) {
     return <div>로그인이 필요합니다.</div>;
   }
-
+  if (loginStateLoading) {
+    return <Loading />;
+  }
   return (
     <>
       <WritingFormWrapper>

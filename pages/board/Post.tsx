@@ -54,6 +54,9 @@ const Post = () => {
     },
   };
 
+  const { isLoading: loginStateLoading, data: loginState } =
+    useQuery('loginState');
+
   const formats = [
     'font',
     'size',
@@ -94,12 +97,17 @@ const Post = () => {
     const docsData = await getDocs(q);
     const getLvName = docsData.docs[0]?.data().lvName;
     const getLv = docsData.docs[0]?.data().lv;
+    // const getLogin = docsData.docs[0]?.data().loginState;
     setUserLvName(getLvName);
     setUserLv(getLv);
+    // setTest(getLogin);
   };
 
   useEffect(() => {
-    if (!authService.currentUser) {
+    if (
+      (!loginStateLoading && loginState === undefined) ||
+      (!loginStateLoading && !loginState)
+    ) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
         modalProps: { contentText: '로그인 후 이용해주세요!' },
@@ -108,7 +116,7 @@ const Post = () => {
     }
 
     profileData();
-  }, []);
+  }, [loginState, loginStateLoading]);
 
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -195,9 +203,10 @@ const Post = () => {
     goToBoard();
   };
 
-  if (!authService.currentUser) {
-    return <div>로그인이 필요합니다.</div>;
+  if (loginStateLoading) {
+    return <Loading />;
   }
+
   return (
     <>
       <PostWrapper>

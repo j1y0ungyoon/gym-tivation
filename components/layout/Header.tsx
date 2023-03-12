@@ -1,5 +1,13 @@
 import { authService, dbService } from '@/firebase';
-import { doc, updateDoc, query, collection, getDocs } from 'firebase/firestore';
+import {
+  doc,
+  updateDoc,
+  query,
+  collection,
+  getDocs,
+  where,
+} from 'firebase/firestore';
+import { useMutation, useQueryClient } from 'react-query';
 import { useState } from 'react';
 import SearchUser from '../SearchUser';
 import { useRouter } from 'next/router';
@@ -11,10 +19,12 @@ import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
 import { navMenuState } from '@/recoil/navMenu';
+import Loading from '../common/globalModal/Loading';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
   const { showModal } = useModal();
+  const queryClient = useQueryClient();
   //유저 검색창
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
@@ -77,6 +87,33 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const goToWrite = () => {
     router.push('/mapBoard/WritingRecruitment');
   };
+  const { mutate: Logout } = useMutation(['Logout'], onLogout, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('loginState');
+    },
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
+  const loginData = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', authService.currentUser?.uid),
+    );
+    const docsData = await getDocs(q);
+    return docsData.docs[0]?.data().loginState;
+  };
+  const { isLoading: loginStateLoading, data: loginState } = useQuery(
+    'loginState',
+    loginData,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+
   return (
     <HeaderWrapper>
       <LogoWrapper
@@ -161,7 +198,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                     >
                       마이페이지
                     </LogoutBtn>
-                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
+                    <LogoutBtn onClick={() => Logout()}>로그아웃</LogoutBtn>
                   </div>
                 )}
               </HelpBox>
