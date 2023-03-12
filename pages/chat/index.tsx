@@ -520,7 +520,7 @@ const UserInfo = styled.div`
   display: flex;
   align-items: center;
 `;
-const UserImg = styled.image`
+const UserImg = styled.img`
   min-width: 40px;
   width: 40px;
   min-height: 40px;
