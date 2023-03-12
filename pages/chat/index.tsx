@@ -270,7 +270,7 @@ const Chat = () => {
                       )
                       .map((item: any) => {
                         return (
-                          <SearchResult key={nanoid()}>
+                          <SearchResult key={item.id}>
                             <UserInfo>
                               <UserImg
                                 src={`${item.photoURL}`}
