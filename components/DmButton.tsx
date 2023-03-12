@@ -10,6 +10,7 @@ import { addDm, getMyDms } from '@/pages/api/api';
 import Loading from './common/globalModal/Loading';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import useModal from '@/hooks/useModal';
+import { chatCategoryState } from '@/recoil/chat';
 
 interface DmButtonProps {
   id?: string;
@@ -57,6 +58,8 @@ const DmButton = ({
   const ids = dmLists?.map((dmList: any) => dmList.id);
   const queryClient = useQueryClient();
   const { showModal } = useModal();
+
+  const [isMyDmOn, setIsMyDmOn] = useRecoilState(chatCategoryState);
 
   // myDms 불러오는 함수
   const { data: myDms, isLoading: myDmsLoading } = useQuery(
@@ -140,14 +143,15 @@ const DmButton = ({
           borderRadius={borderRadius}
           padding={padding}
           marginLeft={marginLeft}
-          onClick={() =>
+          onClick={() => {
+            setIsMyDmOn(true);
             authService.currentUser
               ? onClickDm()
               : showModal({
                   modalType: GLOBAL_MODAL_TYPES.AlertModal,
                   modalProps: { contentText: '로그인 후 이용해주세요!' },
-                })
-          }
+                });
+          }}
         >
           <IconImg src="/assets/icons/myPage/DM.svg" />
           <Text display={display}> 메시지</Text>
