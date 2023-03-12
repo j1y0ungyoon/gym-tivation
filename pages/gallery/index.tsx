@@ -21,7 +21,6 @@ const Gallery = () => {
 
   return (
     <GalleryBoardWrapper>
-      {/* <GalleryBoardContainer> */}
       <GalleryBoardMain>
         <ButtonWrapper>
           <ButtonContainer>
@@ -36,7 +35,6 @@ const Gallery = () => {
           </GalleryBoardContent>
         </GalleryContentWrapper>
       </GalleryBoardMain>
-      {/* </GalleryBoardContainer> */}
     </GalleryBoardWrapper>
   );
 };
@@ -63,7 +61,6 @@ const GalleryContentWrapper = styled.div`
   width: 100%;
   background-color: white;
 `;
-const GalleryBoardContainer = styled.div``;
 
 const GalleryBoardContent = styled.div`
   display: flex;

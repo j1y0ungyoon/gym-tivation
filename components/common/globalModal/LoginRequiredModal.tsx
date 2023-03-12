@@ -25,7 +25,7 @@ const LoginRequiredModal = (props: ModalPropsType) => {
     <BackgroundContainer>
       <ModalContainer>
         <LoginRequiredImg src="/assets/icons/mapBoard/modalImg.svg" />
-        <h5>{contentText}</h5>
+        <h4>{contentText}</h4>
         <AlertButton onClick={closeModal}>확인</AlertButton>
       </ModalContainer>
     </BackgroundContainer>
@@ -46,7 +46,7 @@ const BackgroundContainer = styled.div`
   min-width: 75%;
   height: 100%;
   min-height: 75%;
-  z-index: 999;
+  z-index: 30001;
   background-color: rgba(0, 0, 0, 0.7);
 `;
 
@@ -59,11 +59,10 @@ const ModalContainer = styled.div`
   justify-content: center;
   width: 400px;
   min-width: 300px;
-  height: 250px;
-  min-height: 150px;
+  min-height: 300px;
   background-color: white;
   padding: 10px;
-  z-index: 1000;
+  z-index: 30002;
 `;
 
 const AlertButton = styled.button`
@@ -72,7 +71,7 @@ const AlertButton = styled.button`
   align-items: center;
   width: 80px;
   height: 40px;
-  margin-top: 10px;
+  margin-top: 20px;
   color: white;
   font-size: 20px;
   background-color: #ff4800;

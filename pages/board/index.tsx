@@ -49,38 +49,72 @@ const Board = () => {
   if (isLoading) {
     return <Loading />;
   }
+
   return (
     <>
       <BoardWrapper>
         <BoardMain>
           <ButtonWrapper>
             <CategoryContainter>
-              <CategoryButton
-                category={category}
-                id="운동정보"
-                onClick={onClickCategoryButton}
-              >
-                운동정보
-              </CategoryButton>
-              <CategoryButton
-                category={category}
-                onClick={onClickCategoryButton}
-                id="헬스장정보"
-              >
-                헬스장정보
-              </CategoryButton>
-              <CategoryButton
-                category={category}
-                onClick={onClickCategoryButton}
-                id="헬스용품추천"
-              >
-                헬스용품추천
-              </CategoryButton>
+              {category === '운동정보' ? (
+                <ActiveCategoryButton
+                  category={category}
+                  id="운동정보"
+                  onClick={onClickCategoryButton}
+                >
+                  운동정보
+                </ActiveCategoryButton>
+              ) : (
+                <CategoryButton
+                  category={category}
+                  id="운동정보"
+                  onClick={onClickCategoryButton}
+                >
+                  운동정보
+                </CategoryButton>
+              )}
+              {category === '헬스정보' ? (
+                <ActiveCategoryButton
+                  category={category}
+                  onClick={onClickCategoryButton}
+                  id="헬스장정보"
+                >
+                  헬스장정보
+                </ActiveCategoryButton>
+              ) : (
+                <CategoryButton
+                  category={category}
+                  onClick={onClickCategoryButton}
+                  id="헬스장정보"
+                >
+                  헬스장정보
+                </CategoryButton>
+              )}
+              {category === '헬스용품추천' ? (
+                <ActiveCategoryButton
+                  category={category}
+                  onClick={onClickCategoryButton}
+                  id="헬스용품추천"
+                >
+                  헬스용품추천
+                </ActiveCategoryButton>
+              ) : (
+                <CategoryButton
+                  category={category}
+                  onClick={onClickCategoryButton}
+                  id="헬스용품추천"
+                >
+                  헬스용품추천
+                </CategoryButton>
+              )}
             </CategoryContainter>
             <PostButtonContainer>
               <PostButton onClick={onClickPostButton}>
                 게시글 업로드
-                <PostIcon src="/assets/icons/writingIcon.svg" />
+                <PostIcon
+                  alt="글쓰기 아이콘"
+                  src="/assets/icons/writingIcon.svg"
+                />
               </PostButton>
             </PostButtonContainer>
           </ButtonWrapper>
@@ -190,12 +224,24 @@ const CategoryButton = styled.button<boardCategoryProps>`
   box-shadow: -2px 2px 0px 1px #000000;
   width: 150px;
   margin: 10px;
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+    color: black;
+  }
+`;
+const ActiveCategoryButton = styled.button<boardCategoryProps>`
+  ${({ theme }) => theme.btn.category}
+  box-shadow: -2px 2px 0px 1px #000000;
+  background-color: ${({ theme }) => theme.color.brandColor100};
+  color: white;
+  width: 150px;
+  margin: 10px;
 `;
 const SearchBoxWrapper = styled.div`
   display: flex;
   align-items: center;
-
   justify-content: center;
+  margin-bottom: 20px;
 `;
 const SearchBox = styled.div`
   margin-top: 20px;

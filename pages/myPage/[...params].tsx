@@ -12,6 +12,7 @@ import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
 import { getProfile } from '../api/api';
+
 //mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id

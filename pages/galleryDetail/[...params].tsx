@@ -4,7 +4,7 @@ import { authService, storage } from '@/firebase';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import {
   deleteGalleryPost,
@@ -15,21 +15,23 @@ import {
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
-import { Dropdown } from 'react-bootstrap';
 import DmButton from '@/components/DmButton';
 import FollowButton from '@/components/FollowButton';
+import Image from 'next/image';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
-interface GalleryDetailProps {}
 const GalleryDetail = ({ params }: any) => {
   const queryClient = useQueryClient();
+  const { showModal } = useModal();
 
   const [changeGalleryPost, setChangeGalleryPost] = useState(false);
   const [editGalleryTitle, setEditGalleryTitle] = useState<string>('');
   const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
-
   const [editGalleryContent, setEditGalleryContent] = useState<string>('');
   const [editImageUpload, setEditImageUpload] = useState<File | undefined>();
   const [progressPercent, setProgressPercent] = useState(0);
+  const [modalClick, setModalClick] = useState(false);
   const [id] = params;
   const router = useRouter();
   const { data: detailGalleryPost, isLoading } = useQuery(
@@ -37,7 +39,6 @@ const GalleryDetail = ({ params }: any) => {
     getFetchedGalleryDetail,
   );
   const { data } = useQuery(['profile'], getProfile);
-
   const { mutate: editGallery, isLoading: isEditing } =
     useMutation(editGalleryBoard);
   const { mutate: removeGalleryPost, isLoading: isDeleting } =
@@ -72,8 +73,7 @@ const GalleryDetail = ({ params }: any) => {
   };
 
   const onClickDeleteGalleryPost = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-    if (answer) {
+    const onDeleteGallery = () => {
       try {
         removeGalleryPost(
           { id: id, photo: detailGalleryPost?.data()?.photo },
@@ -89,7 +89,15 @@ const GalleryDetail = ({ params }: any) => {
       } catch (error) {
         console.log('다시 확인해주세요', error);
       }
-    }
+    };
+
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onDeleteGallery,
+      },
+    });
   };
 
   //갤러리 수정 업데이트
@@ -109,7 +117,6 @@ const GalleryDetail = ({ params }: any) => {
         },
       },
     );
-    // editGalleryBoardPost({ id, editGalleryPost });
     setChangeGalleryPost(false);
     setEditGalleryPhoto('');
     toGallery();
@@ -181,23 +188,12 @@ const GalleryDetail = ({ params }: any) => {
     console.log(`compressedFile size ${compressionFile.size / 1024 / 1024} MB`);
   };
 
-  // image upload 불러오기
-  useEffect(() => {
-    // const imageRef = ref(storage, `gallery/${nanoid()}`);
-    // if (!editImageUpload) return;
-    // uploadBytes(imageRef, editImageUpload).then((snapshot) => {
-    //   getDownloadURL(snapshot.ref).then((url) => {
-    //     setEditGalleryPhoto(url);
-    //   });
-    // });
-  }, [editImageUpload]);
   const onClickChangeGalleryDetail = () => {
     setChangeGalleryPost(!changeGalleryPost);
     setEditGalleryTitle(detailGalleryPost?.data()?.title);
     setEditGalleryContent(detailGalleryPost?.data()?.content);
     setEditGalleryPhoto(detailGalleryPost?.data()?.photo);
   };
-
   if (isLoading) {
     return <Loading />;
   }
@@ -222,7 +218,6 @@ const GalleryDetail = ({ params }: any) => {
         <GalleryEditWrapper>
           <GalleryEditContainer>
             <GalleryPostForm onSubmit={onSubmitEditGallery}>
-              {/* <GalleryContent> */}
               <UpperWrapper>
                 <GalleryButtonWrapper>
                   <GalleryPostButton
@@ -235,14 +230,17 @@ const GalleryDetail = ({ params }: any) => {
                   <GalleryPostButton type="submit">수정완료</GalleryPostButton>
                 </GalleryButtonWrapper>
               </UpperWrapper>
-
               <GalleryContentContainer>
                 <GalleryImageLabel>
-                  <GalleryEditPreview
-                    alt="수정 전 이미지"
-                    src={editGalleryPhoto}
-                  />
-
+                  <GalleryEditPreview>
+                    <Image
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="center"
+                      alt="수정 전 이미지"
+                      src={editGalleryPhoto}
+                    />
+                  </GalleryEditPreview>
                   {progressPercent > 1 && 99 > progressPercent ? (
                     <ProgressPercent>
                       <div>
@@ -260,10 +258,15 @@ const GalleryDetail = ({ params }: any) => {
                 </GalleryImageLabel>
                 <ContentWrapper>
                   <UserInfo>
-                    <UserPhoto
-                      alt="유저 이미지"
-                      src={detailGalleryPost?.data()?.userPhoto}
-                    ></UserPhoto>
+                    <UserPhoto>
+                      <Image
+                        layout="fill"
+                        objectFit="cover"
+                        objectPosition="center"
+                        alt="유저 이미지"
+                        src={detailGalleryPost?.data()?.userPhoto}
+                      ></Image>
+                    </UserPhoto>
                     <UserNameInfo>
                       <UserName>{detailGalleryPost?.data()?.nickName}</UserName>
                       <div>
@@ -286,7 +289,6 @@ const GalleryDetail = ({ params }: any) => {
                 </ContentWrapper>
               </GalleryContentContainer>
             </GalleryPostForm>
-            {/* </GalleryContent> */}
           </GalleryEditContainer>
         </GalleryEditWrapper>
       ) : (
@@ -295,22 +297,31 @@ const GalleryDetail = ({ params }: any) => {
             <GalleryContent>
               <DetailContentContainer>
                 <GalleryImageWrapper>
-                  <GalleryImagePreview
-                    alt="업로드 이미지"
-                    src={detailGalleryPost?.data()?.photo}
-                  />
+                  <GalleryImagePreview>
+                    <Image
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="center"
+                      alt="업로드 이미지"
+                      src={detailGalleryPost?.data()?.photo}
+                    />
+                  </GalleryImagePreview>
                 </GalleryImageWrapper>
                 <DetailContent>
                   <GalleryTitleContainer>
                     <InfoWrapper>
                       <BottomWrapper>
-                        <UserImage
-                          alt="유저 이미지"
-                          src={detailGalleryPost?.data()?.userPhoto}
-                          onClick={() => {
-                            goToMyPage(detailGalleryPost?.data()?.userId);
-                          }}
-                        />
+                        <UserImage>
+                          <Image
+                            width={50}
+                            height={50}
+                            alt="유저 이미지"
+                            src={detailGalleryPost?.data()?.userPhoto}
+                            onClick={() =>
+                              goToMyPage(detailGalleryPost?.data()?.userId)
+                            }
+                          />
+                        </UserImage>
                         <LevelWrapper>
                           <NicknameWrapper>
                             {detailGalleryPost?.data()?.nickName}
@@ -328,14 +339,37 @@ const GalleryDetail = ({ params }: any) => {
                         <FollowButton
                           item={followInformation}
                           Id={followInformation?.id}
+                          propDisplay="none"
+                          propWidth="40px"
+                          propHeight="40px"
+                          propPadding="0px"
+                          propMinWidth="40px"
+                          propBorderRadius="50%"
                         />
                         <DMWrapper>
-                          <DmButton id={followInformation?.id} />
+                          <DmButton
+                            propWidth="40px"
+                            propHeight="40px"
+                            propBorderRadius="50%"
+                            propDisplay="none"
+                            propMinWidth="40px"
+                            propPadding="0px"
+                            propMarginLeft="8px"
+                            id={followInformation?.id}
+                          />
                         </DMWrapper>
                         {user === detailGalleryPost?.data()?.userId ? (
-                          <DropDownWrapper>
-                            <EditDropDown className="DropDownBox">
-                              <EditButton onClick={onClickChangeGalleryDetail}>
+                          <DropDownWrapper
+                            onClick={() => setModalClick(!modalClick)}
+                          >
+                            <EditDropDown
+                              modalClick={modalClick}
+                              className="DropDownBox"
+                            >
+                              <EditButton
+                                style={{ borderBottom: '1px solid #d9d9d9' }}
+                                onClick={onClickChangeGalleryDetail}
+                              >
                                 수정
                               </EditButton>
                               <EditButton onClick={onClickDeleteGalleryPost}>
@@ -346,15 +380,17 @@ const GalleryDetail = ({ params }: any) => {
                         ) : null}
                       </BottomWrapper>
                     </InfoWrapper>
-                    <DetailGalleryContent>
-                      {detailGalleryPost?.data()?.content}
-                    </DetailGalleryContent>
                     <LikeContainer>
                       <Like
                         detailGalleryPost={detailGalleryPost?.data()}
                         id={id}
                       />
                     </LikeContainer>
+                    <DetailGalleryContent>
+                      <DetailContentWrapper>
+                        {detailGalleryPost?.data()?.content}
+                      </DetailContentWrapper>
+                    </DetailGalleryContent>
                   </GalleryTitleContainer>
                   <CommentWrapper>
                     <CommentContainer>
@@ -382,13 +418,16 @@ const DetailContent = styled.div`
   border: none;
   border-radius: 0 40px 40px 0;
 `;
+const DetailContentWrapper = styled.div`
+  margin: 20px;
+  width: 100%;
+`;
 const DetailGalleryContent = styled.div`
   display: flex;
   width: 100%;
-  height: 60%;
+  height: 50%;
   font-size: ${({ theme }) => theme.font.font10};
   background-color: ${({ theme }) => theme.color.backgrounColor};
-  padding: 10px;
   border: none;
   overflow-y: auto;
 `;
@@ -430,13 +469,11 @@ const CommentContainer = styled.div`
 `;
 const LikeContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 100%;
-  height: 10%;
-  padding: 5px;
-
-  border-radius: ${({ theme }) => theme.borderRadius.radius50};
+  height: 20%;
+  padding: 0 20px;
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05);
@@ -446,37 +483,35 @@ const LikeContainer = styled.div`
 const BottomWrapper = styled.div`
   display: flex;
   align-items: center;
+  margin: 20px;
 `;
 
 const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 20%;
-  padding: 10px;
-`;
-const EditWrapper = styled.div`
-  display: flex;
-  width: 50%;
-  min-height: 100%;
-  flex-direction: column;
-  align-items: flex-end;
+  height: 30%;
 `;
 
-const UserImage = styled.img`
-  height: 50px;
+const UserImage = styled.div`
+  position: relative;
+  min-height: 50px;
+  min-width: 50px;
   width: 50px;
-  border-radius: 40px;
+  height: 50px;
+  border-radius: 50px;
+  overflow: hidden;
   :hover {
     cursor: pointer;
     transform: scale(1.1, 1.1);
   }
 `;
 const LevelWrapper = styled.span`
-  width: 80%;
   display: flex;
   flex-direction: column;
+  width: 80%;
   margin-left: 20px;
+  width: 80%;
 `;
 const DMWrapper = styled.div``;
 const LevelContainer = styled.div`
@@ -501,19 +536,13 @@ const UpperWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  height: 5%;
+  height: 8%;
   border-bottom: 1px solid black;
+  border-bottom: 3px solid black;
 `;
-const DetailGalleryTitle = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  font-size: 2rem;
-`;
+
 const GalleryEditWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
-
   align-items: center;
   justify-content: center;
 `;
@@ -530,26 +559,9 @@ const GalleryPostForm = styled.form`
   background-color: white;
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
+  overflow: hidden;
 `;
-const EditTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  margin-left: 50px;
-`;
-const Title = styled.span`
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.font70};
-`;
-const InputDiv = styled.div`
-  ${({ theme }) => theme.inputDiv};
-  background-color: white;
-  margin: 10px 0;
-  margin-left: 62px;
-  width: 85%;
-  border: 1px solid black;
-`;
+
 const GalleryTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -565,35 +577,27 @@ const DropDownWrapper = styled.div`
   position: relative;
   width: 50px;
   height: 50px;
-  /* background-color: pink; */
   background-image: url('/assets/icons/dotButton.svg');
   background-repeat: no-repeat;
   background-position: center;
-  :hover {
-    cursor: pointer;
-    .DropDownBox {
-      display: flex;
-    }
-  }
+  cursor: pointer;
 `;
 
-const EditDropDown = styled.div`
-  display: none;
+const EditDropDown = styled.div<any>`
+  display: ${(props) => (props.modalClick ? 'block' : 'none')};
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   position: absolute;
   border-radius: 10px;
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
-
   z-index: 1;
-  top: 20px;
-  right: 0;
+  top: 40px;
+  left: -22px;
   overflow: hidden;
-
   margin-right: 20px;
 `;
 const EditButton = styled.button`
@@ -605,48 +609,7 @@ const EditButton = styled.button`
     background-color: ${({ theme }) => theme.color.brandColor50};
   }
 `;
-const EidtDropdDownToggle = styled(Dropdown.Toggle)`
-  background-color: ${({ theme }) => theme.color.backgroundColor};
-  padding: 0px;
-  border: none;
-  background-image: url('/assets/icons/dotButton.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  :hover {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :active {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :focus {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :checked {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :show {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-`;
-const EditDropDownItem = styled(Dropdown.Item)``;
-const EditDropDownMenu = styled(Dropdown.Menu)`
-  display: none;
-`;
-const EditButtonWrapper = styled.div`
-  width: 100%;
-  height: 10%;
-`;
-const TitleUpperWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 10px;
-`;
 
-const GalleryPostTitle = styled.input`
-  ${({ theme }) => theme.input}
-  background-color:white;
-`;
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -669,7 +632,7 @@ const GalleryContentContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 95%;
+  height: 92%;
 `;
 const DetailContentContainer = styled.div`
   display: flex;
@@ -678,13 +641,6 @@ const DetailContentContainer = styled.div`
   height: 100%;
 `;
 
-const GalleryEditBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 80%;
-  padding: 2rem;
-`;
 const GalleryContentInput = styled.textarea`
   display: flex;
   width: 90%;
@@ -705,21 +661,6 @@ const GalleryButtonWrapper = styled.div`
   width: 100%;
   height: 100%;
   margin: 0 20px;
-`;
-const EditButtonModal = styled.div`
-  /* z-index: 2000;
-  width: 550px;
-  height: 600px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  border-radius: 15px;
-  transform: translate(-50%, -50%) !important;
-  padding-top: 1.5rem;
-  background-color: #fffcf3;
-  border-style: solid;
-  border-width: 0.1rem;
-  border-color: black; */
 `;
 
 const GalleryPostButton = styled.button`
@@ -768,12 +709,16 @@ const UserNameInfo = styled.span`
 const UserName = styled.span`
   margin-right: 20px;
 `;
-const UserPhoto = styled.img`
+const UserPhoto = styled.div`
+  position: relative;
+  max-width: 50px;
+  max-height: 50px;
   width: 50px;
   height: 50px;
   border-radius: 50px;
   margin-right: 10px;
   object-fit: cover;
+  overflow: hidden;
 `;
 const UserLv = styled.span`
   margin-right: 5px;
@@ -782,7 +727,8 @@ const UserLv = styled.span`
 const UserLvName = styled.span`
   font-size: ${({ theme }) => theme.font.font10};
 `;
-const GalleryEditPreview = styled.img`
+const GalleryEditPreview = styled.div`
+  position: relative;
   border: none;
   width: 100%;
   height: 100%;
@@ -798,7 +744,8 @@ const GalleryEditPreview = styled.img`
   }
 `;
 
-const GalleryImagePreview = styled.img`
+const GalleryImagePreview = styled.div`
+  position: relative;
   border: none;
   width: 100%;
   height: 100%;
@@ -806,14 +753,6 @@ const GalleryImagePreview = styled.img`
   object-fit: cover;
   border-radius: 40px 0 0 40px;
 `;
-const EditImagePreview = styled.img`
-  margin-top: 1rem;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  object-fit: scale-down;
-`;
-
 export function getServerSideProps({ params: { params } }: any) {
   return {
     props: {

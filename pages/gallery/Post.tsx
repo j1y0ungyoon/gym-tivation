@@ -37,6 +37,10 @@ const Post = () => {
       pathname: `/gallery`,
     });
   };
+  // const { isLoading: loginStateLoading, data: loginState } =
+  //   useQuery('loginState');
+  const { isLoading: loginStateLoading, data: loginState } =
+    useQuery('loginState');
 
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -76,14 +80,17 @@ const Post = () => {
   };
 
   useEffect(() => {
-    if (!authService.currentUser) {
+    if (
+      (!loginStateLoading && loginState === undefined) ||
+      (!loginStateLoading && !loginState)
+    ) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
         modalProps: { contentText: '로그인 후 이용해주세요!' },
       });
       router.push('/gallery');
     }
-  }, [authService.currentUser]);
+  }, [authService.currentUser, loginState, loginStateLoading]);
   if (!authService.currentUser) {
     return <div>로그인이 필요합니다.</div>;
   }
@@ -167,6 +174,9 @@ const Post = () => {
   const UserPhotoUrl: string | null = authService.currentUser?.photoURL;
   const userInformation: any = data?.filter((item) => item.id === user?.uid);
   if (!UserPhotoUrl) {
+    return <Loading />;
+  }
+  if (loginStateLoading) {
     return <Loading />;
   }
   return (
@@ -273,24 +283,17 @@ const UpperWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  height: 5%;
+  height: 8%;
   border-bottom: 1px solid black;
+  border-bottom: 3px solid black;
 `;
-const BottomWrapper = styled.div``;
 
 const GalleryPostWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
   align-items: center;
   justify-content: center;
 `;
-const GalleryContent = styled.div`
-  background-color: white;
-  border-radius: ${({ theme }) => theme.borderRadius.radius100};
-  width: 95%;
-  height: 95%;
-  border: 1px solid black;
-  margin: 20px 20px;
-`;
+
 const GalleryPostContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container};
   height: calc(100% - 40px);
@@ -304,36 +307,14 @@ const GalleryPostContent = styled.form`
   background-color: white;
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
+  overflow: hidden;
 `;
 
-const Title = styled.span`
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.font70};
-`;
-const InputDiv = styled.div`
-  ${({ theme }) => theme.inputDiv};
-  background-color: white;
-  margin: 10px 0;
-  margin-left: 62px;
-  width: 85%;
-  border: 1px solid black;
-`;
-const GalleryTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  margin-left: 50px;
-`;
-const GalleryPostTitle = styled.input`
-  ${({ theme }) => theme.input}
-  background-color:white;
-`;
 const GalleryContentContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 95%;
+  height: 92%;
 `;
 const ContentWrapper = styled.div`
   display: flex;
@@ -393,7 +374,6 @@ const GalleryImageWarpper = styled.label`
   flex-direction: column;
   border-right: 1px solid black;
   border-radius: 0 0 0 40px;
-  /* position: relative; */
 `;
 
 const ProgressPercent = styled.div`
@@ -415,9 +395,6 @@ const GalleryDefaultImagePreview = styled.img`
   height: 100%;
   overflow: hidden;
   object-fit: scale-down;
-  /* background-image: url('/assets/images/galleryUploadImage.svg');
-  background-repeat: no-repeat;
-  background-position: center center; */
   :hover {
     transform: scale(1.05s, 1.05);
     transition: 0.3s;
@@ -430,9 +407,6 @@ const GalleryImagePreview = styled.img`
   overflow: hidden;
   object-fit: cover;
   border-radius: 0 0 0 40px;
-  /* background-image: url('/assets/images/galleryUploadImage.svg');
-  background-repeat: no-repeat;
-  background-position: center center; */
   :hover {
     transform: scale(0.99, 0.99);
     transition: 0.3s;

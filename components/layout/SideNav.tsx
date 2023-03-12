@@ -2,7 +2,7 @@ import { authService } from '@/firebase';
 import { navMenuState } from '@/recoil/navMenu';
 import { useRouter } from 'next/router';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -18,6 +18,56 @@ const SideNav = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       query: { id },
     });
   };
+
+  React.useEffect(() => {
+    // home
+    if (router.pathname === '/') {
+      setNowMenu('home');
+    }
+
+    // chat
+    if (router.pathname === '/chat') {
+      setNowMenu('chat');
+    }
+
+    // board
+    if (router.pathname === '/board') {
+      setNowMenu('board');
+    }
+    if (router.pathname === '/board/post') {
+      setNowMenu('board');
+    }
+    if (router.pathname === '/boardDetail/[...params]') {
+      setNowMenu('board');
+    }
+
+    // mapBoard
+    if (router.pathname === '/mapBoard') {
+      setNowMenu('mapBoard');
+    }
+    if (router.pathname === '/mapBoard/WritingRecruitment') {
+      setNowMenu('mapBoard');
+    }
+    if (router.pathname === '/recruitDetail/[...params]') {
+      setNowMenu('mapBoard');
+    }
+
+    // gallery
+    if (router.pathname === '/gallery') {
+      setNowMenu('gallery');
+    }
+    if (router.pathname === '/gallery/Post') {
+      setNowMenu('gallery');
+    }
+    if (router.pathname === '/galleryDetail/[...params]') {
+      setNowMenu('gallery');
+    }
+
+    // myPage
+    if (router.pathname === '/myPage') {
+      setNowMenu('myPage');
+    }
+  });
 
   return (
     <SideNavWrapper>
@@ -142,6 +192,10 @@ const SideNavWrapper = styled.nav`
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  z-index: 20000;
 `;
 
 const NavBtn = styled.img`

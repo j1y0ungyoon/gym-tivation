@@ -1,4 +1,5 @@
 import { getProfile } from '@/pages/api/api';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -38,6 +39,7 @@ const GalleryPost = ({
 
   const [CurrentUserProfile, setCurrentUserProfile] = useState<ProfileItem>();
 
+  // GalleryPost.tsx
   const { data: profile, isLoading: profileLoading } = useQuery(
     'profile',
     getProfile,
@@ -53,7 +55,15 @@ const GalleryPost = ({
     <>
       <GalleryPostWrapper key={id} onClick={() => goToGalleryDetailPost(id)}>
         <div className="background" />
-        <MouseOverImage photo={photo} />
+        <MouseOverImage>
+          <Image
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+            alt="업로드 이미지"
+            src={photo}
+          />
+        </MouseOverImage>
         <div className="userInfoContainer">
           <div className="userInfoBox">
             <UserProfileBox>
@@ -61,8 +71,7 @@ const GalleryPost = ({
               <UserNickNameAndLvBox>
                 <UserNicknameText>{nickName}</UserNicknameText>
                 <UserLvText>
-                  {CurrentUserProfile &&
-                    `${CurrentUserProfile.lvName} ${CurrentUserProfile.lv}`}
+                  {CurrentUserProfile && `Lv${CurrentUserProfile.lv}`}
                 </UserLvText>
               </UserNickNameAndLvBox>
             </UserProfileBox>
@@ -134,7 +143,8 @@ const GalleryPostWrapper = styled.div`
   }
 `;
 
-const MouseOverImage = styled.div<MouseHoverWrapperProps>`
+const MouseOverImage = styled.div`
+  position: relative;
   overflow: hidden;
   width: 256px;
   height: 290px;
@@ -142,7 +152,6 @@ const MouseOverImage = styled.div<MouseHoverWrapperProps>`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   cursor: pointer;
   object-fit: cover;
-  background-image: url(${(props) => props.photo});
   background-position: center;
   background-size: cover;
 
@@ -167,7 +176,6 @@ const UserNickNameAndLvBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 4px;
 `;
 
 const UserNicknameText = styled.span`

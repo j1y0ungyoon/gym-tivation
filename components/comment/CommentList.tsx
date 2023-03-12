@@ -197,7 +197,7 @@ const CommentWrapper = styled.div`
   display: flex;
   flex-direction: column-reverse;
   height: 100%;
-  width: 100%;
+  width: 98%;
   overflow: auto;
   overflow-x: hidden;
   &::-webkit-scrollbar {
@@ -207,7 +207,8 @@ const CommentWrapper = styled.div`
 const InputWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 98%;
+  margin-bottom: 3px;
   margin-top: 10px;
 `;
 

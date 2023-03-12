@@ -44,13 +44,18 @@ const BoardPost = ({
 
   return (
     <BoardPostWrapper key={id} onClick={() => goToDetailPost(id)}>
-      {/* <ItemPhotoContainer>
-        <ItemPhoto src={photo}></ItemPhoto>
-      </ItemPhotoContainer> */}
       <BoardPostContainer>
         <ItemContentWrapper>
           <UserImageWrapper>
-            <UserImage src={userPhoto}></UserImage>
+            <UserImage>
+              <Image
+                alt="유저 이미지"
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                src={userPhoto!}
+              />
+            </UserImage>
           </UserImageWrapper>
           <InfoContentWrapper>
             <ItemContentContainer>
@@ -62,7 +67,6 @@ const BoardPost = ({
                 <CommentCount>[{commentCount}]</CommentCount>
               </ItemTitleWrapper>
             </ItemContentContainer>
-
             <InformationWrapper>
               <ItemNickName>{nickName}</ItemNickName>
               <ItemCreatedAt>{String(createdAt)}</ItemCreatedAt>
@@ -87,13 +91,14 @@ const BoardPostWrapper = styled.div`
   background-color: white;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   height: 88px;
+  width: 90%;
   padding: 0.5rem;
   box-shadow: -2px 2px 0px 1px #000000;
   cursor: pointer;
   :hover {
     background-color: ${({ theme }) => theme.color.brandColor50};
     cursor: pointer;
-    transform: scale(1.02, 1.02);
+    transform: scale(1.03, 1.03);
     transition: 0.3s;
   }
 `;
@@ -114,7 +119,9 @@ const ItemContentWrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
-const UserImage = styled.img`
+const UserImage = styled.div`
+  position: relative;
+  overflow: hidden;
   width: 40px;
   height: 40px;
   border-radius: 40px;
@@ -132,15 +139,6 @@ const ItemContentContainer = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const ItemPhotoContainer = styled.div`
-  width: 10rem;
-`;
-const ItemPhoto = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 1rem;
-  object-fit: cover;
-`;
 const ItemCategory = styled.div`
   display: flex;
   align-items: center;
@@ -157,7 +155,6 @@ const ItemCategory = styled.div`
 const InformationWrapper = styled.div`
   display: flex;
   align-items: flex-start;
-  /* padding: 5px; */
   width: 100%;
   height: 50%;
   flex-direction: row;

@@ -1,9 +1,9 @@
 import { authService, dbService } from '@/firebase';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { CoordinateType, WorkOutTimeType } from '../../type';
+import { CoordinateType, DayType, WorkOutTimeType } from '../../type';
 import SearchMyGym from '@/components/mapBoard/SearchMyGym';
 import UseDropDown from '@/components/common/dropDown/UseDropDown';
 import SelectDay from '@/components/mapBoard/SelectDay';
@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
+import { useQuery } from 'react-query';
+import Loading from '@/components/common/globalModal/Loading';
 
 const initialCoordinate: CoordinateType = {
   // 사용자가 처음 등록한 위도, 경도로 바꿔주자
@@ -45,6 +47,9 @@ const WritingRecruitment = () => {
 
   // 선택한 요일에 대한 state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+
+  // 정렬된 요일에 대한 state
+  const [sortedDays, setSortedDays] = useState<string[]>([]);
 
   // 버튼 박스 클릭 시 색상 변경을 위한 state 나중에 수정 필요
   const [mon, setMon] = useState(false);
@@ -85,8 +90,19 @@ const WritingRecruitment = () => {
     setUserLvName(getLvName);
     setUserLv(getLv);
   };
+  const { isLoading: loginStateLoading, data: loginState } =
+    useQuery('loginState');
 
   const onSubmitRecruitPost = async () => {
+    if (!authService.currentUser) {
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
+      router.push('/mapBoard');
+      return;
+    }
+
     if (!recruitTitle) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
@@ -148,7 +164,7 @@ const WritingRecruitment = () => {
       coordinate,
       startTime: start,
       endTime: end,
-      selectedDays,
+      selectedDays: sortedDays,
       participation: [],
       createdAt: Date.now(),
       comment: 0,
@@ -170,14 +186,17 @@ const WritingRecruitment = () => {
   };
 
   useEffect(() => {
-    if (!authService.currentUser) {
+    if (
+      (!loginStateLoading && loginState === undefined) ||
+      (!loginStateLoading && !loginState)
+    ) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '로그인을 해주세요!' },
       });
       router.push('/mapBoard');
     }
-  }, []);
+  }, [loginState, loginStateLoading]);
 
   // 현재 유저 프로필에서 LvName, Lv 가져오기
   useEffect(() => {
@@ -187,7 +206,9 @@ const WritingRecruitment = () => {
   if (!authService.currentUser) {
     return <div>로그인이 필요합니다.</div>;
   }
-
+  if (loginStateLoading) {
+    return <Loading />;
+  }
   return (
     <>
       <WritingFormWrapper>
@@ -250,6 +271,7 @@ const WritingRecruitment = () => {
                       setEvery={setEvery}
                       selectedDays={selectedDays}
                       setSelectedDays={setSelectedDays}
+                      setSortedDays={setSortedDays}
                     />
                   </AllDaysBox>
 
@@ -518,6 +540,9 @@ const UploadButtonBox = styled.button`
   background-color: ${({ theme }) => theme.color.brandColor100};
   color: white;
   border: 1px solid black;
+  &:hover {
+    background-color: black;
+  }
 `;
 
 export const StyledText = styled.span`

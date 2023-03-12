@@ -16,6 +16,9 @@ import {
   updateProfileGalleryUnLike,
   updateProfilePostUnLike,
 } from '@/pages/api/api';
+interface LikeProps {
+  checked?: string;
+}
 const Like = ({ detailPost, detailGalleryPost, id }: any) => {
   const router = useRouter();
   const boardLikeCount = detailPost?.like?.length;
@@ -158,13 +161,7 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
         <>
           <LikeContainer onClick={likeCounter}>
             <LikeCount>{boardLikeCount}</LikeCount>
-            <Text
-              style={
-                boardLikeChecked ? { color: '#FF3D00' } : { color: 'black' }
-              }
-            >
-              좋아요
-            </Text>
+            <Text checked={boardLikeChecked}>좋아요</Text>
             <Image
               src={boardLikeChecked ? checkedLike : like}
               alt="좋아요"
@@ -176,40 +173,27 @@ const Like = ({ detailPost, detailGalleryPost, id }: any) => {
       ) : (
         <>
           <GalleryLikeContainer
-            style={
-              galleryLikeChecked
-                ? { backgroundColor: '#FF4800' }
-                : { backgroundColor: 'white' }
-            }
+            checked={galleryLikeChecked}
             onClick={likeCounter}
           >
             <Image
               src="/assets/icons/likeIcon.svg"
               alt="좋아요"
-              width={25}
-              height={25}
+              width={20}
+              height={20}
             />
-            <Text
-              style={
-                galleryLikeChecked ? { color: 'white' } : { color: 'black' }
-              }
-            >
-              좋아요
-            </Text>
-            <LikeCount
-              style={
-                galleryLikeChecked ? { color: 'white' } : { color: 'black' }
-              }
-            >
+            <GalleryText checked={galleryLikeChecked}>좋아요</GalleryText>
+            <GalleryLikeCount checked={galleryLikeChecked}>
               {galleryLikeCount}
-            </LikeCount>
+            </GalleryLikeCount>
           </GalleryLikeContainer>
         </>
       )}
     </LikeWrapper>
   );
 };
-const GalleryLikeContainer = styled.div`
+const GalleryLikeContainer = styled.div<LikeProps>`
+  background-color: ${(props) => (props.checked ? '#FF4800' : 'white')};
   display: flex;
   width: 100%;
   height: 100%;
@@ -217,22 +201,27 @@ const GalleryLikeContainer = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   border: none;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
-
   :hover {
     background-color: ${({ theme }) => theme.color.brandColor50};
     outline: none;
-    width: 100%;
   }
 `;
 
-const Text = styled.span`
+const GalleryText = styled.span<LikeProps>`
+  color: ${(props) => (props.checked ? 'white' : 'black')};
+  font-size: 14px;
+  padding: 0 5px;
+`;
+
+const Text = styled.span<LikeProps>`
   font-weight: 600;
   margin: 0 5px;
   font-size: ${({ theme }) => theme.font.font50};
+  color: ${(props) => (props.checked ? '#FF3D00' : 'black')};
 `;
 
 const LikeWrapper = styled.div`
@@ -262,5 +251,10 @@ const LikeCount = styled.span`
   display: flex;
   font-weight: 600;
   margin: 0 5px;
+`;
+const GalleryLikeCount = styled.span<LikeProps>`
+  padding: 0 5px;
+  font-size: 14px;
+  color: ${(props) => (props.checked ? 'white' : 'black')};
 `;
 export default Like;

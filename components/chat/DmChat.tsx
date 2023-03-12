@@ -44,7 +44,7 @@ const DmChat = () => {
     username,
   );
   const [apponentPhoto, setApponentPhoto] = useState<string | null | undefined>(
-    '',
+    user?.photoURL,
   );
 
   const dmLogBoxRef = useRef<HTMLDivElement>();
@@ -140,21 +140,16 @@ const DmChat = () => {
   }, [chatLogs]);
 
   // 채팅 전송시 실행 함수
-  const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
-    if (e.key !== 'Enter') return;
+  const postChat = async (e: any) => {
+    e.preventDefault();
     if (dmInputValue === '') return;
 
     // 날짜 추가
-    const newDate = new Date();
-
-    const hours = newDate.getHours(); // 시
-    const minutes = newDate.getMinutes(); // 분
-    const seconds = newDate.getSeconds(); // 초
-    const time = `${hours}:${minutes}:${seconds}`;
+    const time = new Date().toLocaleTimeString('ko-KR');
 
     const chatLog = {
       id: user?.uid,
-      msg: (e.target as any).value,
+      msg: dmInputValue,
       username: username,
       photoURL: user?.photoURL,
       date: time,
@@ -163,7 +158,7 @@ const DmChat = () => {
 
     await updateDoc(doc(dbService, 'dms', chatId), {
       chatLog: arrayUnion({
-        id: chatId,
+        id: user?.uid,
         msg: chatLog.msg,
         username: chatLog.username,
         photoURL: chatLog.photoURL,
@@ -189,8 +184,12 @@ const DmChat = () => {
     const name = userDoc?.docs[0]?.data().displayName;
     const photo = userDoc?.docs[0]?.data().photoURL;
 
-    setApponentName(name);
-    setApponentPhoto(photo);
+    if (name) {
+      setApponentName(name);
+    }
+    if (photo) {
+      setApponentPhoto(photo);
+    }
   };
 
   useEffect(() => {
@@ -205,8 +204,13 @@ const DmChat = () => {
   return (
     <DmChatWrapper>
       <DmUserInfoBox>
-        <UserImg src={`${apponentPhoto}`} />
-        <span>{apponentName}</span>
+        <HeaderUserImg
+          src={`${apponentPhoto}`}
+          onClick={() => {
+            return router.push(`/myPage/${apponentId}`);
+          }}
+        />
+        <UserName>{apponentName}</UserName>
       </DmUserInfoBox>
       <Test>
         <DmLogBox ref={dmLogBoxRef}>
@@ -214,7 +218,7 @@ const DmChat = () => {
             <DmBox key={nanoid()}>
               <UserImg
                 src={`${chatLog.photoURL}`}
-                onClick={(e) => {
+                onClick={() => {
                   return router.push(`/myPage/${chatLog.id}`);
                 }}
               />
@@ -227,13 +231,19 @@ const DmChat = () => {
           ))}
         </DmLogBox>
         {user ? (
-          <DmInput
-            placeholder="채팅을 입력하세요."
-            type="text"
-            onKeyPress={postChat}
-            value={dmInputValue}
-            onChange={onChangeInputValue}
-          />
+          <ChatInputContainer>
+            <ChatInputBox onSubmit={(e) => postChat(e)}>
+              <DmInput
+                placeholder="채팅을 입력하세요."
+                type="text"
+                value={dmInputValue}
+                onChange={onChangeInputValue}
+              />
+              <MessageBtn type="submit">
+                <MessageIcon src="/assets/icons/myPage/DM.svg" />
+              </MessageBtn>
+            </ChatInputBox>
+          </ChatInputContainer>
         ) : (
           <DmInput placeholder="로그인 후 이용 가능합니다." disabled />
         )}
@@ -253,6 +263,7 @@ const DmChatWrapper = styled.section`
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
   box-shadow: -2px 2px 0px 1px #000000;
+  overflow: hidden;
 `;
 
 const DmUserInfoBox = styled.div`
@@ -261,6 +272,11 @@ const DmUserInfoBox = styled.div`
   border-bottom: 1px solid black;
   width: 100%;
   padding: 20px 30px;
+  background-color: black;
+`;
+
+const UserName = styled.span`
+  color: white;
 `;
 
 const DmLogBox = styled.div<any>`
@@ -286,6 +302,16 @@ const DmLogBox = styled.div<any>`
 const DmBox = styled.div`
   display: flex;
   margin-bottom: 20px;
+`;
+const HeaderUserImg = styled.img`
+  min-width: 40px;
+  width: 40px;
+  min-height: 40px;
+  height: 40px;
+  border-radius: 50px;
+  border: 1px solid white;
+  margin-right: 10px;
+  cursor: pointer;
 `;
 const UserImg = styled.img`
   min-width: 40px;
@@ -318,18 +344,38 @@ const DmTime = styled.span`
   color: gray;
   margin: 0;
 `;
-
+const ChatInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;
+const ChatInputBox = styled.form`
+  width: 100%;
+  margin: 0 20px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 50px;
+`;
 const DmInput = styled.input`
   width: calc(100% - 40px);
   height: 48px;
   outline: none;
-  border: 1px solid black;
-  border-radius: 50px;
-  margin: 0 20px;
-  padding: 5px 20px;
+  border: none;
+  padding: 5px 0;
   font-size: 0.875rem;
   ::placeholder {
     font-size: 14px;
   }
+`;
+const MessageBtn = styled.button`
+  background-color: transparent;
+  border: none;
+`;
+const MessageIcon = styled.img`
+  width: 20px;
+  margin: 5px;
+  cursor: pointer;
 `;
 export default DmChat;

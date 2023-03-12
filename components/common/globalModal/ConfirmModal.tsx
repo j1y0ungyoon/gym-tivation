@@ -51,7 +51,7 @@ const BackgroundContainer = styled.div`
   min-width: 75%;
   height: 100%;
   min-height: 75%;
-  z-index: 999;
+  z-index: 30001;
   background-color: rgba(0, 0, 0, 0.7);
 `;
 
@@ -64,10 +64,9 @@ const ModalContainer = styled.div`
   justify-content: center;
   width: 400px;
   min-width: 250px;
-  height: 250px;
-  min-height: 400px;
+  min-height: 300px;
   background-color: white;
-  z-index: 1000;
+  z-index: 30002;
 `;
 
 const ConfirmButtonBox = styled.div`
@@ -76,7 +75,8 @@ const ConfirmButtonBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 300px;
-  height: 100px;
+  height: 50px;
+  margin-top: 30px;
   gap: 1rem;
 `;
 
@@ -113,5 +113,5 @@ const CofirmNoButton = styled.button`
 const AlertImg = styled.img`
   width: 60px;
   height: 60px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 `;

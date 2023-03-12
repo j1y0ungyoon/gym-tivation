@@ -1,5 +1,13 @@
 import { authService, dbService } from '@/firebase';
-import { doc, updateDoc, query, collection, getDocs } from 'firebase/firestore';
+import {
+  doc,
+  updateDoc,
+  query,
+  collection,
+  getDocs,
+  where,
+} from 'firebase/firestore';
+import { useMutation, useQueryClient } from 'react-query';
 import { useState } from 'react';
 import SearchUser from '../SearchUser';
 import { useRouter } from 'next/router';
@@ -11,10 +19,12 @@ import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
 import { navMenuState } from '@/recoil/navMenu';
+import Loading from '../common/globalModal/Loading';
 
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
   const { showModal } = useModal();
+  const queryClient = useQueryClient();
   //유저 검색창
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
@@ -51,43 +61,76 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     }));
   };
 
+  //Header.tsx
   const { isLoading, data: profile } = useQuery('profile', getProfile, {
     onSuccess: () => {},
     onError: (error) => {
       console.log('error : ', error);
     },
   });
+
   const id = authService.currentUser?.uid;
+
   const goToDetailMyPage = (id: any) => {
     router.push({
       pathname: `/myPage/${id}`,
       query: { id },
     });
   };
+
   const onClickGalleryPostButton = () => {
     router.push({
       pathname: `/gallery/Post`,
     });
   };
+
   const onClickPostButton = () => {
     router.push({
       pathname: `/board/Post`,
     });
   };
+
   const goToWrite = () => {
     router.push('/mapBoard/WritingRecruitment');
   };
+  const { mutate: Logout } = useMutation(['Logout'], onLogout, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('loginState');
+    },
+    onError: (error) => {
+      console.log('error : ', error);
+    },
+  });
+  const loginData = async () => {
+    const q = query(
+      collection(dbService, 'profile'),
+      where('uid', '==', authService.currentUser?.uid),
+    );
+    const docsData = await getDocs(q);
+    return docsData.docs[0]?.data().loginState;
+  };
+  const { isLoading: loginStateLoading, data: loginState } = useQuery(
+    'loginState',
+    loginData,
+    {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.log('error : ', error);
+      },
+    },
+  );
+
   return (
     <HeaderWrapper>
-      <Logo
+      <LogoWrapper
         onClick={() => {
           router.push('/');
           setNowMenu('home');
         }}
-        alt="짐티베이션 로고"
-        src="/assets/images/Logo.png"
-      />
-
+      >
+        <Logo alt="짐티베이션 로고" src="/assets/icons/main/logoIcon.svg" />
+        <LogoText src="/assets/icons/main/GYMTIVATION.svg" />
+      </LogoWrapper>
       <Itembox>
         <SearchBar>
           <SearchIcon alt="유저검색 버튼" src="/assets/icons/searchIcon.svg" />
@@ -161,7 +204,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                     >
                       마이페이지
                     </LogoutBtn>
-                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
+                    <LogoutBtn onClick={() => Logout()}>로그아웃</LogoutBtn>
                   </div>
                 )}
               </HelpBox>
@@ -188,13 +231,32 @@ const HeaderWrapper = styled.header`
   border-bottom: 1px solid #ddd;
   background-color: black;
   min-width: 1180px;
+  z-index: 20000;
 `;
-
+const LogoWrapper = styled.div``;
+const LogoText = styled.img`
+  height: 15px;
+  margin-left: 12px;
+  object-fit: contain;
+  cursor: pointer;
+`;
 const Logo = styled.img`
   height: 30px;
   margin-left: 25px;
   object-fit: contain;
   cursor: pointer;
+  :hover {
+    animation: motion 0.3s linear 0s infinite alternate;
+    margin-top: 0;
+    @keyframes motion {
+      0% {
+        margin-top: 0px;
+      }
+      100% {
+        margin-top: 10px;
+      }
+    }
+  }
 `;
 
 const SearchBar = styled.div`
@@ -277,9 +339,7 @@ const ProfilePhoto = styled.div`
   background-color: black;
 `;
 const Photo = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  ${({ theme }) => theme.profileDiv}
 `;
 const FollowText = styled.span`
   color: white;
@@ -300,10 +360,11 @@ const UserBox = styled.div`
   margin-left: 26px;
   margin-right: 46px;
   height: 50px;
+  z-index: 30000;
   :hover {
     cursor: pointer;
-    transform: scale(1.05); /* 가로2배 새로 1.2배 로 커짐 */
-    transition: 0.3s;
+    transform: scale(1.02, 1.02); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.1s;
     .HelpBox {
       display: flex;
     }
@@ -312,7 +373,7 @@ const UserBox = styled.div`
 
 const HelpBox = styled.div`
   display: none;
-  z-index: 2000;
+  z-index: 20000;
   width: 128px;
   height: 250px;
   text-align: center;

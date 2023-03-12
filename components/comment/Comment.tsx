@@ -8,6 +8,7 @@ import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useRouter } from 'next/router';
+import Loading from '../common/globalModal/Loading';
 
 const Comment = ({
   comment,
@@ -175,7 +176,7 @@ const Comment = ({
   };
 
   if (isDeleting) {
-    return <div>삭제중입니다</div>;
+    return <Loading />;
   }
 
   return (
@@ -188,6 +189,7 @@ const Comment = ({
               goToMyPage(comment.userId);
             }}
           />
+
           <ContentLikeBox>
             <CommentContent>
               <NickName>{comment.nickName}</NickName>
@@ -199,12 +201,12 @@ const Comment = ({
                 {isClickedLike ? (
                   <LikeImg
                     onClick={onClickLike}
-                    src="/assets/icons/mapBoard/like_icon_active.svg"
+                    src="/assets/icons/ActivelikeIcon.svg"
                   />
                 ) : (
                   <LikeImg
                     onClick={onClickLike}
-                    src="/assets/icons/mapBoard/like_icon_inactive.svg"
+                    src="/assets/icons/likeIcon.svg"
                   />
                 )}
               </LikeImgBox>
@@ -234,7 +236,7 @@ const CommentListWrapper = styled.span`
   align-items: center;
   width: 100%;
   margin-bottom: 10px;
-  font-size: ${({ theme }) => theme.font.font50};
+  font-size: ${({ theme }) => theme.font.font10};
   font-weight: 600;
   flex-wrap: wrap;
 `;
@@ -246,15 +248,20 @@ const NickName = styled.div`
   font-size: ${({ theme }) => theme.font.font10};
 `;
 const DeleteButton = styled.button`
-  ${({ theme }) => theme.btn.btn50}
-  min-width:80px;
+  border: none;
+  width: 5%;
+  min-width: 70px;
   margin-left: 5px;
-  border: 1px solid black;
+  background-color: white;
+  font-size: 12px;
+  :hover {
+    color: red;
+  }
 `;
 
 const UserProfile = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
 `;
@@ -267,6 +274,7 @@ const CommentContent = styled.div`
 const ProfileImage = styled.img`
   ${({ theme }) => theme.profileDiv};
   margin-right: 8px;
+
   :hover {
     cursor: pointer;
   }
