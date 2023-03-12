@@ -1,38 +1,92 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## :zap: GYMTIVATION (by 8LLOW) :zap:
 
-## Getting Started
+<img src="![Slide 16_9 - 7](https://user-images.githubusercontent.com/117061525/224540028-c3e284fe-31bb-4b19-a882-f34d59e4f2ed.png)" width="700" height="370"/>
 
-First, run the development server:
+### 프로젝트 설명
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+:sunny: ***GymTivation (득근파트너스, Gym + Motivation)*** :sunny:   
+혼자 힘든 운동을 하게 된다면 금세 흥미가 떨어지기 마련입니다.      
+저희의 앱은 운동을 하는 분들이 충분히 동기 부여를 느낄 수 있도록 여러 기능을 제공합니다. 채팅 기능과 식단 공유, map api를 이용한 헬스장 같이 가기 등과 같은 기능을 통해 앱을 이용하는 사용자가 소속감을 느끼고 조금 더 동기 부여를 할 수 있도록 돕습니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### 기능
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+1. 로그인, 회원 가입 (이메일 본인 인증, 비밀번호 찾기)
+2. 메인페이지 (동기부여 한 마디 쓰기, 유저 검색, 운동 완료 이미지 캐로셀)
+3. 게시판 (카테고리 별 운동 정보 공유 글쓰기, 댓글, 좋아요, 팔로우, DM 보내기)
+4. 마이페이지 (내 글 모아보기, 스케줄 관리, 팔로우 확인, 내 정보 수정)
+5. 주변 동료 모집 (지도에 주변 동료 모집글 표시, 모집글 작성, 운동 참여 버튼, 댓글, 댓글, 좋아요, 팔로우, DM 보내기)
+6. 채팅 (실시간 채팅, 전체 채팅, DM 개인 채팅)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 기술 스택
+***1. Next.js***
+  - 이미지를 많이 불러오는 이번 프로젝트에서 SSR 구현을 쉽게 해주는 NEXT.js의 역할이 가장 적합하다고 생각했습니다.
 
-## Learn More
+***2. 전역 관리(Recoil, React-Query)***
+  - 리액트 리덕스를 사용하는 것보다 많은 장점이 있다고 생각했습니다. 일단 Recoil을 사용하면 전역 state 관리가 쉽기 때문에 전역 모달 구현, 채팅 서비스 구현에 들이는 시간적 비용이 줄어들 것으로 판단했습니다. 그리고 React-Query를 사용하면 서버 핸들링이 쉽다는 장점이 있었습니다. 또 이미지를 많이 불러오는 프로젝트에 강력한 캐싱 기능이 있는 React-Query 선택은 적절한 판단이라 생각했습니다.
 
-To learn more about Next.js, take a look at the following resources:
+***3. Socket io***
+  - WebSocket과 비교시 Socket io가 방 개념을 이용해 DM 채팅까지 쉽게 구현이 가능하며, 웹소켓 기술을 보다 쉽게 활용할 수 있기 때문에 프로젝트에 적합하다고 생각했습니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+***4.카카오 맵 API***
+  - 네이버와 구글 맵보다 검색 기능에 있어 속도가 더 빠르고 문서화가 잘 되어 있어 활용하기 쉽습니다. `근거 자료 출처 - https://epdev.tistory.com/8`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+***5. Firebase***
+  - 백엔드 개발자가 없는 상황에서 DB, 서버 관련 서비스가 필요했습니다. 사용이 편리하고 사용자 인증과 데이터 베이스 관련 서비스를 제공하는 파이어베이스가 가장 적합하다고 생각했습니다.
 
-## Deploy on Vercel
+***6. Typescript***
+  - 협업을 하는 과정에서 불가피하게 다른 사람이 쓴 코드를 보게 되는데 이때 지정한 type이 있어 다른 사람이 쓴 변수를 유추하기 쉽게 해주는 장점이 있습니다. 그리고 컴파일 단계에서 오류를 보여주기 때문에 런타임 에러를 피할 수 있는 장점이 있었습니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Commit Convention
+
+- 깃모지 x
+- `UI:` UI 개발 및 UI 수정
+- `Feat:` 새로운 기능 추가, 소개
+- `Fix:` 수정, 버그 수정
+- `Docs:` 문서에 관련된 내용, 문서 수정
+- `Style:` 코드 포맷, 세미콜론 누락, 코드 변경이 없을 경우
+- `Refactor:` 리팩토링
+- `Test:` 테스트 코드 수정, 누락된 테스트를 추가할 때, 리팩토링 테스트 추가
+- `Chore:` 빌드 업무 수정, 패키지 매니저 수정
+- `Add:` 기존 기능에 develop
+- `Share:` 완성되지 않은 코드 공유
+
+#### Title
+
+- 마침표 및 특수기호는 사용하지 않는다.
+- 영어로 작성시 첫 글자를 대문자로 쓴다.
+- 영문으로 표기한다.
+- 제목은 개조식 구문으로 작성한다. (간결하고 요점적인 서술)
+
+#### Body
+
+- 본문 내용은 양에 구애받지 않고 최대한 상세히 작성한다.
+- 본문 내용은 무엇을 변경했는지 또는 왜 변경했는지를 설명한다. (변화에 대한 동기를 포함하고 이전 행동과 대조되어야 함)
+- 한글로 작성한다.
+
+---
+
+### PR Convention
+#### Title
+
+- 영어로 작성시 첫 글자를 대문자로 쓴다.
+- 영문으로 표기한다.
+
+#### Body
+
+- 제목 크기는 h2 로 한다.
+- 제목은 항상 해당 페이지로 한다.
+- 페이지 별 변경, 추가 사항을 상세히 적는다.
+- 페이지 구분 선을 사용한다.
+- 한글로 작성한다.
+- 제일 윗 줄에 머지 경로를 적는다.
+ex) `feature/login` → `dev`
+
+---
+
+### 서비스 아키텍처
