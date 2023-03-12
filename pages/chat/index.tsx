@@ -155,7 +155,7 @@ const Chat = () => {
 
     await updateDoc(doc(dbService, 'allChat', 'allChat'), {
       chatLog: arrayUnion({
-        id: nanoid(),
+        id: user?.uid,
         msg: chatLog.msg,
         username: chatLog.username,
         photoURL: chatLog.photoURL,
@@ -270,7 +270,7 @@ const Chat = () => {
                       )
                       .map((item: any) => {
                         return (
-                          <SearchResult key={nanoid()}>
+                          <SearchResult key={item.id}>
                             <UserInfo>
                               <UserImg
                                 src={`${item.photoURL}`}
@@ -344,7 +344,6 @@ const Chat = () => {
                   <ChatInput
                     placeholder="채팅을 입력하세요."
                     type="text"
-                    onKeyPress={postChat}
                     value={inputValue}
                     onChange={onChangeInputValue}
                   />
@@ -414,7 +413,7 @@ const SearchBar = styled.div`
 const SearchInput = styled.input`
   width: calc(100% - 65px);
   height: 30px;
-  margin-right: 5px;
+  margin-right: 10px;
   border: none;
   outline: none;
   background-color: #fff;
