@@ -49,6 +49,7 @@ const Board = () => {
   if (isLoading) {
     return <Loading />;
   }
+
   return (
     <>
       <BoardWrapper>

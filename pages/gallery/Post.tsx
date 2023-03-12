@@ -37,6 +37,10 @@ const Post = () => {
       pathname: `/gallery`,
     });
   };
+  // const { isLoading: loginStateLoading, data: loginState } =
+  //   useQuery('loginState');
+  const { isLoading: loginStateLoading, data: loginState } =
+    useQuery('loginState');
 
   const onChangeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -76,14 +80,17 @@ const Post = () => {
   };
 
   useEffect(() => {
-    if (!authService.currentUser) {
+    if (
+      (!loginStateLoading && loginState === undefined) ||
+      (!loginStateLoading && !loginState)
+    ) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
         modalProps: { contentText: '로그인 후 이용해주세요!' },
       });
       router.push('/gallery');
     }
-  }, [authService.currentUser]);
+  }, [authService.currentUser, loginState, loginStateLoading]);
   if (!authService.currentUser) {
     return <div>로그인이 필요합니다.</div>;
   }
@@ -167,6 +174,9 @@ const Post = () => {
   const UserPhotoUrl: string | null = authService.currentUser?.photoURL;
   const userInformation: any = data?.filter((item) => item.id === user?.uid);
   if (!UserPhotoUrl) {
+    return <Loading />;
+  }
+  if (loginStateLoading) {
     return <Loading />;
   }
   return (
