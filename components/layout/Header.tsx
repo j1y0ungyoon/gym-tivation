@@ -15,7 +15,7 @@ import { navMenuState } from '@/recoil/navMenu';
 const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
   const { showModal } = useModal();
-
+  //유저 검색창
   const [searchOpen, setSearchOpen] = useState<Boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
 
@@ -86,17 +86,18 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   return (
     <HeaderWrapper>
-      <Logo
+      <LogoWrapper
         onClick={() => {
           router.push('/');
           setNowMenu('home');
         }}
-        src="/assets/images/Logo.png"
-      />
-
+      >
+        <Logo alt="짐티베이션 로고" src="/assets/icons/main/logoIcon.svg" />
+        <LogoText src="/assets/icons/main/GYMTIVATION.svg" />
+      </LogoWrapper>
       <Itembox>
         <SearchBar>
-          <SearchIcon src="/assets/icons/searchIcon.svg" />
+          <SearchIcon alt="유저검색 버튼" src="/assets/icons/searchIcon.svg" />
           <SearchInput
             value={searchName}
             onChange={(e) => {
@@ -119,6 +120,7 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           />
           {searchOpen && searchName.length > 0 && (
             <SearchClose
+              alt="검색 취소 버튼"
               src="/assets/icons/closeBtn.svg"
               onClick={() => {
                 setSearchOpen(false);
@@ -133,13 +135,12 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         <>
           {authService.currentUser && (
             <UserBox>
-              <ProfilePhoto
-                onClick={() => {
-                  goToDetailMyPage(id);
-                }}
-              >
+              <ProfilePhoto>
                 {authService.currentUser?.photoURL && (
-                  <Photo src={authService.currentUser?.photoURL} />
+                  <Photo
+                    alt="유저 사진"
+                    src={authService.currentUser?.photoURL}
+                  />
                 )}
               </ProfilePhoto>
               <TextBox>
@@ -153,7 +154,6 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                   </SignBox>
                 ) : (
                   <div>
-                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
                     <LogoutBtn onClick={onClickGalleryPostButton}>
                       오운완 글쓰기
                     </LogoutBtn>
@@ -161,6 +161,14 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                       게시판 글쓰기
                     </LogoutBtn>
                     <LogoutBtn onClick={goToWrite}>동료 모집하기</LogoutBtn>
+                    <LogoutBtn
+                      onClick={() => {
+                        goToDetailMyPage(id);
+                      }}
+                    >
+                      마이페이지
+                    </LogoutBtn>
+                    <LogoutBtn onClick={onLogout}>로그아웃</LogoutBtn>
                   </div>
                 )}
               </HelpBox>
@@ -187,13 +195,32 @@ const HeaderWrapper = styled.header`
   border-bottom: 1px solid #ddd;
   background-color: black;
   min-width: 1180px;
+  z-index: 20000;
 `;
-
+const LogoWrapper = styled.div``;
+const LogoText = styled.img`
+  height: 15px;
+  margin-left: 12px;
+  object-fit: contain;
+  cursor: pointer;
+`;
 const Logo = styled.img`
   height: 30px;
   margin-left: 25px;
   object-fit: contain;
   cursor: pointer;
+  :hover {
+    animation: motion 0.3s linear 0s infinite alternate;
+    margin-top: 0;
+    @keyframes motion {
+      0% {
+        margin-top: 0px;
+      }
+      100% {
+        margin-top: 10px;
+      }
+    }
+  }
 `;
 
 const SearchBar = styled.div`
@@ -297,6 +324,7 @@ const UserBox = styled.div`
   margin-left: 26px;
   margin-right: 46px;
   height: 50px;
+  z-index: 30000;
   :hover {
     cursor: pointer;
     transform: scale(1.02, 1.02); /* 가로2배 새로 1.2배 로 커짐 */
@@ -309,12 +337,12 @@ const UserBox = styled.div`
 
 const HelpBox = styled.div`
   display: none;
-  z-index: 2000;
+  z-index: 20000;
   width: 128px;
-  height: 200px;
+  height: 250px;
   text-align: center;
-  margin-top: 150px;
-  margin-left: 20px;
+  margin-top: 172px;
+  margin-left: 26px;
   position: fixed;
   border-radius: 15px;
   background-color: white;

@@ -90,6 +90,15 @@ const WritingRecruitment = () => {
   };
 
   const onSubmitRecruitPost = async () => {
+    if (!authService.currentUser) {
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
+      router.push('/mapBoard');
+      return;
+    }
+
     if (!recruitTitle) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
@@ -172,24 +181,10 @@ const WritingRecruitment = () => {
     setOpenMap(!openMap);
   };
 
-  useEffect(() => {
-    if (!authService.currentUser) {
-      showModal({
-        modalType: GLOBAL_MODAL_TYPES.AlertModal,
-        modalProps: { contentText: '로그인을 해주세요!' },
-      });
-      router.push('/mapBoard');
-    }
-  }, []);
-
   // 현재 유저 프로필에서 LvName, Lv 가져오기
   useEffect(() => {
     profileData();
   }, []);
-
-  if (!authService.currentUser) {
-    return <div>로그인이 필요합니다.</div>;
-  }
 
   return (
     <>

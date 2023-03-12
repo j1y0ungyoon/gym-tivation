@@ -457,6 +457,9 @@ const RecruitDetail = ({ params }: any) => {
   if (!refetchedPost) {
     return <Loading />;
   }
+  if (gettingYourProfile) {
+    return <Loading />;
+  }
 
   return (
     <>

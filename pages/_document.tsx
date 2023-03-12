@@ -39,8 +39,24 @@ export default class MyDocument extends Document {
   }
   render() {
     return (
-      <Html>
-        <Head />
+      <Html lang="kr">
+        <title>Gymtivation</title>
+        <Head>
+          <meta name="description" content="당신의 득근 파트너스 Gymtivation" />
+          <meta property="og:type" content={'website'} />
+          <meta property="og:title" content={'짐티베이션'} />
+          <meta
+            property="og:description"
+            content={'당신의 득근 파트너스 Gymtivation'}
+          />
+          <meta property="og:url" content={'gymtivation.site'} />
+          <meta
+            property="og:image"
+            content={
+              'https://firebasestorage.googleapis.com/v0/b/gym-tivation.appspot.com/o/gymtivation%2FOGTAG.png?alt=media&token=8b47b982-6ad1-47b1-adea-7c5d0ceb1dd6'
+            }
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />

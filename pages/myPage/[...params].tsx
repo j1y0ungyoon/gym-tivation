@@ -11,6 +11,7 @@ import MyPageBoard from '@/components/mypage/MyPageBoard';
 import MyPageRecruit from '@/components/mypage/MyPageRecruit';
 import { useQuery } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
+import { getProfile } from '../api/api';
 //mypage 컴포넌트 나누기 완료
 const MyPage = ({ params }: any) => {
   //전달받은 id
@@ -55,11 +56,11 @@ const MyPage = ({ params }: any) => {
           setMeetingMenu(false);
       }}
     >
-      게시판
+      작성한 글
     </GalleyButton>
   ) : (
     <GalleyButton style={{ backgroundColor: 'black', color: 'white' }}>
-      게시판
+      작성한 글
     </GalleyButton>
   );
 
@@ -97,15 +98,6 @@ const MyPage = ({ params }: any) => {
   );
 
   // 프로필 불러오기
-
-  const getProfile = async () => {
-    const q = query(collection(dbService, 'profile'));
-    const data = await getDocs(q);
-    return data.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  };
 
   const { isLoading: profileLoading, data: profile } = useQuery(
     'profile',
@@ -163,6 +155,7 @@ const MyPage = ({ params }: any) => {
       },
     },
   );
+
   const combineData = board?.concat(gallery);
 
   if (galleryLoading) {
@@ -308,6 +301,7 @@ const ScheduleBox = styled.div`
   float: right;
   margin-top: 0.5vh;
   margin-bottom: 0.5vh;
+  margin-right: 16px;
   width: 25%;
 `;
 const Schedule = styled.div`
@@ -329,10 +323,11 @@ const NavigationBox = styled.div`
 
 const GalleyButton = styled.button`
   ${({ theme }) => theme.btn.category}
+  min-width: 130px;
   background-color: white;
-  border: black;
   border-style: solid;
   border-width: 0.1rem;
+  box-shadow: -2px 2px 0px 0px #000000;
   :hover {
     cursor: pointer;
     background-color: black;
@@ -416,6 +411,7 @@ const FollowModal = styled.div`
   top: 50%;
   left: 50%;
   border-radius: 15px;
+  box-shadow: -2px 2px 0px 0px #000000;
   transform: translate(-50%, -50%) !important;
   padding-top: 1.5rem;
   background-color: #fffcf3;

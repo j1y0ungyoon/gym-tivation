@@ -88,12 +88,12 @@ const Home = () => {
     pauseOnHover: false,
     nextArrow: (
       <ArrowR>
-        <SVG src={'/assets/icons/next.svg'} />
+        <SVG alt="다음" src={'/assets/icons/next.svg'} />
       </ArrowR>
     ),
     prevArrow: (
       <ArrowL>
-        <SVG src={'/assets/icons/prev.svg'} />
+        <SVG alt="이전" src={'/assets/icons/prev.svg'} />
       </ArrowL>
     ),
   };
@@ -122,23 +122,23 @@ const Home = () => {
         <TitleText>
           {userCount}명의 동료들이 짐티베이션에 참여하고 있습니다!
         </TitleText>
-        <SliderWrapper>
+        <ImgSliderWrapper>
           <ImgSliderContainer {...imgSettings}>
             {mainImgs?.map((mainImg: string) => {
               return <Img key={mainImg} img={mainImg} />;
             })}
           </ImgSliderContainer>
 
-          <TitleSvg src={'/assets/icons/title.svg'} />
-        </SliderWrapper>
+          <TitleSvg alt="let's gymtivate!" src={'/assets/icons/title.svg'} />
+        </ImgSliderWrapper>
 
-        <SliderWrapper>
+        <CommentSliderWrapper>
           <MainCommentSliderContainer {...commentSettings}>
             {mainComments?.map((mainComment: any) => {
               return <HomeComment key={nanoid()} mainComment={mainComment} />;
             })}
           </MainCommentSliderContainer>
-        </SliderWrapper>
+        </CommentSliderWrapper>
 
         <MainCommentList />
       </HomeContainer>
@@ -154,6 +154,7 @@ const HomeWrapper = styled.main`
 const HomeContainer = styled.div`
   ${({ theme }) => theme.mainLayout.container}
   height: 100%;
+  max-width: 1160px;
 `;
 
 const SubTitleText = styled.h1`
@@ -169,7 +170,14 @@ const TitleText = styled.h1`
   font-weight: bold;
   text-align: center;
 `;
-const SliderWrapper = styled.div`
+const ImgSliderWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 160px;
+`;
+const CommentSliderWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
@@ -183,8 +191,8 @@ const Img = styled.div<ImgBoxProps>`
 
 const ImgSliderContainer = styled(Slider)`
   width: 100%;
-  height: calc(100% - 320px);
-  min-height: 620px;
+  height: calc(100% - 920px);
+  min-height: 100px;
   max-height: 720px;
 
   position: relative;
@@ -197,7 +205,7 @@ const ImgSliderContainer = styled(Slider)`
 
   .slick-list {
     width: 100%;
-    min-height: 600px;
+    min-height: 280px;
     height: 100%;
   }
 
@@ -205,21 +213,22 @@ const ImgSliderContainer = styled(Slider)`
   }
 
   .slick-slide {
-    min-height: 600px;
-    height: calc(100vh - 440px);
+    min-height: 280px;
+    height: calc(100vh - 600px);
     display: flex;
     align-items: center;
   }
   .slick-slide div {
     width: 100%;
-    height: 380px;
+    min-height: 190px;
+    border: 2px solid black;
+    border-radius: 500px;
+    height: 68%;
   }
   .slick-slide div div {
     width: 100%;
     height: 100%;
     border-radius: 500px;
-    border: 2px solid black;
-    /* box-shadow: -2px 2px 0px 1px #000000; */
     object-fit: cover;
   }
   .slick-center div div {
@@ -242,14 +251,14 @@ const ArrowR = styled.div`
   width: 40px;
   height: 40px;
   position: absolute;
-  right: 48px;
+  right: -64px;
   z-index: 99;
 `;
 const ArrowL = styled.div`
   width: 40px;
   height: 40px;
   position: absolute;
-  left: 48px;
+  left: -64px;
   z-index: 99;
 `;
 const SVG = styled.img`
@@ -260,49 +269,8 @@ const SVG = styled.img`
 const MainCommentSliderContainer = styled(Slider)`
   width: 100%;
   height: 100px;
-  margin: 105px 0;
+  margin: 90px 0;
   position: relative;
-  /* 
-  .slick-prev::before,
-  .slick-next::before {
-    opacity: 0;
-    display: none;
-  }
-
-  .slick-list {
-    width: 100%;
-    min-height: 600px;
-    height: 100%;
-  }
-
-  .silck-track {
-  }
-
-  .slick-slide {
-    min-height: 600px;
-    height: calc(100vh - 440px);
-    display: flex;
-    align-items: center;
-  }
-  .slick-slide div {
-    width: 380px;
-    height: 380px;
-  }
-  .slick-slide div div {
-    width: 100%;
-    height: 100%;
-    border-radius: 500px;
-    object-fit: cover;
-  }
-  .slick-center div div {
-    width: 100%;
-    height: 100%;
-    border-radius: 500px;
-    transition: all 300ms ease;
-    transform: scale(1.4);
-  } */
 `;
-
-const MainCommentWrapper = styled.div``;
 
 export default Home;

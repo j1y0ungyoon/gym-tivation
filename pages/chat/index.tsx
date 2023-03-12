@@ -20,12 +20,13 @@ import {
 
 import styled from 'styled-components';
 import DmChat from '@/components/chat/DmChat';
-import DmButton from '@/components/DmButton';
+import DmButton, { MemoizedDmButton } from '@/components/DmButton';
 import { MemoizedDmListUserInfo } from '@/components/chat/DmListUserInfo';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { getMyDms } from '../api/api';
 import Loading from '@/components/common/globalModal/Loading';
+import { chatCategoryState } from '@/recoil/chat';
 
 type ChatLog = {
   id: string | undefined;
@@ -50,7 +51,8 @@ const Chat = () => {
   const [roomNum, setRoomNum] = useRecoilState(roomState);
   const [apponentId, setApponentId] = useRecoilState(apponentState);
 
-  const [isMyDmOn, setIsMyDmOn] = useState(false);
+  const [isMyDmOn, setIsMyDmOn] = useRecoilState(chatCategoryState);
+
   const [searchValue, setSearchValue] = useState('');
   const [users, setUsers] = useState<any>();
 
@@ -136,21 +138,16 @@ const Chat = () => {
   }, [chatLogs]);
 
   // 채팅 전송시 실행 함수
-  const postChat = async (e: React.KeyboardEvent<EventTarget>) => {
-    if (e.key !== 'Enter') return;
+  const postChat = async (e: any) => {
+    e.preventDefault();
     if (inputValue === '') return;
 
     // 날짜 추가
-    const newDate = new Date();
-
-    const hours = newDate.getHours(); // 시
-    const minutes = newDate.getMinutes(); // 분
-    const seconds = newDate.getSeconds(); // 초
-    const time = `${hours}:${minutes}:${seconds}`;
+    const time = new Date().toLocaleTimeString('ko-KR');
 
     const chatLog = {
       id: user?.uid,
-      msg: (e.target as any).value,
+      msg: inputValue,
       username: username ? username : anonymousname,
       photoURL: user ? user.photoURL : null,
       date: time,
@@ -237,6 +234,10 @@ const Chat = () => {
             <MyDmListContainer>
               <SearchWrapper>
                 <SearchBar>
+                  <SearchIcon
+                    alt="찾기 버튼"
+                    src="/assets/icons/searchIcon.svg"
+                  />
                   {user ? (
                     <SearchInput
                       onChange={(e) => setSearchValue(e.target.value)}
@@ -251,13 +252,13 @@ const Chat = () => {
                   )}
                   {searchValue.length > 0 ? (
                     <SearchCancel
+                      alt="검색 취소 버튼"
                       src={'/assets/icons/closeBtn.svg'}
                       onClick={() => {
                         setSearchValue('');
                       }}
                     />
                   ) : null}
-                  <SearchIcon src="/assets/icons/searchIcon.svg" />
                 </SearchBar>
                 {searchValue.length > 0 ? (
                   <SearchResultWrapper>
@@ -279,7 +280,7 @@ const Chat = () => {
                               />
                               <UserName>{item.displayName}</UserName>
                             </UserInfo>
-                            <DmButton id={item.id} />
+                            <MemoizedDmButton id={item.id} />
                           </SearchResult>
                         );
                       })}
@@ -321,6 +322,7 @@ const Chat = () => {
               {chatLogs?.map((chatLog) => (
                 <ChatBox key={nanoid()}>
                   <UserImg
+                    alt="유저 이미지"
                     src={`${chatLog.photoURL}`}
                     onClick={(e) => {
                       return router.push(`/myPage/${chatLog.id}`);
@@ -335,10 +337,10 @@ const Chat = () => {
               ))}
             </ChatLogBox>
 
-            <ChatInputBox>
-              {user ? (
-                <>
-                  <UserImg src={`${user?.photoURL}`} />
+            {user ? (
+              <ChatInputContainer>
+                <UserImg alt="유저이미지" src={`${user?.photoURL}`} />
+                <ChatInputBox onSubmit={(e) => postChat(e)}>
                   <ChatInput
                     placeholder="채팅을 입력하세요."
                     type="text"
@@ -346,11 +348,16 @@ const Chat = () => {
                     value={inputValue}
                     onChange={onChangeInputValue}
                   />
-                </>
-              ) : (
+                  <MessageBtn type="submit">
+                    <MessageIcon src="/assets/icons/myPage/DM.svg" />
+                  </MessageBtn>
+                </ChatInputBox>
+              </ChatInputContainer>
+            ) : (
+              <ChatInputBox>
                 <ChatInput placeholder="로그인 후 이용 가능합니다." disabled />
-              )}
-            </ChatInputBox>
+              </ChatInputBox>
+            )}
           </ChattingContainer>
         )}
       </ChatContainer>
@@ -407,7 +414,7 @@ const SearchBar = styled.div`
 const SearchInput = styled.input`
   width: calc(100% - 65px);
   height: 30px;
-  margin-left: 20px;
+  margin-right: 5px;
   border: none;
   outline: none;
   background-color: #fff;
@@ -418,12 +425,22 @@ const SearchCancel = styled.img`
   justify-content: center;
   width: 12px;
   height: 12px;
+  margin-right: 20px;
   cursor: pointer;
 `;
 const SearchIcon = styled.img`
   width: 20px;
-  margin-right: 20px;
-  margin-left: 5px;
+  margin-right: 5px;
+  margin-left: 20px;
+`;
+const MessageBtn = styled.button`
+  background-color: transparent;
+  border: none;
+`;
+const MessageIcon = styled.img`
+  width: 20px;
+  margin: 5px;
+  cursor: pointer;
 `;
 
 const SearchResultWrapper = styled.div`
@@ -448,7 +465,7 @@ const SearchResult = styled.div`
   }
 `;
 const MyDmListBox = styled.div`
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid #d9d9d9;
   :last-child {
     border-bottom: none;
   }
@@ -532,19 +549,26 @@ const ChatTime = styled.span`
   color: gray;
   margin: 0;
 `;
-
-const ChatInputBox = styled.div`
+const ChatInputContainer = styled.div`
   display: flex;
   align-items: center;
+  width: 100%;
+`;
+const ChatInputBox = styled.form`
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 50px;
 `;
 
 const ChatInput = styled.input`
   width: 100%;
   height: 48px;
   outline: none;
-  border: 1px solid black;
-  border-radius: 50px;
-  padding: 5px 20px;
+  border: none;
+  padding: 5px 0;
   font-size: 0.875rem;
   ::placeholder {
     font-size: 14px;
@@ -564,6 +588,10 @@ const CategoryBtn = styled.button`
 
   margin-bottom: 20px;
   margin-right: 10px;
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor50};
+    color: black;
+  }
 `;
 const ActivatedCategoryBtn = styled.button`
   ${({ theme }) => theme.btn.category}

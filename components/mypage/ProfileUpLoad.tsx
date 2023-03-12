@@ -3,7 +3,6 @@ import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import imageCompression from 'browser-image-compression';
-import { async } from '@firebase/util';
 
 // storage 이미지 업로드 후 불러오기
 const UploadImage = ({

@@ -2,7 +2,7 @@ import { dbService } from '@/firebase';
 import { MapModalProps, RecruitPostType } from '@/type';
 import { collection, getDocs } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
-import React, { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 import MapZoomInZoomOut from './MapZoomInZoomOut';

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import BoardPost from './BoardPost';
 import type { BoardPostType } from '@/type';
 import { useEffect, useState } from 'react';
-import { nanoid } from 'nanoid';
 
 interface BoardItemProps {
   category?: string;
@@ -69,9 +68,9 @@ const BoardItem = ({
               userId={boardPost.userId}
               nickName={boardPost.nickName}
               category={boardPost.category}
-              // photo={boardPost.photo}
               like={boardPost.like}
               createdAt={boardPost.date}
+              userPhoto={boardPost.userPhoto}
             />
           </BoardList>
         );
@@ -81,6 +80,9 @@ const BoardItem = ({
 };
 
 const BoardList = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   overflow: auto;

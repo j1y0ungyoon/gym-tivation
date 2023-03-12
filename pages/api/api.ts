@@ -251,15 +251,6 @@ export const addDm = async ({ myId, appoId }: AddDmParams) => {
     chatLog: [],
   });
 };
-
-// export const fetchRecruitPost = async (recruitPostId: string) => {
-//   const res = await getDoc(doc(dbService, 'recruitments', recruitPostId));
-
-//   return res.data();
-// };
-
-// 프로필 불러오기
-
 export const getProfile = async () => {
   const q = query(collection(dbService, 'profile'));
   const data = await getDocs(q);
@@ -268,3 +259,10 @@ export const getProfile = async () => {
     ...doc.data(),
   }));
 };
+// export const fetchRecruitPost = async (recruitPostId: string) => {
+//   const res = await getDoc(doc(dbService, 'recruitments', recruitPostId));
+
+//   return res.data();
+// };
+
+// 프로필 불러오기

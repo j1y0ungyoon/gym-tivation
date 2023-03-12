@@ -30,6 +30,7 @@ type Board = {
   comment: number;
   like: [];
   date: string;
+  userPhoto: string;
 };
 type Gallery = {
   id: string;
@@ -43,6 +44,7 @@ type Gallery = {
   comment: number;
   like: [];
   date: string;
+  userPhoto: string;
 };
 type Follows = {
   id: string;
