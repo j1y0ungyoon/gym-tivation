@@ -44,9 +44,6 @@ const BoardPost = ({
 
   return (
     <BoardPostWrapper key={id} onClick={() => goToDetailPost(id)}>
-      {/* <ItemPhotoContainer>
-        <ItemPhoto src={photo}></ItemPhoto>
-      </ItemPhotoContainer> */}
       <BoardPostContainer>
         <ItemContentWrapper>
           <UserImageWrapper>

@@ -7,7 +7,7 @@ import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import styled, { ThemeContext } from 'styled-components';
+import styled from 'styled-components';
 import { getBoardPosts } from '../api/api';
 
 interface BoardProps {

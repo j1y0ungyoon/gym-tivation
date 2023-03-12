@@ -20,7 +20,7 @@ import {
 
 import styled from 'styled-components';
 import DmChat from '@/components/chat/DmChat';
-import DmButton, { MemoizedDmButton } from '@/components/DmButton';
+import { MemoizedDmButton } from '@/components/DmButton';
 import { MemoizedDmListUserInfo } from '@/components/chat/DmListUserInfo';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
@@ -163,7 +163,7 @@ const Chat = () => {
       }),
     });
 
-    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
+    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려
     socket?.emit('chat', chatLog);
     setInputValue('');
   };
