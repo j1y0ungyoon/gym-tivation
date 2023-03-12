@@ -2,7 +2,7 @@ import { authService } from '@/firebase';
 import { navMenuState } from '@/recoil/navMenu';
 import { useRouter } from 'next/router';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 

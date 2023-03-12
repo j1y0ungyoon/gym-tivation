@@ -2,15 +2,13 @@ import { authService, dbService } from '@/firebase';
 import { collection, doc, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/board/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
-// import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { addBoardPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
@@ -115,7 +113,6 @@ const Post = () => {
     event.preventDefault();
 
     if (!boardTitle) {
-      // toast.warn('제목을 입력해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '제목을 입력해주세요!' },
@@ -123,7 +120,6 @@ const Post = () => {
       return;
     }
     if (!boardContent) {
-      // toast.warn('내용을 입력해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '내용을 입력해주세요!' },
@@ -131,7 +127,6 @@ const Post = () => {
       return;
     }
     if (!category) {
-      // toast.warn('카테고리를 선택해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '카테고리를 선택해주세요!' },
@@ -147,7 +142,6 @@ const Post = () => {
       createdAt: Date.now(),
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
-      // photo: boardPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
       userLv: userLv,

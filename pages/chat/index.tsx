@@ -20,7 +20,7 @@ import {
 
 import styled from 'styled-components';
 import DmChat from '@/components/chat/DmChat';
-import DmButton, { MemoizedDmButton } from '@/components/DmButton';
+import { MemoizedDmButton } from '@/components/DmButton';
 import { MemoizedDmListUserInfo } from '@/components/chat/DmListUserInfo';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
@@ -142,12 +142,10 @@ const Chat = () => {
 
     // 날짜 추가
     const newDate = new Date();
-
     const hours = newDate.getHours(); // 시
     const minutes = newDate.getMinutes(); // 분
     const seconds = newDate.getSeconds(); // 초
     const time = `${hours}:${minutes}:${seconds}`;
-
     const chatLog = {
       id: user?.uid,
       msg: (e.target as any).value,
@@ -166,7 +164,7 @@ const Chat = () => {
       }),
     });
 
-    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
+    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려
     socket?.emit('chat', chatLog);
     setInputValue('');
   };
