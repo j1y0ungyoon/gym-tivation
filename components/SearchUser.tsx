@@ -34,6 +34,7 @@ const SearchUser = ({
   );
   const follwoingInformation = String(follow);
 
+  // SearchUser.tsx
   const { isLoading: profileLoading, data: profile } = useQuery('profile');
 
   return (

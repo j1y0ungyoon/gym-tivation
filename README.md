@@ -1,6 +1,11 @@
 ## :zap: GYMTIVATION (by 8LLOW) :zap:
 
-<img src="![Slide 16_9 - 7](https://user-images.githubusercontent.com/117061525/224540028-c3e284fe-31bb-4b19-a882-f34d59e4f2ed.png)" width="700" height="370"/>
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224545110-07eb4d22-4928-40a0-9140-a078482df98c.png'>
+
+### 기술 스택
+<img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white"> <img src="https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=Socket.io&logoColor=white"> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white"> <img src="https://img.shields.io/badge/Kakao-FFCD00?style=for-the-badge&logo=Kakao&logoColor=white">
+
+---
 
 ### 프로젝트 설명
 
@@ -12,35 +17,31 @@
 
 ### 기능
 
-1. 로그인, 회원 가입 (이메일 본인 인증, 비밀번호 찾기)
-2. 메인페이지 (동기부여 한 마디 쓰기, 유저 검색, 운동 완료 이미지 캐로셀)
-3. 게시판 (카테고리 별 운동 정보 공유 글쓰기, 댓글, 좋아요, 팔로우, DM 보내기)
-4. 마이페이지 (내 글 모아보기, 스케줄 관리, 팔로우 확인, 내 정보 수정)
-5. 주변 동료 모집 (지도에 주변 동료 모집글 표시, 모집글 작성, 운동 참여 버튼, 댓글, 댓글, 좋아요, 팔로우, DM 보내기)
-6. 채팅 (실시간 채팅, 전체 채팅, DM 개인 채팅)
+#### 1. 로그인, 회원 가입 (이메일 본인 인증, 비밀번호 찾기)
 
----
 
-### 기술 스택
-***1. Next.js***
-  - 이미지를 많이 불러오는 이번 프로젝트에서 SSR 구현을 쉽게 해주는 NEXT.js의 역할이 가장 적합하다고 생각했습니다.
+#### 2. 메인페이지 (동기부여 한 마디 쓰기, 유저 검색, 운동 완료 이미지 캐로셀)
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224545603-93a97b77-e037-48cc-b109-417ad7c1abea.png'>
 
-***2. 전역 관리(Recoil, React-Query)***
-  - 리액트 리덕스를 사용하는 것보다 많은 장점이 있다고 생각했습니다. 일단 Recoil을 사용하면 전역 state 관리가 쉽기 때문에 전역 모달 구현, 채팅 서비스 구현에 들이는 시간적 비용이 줄어들 것으로 판단했습니다. 그리고 React-Query를 사용하면 서버 핸들링이 쉽다는 장점이 있었습니다. 또 이미지를 많이 불러오는 프로젝트에 강력한 캐싱 기능이 있는 React-Query 선택은 적절한 판단이라 생각했습니다.
+#### 3. 게시판 (카테고리 별 운동 정보 공유 글쓰기, 댓글, 좋아요, 팔로우, DM 보내기)
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224546082-c269ecc2-637f-4299-b699-bf3581ecd4f8.png'>
 
-***3. Socket io***
-  - WebSocket과 비교시 Socket io가 방 개념을 이용해 DM 채팅까지 쉽게 구현이 가능하며, 웹소켓 기술을 보다 쉽게 활용할 수 있기 때문에 프로젝트에 적합하다고 생각했습니다.
 
-***4.카카오 맵 API***
-  - 네이버와 구글 맵보다 검색 기능에 있어 속도가 더 빠르고 문서화가 잘 되어 있어 활용하기 쉽습니다. `근거 자료 출처 - https://epdev.tistory.com/8`
+#### 4. 마이페이지 (내 글 모아보기, 스케줄 관리, 팔로우 확인, 내 정보 수정)
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224546036-0595abe2-4a94-45bd-8913-854d3f005243.png'>
 
-***5. Firebase***
-  - 백엔드 개발자가 없는 상황에서 DB, 서버 관련 서비스가 필요했습니다. 사용이 편리하고 사용자 인증과 데이터 베이스 관련 서비스를 제공하는 파이어베이스가 가장 적합하다고 생각했습니다.
+#### 5. 주변 동료 모집 (지도에 주변 동료 모집글 표시, 모집글 작성, 운동 참여 버튼, 댓글, 댓글, 좋아요, 팔로우, DM 보내기)
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224545809-1eff1872-e017-4b2b-9af4-ded38dc5d8a9.png'>
 
-***6. Typescript***
-  - 협업을 하는 과정에서 불가피하게 다른 사람이 쓴 코드를 보게 되는데 이때 지정한 type이 있어 다른 사람이 쓴 변수를 유추하기 쉽게 해주는 장점이 있습니다. 그리고 컴파일 단계에서 오류를 보여주기 때문에 런타임 에러를 피할 수 있는 장점이 있었습니다.
 
----
+#### 6. 채팅 (실시간 채팅, 전체 채팅, DM 개인 채팅)
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224545734-13477c2b-127e-49db-864e-11b443614009.png'>
+
+#### 7. 오운완 갤러리 (이미지 업로드, 이미지 압축)
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224545946-9f22c3a8-5e74-4e6e-a03e-f9c1fbacb181.png'>
+
+
+------
 
 ### Commit Convention
 
@@ -90,3 +91,25 @@ ex) `feature/login` → `dev`
 ---
 
 ### 서비스 아키텍처
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224546308-0fc97b10-6a36-47e2-9eab-1898a14970e8.png'>
+
+-----
+
+### 트러블 슈팅
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224548834-6525f6ec-533f-4da1-a42a-d5db2a866d31.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224548907-63572375-66c9-4d43-8a91-685eef0706c0.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224548991-0510aac6-b7f3-4f00-8127-fd443e58c956.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224549030-040b71af-a05f-40fb-9c42-6c4fcc506139.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224549067-9a4b5b5e-2f2b-43c8-b422-382ffaeefc05.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224549122-edd8feb1-dc6a-4455-97f5-aacbec2758fe.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224549160-d3f0a155-27a2-4621-965c-0bbb67aa6d7f.png'>
+
+<img width='100%' src='https://user-images.githubusercontent.com/117061525/224549200-a08cef52-d112-4394-a7a8-f9394d9f40da.png'>

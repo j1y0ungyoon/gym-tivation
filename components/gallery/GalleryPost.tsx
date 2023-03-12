@@ -39,6 +39,7 @@ const GalleryPost = ({
 
   const [CurrentUserProfile, setCurrentUserProfile] = useState<ProfileItem>();
 
+  // GalleryPost.tsx
   const { data: profile, isLoading: profileLoading } = useQuery(
     'profile',
     getProfile,
@@ -70,8 +71,7 @@ const GalleryPost = ({
               <UserNickNameAndLvBox>
                 <UserNicknameText>{nickName}</UserNicknameText>
                 <UserLvText>
-                  {CurrentUserProfile &&
-                    `${CurrentUserProfile.lvName} ${CurrentUserProfile.lv}`}
+                  {CurrentUserProfile && `Lv${CurrentUserProfile.lv}`}
                 </UserLvText>
               </UserNickNameAndLvBox>
             </UserProfileBox>
@@ -176,7 +176,6 @@ const UserNickNameAndLvBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 4px;
 `;
 
 const UserNicknameText = styled.span`

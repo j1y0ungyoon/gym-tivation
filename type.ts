@@ -121,6 +121,11 @@ export interface CommentType {
 }
 
 export interface DayType {
+  exist: boolean;
+  dayName: string;
+}
+
+export interface DaysType {
   mon: boolean;
   tus: boolean;
   wed: boolean;
@@ -140,6 +145,7 @@ export interface DayType {
 
   setEvery: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedDays: React.Dispatch<React.SetStateAction<string[]>>;
+  setSortedDays: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export interface MainCommentType {

@@ -28,7 +28,7 @@ const AlertModal = (props: ModalPropsType) => {
     <BackgroundContainer>
       <ModalContainer>
         <AlertImg src="/assets/icons/mapBoard/!.svg" />
-        <h5>{contentText}</h5>
+        <h4>{contentText}</h4>
         <AlertButton onClick={closeModal}>확인</AlertButton>
       </ModalContainer>
     </BackgroundContainer>
@@ -49,7 +49,7 @@ const BackgroundContainer = styled.div`
   min-width: 75%;
   height: 100%;
   min-height: 75%;
-  z-index: 999;
+  z-index: 30001;
   background-color: rgba(0, 0, 0, 0.7);
 `;
 
@@ -66,7 +66,7 @@ const ModalContainer = styled.div`
   min-height: 150px;
   background-color: white;
   padding: 10px;
-  z-index: 1000;
+  z-index: 30002;
 `;
 
 const AlertModalContent = styled.span``;

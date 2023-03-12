@@ -18,10 +18,13 @@ import Loading from '@/components/common/globalModal/Loading';
 import DmButton from '@/components/DmButton';
 import FollowButton from '@/components/FollowButton';
 import Image from 'next/image';
+import useModal from '@/hooks/useModal';
+import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
-interface GalleryDetailProps {}
 const GalleryDetail = ({ params }: any) => {
   const queryClient = useQueryClient();
+  const { showModal } = useModal();
+
   const [changeGalleryPost, setChangeGalleryPost] = useState(false);
   const [editGalleryTitle, setEditGalleryTitle] = useState<string>('');
   const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
@@ -70,8 +73,7 @@ const GalleryDetail = ({ params }: any) => {
   };
 
   const onClickDeleteGalleryPost = async () => {
-    const answer = confirm('정말 삭제하시겠습니까?');
-    if (answer) {
+    const onDeleteGallery = () => {
       try {
         removeGalleryPost(
           { id: id, photo: detailGalleryPost?.data()?.photo },
@@ -87,7 +89,15 @@ const GalleryDetail = ({ params }: any) => {
       } catch (error) {
         console.log('다시 확인해주세요', error);
       }
-    }
+    };
+
+    showModal({
+      modalType: GLOBAL_MODAL_TYPES.ConfirmModal,
+      modalProps: {
+        contentText: '정말 삭제하시겠습니까?',
+        handleConfirm: onDeleteGallery,
+      },
+    });
   };
 
   //갤러리 수정 업데이트
@@ -501,6 +511,7 @@ const LevelWrapper = styled.span`
   flex-direction: column;
   width: 80%;
   margin-left: 20px;
+  width: 80%;
 `;
 const DMWrapper = styled.div``;
 const LevelContainer = styled.div`

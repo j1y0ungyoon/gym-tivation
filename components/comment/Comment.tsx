@@ -8,6 +8,7 @@ import { arrayUnion, runTransaction, doc } from 'firebase/firestore';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useRouter } from 'next/router';
+import Loading from '../common/globalModal/Loading';
 
 const Comment = ({
   comment,
@@ -175,7 +176,7 @@ const Comment = ({
   };
 
   if (isDeleting) {
-    return <div>삭제중입니다</div>;
+    return <Loading />;
   }
 
   return (
