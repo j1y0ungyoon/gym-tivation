@@ -80,6 +80,9 @@ const RecruitDetail = ({ params }: any) => {
   // 선택한 요일에 대한 state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
+  // 정렬된 요일에 대한 state
+  const [sortedDays, setSortedDays] = useState<string[]>([]);
+
   // 버튼 박스 클릭 시 색상 변경을 위한 state 나중에 수정 필요
   const [mon, setMon] = useState(false);
   const [tus, setTus] = useState(false);
@@ -262,7 +265,7 @@ const RecruitDetail = ({ params }: any) => {
       coordinate,
       startTime: start,
       endTime: end,
-      selectedDays,
+      selectedDays: sortedDays,
     });
 
     try {
@@ -454,6 +457,9 @@ const RecruitDetail = ({ params }: any) => {
   if (!refetchedPost) {
     return <Loading />;
   }
+  if (gettingYourProfile) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -527,6 +533,7 @@ const RecruitDetail = ({ params }: any) => {
                             setEvery={setEvery}
                             selectedDays={selectedDays}
                             setSelectedDays={setSelectedDays}
+                            setSortedDays={setSortedDays}
                           />
                         </AllDaysBox>
 
@@ -541,7 +548,7 @@ const RecruitDetail = ({ params }: any) => {
                             >
                               시작 시간
                             </UseDropDown>
-                            <Time>{start ? `${start}` : null}</Time>
+                            <Time>{start ? `${start}` : '00 : 00'}</Time>
 
                             <UseDropDown
                               key={`end2-${nanoid()}`}
@@ -550,7 +557,7 @@ const RecruitDetail = ({ params }: any) => {
                             >
                               종료 시간
                             </UseDropDown>
-                            <Time>{end ? end : null}</Time>
+                            <Time>{end ? end : '00 : 00'}</Time>
                           </DropDownButtonBox>
                         </AllTimesBox>
                       </AllDaysAndTimes>
@@ -852,6 +859,10 @@ const StyledButton = styled.button`
   font-weight: bold;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   background-color: white;
+  :hover {
+    background-color: ${({ theme }) => theme.color.brandColor100};
+    color: white;
+  }
 `;
 
 const ParticipationBtn = styled.button`
@@ -1001,7 +1012,7 @@ const CommentListBox = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: calc(100% - 60px);
+  width: calc(100% - 150px);
   height: calc(30% - 60px);
   padding-bottom: 30px;
 `;

@@ -62,14 +62,12 @@ const UseDropDown = (props: PropsWithChildren<DropDownProps>) => {
 
   const onSelectStart = (eventKey: any) => {
     if (eventKey) {
-      console.log('시작', eventKey);
       setStart(eventKey);
     }
   };
 
   const onSelectEnd = (eventKey: any) => {
     if (eventKey) {
-      console.log('종료', eventKey);
       setEnd(eventKey);
     }
   };

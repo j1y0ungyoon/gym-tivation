@@ -2,6 +2,7 @@ import { SearchMyGymProps } from '@/type';
 import React, { useState, useEffect, useRef } from 'react';
 import { CustomOverlayMap, Map, MapMarker } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
+import MapZoomInZoomOut from './MapZoomInZoomOut';
 
 interface MarkersType {
   position: {
@@ -25,6 +26,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
   const [region, setRegion] = useState('서울');
+  const [mapLevel, setMapLevel] = useState(8);
 
   // Info window 열고 닫기
   const [openInfo, setOpenInfo] = useState(false);
@@ -69,6 +71,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
 
   // 엔터 후 지역 설정
   const onPressSetRegion = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value === '') return;
     if (event.key === 'Enter') {
       onClickSetRegion();
     }
@@ -138,7 +141,7 @@ const SearchMyGym = (props: SearchMyGymProps) => {
             lat: 37.566826,
             lng: 126.9786567,
           }}
-          level={2}
+          level={mapLevel}
           // @ts-ignore
           onCreate={setMap}
         >
@@ -175,6 +178,9 @@ const SearchMyGym = (props: SearchMyGymProps) => {
             </MapMarker>
           ))}
         </StyledMap>
+        <PlusMinusButtonBox>
+          <MapZoomInZoomOut mapLevel={mapLevel} setMapLevel={setMapLevel} />
+        </PlusMinusButtonBox>
       </ModalContainer>
     </BackgroundContainer>
   );
@@ -202,6 +208,24 @@ const InfoBox = styled.div`
     background-color: ${({ theme }) => theme.color.brandColor100};
     color: white;
   }
+`;
+
+const PlusMinusButtonBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 24px;
+  bottom: 50px;
+  width: 40px;
+  height: 84px;
+  z-index: 2;
+  gap: 8px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius10};
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
 
 const BackgroundContainer = styled.div`

@@ -1,9 +1,9 @@
 import { authService, dbService } from '@/firebase';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { CoordinateType, WorkOutTimeType } from '../../type';
+import { CoordinateType, DayType, WorkOutTimeType } from '../../type';
 import SearchMyGym from '@/components/mapBoard/SearchMyGym';
 import UseDropDown from '@/components/common/dropDown/UseDropDown';
 import SelectDay from '@/components/mapBoard/SelectDay';
@@ -48,6 +48,9 @@ const WritingRecruitment = () => {
   // 선택한 요일에 대한 state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
+  // 정렬된 요일에 대한 state
+  const [sortedDays, setSortedDays] = useState<string[]>([]);
+
   // 버튼 박스 클릭 시 색상 변경을 위한 state 나중에 수정 필요
   const [mon, setMon] = useState(false);
   const [tus, setTus] = useState(false);
@@ -91,6 +94,15 @@ const WritingRecruitment = () => {
     useQuery('loginState');
 
   const onSubmitRecruitPost = async () => {
+    if (!authService.currentUser) {
+      showModal({
+        modalType: GLOBAL_MODAL_TYPES.AlertModal,
+        modalProps: { contentText: '로그인 후 이용해주세요!' },
+      });
+      router.push('/mapBoard');
+      return;
+    }
+
     if (!recruitTitle) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
@@ -152,7 +164,7 @@ const WritingRecruitment = () => {
       coordinate,
       startTime: start,
       endTime: end,
-      selectedDays,
+      selectedDays: sortedDays,
       participation: [],
       createdAt: Date.now(),
       comment: 0,
@@ -259,6 +271,7 @@ const WritingRecruitment = () => {
                       setEvery={setEvery}
                       selectedDays={selectedDays}
                       setSelectedDays={setSelectedDays}
+                      setSortedDays={setSortedDays}
                     />
                   </AllDaysBox>
 
@@ -527,6 +540,9 @@ const UploadButtonBox = styled.button`
   background-color: ${({ theme }) => theme.color.brandColor100};
   color: white;
   border: 1px solid black;
+  &:hover {
+    background-color: black;
+  }
 `;
 
 export const StyledText = styled.span`
