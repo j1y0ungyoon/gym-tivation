@@ -51,32 +51,39 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
     }));
   };
 
+  //Header.tsx
   const { isLoading, data: profile } = useQuery('profile', getProfile, {
     onSuccess: () => {},
     onError: (error) => {
       console.log('error : ', error);
     },
   });
+
   const id = authService.currentUser?.uid;
+
   const goToDetailMyPage = (id: any) => {
     router.push({
       pathname: `/myPage/${id}`,
       query: { id },
     });
   };
+
   const onClickGalleryPostButton = () => {
     router.push({
       pathname: `/gallery/Post`,
     });
   };
+
   const onClickPostButton = () => {
     router.push({
       pathname: `/board/Post`,
     });
   };
+
   const goToWrite = () => {
     router.push('/mapBoard/WritingRecruitment');
   };
+
   return (
     <HeaderWrapper>
       <Logo
@@ -269,9 +276,7 @@ const ProfilePhoto = styled.div`
   background-color: black;
 `;
 const Photo = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  ${({ theme }) => theme.profileDiv}
 `;
 const FollowText = styled.span`
   color: white;
@@ -294,8 +299,8 @@ const UserBox = styled.div`
   height: 50px;
   :hover {
     cursor: pointer;
-    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
-    transition: 0.3s;
+    transform: scale(1.02, 1.02); /* 가로2배 새로 1.2배 로 커짐 */
+    transition: 0.1s;
     .HelpBox {
       display: flex;
     }

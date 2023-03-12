@@ -22,7 +22,7 @@ const DmButton = ({ id }: DmButtonProps) => {
   const user = authService.currentUser;
   const userId = String(user?.uid);
   const router = useRouter();
-  const ids = dmLists.map((dmList: any) => dmList.id);
+  const ids = dmLists?.map((dmList: any) => dmList.id);
   const queryClient = useQueryClient();
   const { showModal } = useModal();
 

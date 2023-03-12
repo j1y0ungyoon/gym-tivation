@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import React, { useRef, useEffect, useState } from 'react';
 import { Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
-import MyLocationMarker from './MyLocationMarker';
+import MapZoomInZoomOut from './MapZoomInZoomOut';
 import RecruitPostsWindow from './RecruitPostsWindow';
 
 const SearchColleague = (props: MapModalProps) => {
@@ -13,6 +13,7 @@ const SearchColleague = (props: MapModalProps) => {
 
   const [map, setMap] = useState();
   const [inputRegion, setInputRegion] = useState('');
+  const [mapLevel, setMapLevel] = useState(8);
 
   // 서버로부터 fetch된 운동 동료 모집글 배열을 저장하는 state
   const [recruitPosts, setRecruitPosts] = useState<RecruitPostType[]>([]);
@@ -44,6 +45,7 @@ const SearchColleague = (props: MapModalProps) => {
 
   // 엔터 후 지역 설정
   const onPressSetRegion = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value === '') return;
     if (event.key === 'Enter') {
       onClickSetRegion();
     }
@@ -129,7 +131,7 @@ const SearchColleague = (props: MapModalProps) => {
           center={myPosition.center}
           //@ts-ignore
           onCreate={setMap}
-          level={8}
+          level={mapLevel}
         >
           {recruitPosts.map((post) => {
             if (post.coordinate) {
@@ -169,6 +171,9 @@ const SearchColleague = (props: MapModalProps) => {
             myPosition={myPosition}
             setMyPosition={setMyPosition}
           /> */}
+          <PlusMinusButtonBox>
+            <MapZoomInZoomOut mapLevel={mapLevel} setMapLevel={setMapLevel} />
+          </PlusMinusButtonBox>
         </StyledMap>
       </MapModalMain>
     </>
@@ -196,6 +201,8 @@ const MapModalMain = styled.section`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+
   width: 100%;
   height: 100%;
 `;
@@ -225,4 +232,22 @@ const SerachImg = styled.img`
 const SerachInput = styled.input`
   ${({ theme }) => theme.input}
   background-color: white;
+`;
+
+const PlusMinusButtonBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 40px;
+  left: 16px;
+  width: 40px;
+  height: 84px;
+  z-index: 2;
+  gap: 8px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: ${({ theme }) => theme.borderRadius.radius10};
+  box-shadow: -2px 2px 0px 1px #000000;
 `;
