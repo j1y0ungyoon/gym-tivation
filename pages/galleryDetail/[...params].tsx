@@ -4,7 +4,7 @@ import { authService, storage } from '@/firebase';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import {
   deleteGalleryPost,
@@ -15,13 +15,11 @@ import {
 import imageCompression from 'browser-image-compression';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
-import { Dropdown } from 'react-bootstrap';
 import DmButton from '@/components/DmButton';
 import FollowButton from '@/components/FollowButton';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
-interface GalleryDetailProps {}
 const GalleryDetail = ({ params }: any) => {
   const queryClient = useQueryClient();
   const { showModal } = useModal();
@@ -29,7 +27,6 @@ const GalleryDetail = ({ params }: any) => {
   const [changeGalleryPost, setChangeGalleryPost] = useState(false);
   const [editGalleryTitle, setEditGalleryTitle] = useState<string>('');
   const [editGalleryPhoto, setEditGalleryPhoto] = useState<string>('');
-
   const [editGalleryContent, setEditGalleryContent] = useState<string>('');
   const [editImageUpload, setEditImageUpload] = useState<File | undefined>();
   const [progressPercent, setProgressPercent] = useState(0);
@@ -41,7 +38,6 @@ const GalleryDetail = ({ params }: any) => {
     getFetchedGalleryDetail,
   );
   const { data } = useQuery(['profile'], getProfile);
-
   const { mutate: editGallery, isLoading: isEditing } =
     useMutation(editGalleryBoard);
   const { mutate: removeGalleryPost, isLoading: isDeleting } =
@@ -120,7 +116,6 @@ const GalleryDetail = ({ params }: any) => {
         },
       },
     );
-    // editGalleryBoardPost({ id, editGalleryPost });
     setChangeGalleryPost(false);
     setEditGalleryPhoto('');
     toGallery();
@@ -192,16 +187,6 @@ const GalleryDetail = ({ params }: any) => {
     console.log(`compressedFile size ${compressionFile.size / 1024 / 1024} MB`);
   };
 
-  // image upload 불러오기
-  useEffect(() => {
-    // const imageRef = ref(storage, `gallery/${nanoid()}`);
-    // if (!editImageUpload) return;
-    // uploadBytes(imageRef, editImageUpload).then((snapshot) => {
-    //   getDownloadURL(snapshot.ref).then((url) => {
-    //     setEditGalleryPhoto(url);
-    //   });
-    // });
-  }, [editImageUpload]);
   const onClickChangeGalleryDetail = () => {
     setChangeGalleryPost(!changeGalleryPost);
     setEditGalleryTitle(detailGalleryPost?.data()?.title);
@@ -232,7 +217,6 @@ const GalleryDetail = ({ params }: any) => {
         <GalleryEditWrapper>
           <GalleryEditContainer>
             <GalleryPostForm onSubmit={onSubmitEditGallery}>
-              {/* <GalleryContent> */}
               <UpperWrapper>
                 <GalleryButtonWrapper>
                   <GalleryPostButton
@@ -245,14 +229,12 @@ const GalleryDetail = ({ params }: any) => {
                   <GalleryPostButton type="submit">수정완료</GalleryPostButton>
                 </GalleryButtonWrapper>
               </UpperWrapper>
-
               <GalleryContentContainer>
                 <GalleryImageLabel>
                   <GalleryEditPreview
                     alt="수정 전 이미지"
                     src={editGalleryPhoto}
                   />
-
                   {progressPercent > 1 && 99 > progressPercent ? (
                     <ProgressPercent>
                       <div>
@@ -296,7 +278,6 @@ const GalleryDetail = ({ params }: any) => {
                 </ContentWrapper>
               </GalleryContentContainer>
             </GalleryPostForm>
-            {/* </GalleryContent> */}
           </GalleryEditContainer>
         </GalleryEditWrapper>
       ) : (
@@ -491,13 +472,6 @@ const InfoWrapper = styled.div`
   width: 100%;
   height: 30%;
 `;
-const EditWrapper = styled.div`
-  display: flex;
-  width: 50%;
-  min-height: 100%;
-  flex-direction: column;
-  align-items: flex-end;
-`;
 
 const UserImage = styled.img`
   min-height: 50px;
@@ -543,13 +517,7 @@ const UpperWrapper = styled.div`
   border-bottom: 1px solid black;
   border-bottom: 3px solid black;
 `;
-const DetailGalleryTitle = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem;
-  font-size: 2rem;
-`;
+
 const GalleryEditWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
   align-items: center;
@@ -570,25 +538,7 @@ const GalleryPostForm = styled.form`
   box-shadow: -2px 2px 0px 1px #000000;
   overflow: hidden;
 `;
-const EditTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  margin-left: 50px;
-`;
-const Title = styled.span`
-  display: flex;
-  flex-direction: column;
-  font-size: ${({ theme }) => theme.font.font70};
-`;
-const InputDiv = styled.div`
-  ${({ theme }) => theme.inputDiv};
-  background-color: white;
-  margin: 10px 0;
-  margin-left: 62px;
-  width: 85%;
-  border: 1px solid black;
-`;
+
 const GalleryTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -636,48 +586,7 @@ const EditButton = styled.button`
     background-color: ${({ theme }) => theme.color.brandColor50};
   }
 `;
-const EidtDropdDownToggle = styled(Dropdown.Toggle)`
-  background-color: ${({ theme }) => theme.color.backgroundColor};
-  padding: 0px;
-  border: none;
-  background-image: url('/assets/icons/dotButton.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  :hover {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :active {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :focus {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :checked {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-  :show {
-    background-color: ${({ theme }) => theme.color.backgroundColor};
-  }
-`;
-const EditDropDownItem = styled(Dropdown.Item)``;
-const EditDropDownMenu = styled(Dropdown.Menu)`
-  display: none;
-`;
-const EditButtonWrapper = styled.div`
-  width: 100%;
-  height: 10%;
-`;
-const TitleUpperWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 10px;
-`;
 
-const GalleryPostTitle = styled.input`
-  ${({ theme }) => theme.input}
-  background-color:white;
-`;
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -709,13 +618,6 @@ const DetailContentContainer = styled.div`
   height: 100%;
 `;
 
-const GalleryEditBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 80%;
-  padding: 2rem;
-`;
 const GalleryContentInput = styled.textarea`
   display: flex;
   width: 90%;
@@ -736,21 +638,6 @@ const GalleryButtonWrapper = styled.div`
   width: 100%;
   height: 100%;
   margin: 0 20px;
-`;
-const EditButtonModal = styled.div`
-  /* z-index: 2000;
-  width: 550px;
-  height: 600px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  border-radius: 15px;
-  transform: translate(-50%, -50%) !important;
-  padding-top: 1.5rem;
-  background-color: #fffcf3;
-  border-style: solid;
-  border-width: 0.1rem;
-  border-color: black; */
 `;
 
 const GalleryPostButton = styled.button`
@@ -839,14 +726,6 @@ const GalleryImagePreview = styled.img`
   object-fit: cover;
   border-radius: 40px 0 0 40px;
 `;
-const EditImagePreview = styled.img`
-  margin-top: 1rem;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  object-fit: scale-down;
-`;
-
 export function getServerSideProps({ params: { params } }: any) {
   return {
     props: {

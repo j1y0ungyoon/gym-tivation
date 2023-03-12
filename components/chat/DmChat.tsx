@@ -158,7 +158,7 @@ const DmChat = () => {
 
     await updateDoc(doc(dbService, 'dms', chatId), {
       chatLog: arrayUnion({
-        id: chatId,
+        id: user?.uid,
         msg: chatLog.msg,
         username: chatLog.username,
         photoURL: chatLog.photoURL,
@@ -204,7 +204,12 @@ const DmChat = () => {
   return (
     <DmChatWrapper>
       <DmUserInfoBox>
-        <UserImg src={`${apponentPhoto}`} />
+        <HeaderUserImg
+          src={`${apponentPhoto}`}
+          onClick={() => {
+            return router.push(`/myPage/${apponentId}`);
+          }}
+        />
         <UserName>{apponentName}</UserName>
       </DmUserInfoBox>
       <Test>
@@ -213,7 +218,7 @@ const DmChat = () => {
             <DmBox key={nanoid()}>
               <UserImg
                 src={`${chatLog.photoURL}`}
-                onClick={(e) => {
+                onClick={() => {
                   return router.push(`/myPage/${chatLog.id}`);
                 }}
               />
@@ -231,7 +236,6 @@ const DmChat = () => {
               <DmInput
                 placeholder="채팅을 입력하세요."
                 type="text"
-                onKeyPress={postChat}
                 value={dmInputValue}
                 onChange={onChangeInputValue}
               />
@@ -299,13 +303,22 @@ const DmBox = styled.div`
   display: flex;
   margin-bottom: 20px;
 `;
-const UserImg = styled.img`
+const HeaderUserImg = styled.img`
   min-width: 40px;
   width: 40px;
   min-height: 40px;
   height: 40px;
   border-radius: 50px;
   border: 1px solid white;
+  margin-right: 10px;
+  cursor: pointer;
+`;
+const UserImg = styled.img`
+  min-width: 40px;
+  width: 40px;
+  min-height: 40px;
+  height: 40px;
+  border-radius: 50px;
   margin-right: 10px;
   cursor: pointer;
 `;

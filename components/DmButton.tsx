@@ -116,13 +116,11 @@ const DmButton = ({
     }
 
     // 리스트에 이미 있는 방일 때
-    if (ids.includes(`${user.uid + id}`)) {
-      setRoomNum(user.uid + id);
-      if (router.pathname !== '/chat') {
-        router.push('/chat');
-      }
-    } else if (ids.includes(`${id + user.uid}`)) {
-      setRoomNum(id + user.uid);
+    if (ids.includes(`${user.uid + id}`) || ids.includes(`${id + user.uid}`)) {
+      const roomNum = ids.includes(`${user.uid + id}`)
+        ? user.uid + id
+        : id + user.uid;
+      setRoomNum(roomNum);
       if (router.pathname !== '/chat') {
         router.push('/chat');
       }

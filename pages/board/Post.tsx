@@ -2,15 +2,13 @@ import { authService, dbService } from '@/firebase';
 import { collection, doc, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import BoardCategory from '@/components/board/BoardCategory';
 import { runTransaction } from 'firebase/firestore';
-// import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { addBoardPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
@@ -54,6 +52,9 @@ const Post = () => {
     },
   };
 
+  const { isLoading: loginStateLoading, data: loginState } =
+    useQuery('loginState');
+
   const formats = [
     'font',
     'size',
@@ -94,12 +95,17 @@ const Post = () => {
     const docsData = await getDocs(q);
     const getLvName = docsData.docs[0]?.data().lvName;
     const getLv = docsData.docs[0]?.data().lv;
+    // const getLogin = docsData.docs[0]?.data().loginState;
     setUserLvName(getLvName);
     setUserLv(getLv);
+    // setTest(getLogin);
   };
 
   useEffect(() => {
-    if (!authService.currentUser) {
+    if (
+      (!loginStateLoading && loginState === undefined) ||
+      (!loginStateLoading && !loginState)
+    ) {
       showModal({
         modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
         modalProps: { contentText: '로그인 후 이용해주세요!' },
@@ -108,14 +114,13 @@ const Post = () => {
     }
 
     profileData();
-  }, []);
+  }, [loginState, loginStateLoading]);
 
   // Create Post
   const onSubmitBoard = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!boardTitle) {
-      // toast.warn('제목을 입력해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '제목을 입력해주세요!' },
@@ -123,7 +128,6 @@ const Post = () => {
       return;
     }
     if (!boardContent) {
-      // toast.warn('내용을 입력해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '내용을 입력해주세요!' },
@@ -131,7 +135,6 @@ const Post = () => {
       return;
     }
     if (!category) {
-      // toast.warn('카테고리를 선택해주세요!');
       showModal({
         modalType: GLOBAL_MODAL_TYPES.AlertModal,
         modalProps: { contentText: '카테고리를 선택해주세요!' },
@@ -147,7 +150,6 @@ const Post = () => {
       createdAt: Date.now(),
       userId: authService.currentUser?.uid,
       nickName: authService.currentUser?.displayName,
-      // photo: boardPhoto,
       like: [],
       userPhoto: authService.currentUser?.photoURL,
       userLv: userLv,
@@ -195,9 +197,10 @@ const Post = () => {
     goToBoard();
   };
 
-  if (!authService.currentUser) {
-    return <div>로그인이 필요합니다.</div>;
+  if (loginStateLoading) {
+    return <Loading />;
   }
+
   return (
     <>
       <PostWrapper>

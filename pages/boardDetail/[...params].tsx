@@ -77,28 +77,22 @@ interface DetailProps {
 }
 const Detail = ({ params }: any) => {
   const queryClient = useQueryClient();
-  // const [detailPost, setDetailPost] = useState<any>();
   const [changeDetailPost, setChangeDetailPost] = useState(false);
   const [editDetailTitle, setEditDetailTitle] = useState<string | undefined>(
     '',
   );
   const [editDetailCategory, setEditDetailCategory] = useState('운동정보');
-  // const [editDetailPhoto, setEditDetailPhoto] = useState<string>('');
-  // const [prevPhotoUrl, setPrevPhotoUrl] = useState('');
   const [editDetailContent, setEditDetailContent] = useState<string | any>('');
-  // const [editImageUpload, setEditImageUpload] = useState<any>('');
 
   const { showModal } = useModal();
 
   const [id] = params;
-
   const { data: detailPost, isLoading } = useQuery(
     ['post', id],
     getFetchedBoardDetail,
   );
   const { data } = useQuery(['profile'], getProfile);
   const { mutate, isLoading: isEditing } = useMutation(editBoardPost);
-
   const { mutate: removeBoardPost, isLoading: isDeleting } =
     useMutation(deleteBoardPost);
 
@@ -161,25 +155,10 @@ const Detail = ({ params }: any) => {
         },
       },
     );
-    // editBoardPost({ id, editDetailPost });
-    // deleteObject(ref(storage, prevPhotoUrl));
 
     setChangeDetailPost(false);
     toBoard();
   };
-  //이미지 업로드
-  // const onChangeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setEditImageUpload(event.target.files?.[0]);
-  // };
-  // useEffect(() => {
-  //   const imageRef = ref(storage, `image/${nanoid()}`);
-  //   if (!editImageUpload) return;
-  //   uploadBytes(imageRef, editImageUpload).then((snapshot) => {
-  //     getDownloadURL(snapshot.ref).then((url) => {
-  //       setEditDetailPhoto(url);
-  //     });
-  //   });
-  // }, [editImageUpload]);
 
   const toBoard = () => {
     router.push({
@@ -346,10 +325,6 @@ const Detail = ({ params }: any) => {
     </>
   );
 };
-const DetailBox = styled.div`
-  width: 100%;
-  height: 100%;
-`;
 
 const PostEditWrapper = styled.div`
   ${({ theme }) => theme.mainLayout.wrapper};
@@ -400,14 +375,7 @@ const PostUpperWrapper = styled.div`
   margin-top: 20px;
   height: 15%;
 `;
-const PostContent = styled.form`
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 2rem;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-`;
+
 const CommentWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -445,11 +413,7 @@ const Editor = styled(ReactQuill)`
     border: none;
   }
 `;
-const UserWrapper = styled.div`
-  display: flex;
-  align-items: row;
-  margin-left: 10px;
-`;
+
 const NicknameWrapper = styled.span`
   font-weight: 600;
 `;
@@ -519,11 +483,7 @@ const TitleEditContainer = styled.div`
   width: calc(100% - 150px);
   height: 50%;
 `;
-const TitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-`;
+
 const Title = styled.span`
   display: flex;
   flex-direction: column;
@@ -564,9 +524,7 @@ const ContentBox = styled.div`
   box-shadow: -2px 2px 0px 1px #000000;
   min-height: 40%;
   width: 100%;
-
   overflow-y: auto;
-  /* height: 40%; */
 `;
 const LikeContainer = styled.div`
   border: 1px solid black;
@@ -681,7 +639,6 @@ const CategoryWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  /* padding: 5px; */
 `;
 
 const CategoryTextWrapper = styled.div``;

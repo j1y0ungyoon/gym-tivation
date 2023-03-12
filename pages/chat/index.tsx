@@ -20,7 +20,7 @@ import {
 
 import styled from 'styled-components';
 import DmChat from '@/components/chat/DmChat';
-import DmButton, { MemoizedDmButton } from '@/components/DmButton';
+import { MemoizedDmButton } from '@/components/DmButton';
 import { MemoizedDmListUserInfo } from '@/components/chat/DmListUserInfo';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
@@ -155,7 +155,7 @@ const Chat = () => {
 
     await updateDoc(doc(dbService, 'allChat', 'allChat'), {
       chatLog: arrayUnion({
-        id: nanoid(),
+        id: user?.uid,
         msg: chatLog.msg,
         username: chatLog.username,
         photoURL: chatLog.photoURL,
@@ -163,7 +163,7 @@ const Chat = () => {
       }),
     });
 
-    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려줌
+    // "chat" 이름으로 chatLog(채팅내용) 서버로 올려
     socket?.emit('chat', chatLog);
     setInputValue('');
   };
@@ -270,7 +270,7 @@ const Chat = () => {
                       )
                       .map((item: any) => {
                         return (
-                          <SearchResult key={nanoid()}>
+                          <SearchResult key={item.id}>
                             <UserInfo>
                               <UserImg
                                 src={`${item.photoURL}`}
@@ -344,7 +344,6 @@ const Chat = () => {
                   <ChatInput
                     placeholder="채팅을 입력하세요."
                     type="text"
-                    onKeyPress={postChat}
                     value={inputValue}
                     onChange={onChangeInputValue}
                   />
@@ -414,7 +413,7 @@ const SearchBar = styled.div`
 const SearchInput = styled.input`
   width: calc(100% - 65px);
   height: 30px;
-  margin-right: 5px;
+  margin-right: 10px;
   border: none;
   outline: none;
   background-color: #fff;

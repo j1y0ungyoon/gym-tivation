@@ -13,6 +13,9 @@ import {
   updateDoc,
   addDoc,
   collection,
+  query,
+  getDocs,
+  where,
 } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import {
@@ -29,6 +32,8 @@ import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassWord] = useState('');
+
+  //로그인 상태 관리
 
   //모달
   const [releaseModal, setReleaseModal] = useState<boolean>(false);
@@ -118,6 +123,7 @@ const SignIn = () => {
         email,
         password,
       );
+
       if (authService.currentUser?.emailVerified === true) {
         await updateDoc(doc(dbService, 'profile', user.uid), {
           loginState: true,
@@ -201,10 +207,6 @@ const SignIn = () => {
           chatLog: [],
         });
       }
-      // showModal({
-      //   modalType: GLOBAL_MODAL_TYPES.LoginRequiredModal,
-      //   modalProps: { contentText: '로그인이 완료되었습니다!' },
-      // });
       router.push('/');
     } catch (error: any) {
       toast.error(error.message);
