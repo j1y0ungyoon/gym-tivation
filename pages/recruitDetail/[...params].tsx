@@ -722,12 +722,14 @@ const RecruitDetail = ({ params }: any) => {
                     </UserInfoContainer>
                   </InfoContainer>
                 </DetailPostHeadContainer>
-                <ContentBox>
-                  <ContentText>{refetchedPost?.content}</ContentText>
-                </ContentBox>
-                <CommentListBox>
-                  <CommentList id={id} category="동료 모집" />
-                </CommentListBox>
+                <DetailPostBodyContainer>
+                  <ContentBox>
+                    <ContentText>{refetchedPost?.content}</ContentText>
+                  </ContentBox>
+                  <CommentListBox>
+                    <CommentList id={id} category="동료 모집" />
+                  </CommentListBox>
+                </DetailPostBodyContainer>
               </DetailPostFormContainer>
             </DetailPostFormWrapper>
           )}
@@ -780,6 +782,7 @@ const DetailPostHeadContainer = styled.div`
   justify-content: space-evenly;
   align-items: center;
   background-color: #fffcf3;
+  gap: 10px;
   width: 100%;
   height: 30%;
   padding: 40px;
@@ -806,6 +809,7 @@ const InfoContainer = styled.div`
   align-items: flex-start;
   width: 100%;
   min-height: 70%;
+  gap: 10px;
 `;
 
 const RecruitInfoTextBox = styled.div`
@@ -992,11 +996,26 @@ const TitleText = styled.span`
   width: 80%;
 `;
 
+const DetailPostBodyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 const ContentBox = styled.div`
   width: calc(100% - 150px);
   height: 40%;
   padding: 20px;
-  margin: 30px 0;
+  margin-top: 30px;
+  margin-bottom: 10px;
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
@@ -1013,7 +1032,7 @@ const CommentListBox = styled.div`
   justify-content: center;
   align-items: center;
   width: calc(100% - 150px);
-  height: calc(30% - 60px);
+  height: calc(60% - 60px);
   padding-bottom: 30px;
 `;
 

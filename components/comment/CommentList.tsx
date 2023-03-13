@@ -128,7 +128,7 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
   useEffect(() => {
     const commentsRef = collection(dbService, 'comments');
 
-    const q = query(commentsRef, orderBy('createdAt', 'asc'));
+    const q = query(commentsRef, orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newComments = snapshot.docs.map((doc) => ({
@@ -142,18 +142,10 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
       unsubscribe();
     };
   }, []);
+
   //scroll 아래로 내려가기 기능 추가 해야함
   return (
     <CommentListWrapper>
-      <CommentWrapper>
-        {comments
-          .filter((comment) => comment.postId === id)
-          .map((comment) => {
-            return (
-              <Comment key={comment.id} comment={comment} category={category} />
-            );
-          })}
-      </CommentWrapper>
       <InputWrapper>
         {authService.currentUser ? (
           <CommentInput
@@ -179,6 +171,15 @@ const CommentList = ({ id, category }: { id: string; category: string }) => {
           )}
         </ButtonWrapper>
       </InputWrapper>
+      <CommentWrapper>
+        {comments
+          .filter((comment) => comment.postId === id)
+          .map((comment) => {
+            return (
+              <Comment key={comment.id} comment={comment} category={category} />
+            );
+          })}
+      </CommentWrapper>
     </CommentListWrapper>
   );
 };
@@ -195,20 +196,20 @@ const CommentListWrapper = styled.div`
 `;
 const CommentWrapper = styled.div`
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   height: 100%;
   width: 98%;
-  overflow: auto;
+  /* overflow: auto;
   overflow-x: hidden;
   &::-webkit-scrollbar {
     display: none;
-  }
+  } */
 `;
 const InputWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 98%;
-  margin-bottom: 3px;
+  width: 100%;
+  margin-bottom: 20px;
   margin-top: 10px;
 `;
 

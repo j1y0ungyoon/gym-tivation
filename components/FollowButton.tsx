@@ -201,6 +201,6 @@ const EditButton = styled.button<FollowButtonProps>`
 `;
 const IconImg = styled.div`
   position: relative;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 20px;
+  height: 20px;
 `;
