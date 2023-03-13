@@ -8,7 +8,7 @@ import { runTransaction } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
 
 import 'react-quill/dist/quill.snow.css';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { addBoardPost } from '../api/api';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
