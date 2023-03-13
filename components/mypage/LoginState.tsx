@@ -166,6 +166,7 @@ const OnOffBox = styled.div`
   width: 460px;
   margin-left: 60px;
   margin-bottom: 16px;
+
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05); /* 가로2배 새로 1.2배 로 커짐 */
