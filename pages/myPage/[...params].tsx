@@ -405,7 +405,7 @@ const ModalClose = styled.div`
 `;
 
 const FollowModal = styled.div`
-  z-index: 2000;
+  z-index: 20000;
   width: 550px;
   height: 600px;
   position: fixed;

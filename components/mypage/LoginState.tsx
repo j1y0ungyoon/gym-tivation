@@ -164,7 +164,9 @@ const OnOffBox = styled.div`
   display: flex;
   margin: auto;
   width: 460px;
+  margin-left: 60px;
   margin-bottom: 16px;
+
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05); /* 가로2배 새로 1.2배 로 커짐 */
@@ -219,6 +221,7 @@ const TextBox = styled.div`
 `;
 const StateBox = styled.div`
   margin-top: 20px;
+  margin-left: 20px;
   text-align: right;
   width: 360px;
 `;
