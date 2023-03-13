@@ -209,6 +209,8 @@ const Detail = ({ params }: any) => {
                     <Title>제목</Title>
                     <InputDiv>
                       <PostTitle
+                        maxLength={40}
+                        placeholder="총 40자까지 작성할 수 있습니다."
                         onChange={onChangeEditTitle}
                         defaultValue={detailPost?.data()?.title}
                       />
@@ -283,20 +285,20 @@ const Detail = ({ params }: any) => {
                       Id={followInformation?.id}
                     />
                     <DmButton propWidth="50px" id={followInformation?.id} />
+                    <EditWrapper>
+                      {user === detailPost?.data()?.userId ? (
+                        <DetailButtonWrapper>
+                          <DetailPostButton onClick={onClickChangeDetail}>
+                            수정
+                          </DetailPostButton>
+                          <DetailPostButton onClick={onClickDeleteBoardPost}>
+                            삭제
+                          </DetailPostButton>
+                        </DetailButtonWrapper>
+                      ) : null}
+                    </EditWrapper>
                   </TitleBottomWrapper>
                 </InfoWrapper>
-                <EditWrapper>
-                  {user === detailPost?.data()?.userId ? (
-                    <DetailButtonWrapper>
-                      <DetailPostButton onClick={onClickChangeDetail}>
-                        수정
-                      </DetailPostButton>
-                      <DetailPostButton onClick={onClickDeleteBoardPost}>
-                        삭제
-                      </DetailPostButton>
-                    </DetailButtonWrapper>
-                  ) : null}
-                </EditWrapper>
               </DetailTitleContainer>
               <ContentContainer>
                 {/* <div>created At{detailPost?.createdAt}</div> */}
@@ -440,7 +442,7 @@ const DetailContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background-color: white;
   border: 1px solid black;
   border-radius: ${({ theme }) => theme.borderRadius.radius100};
@@ -461,11 +463,11 @@ const UserImage = styled.img`
 
 const DetailTitleContainer = styled.div`
   display: flex;
-  padding: 10px;
   flex-direction: row;
   width: 100%;
-  height: 30%;
-  border-radius: 50px 50px 0 0;
+  border: 1px solid black;
+  border-top-left-radius: ${({ theme }) => theme.borderRadius.radius100};
+  border-top-right-radius: ${({ theme }) => theme.borderRadius.radius100};
   background-color: ${({ theme }) => theme.color.backgroundColor};
   border-bottom: 3px solid black;
   padding: 40px 75px;
@@ -522,7 +524,8 @@ const ContentBox = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.radius50};
   border: 1px solid black;
   box-shadow: -2px 2px 0px 1px #000000;
-  min-height: 40%;
+  /* height: calc(50% - 110px); */
+  height: 100%;
   width: 100%;
   overflow-y: auto;
 `;
@@ -550,13 +553,19 @@ const PostTitle = styled.input`
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 80%;
-  width: calc(100% - 150px);
+  height: calc(80% - 40px);
+  width: 100%;
+  padding: 20px 75px;
   border-bottom: none;
 
   align-items: center;
   justify-content: center;
-  margin: 20px;
+
+  overflow: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const DetailPostButton = styled.button`
@@ -596,7 +605,7 @@ const DetailPostTitle = styled.p`
 const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 100%;
 `;
 const DetailEditButtonWrapper = styled.div`
   display: flex;
@@ -629,10 +638,10 @@ const DetailButtonWrapper = styled.div`
 
 const EditWrapper = styled.div`
   display: flex;
-  width: 50%;
-  height: 100%;
+  width: 20%;
   flex-direction: column;
   align-items: flex-end;
+  margin-left: auto;
 `;
 const CategoryWrapper = styled.div`
   display: flex;
