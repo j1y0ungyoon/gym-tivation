@@ -11,6 +11,7 @@ import Loading from './common/globalModal/Loading';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import useModal from '@/hooks/useModal';
 import { chatCategoryState } from '@/recoil/chat';
+import Image from 'next/image';
 
 interface DmButtonProps {
   id?: string;
@@ -151,7 +152,15 @@ const DmButton = ({
                 });
           }}
         >
-          <IconImg src="/assets/icons/myPage/DM.svg" />
+          <IconImg>
+            <Image
+              layout="fill"
+              objectFit="cover"
+              objectPosition="center"
+              alt="DM 아이콘"
+              src="/assets/icons/myPage/DM.svg"
+            />
+          </IconImg>
           <Text display={display}> 메시지</Text>
         </DmButtonWrapper>
       ) : null}
@@ -185,7 +194,8 @@ const Text = styled.div<TextProps>`
   display: ${(props) => props.display};
   margin-left: 5px;
 `;
-const IconImg = styled.img`
+const IconImg = styled.div`
+  position: relative;
   width: 1.5rem;
   height: 1.5rem;
 `;

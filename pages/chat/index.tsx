@@ -27,6 +27,7 @@ import { useQuery } from 'react-query';
 import { getMyDms } from '../api/api';
 import Loading from '@/components/common/globalModal/Loading';
 import { chatCategoryState } from '@/recoil/chat';
+import Image from 'next/image';
 
 type ChatLog = {
   id: string | undefined;

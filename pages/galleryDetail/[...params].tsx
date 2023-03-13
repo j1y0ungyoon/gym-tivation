@@ -17,6 +17,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Loading from '@/components/common/globalModal/Loading';
 import DmButton from '@/components/DmButton';
 import FollowButton from '@/components/FollowButton';
+import Image from 'next/image';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 
@@ -231,10 +232,15 @@ const GalleryDetail = ({ params }: any) => {
               </UpperWrapper>
               <GalleryContentContainer>
                 <GalleryImageLabel>
-                  <GalleryEditPreview
-                    alt="수정 전 이미지"
-                    src={editGalleryPhoto}
-                  />
+                  <GalleryEditPreview>
+                    <Image
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="center"
+                      alt="수정 전 이미지"
+                      src={editGalleryPhoto}
+                    />
+                  </GalleryEditPreview>
                   {progressPercent > 1 && 99 > progressPercent ? (
                     <ProgressPercent>
                       <div>
@@ -252,10 +258,15 @@ const GalleryDetail = ({ params }: any) => {
                 </GalleryImageLabel>
                 <ContentWrapper>
                   <UserInfo>
-                    <UserPhoto
-                      alt="유저 이미지"
-                      src={detailGalleryPost?.data()?.userPhoto}
-                    ></UserPhoto>
+                    <UserPhoto>
+                      <Image
+                        layout="fill"
+                        objectFit="cover"
+                        objectPosition="center"
+                        alt="유저 이미지"
+                        src={detailGalleryPost?.data()?.userPhoto}
+                      ></Image>
+                    </UserPhoto>
                     <UserNameInfo>
                       <UserName>{detailGalleryPost?.data()?.nickName}</UserName>
                       <div>
@@ -286,22 +297,31 @@ const GalleryDetail = ({ params }: any) => {
             <GalleryContent>
               <DetailContentContainer>
                 <GalleryImageWrapper>
-                  <GalleryImagePreview
-                    alt="업로드 이미지"
-                    src={detailGalleryPost?.data()?.photo}
-                  />
+                  <GalleryImagePreview>
+                    <Image
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="center"
+                      alt="업로드 이미지"
+                      src={detailGalleryPost?.data()?.photo}
+                    />
+                  </GalleryImagePreview>
                 </GalleryImageWrapper>
                 <DetailContent>
                   <GalleryTitleContainer>
                     <InfoWrapper>
                       <BottomWrapper>
-                        <UserImage
-                          alt="유저 이미지"
-                          src={detailGalleryPost?.data()?.userPhoto}
-                          onClick={() => {
-                            goToMyPage(detailGalleryPost?.data()?.userId);
-                          }}
-                        />
+                        <UserImage>
+                          <Image
+                            width={50}
+                            height={50}
+                            alt="유저 이미지"
+                            src={detailGalleryPost?.data()?.userPhoto}
+                            onClick={() =>
+                              goToMyPage(detailGalleryPost?.data()?.userId)
+                            }
+                          />
+                        </UserImage>
                         <LevelWrapper>
                           <NicknameWrapper>
                             {detailGalleryPost?.data()?.nickName}
@@ -473,12 +493,14 @@ const InfoWrapper = styled.div`
   height: 30%;
 `;
 
-const UserImage = styled.img`
+const UserImage = styled.div`
+  position: relative;
   min-height: 50px;
   min-width: 50px;
   width: 50px;
   height: 50px;
   border-radius: 50px;
+  overflow: hidden;
   :hover {
     cursor: pointer;
     transform: scale(1.1, 1.1);
@@ -487,6 +509,7 @@ const UserImage = styled.img`
 const LevelWrapper = styled.span`
   display: flex;
   flex-direction: column;
+  width: 80%;
   margin-left: 20px;
   width: 80%;
 `;
@@ -686,7 +709,8 @@ const UserNameInfo = styled.span`
 const UserName = styled.span`
   margin-right: 20px;
 `;
-const UserPhoto = styled.img`
+const UserPhoto = styled.div`
+  position: relative;
   max-width: 50px;
   max-height: 50px;
   width: 50px;
@@ -694,6 +718,7 @@ const UserPhoto = styled.img`
   border-radius: 50px;
   margin-right: 10px;
   object-fit: cover;
+  overflow: hidden;
 `;
 const UserLv = styled.span`
   margin-right: 5px;
@@ -702,7 +727,8 @@ const UserLv = styled.span`
 const UserLvName = styled.span`
   font-size: ${({ theme }) => theme.font.font10};
 `;
-const GalleryEditPreview = styled.img`
+const GalleryEditPreview = styled.div`
+  position: relative;
   border: none;
   width: 100%;
   height: 100%;
@@ -718,7 +744,8 @@ const GalleryEditPreview = styled.img`
   }
 `;
 
-const GalleryImagePreview = styled.img`
+const GalleryImagePreview = styled.div`
+  position: relative;
   border: none;
   width: 100%;
   height: 100%;

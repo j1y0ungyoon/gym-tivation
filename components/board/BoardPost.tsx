@@ -47,7 +47,15 @@ const BoardPost = ({
       <BoardPostContainer>
         <ItemContentWrapper>
           <UserImageWrapper>
-            <UserImage src={userPhoto}></UserImage>
+            <UserImage>
+              <Image
+                alt="유저 이미지"
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                src={userPhoto!}
+              />
+            </UserImage>
           </UserImageWrapper>
           <InfoContentWrapper>
             <ItemContentContainer>
@@ -111,7 +119,9 @@ const ItemContentWrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
-const UserImage = styled.img`
+const UserImage = styled.div`
+  position: relative;
+  overflow: hidden;
   width: 40px;
   height: 40px;
   border-radius: 40px;

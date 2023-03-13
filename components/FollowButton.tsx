@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import useModal from '@/hooks/useModal';
 import { GLOBAL_MODAL_TYPES } from '@/recoil/modalState';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 type FollowButtonType = {
   item: ProfileItem;
@@ -125,7 +126,15 @@ const FollowButton = ({
               style={{ backgroundColor: '#FF4800', color: 'white' }}
               onClick={() => FollowReMoveOnClick()}
             >
-              <IconImg src="/assets/icons/myPage/followingcheck.svg" />
+              <IconImg>
+                <Image
+                  alt="팔로우 아이콘"
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                  src="/assets/icons/myPage/followingcheck.svg"
+                />
+              </IconImg>
               <Text display={display}>팔로잉</Text>
             </EditButton>
           )}
@@ -148,7 +157,15 @@ const FollowButton = ({
                     })
               }
             >
-              <IconImg src="/assets/icons/myPage/Follow.svg" />
+              <IconImg>
+                <Image
+                  alt="팔로우 아이콘"
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                  src="/assets/icons/myPage/Follow.svg"
+                />
+              </IconImg>
 
               <Text display={display}> 팔로우</Text>
             </EditButton>
@@ -182,7 +199,8 @@ const EditButton = styled.button<FollowButtonProps>`
     color: black;
   }
 `;
-const IconImg = styled.img`
+const IconImg = styled.div`
+  position: relative;
   width: 1.5rem;
   height: 1.5rem;
 `;
