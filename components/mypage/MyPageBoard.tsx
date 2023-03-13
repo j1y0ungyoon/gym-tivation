@@ -62,6 +62,7 @@ export default MyPageBoard;
 const MyPageBoardWrapper = styled.div`
   margin-left: 40px;
   padding-top: 20px;
+  padding-bottom: 20px;
   width: 92%;
   height: 70%;
   flex-wrap: wrap;
@@ -108,16 +109,17 @@ const Photo = styled.img`
 `;
 const BoardCategory = styled.button`
   width: 150px;
-  height: 40px;
-  font-size: 1.2rem;
+  height: 36px;
+  ${({ theme }) => theme.font.font30};
   font-weight: bold;
   background-color: white;
   border-radius: 2rem;
-  margin-right: 15px;
+  margin-right: 8px;
+  box-shadow: -2px 2px 0px 0px #000000;
 `;
 
 const BoardTitleText = styled.span`
-  font-size: 1.2rem;
+  ${({ theme }) => theme.font.font30};
   max-width: 260px;
   text-align: left;
   margin-top: 4px;
@@ -127,14 +129,14 @@ const BoardTitleText = styled.span`
   text-overflow: ellipsis;
 `;
 const NickNameText = styled.span`
-  font-size: 1rem;
+  font-size: 12px;
   margin-right: 10px;
 `;
 
 const TitleBox = styled.div`
   display: flex;
-  padding-top: 6px;
-  margin-bottom: 14px;
+  margin-top: 4px;
+  margin-bottom: 8px;
   width: 100%;
   height: 50%;
 `;
@@ -149,15 +151,15 @@ const TitleNickNameBox = styled.div`
   padding-left: 10px;
 `;
 const RecruitComment = styled.span`
-  font-size: 1.2rem;
-  margin-top: 2px;
+  font-size: 12px;
+  margin-top: 6px;
   color: gray;
   font-weight: bolder;
-  margin-left: 15px;
+  margin-left: 8px;
 `;
 const IconImg = styled.img`
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 16px;
+  height: 16px;
   margin-right: 5px;
   margin-bottom: 2px;
 `;
@@ -169,6 +171,6 @@ const UserPhoto = styled.div`
 `;
 const UserPhotoBox = styled.div`
   margin: auto;
-  width: 80px;
-  height: 70px;
+  width: 70px;
+  height: 60px;
 `;
