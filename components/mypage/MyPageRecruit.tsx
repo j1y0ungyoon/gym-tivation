@@ -90,9 +90,10 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
                     {item.startTime} ~ {item.endTime}
                   </TimeText>
                   <RecruitLength>
-                    <IconImg src="/assets/icons/myPage/gymtivation_logo_miniicon.svg" />
+                    <RecruitIconImg src="/assets/icons/mapBoard/FistImage2.svg" />
+                    현재&nbsp;
                     {item.userId.split(',').length + item.participation.length}
-                    명 참여중
+                    명 참여중입니다.
                   </RecruitLength>
                 </NickNameBox>
               </TitleNickNameBox>
@@ -105,18 +106,6 @@ const MyPageRecruit = ({ paramsId }: { paramsId: string }) => {
 
 export default MyPageRecruit;
 
-const PhotoBox = styled.div`
-  width: 80px;
-  height: 80px;
-  margin: auto;
-  margin-right: 0.5vw;
-`;
-const ProfilePhoto = styled.div`
-  width: 100%;
-  height: 100%;
-  border-radius: 70%;
-  overflow: hidden;
-`;
 const Photo = styled.img`
   width: 100%;
   height: 100%;
@@ -130,15 +119,14 @@ const RecruitLength = styled.span`
   font-size: 1rem;
   margin-top: 5px;
   margin-right: 10px;
-  font-weight: bold;
 `;
 
 const DayText = styled.button`
-  height: 40px;
+  height: 36px;
   padding-left: 10px;
   padding-right: 10px;
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 12px;
+  box-shadow: -2px 2px 0px 0px #000000;
   background-color: white;
   border-radius: 2rem;
   margin-right: 20px;
@@ -148,11 +136,11 @@ const DayText = styled.button`
   text-overflow: ellipsis;
 `;
 const TimeText = styled.button`
-  height: 40px;
+  height: 36px;
   padding-left: 12px;
   padding-right: 12px;
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 12px;
+  box-shadow: -2px 2px 0px 0px #000000;
   background-color: white;
   border-radius: 2rem;
   margin-right: 20px;
@@ -166,12 +154,18 @@ const IconImg = styled.img`
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 5px;
+`;
+const RecruitIconImg = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5px;
   margin-bottom: 2px;
 `;
 
 const MyPageBoardWrapper = styled.div`
   margin-left: 40px;
   padding-top: 20px;
+  padding-bottom: 20px;
   width: 92%;
   height: 70%;
   flex-wrap: wrap;
@@ -198,7 +192,7 @@ const MyPageBoardContainer = styled.div`
 `;
 
 const BoardTitleText = styled.span`
-  font-size: 1.2rem;
+  font-size: ${({ theme }) => theme.font.font30};
   max-width: 260px;
   text-align: left;
   font-weight: bolder;
@@ -210,7 +204,6 @@ const TitleBox = styled.div`
   display: flex;
   width: 100%;
   height: 40%;
-  margin-bottom: 5px;
 `;
 const NickNameBox = styled.div`
   display: flex;
@@ -223,10 +216,10 @@ const TitleNickNameBox = styled.div`
   padding-left: 10px;
 `;
 const RecruitComment = styled.span`
-  font-size: 1.2rem;
+  font-size: 12px;
   color: gray;
-  font-weight: bolder;
-  margin-left: 15px;
+  margin-top: 2px;
+  margin-left: 8px;
 `;
 const UserPhoto = styled.div`
   width: 95%;
@@ -236,6 +229,6 @@ const UserPhoto = styled.div`
 `;
 const UserPhotoBox = styled.div`
   margin: auto;
-  width: 80px;
-  height: 70px;
+  width: 70px;
+  height: 60px;
 `;

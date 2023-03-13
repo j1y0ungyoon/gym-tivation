@@ -57,15 +57,14 @@ const MyPageGalleyWrapper = styled.div`
 
 const GalleryContainer = styled.div`
   width: 23%;
-  height: 100%;
+  height: 60%;
   min-width: 150px;
   min-height: 150px;
-  max-width: 190px;
-  max-height: 190px;
+  max-width: 300px;
   position: relative;
   :hover {
     cursor: pointer;
-    transform: scale(1.1, 1.1); /* 가로2배 새로 1.2배 로 커짐 */
+    transform: scale(1.05, 1.05); /* 가로2배 새로 1.2배 로 커짐 */
     transition: 0.3s;
   }
 `;

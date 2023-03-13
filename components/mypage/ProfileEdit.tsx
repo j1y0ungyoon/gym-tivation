@@ -577,7 +577,8 @@ const InformationBox = styled.div`
   width: 1000px;
   height: 280px;
   padding-top: 0.5vh;
-  overflow: hidden;
+  /* overflow: hidden; */
+  z-index: 20000;
 `;
 const EditPhotoBox = styled.div`
   padding-top: 24px;
@@ -646,12 +647,12 @@ const LevelBox = styled.div`
 `;
 const LevelHelpBox = styled.div`
   display: none;
-  z-index: 2000;
+  z-index: 20000;
   width: 340px;
   height: 260px;
   margin-top: 130px;
   margin-left: 90px;
-  position: fixed;
+  position: absolute;
   border-radius: 15px;
   background-color: white;
   transform: translate(-50%, -50%) !important;
