@@ -212,8 +212,11 @@ const Post = () => {
                   <Title>제목</Title>
                   <InputDiv>
                     <PostTitle
+                      type="text"
                       onChange={onChangeBoardTitle}
                       value={boardTitle}
+                      maxLength={40}
+                      placeholder="총 40자까지 작성할 수 있습니다."
                     />
                   </InputDiv>
                 </TitleBox>

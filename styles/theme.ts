@@ -81,6 +81,7 @@ export const theme = {
       min-height : 740px;
       height : calc(100vh - 80px);
       margin : 0 auto;
+      margin-top : 80px;
       margin-left : 180px;
       background-color:#FFFCF3;
       padding: 0 20px

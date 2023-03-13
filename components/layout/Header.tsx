@@ -223,15 +223,17 @@ const Header = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 };
 
 const HeaderWrapper = styled.header`
+  position: fixed;
   height: 80px;
   margin: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
   background-color: black;
   min-width: 1180px;
-  z-index: 20000;
+  width: 100%;
+  z-index: 20001;
 `;
 const LogoWrapper = styled.div``;
 const LogoText = styled.img`

@@ -381,10 +381,12 @@ const GalleryDetail = ({ params }: any) => {
                       </BottomWrapper>
                     </InfoWrapper>
                     <LikeContainer>
-                      <Like
-                        detailGalleryPost={detailGalleryPost?.data()}
-                        id={id}
-                      />
+                      <LikeBox>
+                        <Like
+                          detailGalleryPost={detailGalleryPost?.data()}
+                          id={id}
+                        />
+                      </LikeBox>
                     </LikeContainer>
                     <DetailGalleryContent>
                       <DetailContentWrapper>
@@ -460,20 +462,29 @@ const CommentWrapper = styled.div`
   background-color: white;
 `;
 const CommentContainer = styled.div`
-  padding: 20px auto;
+  padding: 10px 20px;
   display: flex;
-  width: 95%;
+  width: 100%;
   height: 100%;
   overflow: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   background-color: white;
 `;
 const LikeContainer = styled.div`
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
+  /* justify-content: flex-start; */
   width: 100%;
   height: 20%;
   padding: 0 20px;
+`;
+
+const LikeBox = styled.div`
+  display: flex;
+  justify-content: center;
   :hover {
     cursor: pointer;
     transform: scale(1.05, 1.05);
@@ -509,9 +520,7 @@ const UserImage = styled.div`
 const LevelWrapper = styled.span`
   display: flex;
   flex-direction: column;
-  width: 80%;
   margin-left: 20px;
-  width: 80%;
 `;
 const DMWrapper = styled.div``;
 const LevelContainer = styled.div`
